@@ -27,7 +27,13 @@ export async function renderManifest(manifest: RenderManifest, root: string): Pr
     const outputs: string[] = [];
     for (const [index, slide] of manifest.slides.entries()) {
       await page.setContent(renderHtml(slide, index + 1, manifest.slides.length, assets, manifest.visualStyle), { waitUntil: "load" });
-      await page.evaluate(() => document.fonts.ready);
+      await page.evaluate(async () => {
+        await Promise.all([
+          document.fonts.load('900 16px "Fraunces"'),
+          document.fonts.load('900 16px "Noto Sans"'),
+        ]);
+        await document.fonts.ready;
+      });
       await page.evaluate(() => window.scrollTo(0, 0));
       const dimensions = await page.evaluate(() => {
         const slide = document.querySelector(".slide")?.getBoundingClientRect();
@@ -35,7 +41,7 @@ export async function renderManifest(manifest: RenderManifest, root: string): Pr
           const rect = element.getBoundingClientRect();
           return rect.left < 0 || rect.right > 1080 || rect.top < 0 || rect.bottom > 1350;
         });
-        const fonts = document.fonts.check('16px "Fraunces"') && document.fonts.check('16px "Noto Sans"');
+        const fonts = document.fonts.check('900 16px "Fraunces"') && document.fonts.check('900 16px "Noto Sans"');
         return { overflow: document.documentElement.scrollHeight > 1350 || document.documentElement.scrollWidth > 1080 || clipped, fonts, width: slide?.width, height: slide?.height };
       });
       if (dimensions.width !== 1080 || dimensions.height !== 1350) throw new Error(`Slide ${index + 1} has an invalid ${dimensions.width} × ${dimensions.height} canvas`);
