@@ -23,19 +23,19 @@ export async function renderManifest(manifest: RenderManifest, root: string): Pr
   };
   const browser = await chromium.launch({ headless: true });
   try {
-    const page = await browser.newPage({ viewport: { width: 1080, height: 1350 }, deviceScaleFactor: 1 });
     const outputs: string[] = [];
     for (const [index, slide] of manifest.slides.entries()) {
-      await page.setContent(renderHtml(slide, index + 1, manifest.slides.length, assets, manifest.visualStyle), { waitUntil: "load" });
-      await page.evaluate(async () => {
-        await Promise.all([
-          document.fonts.load('900 16px "Fraunces"'),
-          document.fonts.load('900 16px "Noto Sans"'),
-        ]);
-        await document.fonts.ready;
-      });
-      await page.evaluate(() => window.scrollTo(0, 0));
-      const dimensions = await page.evaluate(() => {
+      const page = await browser.newPage({ viewport: { width: 1080, height: 1350 }, deviceScaleFactor: 1 });
+      try {
+        await page.setContent(renderHtml(slide, index + 1, manifest.slides.length, assets, manifest.visualStyle), { waitUntil: "load" });
+        await page.evaluate(async () => {
+          await Promise.all([
+            document.fonts.load('900 16px "Fraunces"'),
+            document.fonts.load('900 16px "Noto Sans"'),
+          ]);
+          await document.fonts.ready;
+        });
+        const dimensions = await page.evaluate(() => {
         const slide = document.querySelector(".slide")?.getBoundingClientRect();
         const clipped = [...document.querySelectorAll(".top,.copy,.footer,h1,.body,.subtitle,li")].some((element) => {
           const rect = element.getBoundingClientRect();
@@ -43,13 +43,16 @@ export async function renderManifest(manifest: RenderManifest, root: string): Pr
         });
         const fonts = document.fonts.check('900 16px "Fraunces"') && document.fonts.check('900 16px "Noto Sans"');
         return { overflow: document.documentElement.scrollHeight > 1350 || document.documentElement.scrollWidth > 1080 || clipped, fonts, width: slide?.width, height: slide?.height };
-      });
-      if (dimensions.width !== 1080 || dimensions.height !== 1350) throw new Error(`Slide ${index + 1} has an invalid ${dimensions.width} × ${dimensions.height} canvas`);
-      if (dimensions.overflow) throw new Error(`Slide ${index + 1} overflows the canvas`);
-      if (!dimensions.fonts) throw new Error(`Slide ${index + 1} did not load the approved brand fonts`);
-      const output = path.join(directory, `${String(index + 1).padStart(2, "0")}.png`);
-      await page.screenshot({ path: output, type: "png" });
-      outputs.push(output);
+        });
+        if (dimensions.width !== 1080 || dimensions.height !== 1350) throw new Error(`Slide ${index + 1} has an invalid ${dimensions.width} × ${dimensions.height} canvas`);
+        if (dimensions.overflow) throw new Error(`Slide ${index + 1} overflows the canvas`);
+        if (!dimensions.fonts) throw new Error(`Slide ${index + 1} did not load the approved brand fonts`);
+        const output = path.join(directory, `${String(index + 1).padStart(2, "0")}.png`);
+        await page.screenshot({ path: output, type: "png" });
+        outputs.push(output);
+      } finally {
+        await page.close();
+      }
     }
     return outputs;
   } finally { await browser.close(); }
