@@ -313,7 +313,8 @@ const server = http.createServer(async (req, res) => {
         const sources: any[] = []; const seenAuthorities=new Set<string>();
         for(const source of scored){const authority=String(source.source_authority||new URL(String(source.source_url)).hostname);if(seenAuthorities.has(authority)&&sources.length>=1)continue;sources.push(source);seenAuthorities.add(authority);if(sources.length>=2)break;}
         const needsOfficial = slot.risk_level === 'high' || slot.timing_class !== 'evergreen';
-        const valid = sources.length >= 1 && sources[0].relevance_score>=6 && (!needsOfficial || sources.some(s=>s.source_tier==='official'));
+        const minimumRelevance = slot.risk_level === 'high' || slot.timing_class !== 'evergreen' ? 6 : slot.risk_level === 'medium' ? 4 : 2;
+        const valid = sources.length >= 1 && sources[0].relevance_score>=minimumRelevance && (!needsOfficial || sources.some(s=>s.source_tier==='official'));
         if (!valid) { await sql`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${slot.id}`; results.push({slotId:slot.id,topic:slot.topic,state:'held',sources:sources.length}); continue; }
         const normalized=sources.map(s=>({documentId:s.id,url:s.source_url,title:s.title,publisher:s.source_authority,tier:s.source_tier,locale:s.original_lang,retrievedAt:s.last_verified_at||s.fetched_at,contentHash:s.content_hash,relevanceScore:s.relevance_score,matchedTerms:s.matched_terms,excerpts:(s.excerpts as string[]).slice(0,6)}));
         const bundleHash=hash(normalized); const freshnessDays=slot.risk_level==='high'?7:slot.risk_level==='medium'?30:90;
