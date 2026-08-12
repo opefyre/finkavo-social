@@ -1,1 +1,111 @@
-{"name":"WF-06 Queue Approved Revision for Rendering","nodes":[{"parameters":{},"id":"8d5f4610-0f92-4474-a10f-a834683126b4","name":"Run manually","type":"n8n-nodes-base.manualTrigger","typeVersion":1,"position":[-500,0]},{"parameters":{"url":"http://127.0.0.1:4320/v1/posts?status=approved","authentication":"genericCredentialType","genericAuthType":"httpBearerAuth","options":{"timeout":30000}},"id":"a5ce6b7d-2f16-4b56-829c-86fa16778d25","name":"Get approved post","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[-260,0]},{"parameters":{"jsCode":"const post=$json.posts?.[0]; if(!post) throw new Error('No exact approved revision is ready'); return [{json:{postId:post.id,idempotencyKey:`render:${post.id}:${post.approved_revision_id}`}}];"},"id":"60608f44-8d0d-4dfd-8a52-028acbf05769","name":"Build idempotent request","type":"n8n-nodes-base.code","typeVersion":2,"position":[-20,0]},{"parameters":{"method":"POST","url":"=http://127.0.0.1:4320/v1/posts/{{$json.postId}}/request-render","authentication":"genericCredentialType","genericAuthType":"httpBearerAuth","sendBody":true,"contentType":"raw","rawContentType":"application/json","body":"={{ JSON.stringify({idempotencyKey:$json.idempotencyKey}) }}","options":{"timeout":30000}},"id":"089ff943-935e-4aef-a6b7-3752506667db","name":"Queue render job","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[220,0]}],"connections":{"Run manually":{"main":[[{"node":"Get approved post","type":"main","index":0}]]},"Get approved post":{"main":[[{"node":"Build idempotent request","type":"main","index":0}]]},"Build idempotent request":{"main":[[{"node":"Queue render job","type":"main","index":0}]]}},"settings":{"executionOrder":"v1","saveManualExecutions":true},"active":false,"tags":[]}
+{
+  "name": "WF-06 Queue Approved Revision for Rendering",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "8d5f4610-0f92-4474-a10f-a834683126b4",
+      "name": "Run manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -500,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:4320/v1/posts?status=approved",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "a5ce6b7d-2f16-4b56-829c-86fa16778d25",
+      "name": "Get approved post",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -260,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const posts=($json.posts||[]).slice(0,5); if(!posts.length) throw new Error('No exact approved revision is ready'); return posts.map(post=>({json:{postId:post.id,idempotencyKey:`render:${post.id}:${post.approved_revision_id}`}}));"
+      },
+      "id": "60608f44-8d0d-4dfd-8a52-028acbf05769",
+      "name": "Build idempotent request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://127.0.0.1:4320/v1/posts/{{$json.postId}}/request-render",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({idempotencyKey:$json.idempotencyKey}) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "089ff943-935e-4aef-a6b7-3752506667db",
+      "name": "Queue render job",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Run manually": {
+      "main": [
+        [
+          {
+            "node": "Get approved post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get approved post": {
+      "main": [
+        [
+          {
+            "node": "Build idempotent request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build idempotent request": {
+      "main": [
+        [
+          {
+            "node": "Queue render job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  },
+  "active": false,
+  "tags": []
+}

@@ -176,9 +176,9 @@ Inputs:
 
 Initial rules:
 
-- Select 1–2 concepts/day; configurable maximum 5.
+- During the channel-launch phase, select up to 5 concepts/day. Publish fewer rather than use stale, duplicated, or unsupported filler.
 - Do not repeat the same normalized topic within 14 days unless an official change makes repetition necessary.
-- At least one evergreen concept on any two-post day.
+- Include evergreen utility content alongside time-sensitive material on multi-post days.
 - No more than one high-risk/time-sensitive concept per day during MVP.
 - Avoid consecutive posts from the same category.
 - Reserve review capacity; do not plan more posts than a human can approve.

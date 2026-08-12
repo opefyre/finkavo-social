@@ -1,1 +1,112 @@
-{"name":"WF-04 Generate Planned Social Post","nodes":[{"parameters":{},"id":"generate-manual","name":"Run manually","type":"n8n-nodes-base.manualTrigger","typeVersion":1,"position":[-500,0]},{"parameters":{"url":"http://127.0.0.1:4320/v1/planning/queue","authentication":"genericCredentialType","genericAuthType":"httpBearerAuth","options":{"timeout":30000}},"id":"get-plan","name":"Get highest-priority plan","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[-260,0]},{"parameters":{"jsCode":"const concept=$json.concepts?.[0];if(!concept)throw new Error('No verified planned concept is ready');return[{json:{conceptId:concept.id}}];"},"id":"require-plan","name":"Require verified concept","type":"n8n-nodes-base.code","typeVersion":2,"position":[-20,0]},{"parameters":{"method":"POST","url":"http://127.0.0.1:4320/v1/generate","authentication":"genericCredentialType","genericAuthType":"httpBearerAuth","sendBody":true,"contentType":"raw","rawContentType":"application/json","body":"={{ JSON.stringify($json) }}","options":{"timeout":120000}},"id":"generate-post","name":"Generate social-first draft","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[220,0]}],"connections":{"Run manually":{"main":[[{"node":"Get highest-priority plan","type":"main","index":0}]]},"Get highest-priority plan":{"main":[[{"node":"Require verified concept","type":"main","index":0}]]},"Require verified concept":{"main":[[{"node":"Generate social-first draft","type":"main","index":0}]]}},"settings":{"executionOrder":"v1","saveManualExecutions":true,"timezone":"Europe/Lisbon"},"active":false,"tags":[]}
+{
+  "name": "WF-04 Generate Planned Social Post",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "generate-manual",
+      "name": "Run manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -500,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:4320/v1/planning/queue",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "get-plan",
+      "name": "Get highest-priority plan",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -260,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const concepts=($json.concepts||[]).filter(c=>c.status==='planned').slice(0,5);if(!concepts.length)throw new Error('No verified planned concept is ready');return concepts.map(concept=>({json:{conceptId:concept.id}}));"
+      },
+      "id": "require-plan",
+      "name": "Require verified concept",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:4320/v1/generate",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify($json) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "generate-post",
+      "name": "Generate social-first draft",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Run manually": {
+      "main": [
+        [
+          {
+            "node": "Get highest-priority plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get highest-priority plan": {
+      "main": [
+        [
+          {
+            "node": "Require verified concept",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Require verified concept": {
+      "main": [
+        [
+          {
+            "node": "Generate social-first draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "timezone": "Europe/Lisbon"
+  },
+  "active": false,
+  "tags": []
+}

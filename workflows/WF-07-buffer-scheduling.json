@@ -1,1 +1,112 @@
-{"name":"WF-07 Schedule Rendered Post in Buffer","nodes":[{"parameters":{},"id":"e1e08896-b85a-48f1-91df-837413733c33","name":"Run manually","type":"n8n-nodes-base.manualTrigger","typeVersion":1,"position":[-520,0]},{"parameters":{"url":"http://127.0.0.1:4320/v1/posts?status=rendered","authentication":"genericCredentialType","genericAuthType":"httpBearerAuth","options":{"timeout":30000}},"id":"d3ca6867-c3e2-4d0e-b088-1764c793bb52","name":"Get rendered post","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[-280,0]},{"parameters":{"jsCode":"const post=$json.posts?.[0]; if(!post) throw new Error('No approved render is ready'); const scheduledAt=$now.setZone('Europe/Lisbon').plus({days:1}).set({hour:9,minute:0,second:0,millisecond:0}).toUTC().toISO(); return [{json:{postId:post.id,scheduledAt,idempotencyKey:`buffer:${post.id}:${post.approved_revision_id}:${scheduledAt}`}}];"},"id":"58ad07fb-bb22-4cec-a92b-c87388b294ac","name":"Plan tomorrow at 09:00 Lisbon","type":"n8n-nodes-base.code","typeVersion":2,"position":[-40,0]},{"parameters":{"method":"POST","url":"=http://127.0.0.1:4320/v1/posts/{{$json.postId}}/schedule","authentication":"genericCredentialType","genericAuthType":"httpBearerAuth","sendBody":true,"contentType":"raw","rawContentType":"application/json","body":"={{ JSON.stringify({scheduledAt:$json.scheduledAt,idempotencyKey:$json.idempotencyKey}) }}","options":{"timeout":30000}},"id":"dfed9983-15d0-4b5e-a48b-f6c5f60d4072","name":"Queue Buffer schedule","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[200,0]}],"connections":{"Run manually":{"main":[[{"node":"Get rendered post","type":"main","index":0}]]},"Get rendered post":{"main":[[{"node":"Plan tomorrow at 09:00 Lisbon","type":"main","index":0}]]},"Plan tomorrow at 09:00 Lisbon":{"main":[[{"node":"Queue Buffer schedule","type":"main","index":0}]]}},"settings":{"executionOrder":"v1","saveManualExecutions":true,"timezone":"Europe/Lisbon"},"active":false,"tags":[]}
+{
+  "name": "WF-07 Schedule Rendered Post in Buffer",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "e1e08896-b85a-48f1-91df-837413733c33",
+      "name": "Run manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -520,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:4320/v1/posts?status=rendered",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "d3ca6867-c3e2-4d0e-b088-1764c793bb52",
+      "name": "Get rendered post",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -280,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const posts=($json.posts||[]).slice(0,5); if(!posts.length) throw new Error('No approved render is ready'); const slots=[[8,30],[11,30],[14,30],[18,0],[21,0]]; return posts.map((post,index)=>{const [hour,minute]=slots[index];const scheduledAt=$now.setZone('Europe/Lisbon').plus({days:1}).set({hour,minute,second:0,millisecond:0}).toUTC().toISO();return{json:{postId:post.id,scheduledAt,idempotencyKey:`buffer:${post.id}:${post.approved_revision_id}:${scheduledAt}`}}});"
+      },
+      "id": "58ad07fb-bb22-4cec-a92b-c87388b294ac",
+      "name": "Plan five Lisbon publishing slots",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -40,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://127.0.0.1:4320/v1/posts/{{$json.postId}}/schedule",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({scheduledAt:$json.scheduledAt,idempotencyKey:$json.idempotencyKey}) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "dfed9983-15d0-4b5e-a48b-f6c5f60d4072",
+      "name": "Queue Buffer schedule",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        200,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Run manually": {
+      "main": [
+        [
+          {
+            "node": "Get rendered post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get rendered post": {
+      "main": [
+        [
+          {
+            "node": "Plan five Lisbon publishing slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plan five Lisbon publishing slots": {
+      "main": [
+        [
+          {
+            "node": "Queue Buffer schedule",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "timezone": "Europe/Lisbon"
+  },
+  "active": false,
+  "tags": []
+}

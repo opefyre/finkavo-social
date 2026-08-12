@@ -41,12 +41,12 @@ Re-running `infrastructure/macos/install-local-services.sh` is safe. It preserve
 ## Editorial flow
 
 1. Broad-news and official-portal discovery workflows collect Portugal signals every two hours. They remain `discovery_only` until exact official evidence exists in the fresh canonical corpus.
-2. At 06:30 Lisbon, the planner expands recurring deadlines/occasions, prioritizes verified official changes, applies repeat-aware campaign rules, and selects up to two diverse concepts. It allows the next occurrence of a recurring obligation even when that subject was covered previously.
+2. At 06:30 Lisbon, the launch-phase planner expands recurring deadlines/occasions, prioritizes verified official changes, applies repeat-aware campaign rules, and selects up to five diverse concepts. It allows the next occurrence of a recurring obligation even when that subject was covered previously.
 3. Generate a draft from a planned, current canonical corpus document. The JSON contract enforces English social copy, a clear post intent, search phrases, exact source excerpts, approved icons/layouts, renderer-safe lengths, 3–7 slides, and no more than two repair attempts. Caption copy is packaged as hook, body, text CTA, `finkavo.com`, and four to eight focused hashtags.
 4. Request the private review link. It is expiring, single-use, authenticated by Tailscale identity, and tied to the exact revision/evidence hash. The page shows the exact final Instagram caption and all slide alt text before approval.
 5. Approve or reject in the review page. Direct API approval is disabled.
 6. Queue rendering. The outbound Mac agent uploads through presigned R2 URLs; the API re-downloads and verifies all file hashes, sizes, MIME types, and dimensions.
-7. Schedule only after review. Ambiguous provider errors are blocked for reconciliation rather than retried.
+7. Schedule only after review. Up to five approved renders are assigned to 08:30, 11:30, 14:30, 18:00, and 21:00 Lisbon. Ambiguous provider errors are blocked for reconciliation rather than retried.
 
 ## Verified on 2026-08-12
 
