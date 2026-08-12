@@ -56,6 +56,12 @@ const sourceDomainAllowed = (terms: string[], rawUrl: unknown) => {
   if (/\b(?:registo de saúde|processo clínico|sns)\b/i.test(joined)) return allows(["sns.gov.pt","sns24.gov.pt","gov.pt"]);
   return true;
 };
+const topicMatchesPlan = (draftTopic: string, plannedTopic: string) => {
+  const stop=new Set(["about","after","before","checklist","explanation","fallback","golden","international","news","plain","practical","preparation","reserve","residents","step","what","with","your"]);
+  const tokens=(value:string)=>value.toLocaleLowerCase("en").replace(/[^a-zà-ÿ0-9 ]/g," ").split(/\s+/).filter(token=>token.length>=4&&!stop.has(token));
+  const planned=new Set(tokens(plannedTopic)); return tokens(draftTopic).some(token=>planned.has(token));
+};
+const finishSentence = (value:string) => value.trim() && !/[.!?)]$/.test(value.trim()) ? `${value.trim()}.` : value.trim();
 
 const send = (res: http.ServerResponse, status: number, body: unknown) => {
   res.writeHead(status, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
@@ -407,7 +413,9 @@ const server = http.createServer(async (req, res) => {
             ...(selectedConcept ? { editorialContext: { topic: String(selectedConcept.topic), reason: selectedConcept.reason ? String(selectedConcept.reason) : null, campaignStage: selectedConcept.campaign_stage ? String(selectedConcept.campaign_stage) : null, plannedFor: selectedConcept.planned_for ? String(selectedConcept.planned_for) : null, expiresAt: selectedConcept.expires_at ? String(selectedConcept.expires_at) : null } } : {}),
           });
           const candidate = DraftSchema.parse(generated.draft);
-          if (!candidate.topic.toLocaleLowerCase("en").includes(String(selectedConcept.topic).split(":")[0].toLocaleLowerCase("en").slice(0, 24))) throw new Error("Draft drifted away from the predetermined editorial topic");
+          candidate.slides= candidate.slides.map(slide=>({...slide,body:slide.body?finishSentence(slide.body):slide.body,items:slide.items.map(finishSentence)}));
+          candidate.claims=candidate.claims.map(claim=>({...claim,claim:finishSentence(claim.claim)}));
+          if (!topicMatchesPlan(candidate.topic,String(selectedConcept.topic))) throw new Error("Draft drifted away from the predetermined editorial topic");
           const publicCopy=[candidate.hook,candidate.caption,...candidate.slides.flatMap(slide=>[slide.title,slide.body,...slide.items])].join(" ");
           if (/\b(?:sources?|excerpts?|documents?)\b.{0,60}\b(?:do not|does not|don't|cannot|fail(?:s|ed)? to|not enough)\b/i.test(publicCopy)) throw new Error("Draft discusses missing evidence instead of delivering the predetermined topic");
           validateSocialDraft(candidate);
