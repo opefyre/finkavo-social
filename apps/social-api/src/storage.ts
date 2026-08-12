@@ -6,6 +6,7 @@ const endpoint = process.env.R2_ENDPOINT;
 const accessKeyId = process.env.R2_ACCESS_KEY_ID;
 const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
 export const bucket = process.env.R2_BUCKET || "finkavo-social";
+const publicBaseUrl = process.env.R2_PUBLIC_BASE_URL?.replace(/\/$/, "");
 
 let client: S3Client | undefined;
 function r2() {
@@ -46,5 +47,6 @@ export async function verifyUploadedObject(file: RenderFileInput) {
 }
 
 export async function createBufferMediaUrl(key: string) {
-  return getSignedUrl(r2(), new GetObjectCommand({ Bucket: bucket, Key: key }), { expiresIn: 72 * 60 * 60 });
+  if (!publicBaseUrl) throw new Error("R2_PUBLIC_BASE_URL is required for Buffer media");
+  return `${publicBaseUrl}/${key.split("/").map(encodeURIComponent).join("/")}`;
 }

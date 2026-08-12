@@ -23,12 +23,11 @@ for (let index = 1; index <= 5; index++) {
   mediaUrls.push(await createBufferMediaUrl(key));
 }
 
-const dueAt = new Date(Date.now() + 60 * 60_000).toISOString();
 const post = await createScheduledPost({
   channelId,
-  dueAt,
+  mode: "shareNow",
   mediaUrls,
   text: "[PIPELINE TEST] Finkavo five-slide carousel delivery validation. No financial information or advice.",
 });
 const verified = await getPost(post.id);
-process.stdout.write(`${JSON.stringify({ id: post.id, status: verified?.status || post.status, dueAt: verified?.dueAt || post.dueAt, assets: 5 })}\n`);
+process.stdout.write(`${JSON.stringify({ id: post.id, status: verified?.status || post.status, dueAt: verified?.dueAt || post.dueAt || null, assets: 5 })}\n`);

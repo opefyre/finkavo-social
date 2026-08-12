@@ -27,7 +27,7 @@ async function request<T>(query: string, variables: Record<string, unknown>): Pr
   return body.data;
 }
 
-export async function createScheduledPost(input: { channelId: string; text: string; dueAt: string; mediaUrls: string[] }) {
+export async function createScheduledPost(input: { channelId: string; text: string; dueAt?: string; mode?: "customScheduled" | "shareNow"; mediaUrls: string[] }) {
   const data = await request<{ createPost: { __typename: string; message?: string; post?: { id: string; status?: string; dueAt?: string } } }>(`
     mutation CreatePost($input: CreatePostInput!) {
       createPost(input: $input) {
@@ -36,7 +36,7 @@ export async function createScheduledPost(input: { channelId: string; text: stri
         ... on MutationError { message }
       }
     }
-  `, { input: { text: input.text, channelId: input.channelId, schedulingType: "automatic", mode: "customScheduled", dueAt: input.dueAt, aiAssisted: true, metadata: { instagram: { type: "post", shouldShareToFeed: true, isAiGenerated: true } }, assets: input.mediaUrls.map((url) => ({ image: { url } })) } });
+  `, { input: { text: input.text, channelId: input.channelId, schedulingType: "automatic", mode: input.mode || "customScheduled", ...(input.dueAt ? { dueAt: input.dueAt } : {}), aiAssisted: true, metadata: { instagram: { type: "post", shouldShareToFeed: true, isAiGenerated: true } }, assets: input.mediaUrls.map((url) => ({ image: { url } })) } });
   if (!data.createPost.post) throw new BufferError(data.createPost.message || `Buffer mutation failed (${data.createPost.__typename})`, data.createPost.__typename, false);
   return data.createPost.post;
 }

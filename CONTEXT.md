@@ -92,7 +92,7 @@ Discord approval and operational notifications
 | Social API | Validation, transactions, state transitions, idempotency, signed approval actions | Rendering or social publishing UI |
 | CockroachDB | Editorial state, evidence links, schedules, jobs, attempts, append-only events | Image binaries |
 | Mac renderer | Deterministic PNG production from a versioned manifest | Copywriting, verification, approval, scheduling |
-| R2 | Versioned render inputs/outputs and fixed assets | Workflow state |
+| R2 | Versioned render inputs/outputs and fixed assets; exact media object URLs are publicly readable for Buffer | Workflow state, bucket listing, or public writes |
 | Buffer | Scheduled delivery to Instagram | Canonical post state or evidence |
 | Discord | Human notifications and approval entry points | Authoritative approval or publish state |
 
@@ -219,7 +219,7 @@ After approval, the Social API creates an immutable render manifest in R2 and qu
 2. Downloads the manifest, assets, fonts, and named template version.
 3. Renders at 1080 × 1350 using pinned Node, Chromium/Playwright, fonts, and dependencies.
 4. Checks overflow, missing glyphs, image dimensions, safe zones, and slide count.
-5. Uploads PNGs to a versioned private R2 prefix using short-lived presigned upload URLs.
+5. Uploads PNGs to a versioned R2 prefix using short-lived presigned upload URLs. Writes and listing remain private; exact object URLs are publicly readable through the dedicated Buffer media domain.
 6. Reports checksums and results; the API re-downloads each object to verify its SHA-256, byte size, MIME type, and PNG dimensions before marking the job complete transactionally.
 
 Suggested object key:
@@ -240,7 +240,7 @@ Preconditions:
 - schedule is in the future;
 - Buffer channel configuration is healthy.
 
-Use Buffer's GraphQL API and its current `AssetInput` contract. Provide HTTPS media URLs that Buffer can fetch and keep them valid through publication plus a safety window. Store Buffer post/group ID, channel ID, requested schedule, provider status, and response correlation data. Never store the API key in the database or workflow export.
+Use Buffer's GraphQL API and its current `AssetInput` contract. Provide stable HTTPS media URLs from the dedicated read-only R2 custom domain; Buffer validates anonymous HEAD and GET access. Store Buffer post/group ID, channel ID, requested schedule, provider status, and response correlation data. Never store the API key in the database or workflow export.
 
 ### WF-08 — Publish monitoring
 

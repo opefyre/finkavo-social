@@ -45,10 +45,11 @@ Re-running `infrastructure/macos/install-local-services.sh` is safe. It preserve
 - Single-use approval recorded with reviewer identity; replay and mutation protections implemented.
 - Additive CockroachDB migrations through `0004_discovery_planning.sql` applied.
 - Dedicated `finkavo-social` R2 bucket and bucket-scoped read/write credential configured.
+- `social-media.finkavo.com` configured as the public read-only Buffer media origin. Bucket listing and writes remain private; exact object URLs are public.
 - Approved six-slide production render completed at 1080×1350 with byte-level integrity verification.
 - Buffer personal key configured with only account-read and post read/write permissions; the `finkavo` Instagram channel is configured.
 - Four Discord channels and dedicated webhooks configured: `ig-approvals`, `ig-published`, `ig-errors`, and `ig-system`; delivery tests succeeded in all four.
-- A clearly labeled five-image English Buffer contract test was accepted as `scheduled` after verifying the current Instagram metadata contract.
+- A clearly labeled five-image English Buffer contract test published successfully through Instagram after verifying anonymous media access and the current Instagram metadata contract.
 - Buffer GraphQL adapter, lease-safe publish queue, status monitor, Discord notifier, retries, dead-letter/block states, and daily health endpoint implemented.
 - Type check, automated tests, and production build pass locally.
 
