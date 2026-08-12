@@ -3,7 +3,7 @@
   "postId": "buffer-contract-test",
   "revisionId": "v1",
   "locale": "en",
-  "templateVersion": "finkavo-v2",
+  "templateVersion": "finkavo-v3",
   "slides": [
     { "type": "cover", "icon": "document", "category": "Pipeline test", "title": "Finkavo carousel test", "subtitle": "A controlled five-slide delivery check", "sourceLabel": "No financial information" },
     { "type": "content", "icon": "check", "title": "What this checks", "body": "Image ordering, secure media delivery, and Buffer’s current carousel contract.", "highlight": "5 ordered images", "sourceLabel": "Infrastructure validation only" },

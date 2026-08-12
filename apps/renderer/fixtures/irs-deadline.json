@@ -3,7 +3,7 @@
   "postId": "fixture-irs-deadline",
   "revisionId": "v1",
   "locale": "en",
-  "templateVersion": "finkavo-v2",
+  "templateVersion": "finkavo-v3",
   "slides": [
     { "type": "cover", "icon": "calendar", "category": "Portuguese tax", "title": "Portugal’s IRS filing window", "subtitle": "The dates residents should keep on their calendar", "sourceLabel": "Source: Autoridade Tributária" },
     { "type": "content", "icon": "tax", "title": "When do you file?", "body": "The annual filing period normally runs from 1 April through 30 June for income earned in the previous calendar year.", "highlight": "1 April – 30 June", "sourceLabel": "Verify against current AT filing guidance" },

@@ -8,6 +8,6 @@ export const slideSchema = z.discriminatedUnion("type", [
   baseSlide.extend({ type: z.literal("steps"), items: z.array(z.string().trim().min(1).max(130)).min(2).max(5) }),
   baseSlide.extend({ type: z.literal("summary"), body: z.string().trim().min(1).max(300), cta: z.string().trim().min(1).max(80) })
 ]);
-export const renderManifestSchema = z.object({ schemaVersion: z.literal(1), postId: z.string().trim().min(1).max(80), revisionId: z.string().trim().min(1).max(80), locale: z.literal("en"), templateVersion: z.enum(["finkavo-v1", "finkavo-v2"]), slides: z.array(slideSchema).min(3).max(7) });
+export const renderManifestSchema = z.object({ schemaVersion: z.literal(1), postId: z.string().trim().min(1).max(80), revisionId: z.string().trim().min(1).max(80), locale: z.literal("en"), templateVersion: z.enum(["finkavo-v1", "finkavo-v2", "finkavo-v3"]), slides: z.array(slideSchema).min(3).max(7) });
 export type Slide = z.infer<typeof slideSchema>;
 export type RenderManifest = z.infer<typeof renderManifestSchema>;

@@ -1,20 +1,19 @@
 # Branding
 
-Available Finkavo artwork currently lives one directory above this repository:
+The renderer uses committed, non-secret copies of the approved Finkavo artwork:
 
 ```text
-../branding/finkavo-logo-120.png
-../branding/finkavo-logo-512.png
-../branding/finkavo-logo-1024.png
+branding/assets/finkavo-logo-512.png
+branding/assets/lisbon-desk-background-v1.png
 ```
 
-The current logo establishes this provisional palette:
+The app and existing Instagram posts establish this palette:
 
-- deep teal: `#205752`
-- mist: `#A8BDBB`
-- peach: `#EDAC76`
-- warm off-white: `#F7F3EB`
-- ink: `#16302D`
+- petrol: `#14332F`
+- petrol deep: `#0A2320`
+- page cream: `#EEEAE1`
+- mint: `#DAF0E6`
+- peach: `#E3A171`
+- ink: `#1B2B29`
 
-Logo geometry and colors are fixed inputs. A wordmark, licensed brand font, and formal design tokens have not yet been provided.
-
+The PNG logo is a fixed input and must never be recreated in CSS. The Lisbon desk image is an original generated background with no embedded text or branding; all copy and marks are rendered deterministically on top. CTAs are editorial text, never fake UI buttons.
