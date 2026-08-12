@@ -16,5 +16,5 @@ export function validateSocialDraft(draft: Draft) {
     if (/photo|photograph|illustration|crossed[- ]out|person standing|people standing/i.test(slide.altText)) throw new Error("Alt text describes artwork that the deterministic template does not render");
   }
   if (draft.claims.some((claim) => !completeSentence(claim.claim))) throw new Error("Claims must be complete sentences");
-  if (draft.claims.some((claim) => claim.evidenceQuote.trim().length < 12 || endsIncomplete(claim.evidenceQuote))) throw new Error("Evidence excerpts must be substantial and must not end mid-phrase");
+  if (draft.claims.some((claim) => claim.evidenceQuote.trim().length < 12)) throw new Error("Evidence excerpts must be substantial exact source text");
 }
