@@ -40,12 +40,13 @@ Re-running `infrastructure/macos/install-local-services.sh` is safe. It preserve
 
 ## Editorial flow
 
-1. Discovery workflow collects free Portugal news signals as `discovery_only`; these are never evidence.
-2. Generate a draft from a current canonical corpus document. The JSON contract enforces English copy, exact source excerpts, renderer-safe lengths, 3–7 slides, and no more than two repair attempts.
-3. Request the private review link. It is expiring, single-use, authenticated by Tailscale identity, and tied to the exact revision/evidence hash.
-4. Approve or reject in the review page. Direct API approval is disabled.
-5. Queue rendering. The outbound Mac agent uploads through presigned R2 URLs; the API re-downloads and verifies all file hashes, sizes, MIME types, and dimensions.
-6. Schedule only after Buffer is configured and a live test is explicitly authorized. Ambiguous provider errors are blocked for reconciliation rather than retried.
+1. Broad-news and official-portal discovery workflows collect Portugal signals every two hours. They remain `discovery_only` until exact official evidence exists in the fresh canonical corpus.
+2. At 06:30 Lisbon, the planner expands recurring deadlines/occasions, prioritizes verified official changes, applies repeat-aware campaign rules, and selects up to two diverse concepts. It allows the next occurrence of a recurring obligation even when that subject was covered previously.
+3. Generate a draft from a planned, current canonical corpus document. The JSON contract enforces English social copy, a clear post intent, search phrases, exact source excerpts, approved icons/layouts, renderer-safe lengths, 3–7 slides, and no more than two repair attempts.
+4. Request the private review link. It is expiring, single-use, authenticated by Tailscale identity, and tied to the exact revision/evidence hash.
+5. Approve or reject in the review page. Direct API approval is disabled.
+6. Queue rendering. The outbound Mac agent uploads through presigned R2 URLs; the API re-downloads and verifies all file hashes, sizes, MIME types, and dimensions.
+7. Schedule only after review. Ambiguous provider errors are blocked for reconciliation rather than retried.
 
 ## Verified on 2026-08-12
 
@@ -66,6 +67,6 @@ Re-running `infrastructure/macos/install-local-services.sh` is safe. It preserve
 
 ## Publishing policy
 
-Discovery, Buffer monitoring, and the daily health workflow are active. Draft generation, approval-link creation, rendering, and scheduling remain manual by design. No editorial post can reach Buffer without an exact human approval and a completed verified render.
+Broad discovery, official monitoring, exact-evidence triage, daily planning, Buffer monitoring, and daily health are active. Draft generation, approval-link creation, rendering, and scheduling remain manual by design. No editorial post can reach Buffer without an exact human approval and a completed verified render.
 
 The Buffer contract-test utility is additionally guarded by `ALLOW_BUFFER_CONTRACT_TEST=yes`; it cannot create a test post accidentally.

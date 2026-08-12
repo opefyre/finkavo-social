@@ -29,6 +29,20 @@ inputs:
       - sns24.gov.pt
       - ine.pt
     notes: Fetch through the existing corpus freshness path where possible.
+  - id: portugal-official-change-monitor
+    type: official_page_monitor
+    enabled: true
+    authority: official
+    urls:
+      - https://aima.gov.pt/pt/noticias
+      - https://www.gov.pt/noticias
+      - https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Pages/default.aspx
+      - https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/prazos/Paginas/default.aspx
+      - https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx
+      - https://www.seg-social.pt/trabalhadores-independentes
+      - https://diariodarepublica.pt/dr/home
+      - https://clientebancario.bportugal.pt/pt-pt/noticias
+    notes: Changes are discovery signals until the exact official URL and current content version exist in the canonical corpus.
   - id: gdelt-portugal
     type: keyless_news_discovery
     enabled: true

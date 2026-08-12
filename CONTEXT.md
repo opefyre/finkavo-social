@@ -1,6 +1,6 @@
 # Finkavo Social Content Workflow — Context and Architecture
 
-**Status:** implemented local MVP; ready for the human-approved publishing pilot
+**Status:** production editorial and publishing system; human approval required
 **Last reviewed:** 2026-08-12
 **Scope:** Instagram educational carousel workflow for Finkavo. This document defines the system; it does not contain credentials or production configuration.
 
@@ -8,9 +8,9 @@
 
 Build a recoverable, source-backed workflow that turns Finkavo corpus material and fresh official notices into English, deterministic Instagram carousels. n8n coordinates the work, but it does not own state. Finkavo's existing database and corpus remain the source of truth, the spare MacBook hosts n8n and renders, R2 stores generated media, Buffer schedules and publishes, and Discord reports or requests approval.
 
-The first release should optimize for correctness and learning, not volume:
+The system optimizes for correctness, timeliness, usefulness, and sustainable quality:
 
-- Start with **1–2 posts per day**, not five.
+- Plan **1–2 strong posts per day**, with a configurable ceiling of five.
 - Require human approval for every post during the MVP.
 - Publish in English for the initial product while retaining source-language evidence from Portuguese official sources.
 - Use official sources for factual verification; news is a discovery signal, not proof.
@@ -152,6 +152,8 @@ From a stage: -> FAILED (after that stage's retry policy is exhausted)
 
 News remains `DISCOVERY_ONLY` until its claims are supported by official evidence.
 
+Two discovery tracks run independently: broad Portugal news for awareness, and focused monitoring of AIMA, gov.pt, Portal das Finanças, Segurança Social, Diário da República, Banco de Portugal, and other approved official portals. Neither track bypasses canonical-corpus verification.
+
 ### WF-02 — Claim extraction and verification
 
 1. Extract atomic claims from an eligible corpus item or discovery.
@@ -181,6 +183,9 @@ Initial rules:
 - Avoid consecutive posts from the same category.
 - Reserve review capacity; do not plan more posts than a human can approve.
 - Treat the proposed posting times as experiments, not fixed truth; default scheduling is stored in Lisbon time and converted to UTC.
+- Recurring obligations use a fingerprint containing the rule, due date, and campaign stage. Prior coverage never suppresses a new IRS season, IVA quarter, Social Security quarter, IMI instalment, or other new occurrence.
+- A deadline may create multiple useful angles: advance guide, checklist, reminder, and last call. The planner limits daily risk/category concentration rather than incorrectly treating these as duplicates.
+- Official changes and urgent verified notices outrank evergreen content. News without exact official evidence remains held.
 
 ### WF-04 — Structured copy generation
 
@@ -191,10 +196,13 @@ AI receives only the approved concept, locale, evidence bundle, voice rules, and
 - caption, CTA, optional hashtags, alt text per slide;
 - claim IDs used by each slide/caption fragment;
 - source list suitable for the caption or final slide.
+- post intent, approved category icon, and 2–6 natural search phrases;
 
 Validate with shared Zod/JSON Schema. Enforce hard limits for title/body/item lengths at generation time so the renderer never shrinks text unpredictably. On validation failure, allow at most two repair attempts, then mark the generation job failed and alert Discord.
 
 Generation must not invent sources, add unsupplied facts, or distort Portuguese source meaning when producing English copy. A future Portuguese output would be a separately reviewed revision, not a string substitution.
+
+Instagram discoverability is handled through a clear keyword-bearing cover, a descriptive first caption line, natural search phrases, focused hashtags, accessible alt text, and save/share CTAs. Keyword stuffing, generic engagement bait, and unsupported trend claims are prohibited.
 
 ### WF-05 — Approval
 
@@ -298,7 +306,7 @@ renderer/
   src/
 ```
 
-AI may select approved slide types, icons, copy, highlights, and CTA variants. It may not change logo geometry, colors, fonts, spacing scale, frame, footer, safe zones, or aspect ratio.
+AI may select approved slide types, category icons, copy, highlights, and CTA variants. It may not change logo geometry, colors, fonts, spacing scale, frame, footer, safe zones, or aspect ratio. Template version `finkavo-v2` has visibly distinct cover, explanation, checklist, numbered-steps, and summary compositions while preserving one brand system.
 
 Every template and asset bundle has a version. Templates must have fixtures for long English text, Portuguese names and accents in citations, currency, dates, empty optional fields, maximum list length, and source footers. Snapshot tests plus visual regression images run before a renderer release.
 
@@ -386,7 +394,7 @@ References:
 - A private Social API runs on the spare Mac and uses additive `social_*` tables in CockroachDB.
 - Candidate selection reads only public corpus chunks, excludes unavailable/retracted documents, and prioritizes official sources.
 - OpenAI structured output creates English drafts with evidence quotes; the API key remains in the protected host environment.
-- n8n stores encrypted Bearer credentials and retains seven final modular workflows: three scheduled operational workflows and four human-triggered editorial workflows.
+- n8n stores encrypted Bearer credentials and retains ten final modular workflows: six scheduled discovery/planning/operations workflows and four human-triggered editorial workflows.
 - A real official-source draft completed `draft → approved → rendered` and produced six 1080 × 1350 PNGs.
 - The review UI and all application services remain private behind Tailscale. Only exact R2 media object URLs are publicly readable for Buffer; listing and writes remain private.
 - Buffer scheduling, status reconciliation, lease recovery, retry/dead-letter behavior, and Discord approval/published/error/system notifications are configured.
@@ -394,3 +402,5 @@ References:
 - n8n state, encryption configuration, and service secrets are backed up daily on the spare Mac with 30-day local retention; a verified recovery copy is held in Finkavo's protected secrets folder on the primary Mac.
 - All four services passed a restart-recovery drill. Workflow state remained intact and the renderer heartbeat recovered.
 - Generated carousel objects have a verified 180-day Cloudflare R2 lifecycle rule.
+- The editorial calendar expands IRS, IVA, Social Security, IMI/AIMI, monthly fiscal-agenda, and selected occasion rules into occurrence-specific campaigns. Exact official evidence is required before generation.
+- Daily planning runs at 06:30 Lisbon, permits recurring deadline coverage, limits high-risk concentration, avoids repetitive sources/categories, and fills remaining capacity with socially useful verified evergreen material.

@@ -3,12 +3,12 @@
   "postId": "fixture-irs-deadline",
   "revisionId": "v1",
   "locale": "en",
-  "templateVersion": "finkavo-v1",
+  "templateVersion": "finkavo-v2",
   "slides": [
-    { "type": "cover", "category": "Portuguese tax", "title": "Portugal’s IRS filing window", "subtitle": "The dates residents should keep on their calendar", "sourceLabel": "Source: Autoridade Tributária" },
-    { "type": "content", "title": "When do you file?", "body": "The annual filing period normally runs from 1 April through 30 June for income earned in the previous calendar year.", "highlight": "1 April – 30 June", "sourceLabel": "Verify against current AT filing guidance" },
-    { "type": "bullets", "title": "Before you submit", "items": ["Check that your invoices and withholding records are complete.", "Confirm household and dependent information.", "Review pre-filled income before accepting it."], "sourceLabel": "Educational summary — not individual tax advice" },
-    { "type": "steps", "title": "A simple filing flow", "items": ["Sign in to Portal das Finanças.", "Open the Modelo 3 declaration.", "Review, validate, and correct warnings.", "Submit and retain the receipt."], "sourceLabel": "Source: Portal das Finanças" },
-    { "type": "summary", "title": "Don’t leave it to the last day", "body": "Start early enough to resolve missing invoices, access problems, or questions that need professional advice.", "cta": "Save this guide for filing season", "sourceLabel": "Finkavo • Portugal, made clearer." }
+    { "type": "cover", "icon": "calendar", "category": "Portuguese tax", "title": "Portugal’s IRS filing window", "subtitle": "The dates residents should keep on their calendar", "sourceLabel": "Source: Autoridade Tributária" },
+    { "type": "content", "icon": "tax", "title": "When do you file?", "body": "The annual filing period normally runs from 1 April through 30 June for income earned in the previous calendar year.", "highlight": "1 April – 30 June", "sourceLabel": "Verify against current AT filing guidance" },
+    { "type": "bullets", "icon": "check", "title": "Before you submit", "items": ["Check that your invoices and withholding records are complete.", "Confirm household and dependent information.", "Review pre-filled income before accepting it."], "sourceLabel": "Educational summary — not individual tax advice" },
+    { "type": "steps", "icon": "document", "title": "A simple filing flow", "items": ["Sign in to Portal das Finanças.", "Open the Modelo 3 declaration.", "Review, validate, and correct warnings.", "Submit and retain the receipt."], "sourceLabel": "Source: Portal das Finanças" },
+    { "type": "summary", "icon": "calendar", "title": "Don’t leave it to the last day", "body": "Start early enough to resolve missing invoices, access problems, or questions that need professional advice.", "cta": "Save this guide for filing season", "sourceLabel": "Finkavo • Portugal, made clearer." }
   ]
 }

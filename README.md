@@ -10,7 +10,7 @@ Local-first automation for producing source-backed English Instagram carousels f
 - `branding` — project-local brand guidance
 - `CONTEXT.md` — reviewed architecture and operating rules
 
-The local MVP includes human-gated scheduling, active publish monitoring, Discord notifications, and a guarded five-image Buffer contract test. Populated `.env` files, n8n data, credentials, and generated renders are ignored by Git.
+The production workflow includes recurring deadline and occasion campaigns, official-portal change monitoring, exact-evidence verification, daily topic planning, social-first structured copy, deterministic branded carousels, human-gated scheduling, active publish monitoring, Discord notifications, and a guarded Buffer contract test. Populated `.env` files, n8n data, credentials, and generated renders are ignored by Git.
 
 ## Prerequisites
 

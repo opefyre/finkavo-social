@@ -4,12 +4,15 @@ These exports contain no credentials or instance-specific credential IDs. After 
 
 ## Workflow map
 
-1. `WF-01-discovery-ingestion.json` — every two hours, collects free GDELT Portugal results as discovery-only records; they can never serve as evidence.
-2. `WF-01-generate-draft.json` — manually selects an unused verified corpus source and creates a schema-validated English draft.
-3. `WF-05-request-review.json` — creates a signed, expiring, revision-bound private review link. It cannot approve directly.
-4. `WF-06-render-approved.json` — queues only the exact approved revision; the outbound renderer agent performs and verifies the upload.
-5. `WF-07-buffer-scheduling.json` — manually queues the latest completed render for 09:00 Lisbon the next day.
-6. `WF-08-publish-monitor.json` — processes one due Buffer job and reconciles scheduled posts every 15 minutes.
-7. `WF-09-health-report.json` — reads pipeline counts and renderer health daily at 08:00 Lisbon.
+1. `WF-01-discovery-ingestion.json` — every two hours, collects broad free Portugal news signals as discovery-only records.
+2. `WF-01-official-monitoring.json` — every two hours, watches important Portuguese government domains for changes.
+3. `WF-02-verification.json` — promotes only official notices that exactly match fresh canonical corpus evidence.
+4. `WF-03-daily-planning.json` — at 06:30 Lisbon, expands recurring deadlines/occasions and selects a balanced 1–2 post plan.
+5. `WF-04-generate-planned.json` — manually generates a social-first, evidence-bound English draft from the highest-priority verified plan.
+6. `WF-05-request-review.json` — creates a signed, expiring, revision-bound private review link. It cannot approve directly.
+7. `WF-06-render-approved.json` — queues only the exact approved revision; the outbound renderer agent performs and verifies the upload.
+8. `WF-07-buffer-scheduling.json` — manually queues the latest completed render for 09:00 Lisbon the next day.
+9. `WF-08-publish-monitor.json` — processes one due Buffer job and reconciles scheduled posts every 15 minutes.
+10. `WF-09-health-report.json` — reads pipeline, editorial-calendar, and renderer health daily at 08:00 Lisbon.
 
-The safe manual order is generate → request review → approve in the private page → queue render → schedule. Generation allows an initial attempt plus two repairs. Approval and rendering are immutable and idempotent. Publishing retries use 2/10/30-minute policy, while ambiguous Buffer results are blocked for reconciliation rather than blindly retried.
+The safe manual order is plan → generate → request review → approve in the private page → queue render → schedule. Recurring deadlines use occurrence-specific fingerprints, so a previous IRS or IVA post never suppresses the next filing period. Generation allows an initial attempt plus two repairs. Approval and rendering are immutable and idempotent. Publishing retries use 2/10/30-minute policy, while ambiguous Buffer results are blocked for reconciliation rather than blindly retried.

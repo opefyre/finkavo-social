@@ -8,6 +8,8 @@ import { createBufferMediaUrl, createUploadUrl, verifyUploadedObject, type Rende
 import { BufferError, createScheduledPost, getPost as getBufferPost } from "./buffer.js";
 import { notifyDiscord } from "./discord.js";
 import { retryDecision } from "./retry-policy.js";
+import { expandCalendar, loadEditorialCalendar, selectDailyMix } from "./planner.js";
+import { validateSocialDraft } from "./draft-quality.js";
 
 const databaseUrl = process.env.DATABASE_URL;
 const apiToken = process.env.SOCIAL_API_TOKEN;
@@ -28,6 +30,17 @@ const appearsPortuguese = (draft: z.infer<typeof DraftSchema>) => {
   const text = [draft.topic, draft.hook, draft.caption, draft.callToAction, ...draft.slides.flatMap((slide) => [slide.eyebrow, slide.title, slide.body, slide.altText])].join(" ").toLocaleLowerCase("pt");
   const markers = text.match(/\b(?:para|com|uma|não|dos|das|que|até|rendimento|contribuição|declaração|trimestre|mensal|passo|prazo|pagamento|isenção|ajuste)\b/gu)?.length ?? 0;
   return markers >= 5;
+};
+const classifyTopic = (value: unknown) => {
+  const text = String(value || "").toLocaleLowerCase("pt");
+  if (/aima|resid.n|visto|visa|migr|estrangeir/.test(text)) return "immigration";
+  if (/\birs\b|rendimento|modelo 3/.test(text)) return "irs";
+  if (/iva|fiscal|imposto|tribut/.test(text)) return "tax";
+  if (/seguran.a social|contribut|niss|trabalhador independente/.test(text)) return "social_security";
+  if (/casa|im.vel|imi|arrendamento|habita/.test(text)) return "housing";
+  if (/emprego|contrato de trabalho|sal.rio/.test(text)) return "employment";
+  if (/nif|finan.as/.test(text)) return "nif";
+  return "general";
 };
 
 const send = (res: http.ServerResponse, status: number, body: unknown) => {
@@ -76,7 +89,8 @@ function reviewPage(post: Record<string, unknown>, revision: Record<string, unkn
   :root{font-family:Inter,ui-sans-serif,system-ui;color:#143735;background:#f6f2ea}body{margin:0}.wrap{max-width:1080px;margin:auto;padding:32px 20px 64px}header{display:flex;justify-content:space-between;gap:20px;align-items:start}.pill{background:#f0aa70;padding:6px 10px;border-radius:99px;font-weight:700;text-transform:uppercase;font-size:12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:24px 0}article,.panel{background:white;border:1px solid #d7ddd8;border-radius:14px;padding:20px;box-shadow:0 5px 18px #1437350d}article small,.meta{color:#5c706c;font-size:13px}h1{font-size:clamp(30px,5vw,52px);margin:.35em 0}h3{font-size:22px}.caption{white-space:pre-wrap;line-height:1.6}a{color:#175e58}form{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin-top:20px}label{display:grid;gap:6px;flex:1;min-width:240px}textarea{min-height:70px;padding:10px;border:1px solid #aebbb7;border-radius:8px}button{border:0;border-radius:9px;padding:12px 20px;font-weight:800;cursor:pointer}.approve{background:#175e58;color:white}.reject{background:#9d3535;color:white}.warning{border-left:5px solid #f0aa70}.identity{font-size:13px;color:#5c706c}</style></head><body><main class="wrap"><header><div><span class="pill">${escapeHtml(post.risk_level)} risk · ${escapeHtml(post.category)}</span><h1>${escapeHtml(post.topic)}</h1><p>${escapeHtml(revision.hook)}</p></div><p class="identity">Reviewer: ${escapeHtml(reviewer)}</p></header><section class="panel warning"><strong>Approval is revision-bound.</strong> Any change to copy, slides, or evidence invalidates this decision.</section><section class="grid">${slideCards}</section><section class="panel"><h2>Caption</h2><p class="caption">${escapeHtml(revision.caption)}</p><h2>Sources</h2><ul>${sourceItems}</ul><p class="meta">Evidence hash: ${escapeHtml(String(revision.evidence_hash).slice(0, 16))}…</p><form method="post" action="${escapeHtml(reviewPathPrefix)}/review/${escapeHtml(token)}/decision"><label>Optional review comment<textarea name="comment" maxlength="500"></textarea></label><button class="approve" name="decision" value="approved">Approve exact revision</button><button class="reject" name="decision" value="rejected">Reject</button></form></section></main></body></html>`;
 }
 
-const GenerateSchema = z.object({ documentId: z.string().uuid() });
+const GenerateSchema = z.object({ documentId: z.string().uuid().optional(), conceptId: z.string().uuid().optional() }).refine((value) => value.documentId || value.conceptId, "documentId or conceptId is required");
+const PlanningSchema = z.object({ date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), capacity: z.number().int().min(1).max(5).default(2) });
 const ReviewRequestSchema = z.object({ expiresInMinutes: z.number().int().min(5).max(1440).default(60) });
 const RenderRequestSchema = z.object({ idempotencyKey: z.string().min(8).max(200) });
 const RenderFileSchema = z.object({ index: z.number().int().min(1).max(10), sha256: z.string().regex(/^[a-f0-9]{64}$/), bytes: z.number().int().positive().max(15_000_000), width: z.literal(1080), height: z.literal(1350), mimeType: z.literal("image/png") });
@@ -95,11 +109,14 @@ function createRenderManifest(post: Record<string, unknown>, revision: Record<st
   const raw = revision.slides as Array<Record<string, unknown>>;
   const slides = raw.map((slide, index) => {
     const base = { eyebrow: fit(slide.eyebrow, 42), title: fit(slide.title, 82), sourceLabel: fit(slide.sourceLabel || post.source_authority || "Finkavo source-backed guide", 80) };
-    if (index === 0) return { ...base, type: "cover", category: fit(post.category || "Portugal finance", 32), subtitle: fit(slide.body, 150) };
-    if (index === raw.length - 1) return { ...base, type: "summary", body: fit(slide.body, 300), cta: fit(revision.call_to_action, 80) };
-    return { ...base, type: "content", body: fit(slide.body, 420) };
+    const type = String(slide.type || (index === 0 ? "cover" : index === raw.length - 1 ? "summary" : "content"));
+    const icon = String(slide.icon || "document");
+    if (type === "cover") return { ...base, type, icon, category: fit(post.category || "Portugal", 32), subtitle: fit(slide.body, 150) };
+    if (type === "summary") return { ...base, type, icon, body: fit(slide.body, 300), cta: fit(revision.call_to_action, 80) };
+    if (type === "bullets" || type === "steps") return { ...base, type, icon, items: (slide.items as unknown[]).map((item) => fit(item, 130)).slice(0, 5) };
+    return { ...base, type: "content", icon, body: fit(slide.body, 420), ...(slide.highlight ? { highlight: fit(slide.highlight, 80) } : {}) };
   });
-  return { schemaVersion: 1, postId: String(post.id), revisionId: String(revision.id), locale: "en", templateVersion: "finkavo-v1", slides };
+  return { schemaVersion: 1, postId: String(post.id), revisionId: String(revision.id), locale: "en", templateVersion: "finkavo-v2", slides };
 }
 
 const server = http.createServer(async (req, res) => {
@@ -163,6 +180,108 @@ const server = http.createServer(async (req, res) => {
 
     if (req.headers.authorization !== `Bearer ${apiToken}`) return send(res, 401, { error: "Unauthorized" });
 
+    if (req.method === "POST" && url.pathname === "/v1/planning/sync") {
+      const config = await loadEditorialCalendar();
+      const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Lisbon", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+      const expanded = expandCalendar(config, today, 400);
+      let eligible = 0;
+      let blocked = 0;
+      for (const rule of config.rules) {
+        await sql`
+          INSERT INTO social_editorial_rule (slug, title, category, audience, risk_level, recurrence, campaign, source_url, source_label, verification_cadence_days, config_version)
+          VALUES (${rule.slug}, ${rule.title}, ${rule.category}, ${rule.audience}, ${rule.riskLevel}, ${sql.json({ kind: rule.kind, dates: rule.dates ?? [], months: rule.months ?? [], day: rule.day ?? null })}, ${sql.json(rule.campaign)}, ${rule.sourceUrl}, ${rule.sourceLabel}, ${rule.verificationCadenceDays}, ${config.version})
+          ON CONFLICT (slug) DO UPDATE SET title=excluded.title, category=excluded.category, audience=excluded.audience, risk_level=excluded.risk_level, recurrence=excluded.recurrence, campaign=excluded.campaign, source_url=excluded.source_url, source_label=excluded.source_label, verification_cadence_days=excluded.verification_cadence_days, config_version=excluded.config_version, updated_at=now()
+        `;
+      }
+      for (const item of expanded) {
+        const [rule] = await sql`SELECT id FROM social_editorial_rule WHERE slug=${item.slug}`;
+        const [document] = await sql`
+          SELECT id FROM document
+          WHERE verified_still_available=true AND freshness_confidence='fresh' AND source_tier='official'
+            AND regexp_replace(source_url, '/$', '')=regexp_replace(${item.sourceUrl}, '/$', '')
+          ORDER BY COALESCE(last_verified_at, fetched_at) DESC LIMIT 1
+        `;
+        const occurrenceStatus = document ? "verified" : "needs_verification";
+        const [occurrence] = await sql`
+          INSERT INTO social_editorial_occurrence (rule_id, due_date, source_verified_at, status)
+          VALUES (${rule.id}, ${item.dueDate}, ${document ? new Date().toISOString() : null}, ${occurrenceStatus})
+          ON CONFLICT (rule_id, due_date) DO UPDATE SET status=excluded.status, source_verified_at=COALESCE(excluded.source_verified_at, social_editorial_occurrence.source_verified_at), updated_at=now()
+          RETURNING id
+        `;
+        const conceptStatus = document ? "eligible" : "blocked";
+        await sql`
+          INSERT INTO social_post_concept (document_id, topic, category, risk_level, priority, timeliness, fingerprint, status, planned_for, occurrence_id, campaign_stage, reason, expires_at, repeat_allowed, score)
+          VALUES (${document?.id ?? null}, ${`${item.title} — ${item.campaignStage}`}, ${item.category}, ${item.riskLevel}, ${item.score}, 'deadline', ${item.fingerprint}, ${conceptStatus}, ${item.publishDate}, ${occurrence.id}, ${item.campaignStage}, ${`Recurring obligation due ${item.dueDate}; ${item.audience}`}, ${`${item.dueDate}T23:59:59Z`}, true, ${item.score})
+          ON CONFLICT (fingerprint) DO UPDATE SET document_id=excluded.document_id, status=CASE WHEN social_post_concept.status IN ('used','planned') THEN social_post_concept.status WHEN excluded.document_id IS NOT NULL THEN 'eligible' ELSE 'blocked' END, planned_for=excluded.planned_for, reason=excluded.reason, expires_at=excluded.expires_at, score=excluded.score, updated_at=now()
+        `;
+        if (document) eligible++; else blocked++;
+      }
+      await sql`INSERT INTO social_event (event_type, payload) VALUES ('planning.calendar_synced', ${sql.json({ rules: config.rules.length, campaigns: expanded.length, eligible, blocked, configVersion: config.version })})`;
+      return send(res, 200, { rules: config.rules.length, campaigns: expanded.length, eligible, blocked });
+    }
+
+    if (req.method === "POST" && url.pathname === "/v1/planning/daily") {
+      const { date, capacity } = PlanningSchema.parse(await readJson(req));
+      const planningDate = date || new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Lisbon", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+      const config = await loadEditorialCalendar();
+      const due = selectDailyMix(expandCalendar(config, planningDate, 120), planningDate, capacity);
+      const dueFingerprints = due.map((item) => item.fingerprint);
+      const recurring = dueFingerprints.length ? await sql`
+        SELECT c.*, r.source_url, r.source_label, o.due_date
+        FROM social_post_concept c
+        JOIN social_editorial_occurrence o ON o.id=c.occurrence_id
+        JOIN social_editorial_rule r ON r.id=o.rule_id
+        WHERE c.fingerprint IN ${sql(dueFingerprints)} AND c.status='eligible' AND c.document_id IS NOT NULL
+        ORDER BY c.score DESC LIMIT ${capacity}
+      ` : [];
+      const remaining = Math.max(0, capacity - recurring.length);
+      const evergreenPool = remaining ? await sql`
+        SELECT d.id AS document_id, d.title AS topic, d.source_url, d.source_authority AS source_label,
+               CASE d.source_tier WHEN 'official' THEN 45 ELSE 35 END AS score
+        FROM document d
+        WHERE d.verified_still_available=true AND d.freshness_confidence='fresh' AND d.source_tier IN ('official','professional')
+          AND d.title ~* '(AIMA|resid.n|visto|visa|migr|estrangeir|IRS|rendimento|Modelo 3|IVA|fiscal|imposto|Seguran.a Social|NISS|trabalhador independente|NIF|casa|im.vel|IMI|arrendamento|habita|emprego|contrato de trabalho|sal.rio)'
+          AND d.title !~* 'Art\\. [0-9]+|Artigo [0-9]+|c.digo.*art'
+          AND NOT EXISTS (SELECT 1 FROM social_post p WHERE p.source_document_id=d.id AND p.created_at > now() - INTERVAL '45 days')
+        ORDER BY CASE d.source_tier WHEN 'official' THEN 0 ELSE 1 END, COALESCE(d.last_verified_at,d.fetched_at) DESC
+        LIMIT 30
+      ` : [];
+      const evergreen: Record<string, unknown>[] = [];
+      const usedCategories = new Set(recurring.map((item) => String(item.category)));
+      const usedSources = new Set(recurring.map((item) => String(item.source_url)));
+      let highRiskCount = recurring.filter((item) => item.risk_level === "high").length;
+      for (const item of evergreenPool) {
+        const category = classifyTopic(item.topic);
+        const riskLevel = ["irs","tax","immigration","social_security"].includes(category) ? "high" : "medium";
+        if (usedCategories.has(category) || usedSources.has(String(item.source_url))) continue;
+        if (riskLevel === "high" && highRiskCount >= 1) continue;
+        evergreen.push({ ...item, category, risk_level: riskLevel, reason: "Useful, current evergreen topic from the verified corpus" });
+        if (riskLevel === "high") highRiskCount++;
+        usedCategories.add(category); usedSources.add(String(item.source_url));
+        if (evergreen.length >= remaining) break;
+      }
+      const persistedEvergreen: Record<string, unknown>[] = [];
+      for (const item of evergreen) {
+        const fingerprint = `evergreen:${item.document_id}:${planningDate.slice(0, 7)}`;
+        const [concept] = await sql`
+          INSERT INTO social_post_concept (document_id, topic, category, risk_level, priority, timeliness, fingerprint, status, planned_for, reason, repeat_allowed, score)
+          VALUES (${String(item.document_id)}, ${String(item.topic)}, ${String(item.category)}, ${String(item.risk_level)}, ${Number(item.score)}, 'evergreen', ${fingerprint}, 'planned', ${planningDate}, ${String(item.reason)}, false, ${Number(item.score)})
+          ON CONFLICT (fingerprint) DO UPDATE SET status=CASE WHEN social_post_concept.status='used' THEN 'used' ELSE 'planned' END, planned_for=excluded.planned_for, updated_at=now()
+          RETURNING *
+        `;
+        persistedEvergreen.push({ ...item, id: concept.id });
+      }
+      const planned = [...recurring, ...persistedEvergreen];
+      for (const concept of recurring) await sql`UPDATE social_post_concept SET status='planned', updated_at=now() WHERE id=${concept.id}`;
+      await sql`INSERT INTO social_event (event_type, payload) VALUES ('planning.daily_completed', ${sql.json({ planningDate, capacity, selected: planned.map((item) => ({ conceptId: item.id ?? null, documentId: item.document_id, topic: item.topic, reason: item.reason })) })})`;
+      return send(res, 200, { date: planningDate, capacity, planned });
+    }
+
+    if (req.method === "GET" && url.pathname === "/v1/planning/queue") {
+      const rows = await sql`SELECT * FROM social_post_concept WHERE status IN ('planned','eligible') AND document_id IS NOT NULL AND (expires_at IS NULL OR expires_at > now()) AND (status='planned' OR planned_for IS NULL OR planned_for <= current_date + 7) ORDER BY CASE status WHEN 'planned' THEN 0 ELSE 1 END, score DESC, planned_for LIMIT 25`;
+      return send(res, 200, { concepts: rows });
+    }
+
     if (req.method === "POST" && url.pathname === "/v1/discoveries") {
       const { items, sourceKind } = DiscoveryBatchSchema.parse(await readJson(req));
       let inserted = 0;
@@ -184,6 +303,35 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET" && url.pathname === "/v1/discoveries") {
       const rows = await sql`SELECT id, canonical_url, title, publisher, locale, published_at, source_kind, evidence_state, category, risk_level, created_at FROM social_discovery ORDER BY COALESCE(published_at, created_at) DESC LIMIT 100`;
       return send(res, 200, { discoveries: rows });
+    }
+
+    if (req.method === "POST" && url.pathname === "/v1/verification/triage") {
+      const discoveries = await sql`SELECT * FROM social_discovery WHERE evidence_state='discovery_only' ORDER BY COALESCE(published_at, created_at) DESC LIMIT 100`;
+      const officialDomains = ["aima.gov.pt", "diariodarepublica.pt", "dre.pt", "gov.pt", "portaldasfinancas.gov.pt", "seg-social.pt", "irn.justica.gov.pt", "bportugal.pt", "sns24.gov.pt", "ine.pt"];
+      let promoted = 0;
+      let held = 0;
+      for (const discovery of discoveries) {
+        const hostname = new URL(String(discovery.canonical_url)).hostname.replace(/^www\./, "");
+        const official = officialDomains.some((domain) => hostname === domain || hostname.endsWith(`.${domain}`));
+        if (!official) { held++; continue; }
+        const [document] = await sql`
+          SELECT id FROM document WHERE verified_still_available=true AND freshness_confidence='fresh' AND source_tier='official'
+            AND source_url=${String(discovery.canonical_url)} ORDER BY COALESCE(last_verified_at,fetched_at) DESC LIMIT 1
+        `;
+        if (!document) { held++; continue; }
+        const fingerprint = `official-change:${discovery.content_hash}`;
+        await sql.begin(async (tx) => {
+          await tx`UPDATE social_discovery SET evidence_state='promoted', updated_at=now() WHERE id=${discovery.id}`;
+          await tx`
+            INSERT INTO social_post_concept (document_id, discovery_id, topic, category, risk_level, priority, timeliness, fingerprint, status, reason, repeat_allowed, score)
+            VALUES (${document.id}, ${discovery.id}, ${discovery.title}, ${discovery.category}, ${discovery.risk_level}, 90, 'official_change', ${fingerprint}, 'eligible', 'New or changed official notice verified against the canonical corpus', true, 90)
+            ON CONFLICT (fingerprint) DO NOTHING
+          `;
+        });
+        promoted++;
+      }
+      await sql`INSERT INTO social_event (event_type, payload) VALUES ('verification.triaged', ${sql.json({ reviewed: discoveries.length, promoted, held })})`;
+      return send(res, 200, { reviewed: discoveries.length, promoted, held, rule: "Only exact official URLs already present in the fresh canonical corpus are promoted" });
     }
 
     if (req.method === "GET" && url.pathname === "/v1/candidates") {
@@ -208,7 +356,10 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === "POST" && url.pathname === "/v1/generate") {
-      const { documentId } = GenerateSchema.parse(await readJson(req));
+      const generationInput = GenerateSchema.parse(await readJson(req));
+      const [selectedConcept] = generationInput.conceptId ? await sql`SELECT * FROM social_post_concept WHERE id=${generationInput.conceptId} AND document_id IS NOT NULL AND status IN ('planned','eligible')` : [];
+      const documentId = generationInput.documentId || selectedConcept?.document_id;
+      if (!documentId) return send(res, 409, { error: "The selected concept has no verified canonical source" });
       const rows = await sql`
         SELECT d.id, d.title, d.source_url, d.source_authority, d.source_tier, d.original_lang,
                d.content_hash, d.fetched_at,
@@ -228,8 +379,10 @@ const server = http.createServer(async (req, res) => {
             title: String(source.title), sourceUrl: String(source.source_url),
             authority: source.source_authority ? String(source.source_authority) : null,
             fetchedAt: String(source.fetched_at), excerpts: source.excerpts as string[],
+            ...(selectedConcept ? { editorialContext: { topic: String(selectedConcept.topic), reason: selectedConcept.reason ? String(selectedConcept.reason) : null, campaignStage: selectedConcept.campaign_stage ? String(selectedConcept.campaign_stage) : null, plannedFor: selectedConcept.planned_for ? String(selectedConcept.planned_for) : null, expiresAt: selectedConcept.expires_at ? String(selectedConcept.expires_at) : null } } : {}),
           });
           const candidate = DraftSchema.parse(generated.draft);
+          validateSocialDraft(candidate);
           if (appearsPortuguese(candidate)) throw new Error("User-facing draft copy must be English; evidence quotes may remain Portuguese");
           const corpusText = (source.excerpts as string[]).join("\n").replace(/\s+/g, " ");
           const unsupported = candidate.claims.find((claim) => !corpusText.includes(claim.evidenceQuote.replace(/\s+/g, " ")));
@@ -253,22 +406,22 @@ const server = http.createServer(async (req, res) => {
         contentHash: String(source.content_hash), tier: String(source.source_tier),
       }];
       const evidenceHash = hash({ sourceBundle, claims: checked.claims });
-      const contentHash = hash({ hook: checked.hook, caption: checked.caption, callToAction: checked.callToAction, hashtags: checked.hashtags, slides: checked.slides });
+      const contentHash = hash({ hook: checked.hook, caption: checked.caption, callToAction: checked.callToAction, hashtags: checked.hashtags, searchKeywords: checked.searchKeywords, postIntent: checked.postIntent, slides: checked.slides });
       const inserted = await sql.begin(async (tx) => {
         const [post] = await tx`
           INSERT INTO social_post (topic, source_document_id, source_url, source_title, source_authority, source_fetched_at,
-            hook, caption, call_to_action, hashtags, slides, model, category, risk_level)
+            hook, caption, call_to_action, hashtags, slides, model, category, risk_level, post_intent, search_keywords)
           VALUES (${checked.topic}, ${documentId}, ${String(source.source_url)}, ${String(source.title)},
             ${source.source_authority ? String(source.source_authority) : null}, ${String(source.fetched_at)},
-            ${checked.hook}, ${checked.caption}, ${checked.callToAction}, ${tx.json(checked.hashtags)}, ${tx.json(checked.slides)}, ${model}, ${checked.category}, ${checked.riskLevel})
+            ${checked.hook}, ${checked.caption}, ${checked.callToAction}, ${tx.json(checked.hashtags)}, ${tx.json(checked.slides)}, ${model}, ${checked.category}, ${checked.riskLevel}, ${checked.postIntent}, ${tx.json(checked.searchKeywords)})
           RETURNING *
         `;
         const [revision] = await tx`
           INSERT INTO social_post_revision (post_id, revision_number, locale, template_version, hook, caption, call_to_action,
-            hashtags, slides, alt_texts, source_bundle, evidence_hash, content_hash, model, prompt_version)
-          VALUES (${post.id}, 1, 'en', 'finkavo-v1', ${checked.hook}, ${checked.caption}, ${checked.callToAction},
+            hashtags, slides, alt_texts, source_bundle, evidence_hash, content_hash, model, prompt_version, post_intent, search_keywords)
+          VALUES (${post.id}, 1, 'en', 'finkavo-v2', ${checked.hook}, ${checked.caption}, ${checked.callToAction},
             ${tx.json(checked.hashtags)}, ${tx.json(checked.slides)}, ${tx.json(checked.slides.map((slide) => slide.altText))},
-            ${tx.json(sourceBundle)}, ${evidenceHash}, ${contentHash}, ${model}, 'v1') RETURNING *
+            ${tx.json(sourceBundle)}, ${evidenceHash}, ${contentHash}, ${model}, 'v2', ${checked.postIntent}, ${tx.json(checked.searchKeywords)}) RETURNING *
         `;
         await tx`UPDATE social_post SET current_revision_id = ${revision.id} WHERE id = ${post.id}`;
         for (const claim of checked.claims) {
@@ -280,6 +433,7 @@ const server = http.createServer(async (req, res) => {
             VALUES (${savedClaim.id}, ${documentId}, ${String(source.source_url)}, ${String(source.title)}, ${source.source_authority ? String(source.source_authority) : null}, ${String(source.original_lang)}, ${String(source.fetched_at)}, ${String(source.content_hash)}, ${claim.evidenceQuote})`;
         }
         await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'draft.created', ${tx.json({ model, revisionId: revision.id, evidenceHash, contentHash })})`;
+        if (selectedConcept?.id) await tx`UPDATE social_post_concept SET status='used', updated_at=now() WHERE id=${selectedConcept.id}`;
         post.current_revision_id = revision.id;
         return post;
       });
@@ -557,7 +711,13 @@ const server = http.createServer(async (req, res) => {
       const [counts] = await sql`SELECT count(*) FILTER (WHERE status = 'draft') AS drafts, count(*) FILTER (WHERE status = 'approved') AS approved, count(*) FILTER (WHERE status = 'rendered') AS rendered, count(*) FILTER (WHERE status = 'scheduled') AS scheduled, count(*) FILTER (WHERE status = 'published') AS published, count(*) FILTER (WHERE status IN ('blocked','failed')) AS blocked FROM social_post`;
       const [renderer] = await sql`SELECT worker_id, version, last_seen_at FROM social_renderer_heartbeat ORDER BY last_seen_at DESC LIMIT 1`;
       const [oldest] = await sql`SELECT min(created_at) AS oldest_job FROM social_render_job WHERE status IN ('pending','retrying')`;
-      return send(res, 200, { counts, renderer, oldestQueuedRender: oldest?.oldest_job || null, healthy: renderer ? Date.now() - new Date(renderer.last_seen_at as string).getTime() < 5 * 60_000 : false });
+      const upcomingDeadlines = await sql`
+        SELECT r.title, r.category, o.due_date, o.status
+        FROM social_editorial_occurrence o JOIN social_editorial_rule r ON r.id=o.rule_id
+        WHERE o.due_date BETWEEN current_date AND current_date + 45 ORDER BY o.due_date LIMIT 12
+      `;
+      const [planning] = await sql`SELECT count(*) FILTER (WHERE status='blocked') AS blocked_concepts, count(*) FILTER (WHERE status IN ('eligible','planned')) AS ready_concepts FROM social_post_concept`;
+      return send(res, 200, { counts, planning, upcomingDeadlines, renderer, oldestQueuedRender: oldest?.oldest_job || null, healthy: renderer ? Date.now() - new Date(renderer.last_seen_at as string).getTime() < 5 * 60_000 : false });
     }
 
     const approve = url.pathname.match(/^\/v1\/posts\/([0-9a-f-]+)\/approve$/i);

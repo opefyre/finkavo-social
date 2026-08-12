@@ -3,12 +3,12 @@
   "postId": "buffer-contract-test",
   "revisionId": "v1",
   "locale": "en",
-  "templateVersion": "finkavo-v1",
+  "templateVersion": "finkavo-v2",
   "slides": [
-    { "type": "cover", "category": "Pipeline test", "title": "Finkavo carousel test", "subtitle": "A controlled five-slide delivery check", "sourceLabel": "No financial information" },
-    { "type": "content", "title": "What this checks", "body": "Image ordering, secure media delivery, and Buffer’s current carousel contract.", "highlight": "5 ordered images", "sourceLabel": "Infrastructure validation only" },
-    { "type": "bullets", "title": "Safety controls", "items": ["No personal information", "No financial claims", "No customer audience", "Clearly labeled as a test"], "sourceLabel": "Finkavo local MVP" },
-    { "type": "steps", "title": "Delivery path", "items": ["Render fixed templates", "Verify image integrity", "Provide expiring media URLs", "Create and reconcile the Buffer post"], "sourceLabel": "Automated contract test" },
-    { "type": "summary", "title": "Test complete", "body": "If all five slides arrive in order, the media contract is working as designed.", "cta": "Internal pipeline validation", "sourceLabel": "Not financial advice" }
+    { "type": "cover", "icon": "document", "category": "Pipeline test", "title": "Finkavo carousel test", "subtitle": "A controlled five-slide delivery check", "sourceLabel": "No financial information" },
+    { "type": "content", "icon": "check", "title": "What this checks", "body": "Image ordering, secure media delivery, and Buffer’s current carousel contract.", "highlight": "5 ordered images", "sourceLabel": "Infrastructure validation only" },
+    { "type": "bullets", "icon": "people", "title": "Safety controls", "items": ["No personal information", "No financial claims", "No customer audience", "Clearly labeled as a test"], "sourceLabel": "Finkavo local MVP" },
+    { "type": "steps", "icon": "document", "title": "Delivery path", "items": ["Render fixed templates", "Verify image integrity", "Provide expiring media URLs", "Create and reconcile the Buffer post"], "sourceLabel": "Automated contract test" },
+    { "type": "summary", "icon": "check", "title": "Test complete", "body": "If all five slides arrive in order, the media contract is working as designed.", "cta": "Internal pipeline validation", "sourceLabel": "Not financial advice" }
   ]
 }

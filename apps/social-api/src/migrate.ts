@@ -11,6 +11,7 @@ try {
     { name: "0002_production_pipeline.sql", sentinel: "social_review_token" },
     { name: "0003_publish_leases.sql", sentinel: "" },
     { name: "0004_discovery_planning.sql", sentinel: "social_discovery" },
+    { name: "0005_editorial_intelligence.sql", sentinel: "social_editorial_rule" },
   ];
   for (const { name, sentinel } of migrations) {
     const [applied] = await sql`SELECT version FROM social_schema_migration WHERE version = ${name}`;
