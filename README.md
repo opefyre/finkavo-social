@@ -2,6 +2,8 @@
 
 Local-first automation for producing source-backed English Instagram carousels for Finkavo.
 
+The editorial system is topic-first: a versioned rolling-year plan defines five daily subjects, then the corpus and official sources are retrieved only as evidence. See `ANNUAL_CONTENT_STRATEGY.md` and the generated calendar in `plans/`.
+
 - `apps/social-api` — durable workflow state, evidence, approval, R2, Buffer, monitoring, and audit API
 - `apps/renderer` — deterministic 1080 × 1350 carousel renderer and outbound job agent
 - `infrastructure/n8n` — self-hosted n8n configuration for the spare Mac
@@ -9,6 +11,8 @@ Local-first automation for producing source-backed English Instagram carousels f
 - `config/sources.yaml` — free discovery sources and source policy
 - `branding` — project-local brand guidance
 - `CONTEXT.md` — reviewed architecture and operating rules
+- `ANNUAL_CONTENT_STRATEGY.md` — annual taxonomy, timing rules, verification policy, and five-post daily rhythm
+- `plans` — the 365-day, 1,825-slot human-readable and machine-readable editorial plan
 
 The production workflow includes recurring deadline and occasion campaigns, official-portal change monitoring, exact-evidence verification, daily topic planning, social-first structured copy, deterministic branded carousels, human-gated scheduling, active publish monitoring, Discord notifications, and a guarded Buffer contract test. Populated `.env` files, n8n data, credentials, and generated renders are ignored by Git.
 

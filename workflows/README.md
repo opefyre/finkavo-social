@@ -7,8 +7,8 @@ These exports contain no credentials or instance-specific credential IDs. After 
 1. `WF-01-discovery-ingestion.json` — every two hours, collects broad free Portugal news signals as discovery-only records.
 2. `WF-01-official-monitoring.json` — every two hours, watches important Portuguese government domains for changes.
 3. `WF-02-verification.json` — promotes only official notices that exactly match fresh canonical corpus evidence.
-4. `WF-03-daily-planning.json` — at 06:30 Lisbon, expands recurring deadlines/occasions and selects up to five diverse launch-phase posts.
-5. `WF-04-generate-planned.json` — manually generates social-first, evidence-bound English drafts for up to five verified plans.
+4. `WF-03-daily-planning.json` — at 06:30 Lisbon, loads five predetermined annual-plan topics and builds current multi-source evidence bundles; unsupported slots are held.
+5. `WF-04-generate-planned.json` — manually generates social-first English drafts only for topic-led plans with unexpired verified evidence bundles.
 6. `WF-05-request-review.json` — creates signed, expiring, revision-bound private review links for up to five drafts. It cannot approve directly.
 7. `WF-06-render-approved.json` — queues up to five exact approved revisions; the outbound renderer agent performs and verifies the uploads.
 8. `WF-07-buffer-scheduling.json` — manually assigns up to five completed renders to 08:30, 11:30, 14:30, 18:00, and 21:00 Lisbon the next day.

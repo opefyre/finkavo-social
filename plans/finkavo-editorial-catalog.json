@@ -1,0 +1,715 @@
+{
+  "version": 1,
+  "period": {
+    "start": "2026-08-13",
+    "days": 365
+  },
+  "slots": [
+    "08:30",
+    "11:30",
+    "14:30",
+    "18:00",
+    "21:00"
+  ],
+  "angles": [
+    "foundation",
+    "action",
+    "edge_case",
+    "audience",
+    "golden_tip"
+  ],
+  "pillars": [
+    {
+      "id": "identity_access",
+      "audience": "new residents",
+      "risk": "medium",
+      "terms": [
+        "NIF",
+        "NISS",
+        "Chave Móvel Digital",
+        "Portal das Finanças",
+        "Segurança Social Direta"
+      ],
+      "topics": [
+        "What a Portuguese NIF is",
+        "Getting a NIF as a resident",
+        "Getting a NIF before moving",
+        "Finding your NIF on official documents",
+        "Changing the address linked to your NIF",
+        "Tax representation and when it applies",
+        "What a NISS is",
+        "Requesting a NISS",
+        "Recovering Portal das Finanças access",
+        "Changing the temporary Finanças password",
+        "Confirming email and mobile contacts on Finanças",
+        "What Chave Móvel Digital does",
+        "Activating Chave Móvel Digital",
+        "Using gov.pt authentication",
+        "Keeping digital copies of Portuguese documents"
+      ]
+    },
+    {
+      "id": "immigration_residency",
+      "audience": "international residents",
+      "risk": "high",
+      "terms": [
+        "AIMA",
+        "autorização de residência",
+        "visto",
+        "reagrupamento familiar",
+        "CPLP"
+      ],
+      "topics": [
+        "Visa versus residence permit",
+        "Residence title versus EU registration certificate",
+        "Preparing for an AIMA appointment",
+        "Residence renewal preparation",
+        "Using the AIMA renewals portal",
+        "Family reunification basics",
+        "D7 residence route",
+        "D8 digital-nomad route",
+        "D2 entrepreneur route",
+        "D3 highly qualified route",
+        "CPLP residence documentation",
+        "Long-term resident status",
+        "Changing address during an immigration process",
+        "Replacing a lost residence document",
+        "Checking AIMA fees safely",
+        "Recognising fake appointment websites",
+        "When an application file is incomplete",
+        "Keeping evidence of an immigration submission"
+      ]
+    },
+    {
+      "id": "citizenship_civil",
+      "audience": "residents building a long-term life",
+      "risk": "high",
+      "terms": [
+        "IRN",
+        "cidadania",
+        "nacionalidade",
+        "registo civil",
+        "Nascer Cidadão"
+      ],
+      "topics": [
+        "Residence and citizenship are different processes",
+        "Portuguese citizenship document checklist",
+        "Counting legal residence time",
+        "Birth registration in Portugal",
+        "Nascer Cidadão service",
+        "Marriage registration",
+        "Requesting Portuguese civil certificates",
+        "Apostilles and foreign documents",
+        "Certified translations",
+        "Name differences across foreign documents",
+        "Tracking an IRN application",
+        "Citizenship scams and unrealistic promises"
+      ]
+    },
+    {
+      "id": "freelance_business",
+      "audience": "freelancers and solo founders",
+      "risk": "high",
+      "terms": [
+        "trabalhador independente",
+        "abrir atividade",
+        "recibos verdes",
+        "CAE",
+        "CIRS"
+      ],
+      "topics": [
+        "Opening freelance activity in Portugal",
+        "Choosing a CAE or CIRS activity code",
+        "Changing an activity code later",
+        "Simplified accounting versus organised accounting",
+        "What recibos verdes are",
+        "Invoice, invoice-receipt and receipt differences",
+        "Correcting a Portuguese invoice",
+        "Closing freelance activity",
+        "Restarting a closed activity",
+        "Working with one main client",
+        "Freelancing while employed",
+        "Starting a small company versus freelancing",
+        "Business expense record keeping",
+        "Using certified invoicing software",
+        "Invoicing foreign clients",
+        "Proof to retain after opening activity",
+        "When to speak with a certified accountant"
+      ]
+    },
+    {
+      "id": "iva",
+      "audience": "freelancers and small businesses",
+      "risk": "high",
+      "terms": [
+        "IVA",
+        "CIVA",
+        "artigo 53",
+        "declaração periódica",
+        "VIES"
+      ],
+      "topics": [
+        "What IVA is",
+        "Article 53 IVA exemption",
+        "Monitoring the IVA exemption threshold",
+        "Entering the normal IVA regime",
+        "Leaving the IVA exemption",
+        "Monthly versus quarterly IVA",
+        "Quarterly IVA declaration basics",
+        "Paying IVA after filing",
+        "Correcting an IVA declaration",
+        "Invoicing an EU business customer",
+        "Checking a customer in VIES",
+        "Reverse charge wording",
+        "Invoicing a non-EU customer",
+        "IVA on digital services",
+        "IVA when buying business services abroad",
+        "Keeping IVA evidence",
+        "IVA after ceasing activity",
+        "When property transactions involve IVA"
+      ]
+    },
+    {
+      "id": "irs",
+      "audience": "people filing personal income tax",
+      "risk": "high",
+      "terms": [
+        "IRS",
+        "Modelo 3",
+        "e-Fatura",
+        "Anexo J",
+        "IRS Automático"
+      ],
+      "topics": [
+        "What Portuguese IRS is",
+        "Who normally files Modelo 3",
+        "Tax residence and IRS",
+        "Preparing for IRS season",
+        "Checking household information before IRS",
+        "Validating e-Fatura expenses",
+        "Reviewing automatic IRS",
+        "Submitting Modelo 3",
+        "Correcting an IRS return",
+        "Foreign income and Anexo J",
+        "Foreign bank accounts in Anexo J",
+        "Rental income and IRS",
+        "Freelance income and IRS",
+        "Employment income and IRS",
+        "Capital gains basics",
+        "Receiving an IRS assessment",
+        "Understanding an IRS refund",
+        "Paying an IRS balance",
+        "Keeping an IRS submission receipt",
+        "What to do after missing the filing window",
+        "IRS Jovem basics",
+        "Tax deductions versus tax credits"
+      ]
+    },
+    {
+      "id": "social_security",
+      "audience": "workers and freelancers",
+      "risk": "high",
+      "terms": [
+        "Segurança Social",
+        "declaração trimestral",
+        "contribuições",
+        "NISS",
+        "desemprego"
+      ],
+      "topics": [
+        "What Portuguese Social Security covers",
+        "Registering as a self-employed worker",
+        "First-year Social Security treatment",
+        "Quarterly Social Security declarations",
+        "Income included in a quarterly declaration",
+        "Correcting a quarterly declaration",
+        "Keeping proof of a quarterly declaration",
+        "Calculating relevant self-employed income",
+        "Monthly contribution payments",
+        "Freelancing while employed",
+        "Social Security contribution exemptions",
+        "Stopping or suspending self-employment",
+        "Checking contribution history",
+        "Getting a contribution statement",
+        "Voluntary Social Security",
+        "Employee Social Security deductions",
+        "Unemployment-benefit basics",
+        "Sickness-benefit basics",
+        "Parental-benefit basics",
+        "Portable A1 certificates"
+      ]
+    },
+    {
+      "id": "housing_property",
+      "audience": "renters and property owners",
+      "risk": "high",
+      "terms": [
+        "arrendamento",
+        "IMI",
+        "AIMI",
+        "IMT",
+        "imóvel",
+        "habitação"
+      ],
+      "topics": [
+        "Reading a Portuguese rental contract",
+        "Registering a rental contract",
+        "Rental receipts",
+        "Security deposits and records",
+        "Proof of address for renters",
+        "Changing utilities after moving",
+        "What IMI is",
+        "IMI payment instalments",
+        "Temporary IMI exemptions",
+        "What AIMI is",
+        "What IMT is",
+        "Stamp duty on property purchases",
+        "Budgeting purchase transaction costs",
+        "Property tax value versus market value",
+        "Updating property ownership records",
+        "Buying a primary residence",
+        "Buying as a non-resident",
+        "Selling a Portuguese property",
+        "Rental income records",
+        "Condominium documents",
+        "Energy certificates",
+        "Municipal property differences"
+      ]
+    },
+    {
+      "id": "banking_money",
+      "audience": "people managing money in Portugal",
+      "risk": "medium",
+      "terms": [
+        "Banco de Portugal",
+        "SEPA",
+        "conta bancária",
+        "IBAN",
+        "crédito"
+      ],
+      "topics": [
+        "Opening a Portuguese bank account",
+        "Resident versus non-resident bank accounts",
+        "Documents banks request",
+        "Understanding Portuguese IBANs",
+        "SEPA transfers",
+        "Direct debits",
+        "Multibanco payments",
+        "Paying the state through Multibanco",
+        "MB WAY basics",
+        "Bank fees and account packages",
+        "Basic bank accounts",
+        "Changing banks",
+        "Closing a bank account",
+        "Keeping proof of bank transfers",
+        "Avoiding payment-reference scams",
+        "Foreign bank accounts and Portuguese tax",
+        "Credit reports at Banco de Portugal",
+        "Mortgage preparation",
+        "Variable versus fixed mortgage rates",
+        "Deposit protection basics",
+        "IBAN discrimination",
+        "Currency-conversion costs"
+      ]
+    },
+    {
+      "id": "employment",
+      "audience": "employees and job seekers",
+      "risk": "medium",
+      "terms": [
+        "contrato de trabalho",
+        "emprego",
+        "salário",
+        "férias",
+        "desemprego"
+      ],
+      "topics": [
+        "Reading a Portuguese employment contract",
+        "Gross salary versus take-home pay",
+        "Meal allowance",
+        "Holiday and Christmas allowances",
+        "Payslip basics",
+        "Probation periods",
+        "Fixed-term versus permanent contracts",
+        "Working-time records",
+        "Annual leave basics",
+        "Public holidays and work",
+        "Sick leave steps",
+        "Ending an employment contract",
+        "Keeping employment documents",
+        "Registering with IEFP",
+        "Unemployment-benefit preparation",
+        "Remote work from Portugal",
+        "Working for a foreign employer",
+        "Employee plus freelance income",
+        "Recognising unpaid-trial scams"
+      ]
+    },
+    {
+      "id": "health_family",
+      "audience": "individuals and families",
+      "risk": "medium",
+      "terms": [
+        "SNS",
+        "centro de saúde",
+        "médico de família",
+        "nascimento",
+        "família"
+      ],
+      "topics": [
+        "Registering with the SNS",
+        "Getting an SNS user number",
+        "Registering at a health centre",
+        "Requesting or changing a family doctor",
+        "Using SNS 24",
+        "Electronic prescriptions",
+        "European Health Insurance Card",
+        "S1 healthcare registration",
+        "Healthcare for children",
+        "Vaccination records",
+        "Pregnancy and birth administration",
+        "Registering a birth",
+        "Parental-leave administration",
+        "Emergency versus non-emergency care",
+        "Keeping foreign medical records usable",
+        "Health-fee exemptions",
+        "Changing address in health records"
+      ]
+    },
+    {
+      "id": "driving_transport",
+      "audience": "drivers and commuters",
+      "risk": "medium",
+      "terms": [
+        "IMT",
+        "carta de condução",
+        "IUC",
+        "veículo",
+        "Via Verde"
+      ],
+      "topics": [
+        "Using a foreign driving licence in Portugal",
+        "Exchanging an EU driving licence",
+        "Exchanging a non-EU driving licence",
+        "Driving-licence exchange documents",
+        "What happens when a foreign licence expires",
+        "Buying a used car",
+        "Checking vehicle documents",
+        "Registering an imported vehicle",
+        "ISV basics",
+        "What IUC is",
+        "IUC payment timing",
+        "Portuguese toll systems",
+        "Via Verde basics",
+        "Electronic tolls for foreign vehicles",
+        "Car-insurance documents",
+        "Vehicle inspection timing",
+        "Selling a vehicle safely",
+        "Changing the address on vehicle records",
+        "Public-transport passes"
+      ]
+    },
+    {
+      "id": "education_children",
+      "audience": "families and students",
+      "risk": "medium",
+      "terms": [
+        "matrícula escolar",
+        "educação",
+        "equivalência",
+        "reconhecimento",
+        "MEGA"
+      ],
+      "topics": [
+        "Enrolling a child in a Portuguese school",
+        "School-enrolment documents",
+        "School catchment areas",
+        "Renewing school enrolment",
+        "Portuguese-language support for students",
+        "Recognising foreign school records",
+        "School-meal and support applications",
+        "MEGA schoolbook vouchers",
+        "School calendar basics",
+        "National-exam administration",
+        "Applying to Portuguese higher education",
+        "Recognising a foreign degree",
+        "Automatic versus specific degree recognition",
+        "Student residence administration",
+        "Moving schools during the year"
+      ]
+    },
+    {
+      "id": "daily_life_consumer",
+      "audience": "everyone living in Portugal",
+      "risk": "low",
+      "terms": [
+        "ePortugal",
+        "Livro de Reclamações",
+        "ANACOM",
+        "energia",
+        "telecomunicações"
+      ],
+      "topics": [
+        "Using ePortugal to find public services",
+        "Getting an atestado de residência",
+        "Finding the correct municipal office",
+        "Booking public-service appointments",
+        "Using the electronic complaints book",
+        "Changing electricity supplier",
+        "Reading an electricity bill",
+        "Changing telecom provider",
+        "Mobile-phone contracts",
+        "Internet installation documents",
+        "Cancelling a consumer contract",
+        "Keeping proof of cancellation",
+        "Moving house administration checklist",
+        "Preventing identity-document scams",
+        "Official email and SMS scam checks",
+        "Document-expiry monthly review",
+        "Building an emergency document folder",
+        "When a municipal rule differs",
+        "Finding English-language official help"
+      ]
+    }
+  ],
+  "campaigns": [
+    {
+      "date": "2026-08-31",
+      "pillar": "irs",
+      "title": "IRS assessment, refund or payment: verify your notice before 31 August",
+      "timing": "official_locked",
+      "authority": "Autoridade Tributária"
+    },
+    {
+      "date": "2026-08-31",
+      "pillar": "housing_property",
+      "title": "August IMI instalment: who should check for a payment notice",
+      "timing": "official_locked",
+      "authority": "Autoridade Tributária"
+    },
+    {
+      "date": "2026-09-15",
+      "pillar": "education_children",
+      "title": "Portugal school year starts this week: family admin checklist",
+      "timing": "official_locked",
+      "authority": "Portal da Educação"
+    },
+    {
+      "date": "2026-09-25",
+      "pillar": "iva",
+      "title": "Quarterly IVA payment window: verify the September deadline",
+      "timing": "official_locked",
+      "authority": "Autoridade Tributária"
+    },
+    {
+      "date": "2026-09-30",
+      "pillar": "housing_property",
+      "title": "AIMI payment deadline: check whether a notice applies to you",
+      "timing": "official_locked",
+      "authority": "Autoridade Tributária"
+    },
+    {
+      "date": "2026-10-05",
+      "pillar": "daily_life_consumer",
+      "title": "Republic Day in Portugal: what closes and what remains available online",
+      "timing": "official_locked",
+      "authority": "DGAEP"
+    },
+    {
+      "date": "2026-10-24",
+      "pillar": "banking_money",
+      "title": "World Savings Day: five Portugal money-admin habits",
+      "timing": "occasion",
+      "authority": "Banco de Portugal"
+    },
+    {
+      "date": "2026-10-28",
+      "pillar": "social_security",
+      "title": "Quarterly Social Security declaration: prepare before 31 October",
+      "timing": "official_locked",
+      "authority": "Segurança Social"
+    },
+    {
+      "date": "2026-11-25",
+      "pillar": "housing_property",
+      "title": "November IMI instalment: final checks before month-end",
+      "timing": "official_locked",
+      "authority": "Autoridade Tributária"
+    },
+    {
+      "date": "2026-12-01",
+      "pillar": "daily_life_consumer",
+      "title": "Restoration of Independence Day: Portugal public-service availability",
+      "timing": "official_locked",
+      "authority": "DGAEP"
+    },
+    {
+      "date": "2026-12-08",
+      "pillar": "daily_life_consumer",
+      "title": "8 December public holiday: plan appointments and payments",
+      "timing": "official_locked",
+      "authority": "DGAEP"
+    },
+    {
+      "date": "2026-12-18",
+      "pillar": "immigration_residency",
+      "title": "International Migrants Day: a Portugal document-health check",
+      "timing": "occasion",
+      "authority": "United Nations"
+    },
+    {
+      "date": "2026-12-22",
+      "pillar": "daily_life_consumer",
+      "title": "Before Christmas: download the documents you may need during closures",
+      "timing": "seasonal",
+      "authority": "DGAEP"
+    },
+    {
+      "date": "2027-01-02",
+      "pillar": "identity_access",
+      "title": "New-year Portugal admin reset: addresses, passwords and expiring documents",
+      "timing": "seasonal",
+      "authority": "Multiple official sources"
+    },
+    {
+      "date": "2027-01-10",
+      "pillar": "social_security",
+      "title": "January quarterly declaration: records to collect now",
+      "timing": "rule_locked",
+      "authority": "Segurança Social"
+    },
+    {
+      "date": "2027-01-28",
+      "pillar": "social_security",
+      "title": "Quarterly Social Security declaration: last checks before month-end",
+      "timing": "rule_locked",
+      "authority": "Segurança Social"
+    },
+    {
+      "date": "2027-02-05",
+      "pillar": "irs",
+      "title": "IRS preparation: household and invoice checkpoints to verify",
+      "timing": "must_reverify",
+      "authority": "Autoridade Tributária"
+    },
+    {
+      "date": "2027-02-12",
+      "pillar": "irs",
+      "title": "e-Fatura and household deadlines: verify the current-year dates",
+      "timing": "must_reverify",
+      "authority": "Autoridade Tributária"
+    },
+    {
+      "date": "2027-03-01",
+      "pillar": "irs",
+      "title": "March IRS preparation: review deductions before filing opens",
+      "timing": "must_reverify",
+      "authority": "Autoridade Tributária"
+    },
+    {
+      "date": "2027-03-15",
+      "pillar": "daily_life_consumer",
+      "title": "World Consumer Rights Day: using Portugal’s complaints system",
+      "timing": "occasion",
+      "authority": "Direção-Geral do Consumidor"
+    },
+    {
+      "date": "2027-03-25",
+      "pillar": "irs",
+      "title": "IRS filing opens soon: your evidence and access checklist",
+      "timing": "rule_locked",
+      "authority": "Autoridade Tributária"
+    },
+    {
+      "date": "2027-04-01",
+      "pillar": "irs",
+      "title": "Portugal IRS filing window: what to check before submitting",
+      "timing": "rule_locked",
+      "authority": "Autoridade Tributária"
+    },
+    {
+      "date": "2027-04-23",
+      "pillar": "daily_life_consumer",
+      "title": "25 April in Portugal: public holiday and civic context",
+      "timing": "official_locked",
+      "authority": "DGAEP"
+    },
+    {
+      "date": "2027-04-25",
+      "pillar": "daily_life_consumer",
+      "title": "Freedom Day: a practical guide for international residents",
+      "timing": "official_locked",
+      "authority": "Government of Portugal"
+    },
+    {
+      "date": "2027-04-28",
+      "pillar": "social_security",
+      "title": "Quarterly Social Security declaration: final checks",
+      "timing": "rule_locked",
+      "authority": "Segurança Social"
+    },
+    {
+      "date": "2027-05-01",
+      "pillar": "employment",
+      "title": "Labour Day in Portugal: public holiday and worker-admin essentials",
+      "timing": "official_locked",
+      "authority": "DGAEP"
+    },
+    {
+      "date": "2027-05-15",
+      "pillar": "housing_property",
+      "title": "May IMI payment: find and verify your payment notice",
+      "timing": "must_reverify",
+      "authority": "Autoridade Tributária"
+    },
+    {
+      "date": "2027-06-01",
+      "pillar": "irs",
+      "title": "Final month for IRS: what remains to check",
+      "timing": "rule_locked",
+      "authority": "Autoridade Tributária"
+    },
+    {
+      "date": "2027-06-10",
+      "pillar": "daily_life_consumer",
+      "title": "Portugal Day: practical ways international residents can participate",
+      "timing": "official_locked",
+      "authority": "Government of Portugal"
+    },
+    {
+      "date": "2027-06-20",
+      "pillar": "irs",
+      "title": "Ten days before the usual IRS deadline: submission checklist",
+      "timing": "rule_locked",
+      "authority": "Autoridade Tributária"
+    },
+    {
+      "date": "2027-06-27",
+      "pillar": "irs",
+      "title": "IRS last call: verify the official deadline before filing",
+      "timing": "must_reverify",
+      "authority": "Autoridade Tributária"
+    },
+    {
+      "date": "2027-07-01",
+      "pillar": "education_children",
+      "title": "School enrolment and renewal season: official portals to check",
+      "timing": "must_reverify",
+      "authority": "Portal da Educação"
+    },
+    {
+      "date": "2027-07-10",
+      "pillar": "social_security",
+      "title": "July quarterly declaration: prepare the previous quarter’s records",
+      "timing": "rule_locked",
+      "authority": "Segurança Social"
+    },
+    {
+      "date": "2027-07-28",
+      "pillar": "social_security",
+      "title": "Quarterly Social Security declaration: final July checks",
+      "timing": "rule_locked",
+      "authority": "Segurança Social"
+    }
+  ]
+}

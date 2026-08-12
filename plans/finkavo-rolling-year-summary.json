@@ -1,0 +1,27 @@
+{
+  "period": {
+    "start": "2026-08-13",
+    "end": "2027-08-12"
+  },
+  "totalSlots": 1825,
+  "dateLocked": 33,
+  "newsReserve": 332,
+  "evergreen": 1460,
+  "pillars": {
+    "identity_access": 155,
+    "immigration_residency": 128,
+    "citizenship_civil": 78,
+    "freelance_business": 78,
+    "iva": 125,
+    "irs": 133,
+    "social_security": 85,
+    "housing_property": 82,
+    "banking_money": 154,
+    "employment": 155,
+    "health_family": 155,
+    "driving_transport": 155,
+    "education_children": 181,
+    "daily_life_consumer": 161
+  },
+  "duplicateExactTitles": 0
+}

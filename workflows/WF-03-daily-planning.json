@@ -66,6 +66,24 @@
         20,
         0
       ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:4320/v1/evidence/research",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={}",
+        "options": { "timeout": 120000 }
+      },
+      "id": "topic-evidence",
+      "name": "Build verified multi-source evidence bundles",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [300,0]
     }
   ],
   "connections": {
@@ -90,6 +108,9 @@
           }
         ]
       ]
+    },
+    "Select five-post launch mix": {
+      "main": [[{"node":"Build verified multi-source evidence bundles","type":"main","index":0}]]
     }
   },
   "settings": {

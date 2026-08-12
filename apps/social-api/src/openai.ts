@@ -7,6 +7,7 @@ type Candidate = {
   fetchedAt: string;
   excerpts: string[];
   editorialContext?: { topic: string; reason: string | null; campaignStage: string | null; plannedFor: string | null; expiresAt: string | null };
+  sources?: Array<{ title: string; sourceUrl: string; authority: string | null; fetchedAt: string; excerpts: string[] }>;
 };
 
 export async function generateDraft(candidate: Candidate): Promise<{ draft: Draft; model: string }> {
@@ -22,6 +23,8 @@ export async function generateDraft(candidate: Candidate): Promise<{ draft: Draf
         "You create concise, practical, English-language carousel posts for Finkavo, a Portugal personal-finance product.",
         "All user-facing output fields must be written in English, even when the evidence is Portuguese. Keep exact evidenceQuote values in their original source language.",
         "Use only the supplied source excerpts. Do not introduce dates, thresholds, eligibility rules, rates, or legal claims absent from them.",
+        "The editorial topic is predetermined. Sources are evidence for that topic; never replace it with a subject chosen from an arbitrary excerpt.",
+        "When multiple sources are supplied, reconcile them and prefer official primary evidence. Do not combine rules that apply to different audiences, regions, or years.",
         "Every claim must include a short exact supporting excerpt. Never provide individualized financial, tax, or legal advice.",
         "Set riskLevel to high for tax, immigration, legal, deadline, fee, or eligibility content. Write useful alt text for every slide.",
         "Write for Instagram, not as a report: the cover promises one concrete benefit, each slide communicates one idea, and the final slide has a save/share/follow action.",

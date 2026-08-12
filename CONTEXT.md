@@ -1,16 +1,16 @@
 # Finkavo Social Content Workflow — Context and Architecture
 
-**Status:** production editorial and publishing system; human approval required
+**Status:** topic-led annual editorial and publishing system; human approval required
 **Last reviewed:** 2026-08-12
 **Scope:** Instagram educational carousel workflow for Finkavo. This document defines the system; it does not contain credentials or production configuration.
 
 ## 1. Outcome
 
-Build a recoverable, source-backed workflow that turns Finkavo corpus material and fresh official notices into English, deterministic Instagram carousels. n8n coordinates the work, but it does not own state. Finkavo's existing database and corpus remain the source of truth, the spare MacBook hosts n8n and renders, R2 stores generated media, Buffer schedules and publishes, and Discord reports or requests approval.
+Build a recoverable, source-backed workflow that turns a predetermined annual editorial plan, Finkavo corpus evidence, and fresh official notices into English, deterministic Instagram carousels. The plan chooses the subject; corpus passages only prove claims. n8n coordinates the work, but it does not own state. Finkavo's existing database and corpus remain the source of truth, the spare MacBook hosts n8n and renders, R2 stores generated media, Buffer schedules and publishes, and Discord reports or requests approval.
 
 The system optimizes for correctness, timeliness, usefulness, and sustainable quality:
 
-- Plan **1–2 strong posts per day**, with a configurable ceiling of five.
+- Plan up to **five strong posts per day** during launch, while holding any slot that lacks current evidence or review.
 - Require human approval for every post during the MVP.
 - Publish in English for the initial product while retaining source-language evidence from Portuguese official sources.
 - Use official sources for factual verification; news is a discovery signal, not proof.
@@ -43,7 +43,7 @@ The system optimizes for correctness, timeliness, usefulness, and sustainable qu
 
 7. **“AI compares news to an official page” is not sufficient for high-risk claims.** Tax, immigration, legal, deadline, fee, and eligibility claims need an official primary source and human approval. Unsupported claims go to `BLOCKED`, not into an automatic search loop that might manufacture certainty.
 
-8. **Five posts every day is an unvalidated growth assumption.** It increases factual, review, and audience-fatigue risk. Begin at 1–2/day, measure saves, shares, reach, follows, and corrections, and change frequency from evidence. Keep five/day as a configurable ceiling, not the initial target.
+8. **Five posts every day requires strict quality control.** The launch calendar provides five intentional slots, but volume never overrides accuracy. Hold a slot when evidence, freshness, rendering, or human review is incomplete. Measure saves, shares, reach, follows, hides, and corrections, then adjust cadence from evidence.
 
 9. **Language policy needed an explicit decision.** The social account is English-first, even when its official evidence is Portuguese. Generation must preserve the meaning of Portuguese primary sources and retain original-language supporting excerpts. Portuguese social editions are deferred and would require separate native review and approval.
 
@@ -156,8 +156,8 @@ Two discovery tracks run independently: broad Portugal news for awareness, and f
 
 ### WF-02 — Claim extraction and verification
 
-1. Extract atomic claims from an eligible corpus item or discovery.
-2. Retrieve official evidence from the canonical corpus first; use bounded official-domain search only for gaps.
+1. Start with the predetermined topic, audience, angle, timing class, and search vocabulary.
+2. Retrieve two to four relevant documents from the canonical corpus; require an official primary source for high-risk or time-sensitive content and use bounded official-domain search only for gaps.
 3. Save claim-to-source-version relationships and supporting spans.
 4. Run deterministic checks for dates, monetary amounts, entity names, locale, and contradictory values.
 5. Mark each claim `SUPPORTED`, `CONFLICTED`, `STALE`, or `UNSUPPORTED`.
@@ -166,30 +166,26 @@ Two discovery tracks run independently: broad Portugal news for awareness, and f
 
 ### WF-03 — Daily planning (once daily)
 
-Inputs:
-
-- unused evergreen corpus topics;
-- newly verified and time-sensitive official changes;
-- upcoming deadlines;
-- recent posting history and topic fingerprints;
-- configured editorial capacity and locale strategy.
+Inputs are the versioned 365-day plan, verified date-locked campaigns, current official news, evidence freshness, recent posting history, and review capacity. The current release covers 13 August 2026 through 12 August 2027 with 1,825 named slots.
 
 Initial rules:
 
 - During the channel-launch phase, select up to 5 concepts/day. Publish fewer rather than use stale, duplicated, or unsupported filler.
 - Do not repeat the same normalized topic within 14 days unless an official change makes repetition necessary.
 - Include evergreen utility content alongside time-sensitive material on multi-post days.
-- No more than one high-risk/time-sensitive concept per day during MVP.
+- Normally no more than two high-risk concepts per day; a verified date-locked campaign may temporarily produce three.
 - Avoid consecutive posts from the same category.
 - Reserve review capacity; do not plan more posts than a human can approve.
 - Treat the proposed posting times as experiments, not fixed truth; default scheduling is stored in Lisbon time and converted to UTC.
 - Recurring obligations use a fingerprint containing the rule, due date, and campaign stage. Prior coverage never suppresses a new IRS season, IVA quarter, Social Security quarter, IMI instalment, or other new occurrence.
 - A deadline may create multiple useful angles: advance guide, checklist, reminder, and last call. The planner limits daily risk/category concentration rather than incorrectly treating these as duplicates.
 - Official changes and urgent verified notices outrank evergreen content. News without exact official evidence remains held.
+- The 18:00 slot is reserved for verified news or date-locked content; otherwise its predetermined evergreen fallback runs.
+- Dates from an earlier year are never copied forward. `must_reverify` entries stay held until the relevant authority publishes the current date.
 
 ### WF-04 — Structured copy generation
 
-AI receives only the approved concept, locale, evidence bundle, voice rules, and versioned JSON schema. It returns structured JSON containing:
+AI receives only the predetermined topic, audience, angle, locale, current multi-source evidence bundle, voice rules, and versioned JSON schema. It returns structured JSON containing:
 
 - locale and template ID;
 - 3–7 slides for MVP (five is the default, ten is the provider ceiling);
