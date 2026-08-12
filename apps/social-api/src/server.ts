@@ -251,7 +251,7 @@ const server = http.createServer(async (req, res) => {
       for (const item of selected) {
         const [slot] = await sql`
           INSERT INTO social_editorial_plan_slot (plan_version,publish_date,publish_time,slot_number,pillar,angle,topic,audience,risk_level,timing_class,reserve_kind,search_terms,required_authority,occurrence_number)
-          VALUES (${plan.version},${item.date},${item.time},${item.slot},${item.pillar},${item.angle},${item.title},${item.audience},${item.risk},${item.timing},${item.reserve},${sql.json(item.searchTerms.split("|").map(v=>v.trim()).filter(Boolean))},${item.authority},${item.occurrence})
+          VALUES (${plan.version},${item.date},${item.time},${item.slot},${item.pillar},${item.angle},${item.title},${item.audience},${item.risk},${item.timing},${item.reserve},${sql.json(item.evidenceTerms.split("|").map(v=>v.trim()).filter(Boolean))},${item.authority},${item.occurrence})
           ON CONFLICT (plan_version,publish_date,slot_number) DO UPDATE SET topic=excluded.topic,audience=excluded.audience,risk_level=excluded.risk_level,timing_class=excluded.timing_class,search_terms=excluded.search_terms,required_authority=excluded.required_authority,updated_at=now()
           RETURNING *
         `;
@@ -264,12 +264,12 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && url.pathname === "/v1/evidence/research") {
       const { date } = ResearchSchema.parse(await readJson(req));
       const planningDate = date || new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Lisbon", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
-      const slots = await sql`SELECT * FROM social_editorial_plan_slot WHERE publish_date=${planningDate} AND status IN ('planned','researching','held') ORDER BY slot_number`;
+      const slots = await sql`SELECT * FROM social_editorial_plan_slot WHERE publish_date=${planningDate} AND status IN ('planned','researching','evidence_ready','held') ORDER BY slot_number`;
       const results=[];
       for (const slot of slots) {
         const terms = (slot.search_terms as string[]).map(v=>v.trim()).filter(v=>v.length >= 3);
         const pattern = terms.map(v=>v.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|");
-        const sources = pattern ? await sql`
+        const candidates = pattern ? await sql`
           SELECT d.id,d.title,d.source_url,d.source_authority,d.source_tier,d.original_lang,d.content_hash,d.fetched_at,d.last_verified_at,
                  array_agg(c.text ORDER BY c.chunk_index) FILTER (WHERE c.chunk_index < 8) AS excerpts
           FROM document d JOIN chunk c ON c.document_id=d.id AND c.vault_doc_id IS NULL
@@ -277,18 +277,22 @@ const server = http.createServer(async (req, res) => {
             AND (d.title ~* ${pattern} OR c.text ~* ${pattern})
           GROUP BY d.id
           ORDER BY CASE d.source_tier WHEN 'official' THEN 0 WHEN 'professional' THEN 1 ELSE 2 END, COALESCE(d.last_verified_at,d.fetched_at) DESC
-          LIMIT 4
+          LIMIT 40
         ` : [];
+        const normalizedTerms=terms.map(v=>v.toLocaleLowerCase("pt"));
+        const scored: any[]=(candidates as any[]).map(source=>{const title=String(source.title).toLocaleLowerCase("pt");const body=(source.excerpts as string[]).join(" ").toLocaleLowerCase("pt");const matched=normalizedTerms.filter(term=>title.includes(term)||body.includes(term));const score=matched.reduce((sum,term)=>sum+(title.includes(term)?6:2),0);return {...source,relevance_score:score,matched_terms:matched};}).filter(source=>source.relevance_score>=2).sort((a,b)=>b.relevance_score-a.relevance_score||String(b.last_verified_at||b.fetched_at).localeCompare(String(a.last_verified_at||a.fetched_at)));
+        const sources: any[] = []; const seenAuthorities=new Set<string>();
+        for(const source of scored){const authority=String(source.source_authority||new URL(String(source.source_url)).hostname);if(seenAuthorities.has(authority)&&sources.length>=2)continue;sources.push(source);seenAuthorities.add(authority);if(sources.length>=4)break;}
         const needsOfficial = slot.risk_level === 'high' || slot.timing_class !== 'evergreen';
-        const valid = sources.length >= 2 && (!needsOfficial || sources.some(s=>s.source_tier==='official'));
+        const valid = sources.length >= 2 && sources[0].relevance_score>=4 && (!needsOfficial || sources.some(s=>s.source_tier==='official'));
         if (!valid) { await sql`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${slot.id}`; results.push({slotId:slot.id,topic:slot.topic,state:'held',sources:sources.length}); continue; }
-        const normalized=sources.map(s=>({documentId:s.id,url:s.source_url,title:s.title,publisher:s.source_authority,tier:s.source_tier,locale:s.original_lang,retrievedAt:s.last_verified_at||s.fetched_at,contentHash:s.content_hash,excerpts:(s.excerpts as string[]).slice(0,6)}));
+        const normalized=sources.map(s=>({documentId:s.id,url:s.source_url,title:s.title,publisher:s.source_authority,tier:s.source_tier,locale:s.original_lang,retrievedAt:s.last_verified_at||s.fetched_at,contentHash:s.content_hash,relevanceScore:s.relevance_score,matchedTerms:s.matched_terms,excerpts:(s.excerpts as string[]).slice(0,6)}));
         const bundleHash=hash(normalized); const freshnessDays=slot.risk_level==='high'?7:slot.risk_level==='medium'?30:90;
         const [bundle]=await sql`INSERT INTO social_topic_evidence_bundle (plan_slot_id,bundle_hash,sources,verification_state,verified_at,expires_at) VALUES (${slot.id},${bundleHash},${sql.json(normalized)},'verified',now(),now()+(${freshnessDays}::STRING||' days')::INTERVAL) ON CONFLICT (plan_slot_id,bundle_hash) DO UPDATE SET verification_state='verified',verified_at=now(),expires_at=excluded.expires_at RETURNING *`;
         const primary=normalized.find(s=>s.tier==='official')||normalized[0]; const fingerprint=`plan:${slot.plan_version}:${planningDate}:${slot.slot_number}`;
         const [concept]=await sql`INSERT INTO social_post_concept (document_id,topic,category,risk_level,priority,timeliness,fingerprint,status,planned_for,reason,repeat_allowed,score,plan_slot_id,evidence_bundle_id) VALUES (${primary.documentId},${slot.topic},${slot.pillar},${slot.risk_level},${100-Number(slot.slot_number)},${slot.timing_class},${fingerprint},'planned',${planningDate},${`Predetermined annual-plan topic for ${slot.audience}`},true,${100-Number(slot.slot_number)},${slot.id},${bundle.id}) ON CONFLICT (fingerprint) DO UPDATE SET document_id=excluded.document_id,evidence_bundle_id=excluded.evidence_bundle_id,status=CASE WHEN social_post_concept.status='used' THEN 'used' ELSE 'planned' END,updated_at=now() RETURNING *`;
         await sql`UPDATE social_editorial_plan_slot SET status='evidence_ready',updated_at=now() WHERE id=${slot.id}`;
-        results.push({slotId:slot.id,conceptId:concept.id,topic:slot.topic,state:'verified',sources:normalized.length,bundleHash});
+        results.push({slotId:slot.id,conceptId:concept.id,topic:slot.topic,state:'verified',sources:normalized.map(source=>({title:source.title,url:source.url,tier:source.tier,relevanceScore:source.relevanceScore,matchedTerms:source.matchedTerms})),bundleHash});
       }
       return send(res,200,{date:planningDate,results});
     }

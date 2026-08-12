@@ -4,6 +4,7 @@ export type AnnualPlanRow = {
   date: string; time: string; slot: number; pillar: string; angle: string; title: string;
   audience: string; risk: "low" | "medium" | "high"; timing: string; reserve: string;
   searchTerms: string; authority: string; occurrence: number;
+  evidenceTerms: string;
 };
 
 type AnnualPlan = { version: number; generatedAt: string; rows: AnnualPlanRow[] };

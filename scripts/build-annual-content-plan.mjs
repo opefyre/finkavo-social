@@ -98,6 +98,41 @@ const campaignMap = new Map(campaigns.map((item) => [item[0], item]));
 const lowerRiskPillars = pillars.filter((pillar) => pillar.risk !== "high");
 const iso = (date) => date.toISOString().slice(0, 10);
 const csv = (value) => `"${String(value).replaceAll('"', '""')}"`;
+const evidenceGlossary = [
+  [/\bnif\b/i, ["NIF", "número de identificação fiscal"]],
+  [/\bniss\b/i, ["NISS", "número de identificação da segurança social"]],
+  [/chave móvel|digital key/i, ["Chave Móvel Digital", "autenticação.gov"]],
+  [/modelo 3/i, ["Modelo 3", "declaração de rendimentos"]],
+  [/\birs\b|income tax/i, ["IRS", "Imposto sobre o Rendimento das Pessoas Singulares"]],
+  [/e-?fatura/i, ["e-Fatura", "faturas"]],
+  [/\biva\b|vat/i, ["IVA", "Imposto sobre o Valor Acrescentado"]],
+  [/social security|segurança social|quarterly declaration/i, ["Segurança Social", "declaração trimestral"]],
+  [/residence|residency|aima|family reunification|cplp|visa/i, ["AIMA", "autorização de residência"]],
+  [/medical record|health record/i, ["registo de saúde", "processo clínico", "SNS"]],
+  [/family doctor/i, ["médico de família", "SNS"]],
+  [/\biuc\b/i, ["IUC", "Imposto Único de Circulação"]],
+  [/\bimi\b/i, ["IMI", "Imposto Municipal sobre Imóveis"]],
+  [/\baimi\b/i, ["AIMI", "Adicional ao IMI"]],
+  [/\bimt\b/i, ["IMT", "Imposto Municipal sobre as Transmissões"]],
+  [/driving licen[cs]e/i, ["carta de condução", "IMT"]],
+  [/school|education|enrolment/i, ["matrículas", "Portal das Matrículas", "educação"]],
+  [/employment|work contract|payslip/i, ["contrato de trabalho", "Código do Trabalho"]],
+  [/rent|tenant|landlord|lease/i, ["arrendamento", "contrato de arrendamento"]],
+  [/bank|iban|sepa/i, ["Banco de Portugal", "IBAN", "SEPA"]],
+  [/consumer|complaint/i, ["Livro de Reclamações", "Direção-Geral do Consumidor"]],
+];
+const genericWords = new Set(["what","when","where","which","with","your","from","into","before","after","about","portugal","portuguese","plain","english","explanation","practical","step","checklist","mistakes","exceptions","edge","cases","golden","tip","verify","news","reserve","fallback"]);
+function evidenceTermsFor(topic, title, pillar) {
+  const terms = [];
+  for (const [pattern, values] of evidenceGlossary) if (pattern.test(`${topic} ${title}`)) terms.push(...values);
+  if (!terms.length) {
+    const words = topic.toLowerCase().replace(/[^a-zà-ÿ0-9 ]/g, " ").split(/\s+/).filter((word) => word.length > 4 && !genericWords.has(word));
+    terms.push(words.slice(0, 3).join(" "));
+  }
+  const pillarFallback = pillar.terms.find((term) => new RegExp(`\\b${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(`${topic} ${title}`));
+  if (pillarFallback) terms.push(pillarFallback);
+  return [...new Set(terms.filter(Boolean))].slice(0, 5);
+}
 const rows = [];
 const seen = new Map();
 
@@ -129,7 +164,7 @@ for (let day = 0; day < days; day++) {
     const occurrence = (seen.get(key) ?? 0) + 1; seen.set(key, occurrence);
     if (occurrence > 1) title = `${newsPrefix}${key} — ${contexts[(occurrence - 2) % contexts.length]}`;
     if (pillar.risk === "high") highRiskCount++;
-    rows.push({ date: dateText, time: slots[slot], slot: slot + 1, pillar: pillar.id, angle, title, audience: pillar.audience, risk: pillar.risk, timing, reserve, searchTerms: pillar.terms.join(" | "), authority, occurrence });
+    rows.push({ date: dateText, time: slots[slot], slot: slot + 1, pillar: pillar.id, angle, title, audience: pillar.audience, risk: pillar.risk, timing, reserve, evidenceTerms: evidenceTermsFor(topic, title, pillar).join(" | "), searchTerms: pillar.terms.join(" | "), authority, occurrence });
   }
 }
 

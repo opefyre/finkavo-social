@@ -5,7 +5,7 @@ const draft = {
   topic: "What a Portuguese NIF is", category: "nif" as const, riskLevel: "medium" as const,
   postIntent: "evergreen_explainer" as const, hook: "Understand your Portuguese NIF before you need it.",
   caption: "In Portugal, the NIF identifies taxpayers in dealings with the tax authority.",
-  callToAction: "Save this for your Portugal admin checklist.", hashtags: ["#Finkavo", "#Portugal"],
+  callToAction: "Save this for your Portugal admin checklist.", hashtags: ["#Finkavo", "#Portugal", "#NIF", "#PortugalAdmin"],
   searchKeywords: ["Portuguese NIF", "Portugal tax number"],
   slides: [
     { type: "cover" as const, icon: "document" as const, eyebrow: "Portugal admin", title: "What is a NIF?", body: "A simple guide to Portugal’s tax identification number.", items: [], highlight: "", sourceLabel: "Portal das Finanças", altText: "Cover explaining the Portuguese NIF." },
