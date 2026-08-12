@@ -34,8 +34,7 @@ export async function renderManifest(manifest: RenderManifest, root: string): Pr
           const rect = element.getBoundingClientRect();
           return rect.left < 0 || rect.right > 1080 || rect.top < 0 || rect.bottom > 1350;
         });
-        const loadedFaces = Array.from(document.fonts).filter((face) => face.status === "loaded").map((face) => face.family.replaceAll('"', ""));
-        const fonts = loadedFaces.includes("Fraunces") && loadedFaces.includes("Noto Sans");
+        const fonts = document.fonts.check('16px "Fraunces"') && document.fonts.check('16px "Noto Sans"');
         return { overflow: document.documentElement.scrollHeight > 1350 || document.documentElement.scrollWidth > 1080 || clipped, fonts, width: slide?.width, height: slide?.height };
       });
       if (dimensions.width !== 1080 || dimensions.height !== 1350) throw new Error(`Slide ${index + 1} has an invalid ${dimensions.width} × ${dimensions.height} canvas`);
