@@ -50,7 +50,7 @@ const exactTermMatch = (text: string, term: string) => {
 };
 const sourceDomainAllowed = (terms: string[], rawUrl: unknown) => {
   const hostname=new URL(String(rawUrl)).hostname.replace(/^www\./,""); const joined=terms.join(" ");
-  const allows=(domains:string[])=>domains.some(domain=>hostname===domain||hostname.endsWith(`.${domain}`));
+  const allows=(domains:string[])=>domains.some(domain=>domain==="gov.pt"?(hostname==="gov.pt"||hostname==="www2.gov.pt"):(hostname===domain||hostname.endsWith(`.${domain}`)));
   if (/\b(?:nif|modelo 3|irs|iva|iuc|imi|aimi|imt)\b/i.test(joined)) return allows(["portaldasfinancas.gov.pt","gov.pt"]);
   if (/\b(?:aima|autorização de residência)\b/i.test(joined)) return allows(["aima.gov.pt","gov.pt"]);
   if (/\b(?:registo de saúde|processo clínico|sns)\b/i.test(joined)) return allows(["sns.gov.pt","sns24.gov.pt","gov.pt"]);
