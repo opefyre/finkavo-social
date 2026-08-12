@@ -36,7 +36,7 @@ export async function createScheduledPost(input: { channelId: string; text: stri
         ... on MutationError { message }
       }
     }
-  `, { input: { text: input.text, channelId: input.channelId, schedulingType: "automatic", mode: "customScheduled", dueAt: input.dueAt, assets: input.mediaUrls.map((url) => ({ image: { url } })) } });
+  `, { input: { text: input.text, channelId: input.channelId, schedulingType: "automatic", mode: "customScheduled", dueAt: input.dueAt, aiAssisted: true, metadata: { instagram: { type: "post", shouldShareToFeed: true, isAiGenerated: true } }, assets: input.mediaUrls.map((url) => ({ image: { url } })) } });
   if (!data.createPost.post) throw new BufferError(data.createPost.message || `Buffer mutation failed (${data.createPost.__typename})`, data.createPost.__typename, false);
   return data.createPost.post;
 }

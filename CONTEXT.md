@@ -1,6 +1,6 @@
 # Finkavo Social Content Workflow — Context and Architecture
 
-**Status:** implemented local MVP; publishing remains intentionally disabled until Discord webhooks are configured and a live Buffer scheduling test is explicitly approved
+**Status:** implemented local MVP; ready for the human-approved publishing pilot
 **Last reviewed:** 2026-08-12
 **Scope:** Instagram educational carousel workflow for Finkavo. This document defines the system; it does not contain credentials or production configuration.
 

@@ -46,10 +46,14 @@ Re-running `infrastructure/macos/install-local-services.sh` is safe. It preserve
 - Additive CockroachDB migrations through `0004_discovery_planning.sql` applied.
 - Dedicated `finkavo-social` R2 bucket and bucket-scoped read/write credential configured.
 - Approved six-slide production render completed at 1080×1350 with byte-level integrity verification.
-- Buffer personal key configured with only account-read and post read/write permissions; the `finkavo` Instagram channel was discovered and configured without creating a post.
+- Buffer personal key configured with only account-read and post read/write permissions; the `finkavo` Instagram channel is configured.
+- Four Discord channels and dedicated webhooks configured: `ig-approvals`, `ig-published`, `ig-errors`, and `ig-system`; delivery tests succeeded in all four.
+- A clearly labeled five-image English Buffer contract test was accepted as `scheduled` after verifying the current Instagram metadata contract.
 - Buffer GraphQL adapter, lease-safe publish queue, status monitor, Discord notifier, retries, dead-letter/block states, and daily health endpoint implemented.
 - Type check, automated tests, and production build pass locally.
 
-## Intentional publishing lock
+## Publishing policy
 
-The scheduler and monitor exports are inactive. Live publishing is not ready until the Discord webhook values are added to the protected environment, followed by an explicitly approved five-image Buffer test. This prevents an implementation test from reaching Instagram accidentally.
+Discovery, Buffer monitoring, and the daily health workflow are active. Draft generation, approval-link creation, rendering, and scheduling remain manual by design. No editorial post can reach Buffer without an exact human approval and a completed verified render.
+
+The Buffer contract-test utility is additionally guarded by `ALLOW_BUFFER_CONTRACT_TEST=yes`; it cannot create a test post accidentally.

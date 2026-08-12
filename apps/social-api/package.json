@@ -7,6 +7,7 @@
     "build": "tsc -p tsconfig.json",
     "migrate": "node dist/migrate.js",
     "start": "node dist/server.js",
+    "test:buffer-contract": "node dist/buffer-contract-test.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run"
   },

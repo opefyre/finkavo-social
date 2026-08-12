@@ -316,7 +316,9 @@ const server = http.createServer(async (req, res) => {
       });
       if (!created) return send(res, 409, { error: "Only a current draft revision can be sent for review" });
       const base = reviewBaseUrl || `${url.protocol}//${url.host}`;
-      return send(res, 201, { reviewUrl: `${base.replace(/\/$/, "")}/review/${rawToken}`, expiresAt: created.expires_at });
+      const reviewUrl = `${base.replace(/\/$/, "")}/review/${rawToken}`;
+      await notifyDiscord("approval", "Instagram carousel ready for review", { post: reviewRequest[1], expiresAt: created.expires_at }, reviewUrl);
+      return send(res, 201, { reviewUrl, expiresAt: created.expires_at });
     }
 
     const renderRequest = url.pathname.match(/^\/v1\/posts\/([0-9a-f-]+)\/request-render$/i);
