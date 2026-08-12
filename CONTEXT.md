@@ -310,7 +310,7 @@ AI may select approved slide types, category icons, copy, highlights, and CTA va
 
 Every template and asset bundle has a version. Templates must have fixtures for long English text, Portuguese names and accents in citations, currency, dates, empty optional fields, maximum list length, and source footers. Snapshot tests plus visual regression images run before a renderer release.
 
-The production visual baseline is `finkavo-v3`: native 1080 × 1350 PNGs, the supplied Finkavo logo (never an invented substitute), the exact app palette, self-hosted Fraunces display type with Noto Sans supporting type, bold editorial typography sized to survive Instagram compression, photographic Portugal-context backgrounds, and text-only CTAs. Generated or licensed background images must contain no embedded copy, logos, official insignia, or watermarks. The four pre-automation Instagram posts are the visual reference; every template release requires private full-carousel review before any live test.
+The production visual baseline is `finkavo-v3`: native 1080 × 1350 PNGs, the supplied Finkavo logo (never an invented substitute), the exact app palette, self-hosted Fraunces display type with Noto Sans supporting type, bold editorial typography sized to survive Instagram compression, non-photographic editorial backgrounds, and text-only CTAs. Backgrounds use restrained grids, circles, and abstract document forms; realistic, stock, and generated photographic scenes are not part of the brand system. The four pre-automation Instagram posts are the visual reference; every template release requires private full-carousel review before any live test.
 
 Accessibility requirements:
 
