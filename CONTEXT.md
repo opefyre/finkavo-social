@@ -408,6 +408,7 @@ References:
 - Instagram captions are one reviewed, deterministic package: a specific hook, useful body copy, concise text CTA, `finkavo.com`, and four to eight focused hashtags including `#Finkavo`. The generator cannot duplicate these sections, omit the website, use a weak hook, or exceed Instagram's caption limit.
 - The private review page shows the exact final caption that Buffer will receive. Publishing assembles the same approved fields; it does not invent or modify copy after approval.
 - English-only and copy-completeness validation is repeated at generation, render queue, publish queue, and final Buffer handoff so legacy approvals cannot bypass current policy. Rendering rejects internal text clipping and any overlap between the copy region, header, or footer; character limits alone are not treated as proof that a slide fits.
+- Buffer reconciliation runs every 15 minutes but calls Buffer only for posts due within ten minutes or already due. It never polls the full future queue, and it stops the reconciliation batch immediately on a rate-limit response.
 - Finkavo v3 contains five approved non-photographic visual families using the supplied logo, app palette, Fraunces display face, Noto Sans supporting face, fixed typography, source footer, and 1080 × 1350 safe zones:
   - `petrol_editorial`: default brand editorial treatment;
   - `cream_guide`: evergreen explanations and general guides;

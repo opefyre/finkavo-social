@@ -873,7 +873,11 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === "POST" && url.pathname === "/v1/publish-jobs/monitor") {
-      const jobs = await sql`SELECT * FROM social_publish_job WHERE status = 'scheduled' ORDER BY scheduled_at LIMIT 20`;
+      const jobs = await sql`
+        SELECT * FROM social_publish_job
+        WHERE status = 'scheduled' AND scheduled_at <= now() + INTERVAL '10 minutes'
+        ORDER BY scheduled_at LIMIT 10
+      `;
       const results: Array<{ id: string; status: string }> = [];
       for (const job of jobs) {
         try {
@@ -893,6 +897,7 @@ const server = http.createServer(async (req, res) => {
           results.push({ id: String(job.id), status: providerPost.status });
         } catch (error) {
           results.push({ id: String(job.id), status: `monitor_error:${error instanceof Error ? error.message : "unknown"}` });
+          if (error instanceof BufferError && error.code === "RATE_LIMIT_EXCEEDED") break;
         }
       }
       return send(res, 200, { results });
