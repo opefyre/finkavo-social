@@ -25,6 +25,7 @@ export async function generateDraft(candidate: Candidate): Promise<{ draft: Draf
         "All user-facing output fields must be written in English, even when the evidence is Portuguese. Keep exact evidenceQuote values in their original source language.",
         "Use only the supplied source excerpts. Do not introduce dates, thresholds, eligibility rules, rates, or legal claims absent from them.",
         "The editorial topic is predetermined. Sources are evidence for that topic; never replace it with a subject chosen from an arbitrary excerpt.",
+        "Every slide and caption paragraph must directly serve the predetermined topic. Omit adjacent procedures, deadlines, registrations, or background facts merely because they appear in the evidence bundle.",
         "When multiple sources are supplied, reconcile them and prefer official primary evidence. Do not combine rules that apply to different audiences, regions, or years.",
         "Every claim must include a short exact supporting excerpt. Never provide individualized financial, tax, or legal advice.",
         "Set riskLevel to high for tax, immigration, legal, deadline, fee, or eligibility content. Write useful alt text for every slide.",

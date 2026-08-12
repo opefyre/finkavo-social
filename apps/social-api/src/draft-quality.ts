@@ -1,7 +1,7 @@
 import type { Draft } from "./contracts.js";
 import { validateCaptionParts } from "./caption.js";
 
-const endsIncomplete = (value: string) => /(?:\b(?:and|or|to|the|a|an|of|in|on|for|with|from|by|as)|[,;:—-])$/i.test(value.trim());
+const endsIncomplete = (value: string) => /(?:\b(?:and|or|to|the|a|an|of|in|on|for|with|from|by|as)|[,;:—-])$/i.test(value.trim().replace(/[.!?)]$/, "").trim());
 const completeSentence = (value: string) => /[.!?)]$/.test(value.trim()) && !endsIncomplete(value);
 const hasPresentationArtifacts = (value: string) => /\*\*|^\s*[-*]\s|^[A-Za-z0-9]+,\s*[A-Z]\d+:|\b(?!(?:AIMA|IRS|IVA|NISS|IMI|AIMI|EU)\b)[A-ZÁÉÍÓÚÇ]{4,}\b/.test(value);
 

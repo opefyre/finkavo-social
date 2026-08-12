@@ -16,4 +16,8 @@ const draft = {
 
 describe("evidence excerpt quality", () => {
   it("allows an exact source heading without invented punctuation", () => expect(() => validateSocialDraft(draft)).not.toThrow());
+  it("rejects a sentence that ends on a function word before punctuation", () => {
+    const broken={...draft,slides:draft.slides.map((slide,index)=>index===0?{...slide,body:"Complete this before starting the."}:slide)};
+    expect(()=>validateSocialDraft(broken)).toThrow(/complete sentence/);
+  });
 });
