@@ -4,8 +4,17 @@ import { validateCaptionParts } from "./caption.js";
 const endsIncomplete = (value: string) => /(?:\b(?:and|or|to|the|a|an|of|in|on|for|with|from|by|as)|[,;:—-])$/i.test(value.trim().replace(/[.!?)]$/, "").trim());
 const completeSentence = (value: string) => /[.!?)]$/.test(value.trim()) && !endsIncomplete(value);
 const hasPresentationArtifacts = (value: string) => /\bnoneof\b/i.test(value) || /\*\*|^\s*[-*]\s|^[A-Za-z0-9]+,\s*[A-Z]\d+:|\b(?!(?:AIMA|IRS|IVA|NISS|IMI|AIMI|SEPA|IEFP|IBAN|SNS|EEA|IRN|EU)\b)[A-ZÁÉÍÓÚÇ]{4,}\b/.test(value);
+const portugueseMarkers = /\b(?:a|ao|aos|as|com|como|da|das|de|declaração|do|dos|e|em|é|isenção|mensal|não|o|os|pagamento|para|passo|pela|pelo|por|prazo|regime|rendimento|sobre|trimestral|uma|valor)\b/giu;
+
+export function assertEnglishUserCopy(values: unknown[]) {
+  const text = values.flat(Infinity).map(value => String(value || "")).join(" ").toLocaleLowerCase("pt");
+  const markers = text.match(portugueseMarkers)?.length ?? 0;
+  const words = text.match(/[a-zà-ÿ]+/giu)?.length ?? 1;
+  if (markers >= 6 && markers / words >= 0.08) throw new Error("User-facing copy must be English");
+}
 
 export function validateSocialDraft(draft: Draft) {
+  assertEnglishUserCopy([draft.topic, draft.hook, draft.caption, draft.callToAction, draft.slides.flatMap(slide => [slide.eyebrow, slide.title, slide.body, slide.items, slide.altText])]);
   validateCaptionParts({ hook: draft.hook, body: draft.caption, callToAction: draft.callToAction, hashtags: draft.hashtags });
   if (draft.slides[0]?.type !== "cover" || draft.slides.at(-1)?.type !== "summary") throw new Error("The carousel must start with a cover and end with a summary");
   if (draft.callToAction.length > 65 || endsIncomplete(draft.callToAction)) throw new Error("The call to action is incomplete or too long");

@@ -37,12 +37,17 @@ export async function renderManifest(manifest: RenderManifest, root: string): Pr
         });
         const dimensions = await page.evaluate(() => {
         const slide = document.querySelector(".slide")?.getBoundingClientRect();
+        const top = document.querySelector(".top")?.getBoundingClientRect();
+        const copy = document.querySelector(".copy")?.getBoundingClientRect();
+        const footer = document.querySelector(".footer")?.getBoundingClientRect();
         const clipped = [...document.querySelectorAll(".top,.copy,.footer,h1,.body,.subtitle,li")].some((element) => {
           const rect = element.getBoundingClientRect();
-          return rect.left < 0 || rect.right > 1080 || rect.top < 0 || rect.bottom > 1350;
+          const html = element as HTMLElement;
+          return rect.left < 0 || rect.right > 1080 || rect.top < 0 || rect.bottom > 1350 || html.scrollHeight > html.clientHeight + 1 || html.scrollWidth > html.clientWidth + 1;
         });
+        const overlapsRegions = Boolean(top && copy && footer && (copy.top < top.bottom || copy.bottom > footer.top));
         const fonts = document.fonts.check('900 16px "Fraunces"') && document.fonts.check('900 16px "Noto Sans"');
-        return { overflow: document.documentElement.scrollHeight > 1350 || document.documentElement.scrollWidth > 1080 || clipped, fonts, width: slide?.width, height: slide?.height };
+        return { overflow: document.documentElement.scrollHeight > 1350 || document.documentElement.scrollWidth > 1080 || clipped || overlapsRegions, fonts, width: slide?.width, height: slide?.height };
         });
         if (dimensions.width !== 1080 || dimensions.height !== 1350) throw new Error(`Slide ${index + 1} has an invalid ${dimensions.width} × ${dimensions.height} canvas`);
         if (dimensions.overflow) throw new Error(`Slide ${index + 1} overflows the canvas`);

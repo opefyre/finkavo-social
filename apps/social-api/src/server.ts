@@ -10,7 +10,7 @@ import { notifyDiscord, notifyDiscordReview } from "./discord.js";
 import { renderReviewPreview } from "./preview.js";
 import { retryDecision } from "./retry-policy.js";
 import { expandCalendar, loadEditorialCalendar, selectDailyMix } from "./planner.js";
-import { validateSocialDraft } from "./draft-quality.js";
+import { assertEnglishUserCopy, validateSocialDraft } from "./draft-quality.js";
 import { composeInstagramCaption } from "./caption.js";
 import { loadAnnualPlan, rowsForDate } from "./annual-plan.js";
 import { findFactCard } from "./fact-cards.js";
@@ -92,6 +92,14 @@ const topicMatchesPlan = (draftTopic: string, plannedTopic: string) => {
   const planned=new Set(tokens(plannedTopic)); return tokens(draftTopic).some(token=>planned.has(token));
 };
 const finishSentence = (value:string) => value.trim() && !/[.!?)]$/.test(value.trim()) ? `${value.trim()}.` : value.trim();
+const assertPublishableCopy = (post: Record<string, unknown>) => {
+  const slides = (post.slides || []) as Array<Record<string, unknown>>;
+  assertEnglishUserCopy([post.topic, post.hook, post.caption, post.call_to_action, slides.flatMap(slide => [slide.eyebrow, slide.title, slide.body, slide.items, slide.altText])]);
+  for (const slide of slides) {
+    const values = [slide.title, slide.body, ...((slide.items || []) as unknown[])].map(value => String(value || "").trim()).filter(Boolean);
+    if (values.some(value => /(?:\(\.|\b(?:and|or|to|the|a|an|of|in|on|for|with|from|by|as)|[,;:—-])$/i.test(value))) throw new Error("Stored slide copy appears truncated");
+  }
+};
 const simpleDraft = (topic:string, facts:string[]): z.infer<typeof DraftSchema> => {
   const subject=/\b(NIF|NISS|IUC|IMI|IBAN|SNS 24|Chave Móvel Digital|Livro de Reclamações)\b/i.exec(topic)?.[1]||"Portugal admin";
   const category=subject.toUpperCase()==="NIF"?"nif":subject.toUpperCase()==="NISS"?"niss":["IUC","IMI"].includes(subject.toUpperCase())?"tax":"general";
@@ -557,6 +565,11 @@ const server = http.createServer(async (req, res) => {
         `;
         const renders: string[] = [];
         for (const row of approved) {
+          try { assertPublishableCopy(row as Record<string, unknown>); } catch (error) {
+            await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${row.id}`;
+            await tx`INSERT INTO social_event (post_id,event_type,payload) VALUES (${row.id},'quality.blocked',${tx.json({ stage: 'render_queue', reason: error instanceof Error ? error.message : 'quality failure' })})`;
+            continue;
+          }
           const idempotencyKey = `render:${row.id}:${row.revision_id}`;
           const [existing] = await tx`SELECT id FROM social_render_job WHERE idempotency_key=${idempotencyKey}`;
           if (existing) continue;
@@ -584,6 +597,11 @@ const server = http.createServer(async (req, res) => {
         `;
         const scheduled: Array<{ postId: string; scheduledAt: string }> = [];
         for (const post of rendered) {
+          try { assertPublishableCopy(post as Record<string, unknown>); } catch (error) {
+            await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${post.id}`;
+            await tx`INSERT INTO social_event (post_id,event_type,payload) VALUES (${post.id},'quality.blocked',${tx.json({ stage: 'publish_queue', reason: error instanceof Error ? error.message : 'quality failure' })})`;
+            continue;
+          }
           const slot = candidates.shift();
           if (!slot) break;
           const idempotencyKey = `buffer:${post.id}:${post.revision_id}:${slot.toISOString()}`;
@@ -798,6 +816,7 @@ const server = http.createServer(async (req, res) => {
           FOR UPDATE OF p
         `;
         if (!post || !(post.render_files as unknown[])?.length || !(post.caption as string)?.trim()) return null;
+        assertPublishableCopy(post as Record<string, unknown>);
         const [created] = await tx`INSERT INTO social_publish_job (post_id, revision_id, render_job_id, idempotency_key, scheduled_at) VALUES (${post.id}, ${post.revision_id}, ${post.render_job_id}, ${idempotencyKey}, ${scheduledAt}) RETURNING *`;
         await tx`UPDATE social_post SET scheduled_at = ${scheduledAt}, updated_at = now() WHERE id = ${post.id}`;
         await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'publish.queued', ${tx.json({ jobId: created.id, scheduledAt })})`;
@@ -814,13 +833,14 @@ const server = http.createServer(async (req, res) => {
         if (!candidate) return null;
         const attempt = Number(candidate.attempt_count) + 1;
         const [claimed] = await tx`UPDATE social_publish_job SET status = 'processing', attempt_count = ${attempt}, lease_owner = ${workerId}, lease_expires_at = now() + INTERVAL '5 minutes', updated_at = now() WHERE id = ${candidate.id} RETURNING *`;
-        const [post] = await tx`SELECT hook, caption, call_to_action, hashtags, render_files FROM social_post WHERE id = ${candidate.post_id}`;
+        const [post] = await tx`SELECT topic, hook, caption, call_to_action, hashtags, slides, render_files FROM social_post WHERE id = ${candidate.post_id}`;
         const requestFingerprint = hash({ postId: candidate.post_id, revisionId: candidate.revision_id, scheduledAt: candidate.scheduled_at, files: post.render_files });
         await tx`INSERT INTO social_publish_attempt (job_id, attempt_number, request_fingerprint) VALUES (${candidate.id}, ${attempt}, ${requestFingerprint})`;
         return { ...claimed, post };
       });
       if (!job) return send(res, 200, { job: null });
       try {
+        assertPublishableCopy(job.post as Record<string, unknown>);
         const channelId = process.env.BUFFER_CHANNEL_ID;
         if (!channelId) throw new BufferError("BUFFER_CHANNEL_ID is not configured", "CHANNEL_NOT_CONFIGURED", false);
         const storedFiles = job.post.render_files as Array<{ key: string }>;
