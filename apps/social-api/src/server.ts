@@ -82,7 +82,7 @@ const simpleDraft = (topic:string, facts:string[]): z.infer<typeof DraftSchema> 
     {type:"cover",icon:"document",eyebrow:"Portugal basics",title:`What is ${subject}?`,body:`A plain-English guide to ${subject} in Portugal.`,items:[],highlight:"",sourceLabel:"",altText:`Cover explaining ${subject} in Portugal.`},
     {type:"content",icon:"document",eyebrow:"Definition",title:`${subject}, explained`,body:content[0],items:[],highlight:"",sourceLabel:"",altText:`Definition of ${subject}.`},
     {type:"content",icon:"people",eyebrow:"Why it matters",title:"Where it is used",body:content[1]||content[0],items:[],highlight:"",sourceLabel:"",altText:`Common uses of ${subject}.`},
-    {type:"content",icon:"warning",eyebrow:"Good to know",title:"Avoid this mistake",body:[content[2],content[3]].filter(Boolean).join(" "),items:[],highlight:"",sourceLabel:"",altText:`Important practical note about ${subject}.`},
+    {type:"content",icon:"warning",eyebrow:"Good to know",title:"Avoid this mistake",body:content[2]||content[0],items:[],highlight:"",sourceLabel:"",altText:`Important practical note about ${subject}.`},
     {type:"summary",icon:"check",eyebrow:"Quick recap",title:`Remember ${subject}`,body:content[4]||content[3]||content[0],items:[],highlight:"",sourceLabel:"",altText:`Summary of the ${subject} guide.`},
   ],claims:content.map(fact=>({claim:fact,evidenceQuote:fact}))});
 };
