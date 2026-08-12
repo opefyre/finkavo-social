@@ -42,8 +42,8 @@ Re-running `infrastructure/macos/install-local-services.sh` is safe. It preserve
 
 1. Broad-news and official-portal discovery workflows collect Portugal signals every two hours. They remain `discovery_only` until exact official evidence exists in the fresh canonical corpus.
 2. At 06:30 Lisbon, the planner expands recurring deadlines/occasions, prioritizes verified official changes, applies repeat-aware campaign rules, and selects up to two diverse concepts. It allows the next occurrence of a recurring obligation even when that subject was covered previously.
-3. Generate a draft from a planned, current canonical corpus document. The JSON contract enforces English social copy, a clear post intent, search phrases, exact source excerpts, approved icons/layouts, renderer-safe lengths, 3–7 slides, and no more than two repair attempts.
-4. Request the private review link. It is expiring, single-use, authenticated by Tailscale identity, and tied to the exact revision/evidence hash.
+3. Generate a draft from a planned, current canonical corpus document. The JSON contract enforces English social copy, a clear post intent, search phrases, exact source excerpts, approved icons/layouts, renderer-safe lengths, 3–7 slides, and no more than two repair attempts. Caption copy is packaged as hook, body, text CTA, `finkavo.com`, and four to eight focused hashtags.
+4. Request the private review link. It is expiring, single-use, authenticated by Tailscale identity, and tied to the exact revision/evidence hash. The page shows the exact final Instagram caption and all slide alt text before approval.
 5. Approve or reject in the review page. Direct API approval is disabled.
 6. Queue rendering. The outbound Mac agent uploads through presigned R2 URLs; the API re-downloads and verifies all file hashes, sizes, MIME types, and dimensions.
 7. Schedule only after review. Ambiguous provider errors are blocked for reconciliation rather than retried.
@@ -53,7 +53,7 @@ Re-running `infrastructure/macos/install-local-services.sh` is safe. It preserve
 - n8n, renderer, Social API, and renderer agent healthy.
 - Private Tailscale review UI authenticated and revision-bound.
 - Single-use approval recorded with reviewer identity; replay and mutation protections implemented.
-- Additive CockroachDB migrations through `0004_discovery_planning.sql` applied.
+- Additive CockroachDB migrations through `0005_editorial_intelligence.sql` applied.
 - Dedicated `finkavo-social` R2 bucket and bucket-scoped read/write credential configured.
 - `social-media.finkavo.com` configured as the public read-only Buffer media origin. Bucket listing and writes remain private; exact object URLs are public.
 - Approved six-slide production render completed at 1080×1350 with byte-level integrity verification.
@@ -62,7 +62,8 @@ Re-running `infrastructure/macos/install-local-services.sh` is safe. It preserve
 - A clearly labeled five-image English Buffer contract test published successfully through Instagram after verifying anonymous media access and the current Instagram metadata contract.
 - Buffer GraphQL adapter, lease-safe publish queue, status monitor, Discord notifier, retries, dead-letter/block states, and daily health endpoint implemented.
 - Type check, automated tests, and production build pass locally.
-- A full LaunchAgent restart drill recovered all services, preserved seven current n8n workflows (three scheduled), and restored a healthy renderer heartbeat.
+- A full LaunchAgent restart drill recovered all services, preserved ten final modular n8n workflows, and restored a healthy renderer heartbeat.
+- Five approved Finkavo v3 visual families are available: petrol editorial, cream guide, mint checklist, peach deadline, and ink alert. Four dedicated gallery fixtures passed native-size, overflow, and brand-font checks.
 - Daily verified local backup and 180-day R2 carousel retention are configured.
 
 ## Publishing policy
