@@ -16,4 +16,7 @@ describe("Instagram captions", () => {
   it("rejects missing brand hashtag and weak hooks", () => {
     expect(() => validateCaptionParts({ ...good, hook: "Read this.", hashtags: good.hashtags.slice(1) })).toThrow();
   });
+  it("recognizes Portuguese as explicit Portugal context", () => {
+    expect(() => validateCaptionParts({ ...good, hook: "Understand your Portuguese NIF before you need it.", body: "This source-backed guide explains the tax identifier and how to keep it available for administrative tasks." })).not.toThrow();
+  });
 });

@@ -19,7 +19,7 @@ export function validateCaptionParts(parts: CaptionParts): void {
   const body = clean(parts.body);
   const cta = clean(parts.callToAction);
   if (hook.length < 20 || hook.length > 125) throw new Error("Caption hook must be 20–125 characters");
-  if (!/\bPortugal\b/i.test(`${hook} ${body}`)) throw new Error("Caption must clearly identify its Portugal context");
+  if (!/\b(?:Portugal|Portuguese)\b/i.test(`${hook} ${body}`)) throw new Error("Caption must clearly identify its Portugal context");
   if (body.length < 40 || body.length > 1_500) throw new Error("Caption body must be 40–1,500 characters");
   if (cta.length < 8 || cta.length > 65) throw new Error("Caption CTA must be 8–65 characters");
   if (parts.hashtags.length < 4 || parts.hashtags.length > 8) throw new Error("Use four to eight focused hashtags");
