@@ -73,6 +73,19 @@ const topicMatchesPlan = (draftTopic: string, plannedTopic: string) => {
   const planned=new Set(tokens(plannedTopic)); return tokens(draftTopic).some(token=>planned.has(token));
 };
 const finishSentence = (value:string) => value.trim() && !/[.!?)]$/.test(value.trim()) ? `${value.trim()}.` : value.trim();
+const simpleDraft = (topic:string, facts:string[]): z.infer<typeof DraftSchema> => {
+  const subject=/\b(NIF|NISS|IUC|IMI|IBAN|SNS 24|Chave Móvel Digital|Livro de Reclamações)\b/i.exec(topic)?.[1]||"Portugal admin";
+  const category=subject.toUpperCase()==="NIF"?"nif":subject.toUpperCase()==="NISS"?"niss":["IUC","IMI"].includes(subject.toUpperCase())?"tax":"general";
+  const hook=`Portugal basics: understand ${subject} and what you should do next.`;
+  const content=facts.slice(0,5).map(finishSentence);
+  return DraftSchema.parse({topic,category,riskLevel:"medium",postIntent:"evergreen_explainer",hook,caption:content.slice(0,4).join("\n\n"),callToAction:"Save this Portugal guide for later.",hashtags:["#Finkavo","#Portugal","#PortugalAdmin",`#${subject.replace(/[^A-Za-z0-9]/g,"")}`],searchKeywords:[`${subject} Portugal`,`${subject} explained`],slides:[
+    {type:"cover",icon:"document",eyebrow:"Portugal basics",title:`What is ${subject}?`,body:`A plain-English guide to ${subject} in Portugal.`,items:[],highlight:"",sourceLabel:"",altText:`Cover explaining ${subject} in Portugal.`},
+    {type:"content",icon:"document",eyebrow:"Definition",title:`${subject}, explained`,body:content[0],items:[],highlight:"",sourceLabel:"",altText:`Definition of ${subject}.`},
+    {type:"content",icon:"people",eyebrow:"Why it matters",title:"Where it is used",body:content[1]||content[0],items:[],highlight:"",sourceLabel:"",altText:`Common uses of ${subject}.`},
+    {type:"content",icon:"warning",eyebrow:"Good to know",title:"Avoid this mistake",body:[content[2],content[3]].filter(Boolean).join(" "),items:[],highlight:"",sourceLabel:"",altText:`Important practical note about ${subject}.`},
+    {type:"summary",icon:"check",eyebrow:"Quick recap",title:`Remember ${subject}`,body:content[4]||content[3]||content[0],items:[],highlight:"",sourceLabel:"",altText:`Summary of the ${subject} guide.`},
+  ],claims:content.map(fact=>({claim:fact,evidenceQuote:fact}))});
+};
 
 const send = (res: http.ServerResponse, status: number, body: unknown) => {
   res.writeHead(status, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
@@ -415,7 +428,11 @@ const server = http.createServer(async (req, res) => {
       let checked: z.infer<typeof DraftSchema> | null = null;
       let model = "";
       let lastGenerationError = "";
-      for (let attempt = 1; attempt <= 3; attempt++) {
+      if (evidenceSources.some(source=>Number(source.relevanceScore)===100)) {
+        checked=simpleDraft(String(selectedConcept.topic),evidenceSources.flatMap(source=>source.excerpts as string[]));
+        validateSocialDraft(checked); model="deterministic-fact-card-v1";
+      }
+      for (let attempt = 1; !checked && attempt <= 3; attempt++) {
         try {
           const generated = await generateDraft({
             title: String(selectedConcept.topic), sourceUrl: String(source.url),
