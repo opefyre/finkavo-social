@@ -15,5 +15,6 @@ export function validateSocialDraft(draft: Draft) {
     if (["bullets","steps"].includes(slide.type) && (slide.items.length < 2 || slide.items.some((item) => !completeSentence(item) || hasPresentationArtifacts(item)))) throw new Error(`${slide.type} slide items must be clean, complete sentences`);
     if (/photo|photograph|illustration|crossed[- ]out|person standing|people standing/i.test(slide.altText)) throw new Error("Alt text describes artwork that the deterministic template does not render");
   }
-  if (draft.claims.some((claim) => !completeSentence(claim.claim) || !completeSentence(claim.evidenceQuote))) throw new Error("Claims and evidence excerpts must be complete sentences");
+  if (draft.claims.some((claim) => !completeSentence(claim.claim))) throw new Error("Claims must be complete sentences");
+  if (draft.claims.some((claim) => claim.evidenceQuote.trim().length < 12 || endsIncomplete(claim.evidenceQuote))) throw new Error("Evidence excerpts must be substantial and must not end mid-phrase");
 }
