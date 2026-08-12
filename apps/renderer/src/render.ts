@@ -21,8 +21,12 @@ export async function renderManifest(manifest: RenderManifest, root: string): Pr
     const outputs: string[] = [];
     for (const [index, slide] of manifest.slides.entries()) {
       await page.setContent(renderHtml(slide, index + 1, manifest.slides.length, assets), { waitUntil: "load" });
-      const overflow = await page.evaluate(() => document.documentElement.scrollHeight > 1350 || document.documentElement.scrollWidth > 1080);
-      if (overflow) throw new Error(`Slide ${index + 1} overflows the canvas`);
+      const dimensions = await page.evaluate(() => {
+        const slide = document.querySelector(".slide")?.getBoundingClientRect();
+        return { overflow: document.documentElement.scrollHeight > 1350 || document.documentElement.scrollWidth > 1080, width: slide?.width, height: slide?.height };
+      });
+      if (dimensions.width !== 1080 || dimensions.height !== 1350) throw new Error(`Slide ${index + 1} has an invalid ${dimensions.width} × ${dimensions.height} canvas`);
+      if (dimensions.overflow) throw new Error(`Slide ${index + 1} overflows the canvas`);
       const output = path.join(directory, `${String(index + 1).padStart(2, "0")}.png`);
       await page.screenshot({ path: output, type: "png" });
       outputs.push(output);
