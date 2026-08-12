@@ -1,5 +1,5 @@
 {
-  "name": "WF-03 Deadline-aware Daily Planning",
+  "name": "WF-06 Live Approval to Instagram Pipeline",
   "nodes": [
     {
       "parameters": {
@@ -7,24 +7,24 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "30 6 * * *"
+              "expression": "*/2 * * * *"
             }
           ]
         }
       },
-      "id": "plan-schedule",
-      "name": "Daily at 06:30 Lisbon",
+      "id": "live-trigger",
+      "name": "Every 2 minutes",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -520,
+        -500,
         0
       ]
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "http://127.0.0.1:4320/v1/planning/sync",
+        "url": "http://127.0.0.1:4320/v1/automation/advance",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpBearerAuth",
         "sendBody": true,
@@ -35,12 +35,12 @@
           "timeout": 30000
         }
       },
-      "id": "calendar-sync",
-      "name": "Sync recurring deadlines and occasions",
+      "id": "advance",
+      "name": "Advance approved and rendered posts",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -260,
+        -220,
         0
       ],
       "credentials": {
@@ -53,23 +53,33 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "http://127.0.0.1:4320/v1/planning/daily",
+        "url": "http://127.0.0.1:4320/v1/publish-jobs/process",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Publisher-Id",
+              "value": "n8n-live-publisher"
+            }
+          ]
+        },
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
-        "body": "={{ JSON.stringify({capacity:5}) }}",
+        "body": "={}",
         "options": {
-          "timeout": 30000
+          "timeout": 120000
         }
       },
-      "id": "daily-plan",
-      "name": "Select five-post launch mix",
+      "id": "publish",
+      "name": "Send one queued post to Buffer",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        20,
+        60,
         0
       ],
       "credentials": {
@@ -82,7 +92,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "http://127.0.0.1:4320/v1/evidence/research",
+        "url": "http://127.0.0.1:4320/v1/publish-jobs/monitor",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpBearerAuth",
         "sendBody": true,
@@ -93,12 +103,12 @@
           "timeout": 120000
         }
       },
-      "id": "topic-evidence",
-      "name": "Build verified multi-source evidence bundles",
+      "id": "monitor",
+      "name": "Confirm Instagram delivery",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        300,
+        340,
         0
       ],
       "credentials": {
@@ -110,33 +120,33 @@
     }
   ],
   "connections": {
-    "Daily at 06:30 Lisbon": {
+    "Every 2 minutes": {
       "main": [
         [
           {
-            "node": "Sync recurring deadlines and occasions",
+            "node": "Advance approved and rendered posts",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Sync recurring deadlines and occasions": {
+    "Advance approved and rendered posts": {
       "main": [
         [
           {
-            "node": "Select five-post launch mix",
+            "node": "Send one queued post to Buffer",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Select five-post launch mix": {
+    "Send one queued post to Buffer": {
       "main": [
         [
           {
-            "node": "Build verified multi-source evidence bundles",
+            "node": "Confirm Instagram delivery",
             "type": "main",
             "index": 0
           }

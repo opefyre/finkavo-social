@@ -6,7 +6,8 @@ import { DraftSchema } from "./contracts.js";
 import { generateDraft } from "./openai.js";
 import { createBufferMediaUrl, createUploadUrl, verifyUploadedObject, type RenderFileInput } from "./storage.js";
 import { BufferError, createScheduledPost, getPost as getBufferPost } from "./buffer.js";
-import { notifyDiscord } from "./discord.js";
+import { notifyDiscord, notifyDiscordReview } from "./discord.js";
+import { renderReviewPreview } from "./preview.js";
 import { retryDecision } from "./retry-policy.js";
 import { expandCalendar, loadEditorialCalendar, selectDailyMix } from "./planner.js";
 import { validateSocialDraft } from "./draft-quality.js";
@@ -21,8 +22,25 @@ const sql = postgres(databaseUrl, { max: 5, idle_timeout: 20, connect_timeout: 1
 const port = Number(process.env.SOCIAL_API_PORT || 4320);
 const reviewBaseUrl = process.env.REVIEW_BASE_URL;
 const reviewPathPrefix = (process.env.REVIEW_PATH_PREFIX || "").replace(/\/$/, "");
+const dailyPublishSlots = [[8, 30], [11, 30], [14, 30], [18, 0], [21, 0]] as const;
 
 const hash = (value: unknown) => createHash("sha256").update(typeof value === "string" ? value : JSON.stringify(value)).digest("hex");
+const lisbonDate = (date: Date) => new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Lisbon", year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
+const lisbonSlotUtc = (day: string, hour: number, minute: number) => {
+  const [year, month, date] = day.split("-").map(Number);
+  const desired = Date.UTC(year, month - 1, date, hour, minute);
+  let guess = desired;
+  for (let index = 0; index < 2; index++) {
+    const parts = Object.fromEntries(new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Lisbon", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date(guess)).filter(part => part.type !== "literal").map(part => [part.type, Number(part.value)]));
+    const represented = Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute);
+    guess += desired - represented;
+  }
+  return new Date(guess);
+};
+const addLisbonDays = (day: string, days: number) => {
+  const [year, month, date] = day.split("-").map(Number);
+  return lisbonDate(new Date(Date.UTC(year, month - 1, date + days, 12)));
+};
 const fit = (value: unknown, max: number) => {
   const text = String(value || "").trim();
   if (text.length > max) throw new Error(`Approved render text exceeds its ${max}-character contract`);
@@ -510,9 +528,77 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { posts: rows });
     }
 
+    if (req.method === "POST" && url.pathname === "/v1/automation/advance") {
+      const now = new Date();
+      const minimum = now.getTime() + 15 * 60_000;
+      const result = await sql.begin(async (tx) => {
+        const approved = await tx`
+          SELECT p.*, r.id AS revision_id, r.slides AS revision_slides, r.call_to_action AS revision_cta,
+                 r.evidence_hash, r.content_hash
+          FROM social_post p JOIN social_post_revision r ON r.id=p.approved_revision_id
+          WHERE p.status='approved' AND p.current_revision_id=p.approved_revision_id
+          ORDER BY p.approved_at LIMIT 10 FOR UPDATE OF p
+        `;
+        const renders: string[] = [];
+        for (const row of approved) {
+          const idempotencyKey = `render:${row.id}:${row.revision_id}`;
+          const [existing] = await tx`SELECT id FROM social_render_job WHERE idempotency_key=${idempotencyKey}`;
+          if (existing) continue;
+          const manifest = createRenderManifest(row as Record<string, unknown>, { id: row.revision_id, slides: row.revision_slides, call_to_action: row.revision_cta });
+          const [job] = await tx`INSERT INTO social_render_job (post_id,revision_id,idempotency_key,manifest,manifest_hash) VALUES (${row.id},${row.revision_id},${idempotencyKey},${tx.json(manifest)},${hash(manifest)}) RETURNING id`;
+          await tx`UPDATE social_post SET status='render_queued',updated_at=now() WHERE id=${row.id}`;
+          await tx`INSERT INTO social_event (post_id,event_type,payload) VALUES (${row.id},'render.queued',${tx.json({ jobId: job.id, revisionId: row.revision_id, automated: true })})`;
+          renders.push(String(row.id));
+        }
+
+        const occupiedRows = await tx`SELECT scheduled_at FROM social_publish_job WHERE scheduled_at >= ${new Date(minimum).toISOString()} AND status NOT IN ('failed','blocked')`;
+        const occupied = new Set(occupiedRows.map(row => new Date(String(row.scheduled_at)).toISOString()));
+        const candidates: Date[] = [];
+        const today = lisbonDate(now);
+        for (let dayOffset = 0; dayOffset < 8; dayOffset++) for (const [hour, minute] of dailyPublishSlots) {
+          const slot = lisbonSlotUtc(addLisbonDays(today, dayOffset), hour, minute);
+          if (slot.getTime() >= minimum && !occupied.has(slot.toISOString())) candidates.push(slot);
+        }
+        const rendered = await tx`
+          SELECT p.*, r.id AS revision_id, j.id AS render_job_id
+          FROM social_post p JOIN social_post_revision r ON r.id=p.approved_revision_id
+          JOIN social_render_job j ON j.post_id=p.id AND j.revision_id=r.id AND j.status='completed'
+          WHERE p.status='rendered' AND p.current_revision_id=p.approved_revision_id
+          ORDER BY p.rendered_at LIMIT 10 FOR UPDATE OF p
+        `;
+        const scheduled: Array<{ postId: string; scheduledAt: string }> = [];
+        for (const post of rendered) {
+          const slot = candidates.shift();
+          if (!slot) break;
+          const idempotencyKey = `buffer:${post.id}:${post.revision_id}:${slot.toISOString()}`;
+          const [existing] = await tx`SELECT id FROM social_publish_job WHERE post_id=${post.id} AND revision_id=${post.revision_id}`;
+          if (existing) continue;
+          const [job] = await tx`INSERT INTO social_publish_job (post_id,revision_id,render_job_id,idempotency_key,scheduled_at) VALUES (${post.id},${post.revision_id},${post.render_job_id},${idempotencyKey},${slot.toISOString()}) RETURNING id`;
+          await tx`UPDATE social_post SET scheduled_at=${slot.toISOString()},updated_at=now() WHERE id=${post.id}`;
+          await tx`INSERT INTO social_event (post_id,event_type,payload) VALUES (${post.id},'publish.queued',${tx.json({ jobId: job.id, scheduledAt: slot.toISOString(), automated: true })})`;
+          scheduled.push({ postId: String(post.id), scheduledAt: slot.toISOString() });
+          occupied.add(slot.toISOString());
+        }
+        return { renders, scheduled };
+      });
+      return send(res, 200, result);
+    }
+
     const reviewRequest = url.pathname.match(/^\/v1\/posts\/([0-9a-f-]+)\/request-review$/i);
     if (req.method === "POST" && reviewRequest) {
       const { expiresInMinutes } = ReviewRequestSchema.parse(await readJson(req));
+      const [previewSource] = await sql`
+        SELECT p.*, r.id AS revision_id, r.slides AS revision_slides, r.call_to_action AS revision_cta,
+               r.hook AS revision_hook, r.caption AS revision_caption, r.hashtags AS revision_hashtags
+        FROM social_post p JOIN social_post_revision r ON r.id = p.current_revision_id
+        WHERE p.id = ${reviewRequest[1]} AND p.status = 'draft'
+      `;
+      if (!previewSource) return send(res, 409, { error: "Only a current draft revision can be sent for review" });
+      const previewFiles = await renderReviewPreview(createRenderManifest(previewSource as Record<string, unknown>, {
+        id: previewSource.revision_id,
+        slides: previewSource.revision_slides,
+        call_to_action: previewSource.revision_cta,
+      }));
       const rawToken = randomBytes(32).toString("base64url");
       const [created] = await sql.begin(async (tx) => {
         const [post] = await tx`
@@ -529,12 +615,19 @@ const server = http.createServer(async (req, res) => {
           RETURNING expires_at
         `;
         await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'review.requested', ${tx.json({ revisionId: post.current_revision_id, expiresInMinutes })})`;
+        await tx`UPDATE social_post SET status='review_requested',updated_at=now() WHERE id=${post.id}`;
         return [token];
       });
       if (!created) return send(res, 409, { error: "Only a current draft revision can be sent for review" });
       const base = reviewBaseUrl || `${url.protocol}//${url.host}`;
       const reviewUrl = `${base.replace(/\/$/, "")}/review/${rawToken}`;
-      await notifyDiscord("approval", "Instagram carousel ready for review", { post: reviewRequest[1], expiresAt: created.expires_at }, reviewUrl);
+      const finalCaption = composeInstagramCaption({
+        hook: String(previewSource.revision_hook),
+        body: String(previewSource.revision_caption),
+        callToAction: String(previewSource.revision_cta),
+        hashtags: previewSource.revision_hashtags as string[],
+      });
+      await notifyDiscordReview({ title: "Instagram carousel ready for review", postId: reviewRequest[1], expiresAt: created.expires_at, actionUrl: reviewUrl, caption: finalCaption, files: previewFiles });
       return send(res, 201, { reviewUrl, expiresAt: created.expires_at });
     }
 

@@ -2,11 +2,20 @@
   "name": "WF-04 Generate Planned Social Post",
   "nodes": [
     {
-      "parameters": {},
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "45 6 * * *"
+            }
+          ]
+        }
+      },
       "id": "generate-manual",
-      "name": "Run manually",
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
+      "name": "Daily at 06:45 Lisbon",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
       "position": [
         -500,
         0
@@ -28,7 +37,13 @@
       "position": [
         -260,
         0
-      ]
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "socialApiBearer01",
+          "name": "Finkavo Social API"
+        }
+      }
     },
     {
       "parameters": {
@@ -54,7 +69,7 @@
         "rawContentType": "application/json",
         "body": "={{ JSON.stringify($json) }}",
         "options": {
-          "timeout": 120000
+          "timeout": 360000
         }
       },
       "id": "generate-post",
@@ -64,11 +79,17 @@
       "position": [
         220,
         0
-      ]
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "socialApiBearer01",
+          "name": "Finkavo Social API"
+        }
+      }
     }
   ],
   "connections": {
-    "Run manually": {
+    "Daily at 06:45 Lisbon": {
       "main": [
         [
           {
