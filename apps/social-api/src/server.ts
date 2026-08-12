@@ -615,7 +615,7 @@ const server = http.createServer(async (req, res) => {
           RETURNING expires_at
         `;
         await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'review.requested', ${tx.json({ revisionId: post.current_revision_id, expiresInMinutes })})`;
-        await tx`UPDATE social_post SET status='review_requested',updated_at=now() WHERE id=${post.id}`;
+        await tx`UPDATE social_post SET status='ready_for_review',updated_at=now() WHERE id=${post.id}`;
         return [token];
       });
       if (!created) return send(res, 409, { error: "Only a current draft revision can be sent for review" });
