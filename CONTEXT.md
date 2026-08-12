@@ -356,15 +356,14 @@ Deferred:
 9. Local state reconciles with Buffer after n8n or the renderer restarts.
 10. No secret appears in the repository, n8n export, events, render manifest, or Discord messages.
 
-## 11. Open decisions before implementation
+## 11. Resolved implementation decisions
 
-- Whether this workflow lives inside the existing Finkavo monorepo or remains a separate repository that consumes Finkavo APIs. **Recommendation:** keep n8n exports and renderer code here, but place the Social API, shared schemas, and Drizzle migrations in the Finkavo monorepo.
-- Exact brand assets, fonts, PT/EN voice guide, disclaimer, caption source format, and visual fixtures.
-- Initial official/RSS discovery allowlist and responsible reviewer(s).
-- Buffer plan, organization owner/API-key access, Instagram Professional connection, and test channel.
-- R2 retention windows for rejected, failed, scheduled, and published artifacts.
-- Whether Portuguese social editions should ever be added; they are outside the MVP.
-- Whether approval occurs on a small Finkavo review page linked from Discord or inside a Discord bot. **Recommendation:** a Finkavo review page; Discord remains the notification surface.
+- The workflow is maintained in the separate `opefyre/finkavo-social` repository and consumes Finkavo's existing corpus and database without modifying unrelated application tables.
+- The supplied Finkavo logo and project-local template system are the MVP brand baseline. English is the only publishing language.
+- Official Portuguese sources are the evidence allowlist. GDELT is free discovery-only input and can never serve as factual evidence.
+- Buffer uses the dedicated Finkavo Instagram channel and a least-privilege personal API key. Publishing stays human-gated.
+- Generated carousel media under `social/carousels/` expires after 180 days. Database audit records, hashes, evidence, and provider IDs remain durable.
+- Approval occurs on the private, Tailscale-authenticated Finkavo review page. Discord is notification-only.
 
 ## 12. External contracts verified on 2026-08-11
 
@@ -382,11 +381,16 @@ References:
 - Buffer Instagram support: https://support.buffer.com/article/554-using-instagram-with-buffer
 - Cloudflare D1 external-access guidance: https://developers.cloudflare.com/d1/tutorials/build-an-api-to-access-d1/
 
-## 13. Implemented local MVP — 2026-08-12
+## 13. Production-ready local workflow — 2026-08-12
 
 - A private Social API runs on the spare Mac and uses additive `social_*` tables in CockroachDB.
 - Candidate selection reads only public corpus chunks, excludes unavailable/retracted documents, and prioritizes official sources.
 - OpenAI structured output creates English drafts with evidence quotes; the API key remains in the protected host environment.
-- n8n stores encrypted Bearer credentials and has separate manual generate, approve, and approved-only render workflows.
+- n8n stores encrypted Bearer credentials and retains seven final modular workflows: three scheduled operational workflows and four human-triggered editorial workflows.
 - A real official-source draft completed `draft → approved → rendered` and produced six 1080 × 1350 PNGs.
-- No schedule, public service, Buffer integration, or publishing action is active in this phase.
+- The review UI and all application services remain private behind Tailscale. Only exact R2 media object URLs are publicly readable for Buffer; listing and writes remain private.
+- Buffer scheduling, status reconciliation, lease recovery, retry/dead-letter behavior, and Discord approval/published/error/system notifications are configured.
+- A guarded five-image Buffer contract post successfully reached Instagram using the current media contract and public R2 custom domain.
+- n8n state, encryption configuration, and service secrets are backed up daily on the spare Mac with 30-day local retention; a verified recovery copy is held in Finkavo's protected secrets folder on the primary Mac.
+- All four services passed a restart-recovery drill. Workflow state remained intact and the renderer heartbeat recovered.
+- Generated carousel objects have a verified 180-day Cloudflare R2 lifecycle rule.

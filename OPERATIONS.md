@@ -20,12 +20,21 @@ Runtime secrets exist only on the spare Mac in `~/.config/finkavo-social/service
 
 Back up this file with `~/.n8n`; encrypted n8n credentials cannot be restored without the original `N8N_ENCRYPTION_KEY`.
 
+## Backups and retention
+
+- `com.finkavo.social.backup` creates a consistent n8n SQLite backup together with the n8n config and protected service environment every day at 03:30 local time.
+- Host-local archives live in `~/Backups/FinkavoSocial`, are mode `0600`, are integrity-checked after creation, and expire after 30 days.
+- Keep at least one verified copy outside the spare Mac in Finkavo's protected secrets storage. Never place an archive in Git, cloud-synced public storage, or Discord.
+- Restore n8n only from an archive that contains both `n8n/database.sqlite` and `n8n/config`; restore `services.env` with mode `0600` before starting the services.
+- R2 objects under `social/carousels/` expire after 180 days. The database remains the durable audit record after media expiry.
+
 ## Services
 
 - `com.finkavo.social.n8n`
 - `com.finkavo.social.renderer`
 - `com.finkavo.social.api`
 - `com.finkavo.social.renderer-agent`
+- `com.finkavo.social.backup`
 
 Re-running `infrastructure/macos/install-local-services.sh` is safe. It preserves the protected environment, rebuilds both apps, and retries transient LaunchAgent bootstrap failures.
 
@@ -52,6 +61,8 @@ Re-running `infrastructure/macos/install-local-services.sh` is safe. It preserve
 - A clearly labeled five-image English Buffer contract test published successfully through Instagram after verifying anonymous media access and the current Instagram metadata contract.
 - Buffer GraphQL adapter, lease-safe publish queue, status monitor, Discord notifier, retries, dead-letter/block states, and daily health endpoint implemented.
 - Type check, automated tests, and production build pass locally.
+- A full LaunchAgent restart drill recovered all services, preserved seven current n8n workflows (three scheduled), and restored a healthy renderer heartbeat.
+- Daily verified local backup and 180-day R2 carousel retention are configured.
 
 ## Publishing policy
 

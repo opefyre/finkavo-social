@@ -1,6 +1,6 @@
 # Native spare-Mac services
 
-This is the zero-admin alternative to Docker. It installs pinned Node.js and n8n under the user's home directory, generates private service secrets, installs renderer dependencies, and registers n8n and the renderer as macOS LaunchAgents.
+This is the zero-admin alternative to Docker. It installs pinned Node.js and n8n under the user's home directory, generates private service secrets, installs renderer dependencies, and registers the application services and daily backup as macOS LaunchAgents.
 
 The services listen only on localhost:
 
@@ -17,3 +17,5 @@ zsh infrastructure/macos/install-local-services.sh
 ```
 
 Logs live in `~/Library/Logs/FinkavoSocial`.
+
+The daily backup runs at 03:30 and keeps verified, mode-`0600` archives in `~/Backups/FinkavoSocial` for 30 days. Periodically copy a verified archive to Finkavo's protected secrets storage on another machine.

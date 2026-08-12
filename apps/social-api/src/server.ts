@@ -7,6 +7,7 @@ import { generateDraft } from "./openai.js";
 import { createBufferMediaUrl, createUploadUrl, verifyUploadedObject, type RenderFileInput } from "./storage.js";
 import { BufferError, createScheduledPost, getPost as getBufferPost } from "./buffer.js";
 import { notifyDiscord } from "./discord.js";
+import { retryDecision } from "./retry-policy.js";
 
 const databaseUrl = process.env.DATABASE_URL;
 const apiToken = process.env.SOCIAL_API_TOKEN;
@@ -442,16 +443,17 @@ const server = http.createServer(async (req, res) => {
       const [updated] = await sql.begin(async (tx) => {
         const [job] = await tx`SELECT * FROM social_render_job WHERE id = ${failRenderMatch[1]} AND status = 'leased' AND lease_owner = ${workerId} FOR UPDATE`;
         if (!job) return [];
-        const retry = failure.retryable && Number(job.attempt_count) < 3;
-        const delayMinutes = Number(job.attempt_count) === 1 ? 2 : Number(job.attempt_count) === 2 ? 10 : 30;
+        const decision = retryDecision(Number(job.attempt_count), failure.retryable);
+        const { retry, delayMinutes } = decision;
         const [next] = retry
-          ? await tx`UPDATE social_render_job SET status = 'retrying', available_at = now() + (${delayMinutes}::STRING || ' minutes')::INTERVAL, lease_owner = NULL, lease_expires_at = NULL, error_code = ${failure.code}, error_message = ${failure.message}, updated_at = now() WHERE id = ${job.id} RETURNING *`
+          ? await tx`UPDATE social_render_job SET status = 'retrying', available_at = now() + (${delayMinutes!}::STRING || ' minutes')::INTERVAL, lease_owner = NULL, lease_expires_at = NULL, error_code = ${failure.code}, error_message = ${failure.message}, updated_at = now() WHERE id = ${job.id} RETURNING *`
           : await tx`UPDATE social_render_job SET status = 'failed', lease_owner = NULL, lease_expires_at = NULL, error_code = ${failure.code}, error_message = ${failure.message}, updated_at = now() WHERE id = ${job.id} RETURNING *`;
         await tx`UPDATE social_render_attempt SET finished_at = now(), outcome = ${retry ? "retrying" : "failed"}, error_code = ${failure.code}, error_message = ${failure.message} WHERE job_id = ${job.id} AND attempt_number = ${job.attempt_count}`;
         await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${job.post_id}, ${retry ? "render.retrying" : "render.failed"}, ${tx.json({ jobId: job.id, attempt: job.attempt_count, delayMinutes: retry ? delayMinutes : null, code: failure.code })})`;
         if (!retry) await tx`UPDATE social_post SET status = 'failed', updated_at = now() WHERE id = ${job.post_id}`;
         return [next];
       });
+      if (updated && updated.status === "failed") await notifyDiscord("errors", "Carousel rendering failed permanently", { post: updated.post_id, job: updated.id, code: updated.error_code, attempt: updated.attempt_count });
       return updated ? send(res, 200, { job: updated }) : send(res, 409, { error: "Render job is not leased by this worker" });
     }
 
@@ -511,12 +513,10 @@ const server = http.createServer(async (req, res) => {
         return send(res, 200, { job: saved });
       } catch (error) {
         const failure = error instanceof BufferError ? error : new BufferError(error instanceof Error ? error.message : "Publish failure", "PUBLISH_FAILED", false, true);
-        const retry = failure.retryable && !failure.ambiguous && Number(job.attempt_count) < 3;
-        const blocked = failure.ambiguous;
-        const delayMinutes = Number(job.attempt_count) === 1 ? 2 : Number(job.attempt_count) === 2 ? 10 : 30;
+        const { retry, blocked, delayMinutes } = retryDecision(Number(job.attempt_count), failure.retryable, failure.ambiguous);
         const [failed] = await sql.begin(async (tx) => {
           const [updated] = retry
-            ? await tx`UPDATE social_publish_job SET status = 'retrying', available_at = now() + (${delayMinutes}::STRING || ' minutes')::INTERVAL, lease_owner = NULL, lease_expires_at = NULL, error_code = ${failure.code}, error_message = ${failure.message}, updated_at = now() WHERE id = ${job.id} RETURNING *`
+            ? await tx`UPDATE social_publish_job SET status = 'retrying', available_at = now() + (${delayMinutes!}::STRING || ' minutes')::INTERVAL, lease_owner = NULL, lease_expires_at = NULL, error_code = ${failure.code}, error_message = ${failure.message}, updated_at = now() WHERE id = ${job.id} RETURNING *`
             : await tx`UPDATE social_publish_job SET status = ${blocked ? "blocked" : "failed"}, lease_owner = NULL, lease_expires_at = NULL, error_code = ${failure.code}, error_message = ${failure.message}, updated_at = now() WHERE id = ${job.id} RETURNING *`;
           await tx`UPDATE social_publish_attempt SET finished_at = now(), outcome = ${retry ? "retrying" : blocked ? "blocked" : "failed"}, error_code = ${failure.code}, error_message = ${failure.message} WHERE job_id = ${job.id} AND attempt_number = ${job.attempt_count}`;
           await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${job.post_id}, ${retry ? "publish.retrying" : blocked ? "publish.blocked" : "publish.failed"}, ${tx.json({ jobId: job.id, attempt: job.attempt_count, code: failure.code, delayMinutes: retry ? delayMinutes : null })})`;

@@ -66,7 +66,8 @@ cp "$PROJECT_DIR/infrastructure/macos/run-n8n.sh" "$CONFIG_ROOT/run-n8n.sh"
 cp "$PROJECT_DIR/infrastructure/macos/run-renderer.sh" "$CONFIG_ROOT/run-renderer.sh"
 cp "$PROJECT_DIR/infrastructure/macos/run-social-api.sh" "$CONFIG_ROOT/run-social-api.sh"
 cp "$PROJECT_DIR/infrastructure/macos/run-renderer-agent.sh" "$CONFIG_ROOT/run-renderer-agent.sh"
-chmod 700 "$CONFIG_ROOT/run-n8n.sh" "$CONFIG_ROOT/run-renderer.sh" "$CONFIG_ROOT/run-social-api.sh" "$CONFIG_ROOT/run-renderer-agent.sh"
+cp "$PROJECT_DIR/infrastructure/macos/backup-local-state.sh" "$CONFIG_ROOT/backup-local-state.sh"
+chmod 700 "$CONFIG_ROOT/run-n8n.sh" "$CONFIG_ROOT/run-renderer.sh" "$CONFIG_ROOT/run-social-api.sh" "$CONFIG_ROOT/run-renderer-agent.sh" "$CONFIG_ROOT/backup-local-state.sh"
 
 sed -e "s|__HOME__|$HOME|g" -e "s|__NODE_ROOT__|$NODE_ROOT|g" -e "s|__N8N_ROOT__|$N8N_ROOT|g" -e "s|__PROJECT_DIR__|$PROJECT_DIR|g" \
   "$PROJECT_DIR/infrastructure/macos/com.finkavo.social.n8n.plist.template" > "$LAUNCH_AGENTS/com.finkavo.social.n8n.plist"
@@ -76,7 +77,9 @@ sed -e "s|__HOME__|$HOME|g" -e "s|__NODE_ROOT__|$NODE_ROOT|g" -e "s|__PROJECT_DI
   "$PROJECT_DIR/infrastructure/macos/com.finkavo.social.api.plist.template" > "$LAUNCH_AGENTS/com.finkavo.social.api.plist"
 sed -e "s|__HOME__|$HOME|g" -e "s|__NODE_ROOT__|$NODE_ROOT|g" -e "s|__PROJECT_DIR__|$PROJECT_DIR|g" \
   "$PROJECT_DIR/infrastructure/macos/com.finkavo.social.renderer-agent.plist.template" > "$LAUNCH_AGENTS/com.finkavo.social.renderer-agent.plist"
-chmod 600 "$LAUNCH_AGENTS/com.finkavo.social.n8n.plist" "$LAUNCH_AGENTS/com.finkavo.social.renderer.plist" "$LAUNCH_AGENTS/com.finkavo.social.api.plist" "$LAUNCH_AGENTS/com.finkavo.social.renderer-agent.plist"
+sed -e "s|__HOME__|$HOME|g" \
+  "$PROJECT_DIR/infrastructure/macos/com.finkavo.social.backup.plist.template" > "$LAUNCH_AGENTS/com.finkavo.social.backup.plist"
+chmod 600 "$LAUNCH_AGENTS/com.finkavo.social.n8n.plist" "$LAUNCH_AGENTS/com.finkavo.social.renderer.plist" "$LAUNCH_AGENTS/com.finkavo.social.api.plist" "$LAUNCH_AGENTS/com.finkavo.social.renderer-agent.plist" "$LAUNCH_AGENTS/com.finkavo.social.backup.plist"
 
 cd "$PROJECT_DIR"
 "$NODE_ROOT/bin/corepack" pnpm --version >/dev/null
@@ -87,8 +90,12 @@ if ! "$NODE_ROOT/bin/corepack" pnpm install --frozen-lockfile; then
   [[ -x "$PROJECT_DIR/apps/renderer/node_modules/.bin/tsc" ]] || exit 1
 fi
 "$NODE_ROOT/bin/node" apps/renderer/node_modules/playwright/cli.js install chromium
-apps/renderer/node_modules/.bin/tsc -p apps/renderer/tsconfig.json
-apps/social-api/node_modules/.bin/tsc -p apps/social-api/tsconfig.json
+"$NODE_ROOT/bin/node" apps/renderer/node_modules/typescript/bin/tsc -p apps/renderer/tsconfig.json
+"$NODE_ROOT/bin/node" apps/social-api/node_modules/typescript/bin/tsc -p apps/social-api/tsconfig.json
+[[ -f apps/renderer/dist/server.js && -f apps/renderer/dist/agent.js && -f apps/social-api/dist/server.js ]] || {
+  print -u2 "Required production build artifacts are missing"
+  exit 1
+}
 
 for label in com.finkavo.social.n8n com.finkavo.social.renderer com.finkavo.social.api com.finkavo.social.renderer-agent; do
   launchctl bootout "gui/$(id -u)/$label" 2>/dev/null || true
@@ -107,6 +114,10 @@ for label in com.finkavo.social.n8n com.finkavo.social.renderer com.finkavo.soci
   launchctl enable "gui/$(id -u)/$label"
   launchctl kickstart -k "gui/$(id -u)/$label"
 done
+
+launchctl bootout "gui/$(id -u)/com.finkavo.social.backup" 2>/dev/null || true
+launchctl bootstrap "gui/$(id -u)" "$LAUNCH_AGENTS/com.finkavo.social.backup.plist"
+launchctl enable "gui/$(id -u)/com.finkavo.social.backup"
 
 print "Installed Node $NODE_VERSION and n8n $N8N_VERSION"
 print "Service secrets: $ENV_FILE"
