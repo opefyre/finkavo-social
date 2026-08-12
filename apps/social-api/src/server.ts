@@ -44,6 +44,18 @@ const classifyTopic = (value: unknown) => {
   if (/nif|finan.as/.test(text)) return "nif";
   return "general";
 };
+const exactTermMatch = (text: string, term: string) => {
+  const escaped=term.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+  return new RegExp(`(^|[^a-zà-ÿ0-9])${escaped}([^a-zà-ÿ0-9]|$)`,"iu").test(text);
+};
+const sourceDomainAllowed = (terms: string[], rawUrl: unknown) => {
+  const hostname=new URL(String(rawUrl)).hostname.replace(/^www\./,""); const joined=terms.join(" ");
+  const allows=(domains:string[])=>domains.some(domain=>hostname===domain||hostname.endsWith(`.${domain}`));
+  if (/\b(?:nif|modelo 3|irs|iva|iuc|imi|aimi|imt)\b/i.test(joined)) return allows(["portaldasfinancas.gov.pt","gov.pt"]);
+  if (/\b(?:aima|autorização de residência)\b/i.test(joined)) return allows(["aima.gov.pt","gov.pt"]);
+  if (/\b(?:registo de saúde|processo clínico|sns)\b/i.test(joined)) return allows(["sns.gov.pt","sns24.gov.pt","gov.pt"]);
+  return true;
+};
 
 const send = (res: http.ServerResponse, status: number, body: unknown) => {
   res.writeHead(status, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
@@ -271,7 +283,7 @@ const server = http.createServer(async (req, res) => {
         const pattern = terms.map(v=>v.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|");
         const candidates = pattern ? await sql`
           SELECT d.id,d.title,d.source_url,d.source_authority,d.source_tier,d.original_lang,d.content_hash,d.fetched_at,d.last_verified_at,
-                 array_agg(c.text ORDER BY c.chunk_index) FILTER (WHERE c.chunk_index < 8) AS excerpts
+                 array_agg(c.text ORDER BY c.chunk_index) FILTER (WHERE c.text ~* ${pattern}) AS excerpts
           FROM document d JOIN chunk c ON c.document_id=d.id AND c.vault_doc_id IS NULL
           WHERE d.verified_still_available=true AND d.freshness_confidence='fresh' AND d.source_tier IN ('official','professional','editorial')
             AND (d.title ~* ${pattern} OR c.text ~* ${pattern})
@@ -280,11 +292,12 @@ const server = http.createServer(async (req, res) => {
           LIMIT 40
         ` : [];
         const normalizedTerms=terms.map(v=>v.toLocaleLowerCase("pt"));
-        const scored: any[]=(candidates as any[]).map(source=>{const title=String(source.title).toLocaleLowerCase("pt");const body=(source.excerpts as string[]).join(" ").toLocaleLowerCase("pt");const matched=normalizedTerms.filter(term=>title.includes(term)||body.includes(term));const score=matched.reduce((sum,term)=>sum+(title.includes(term)?6:2),0);return {...source,relevance_score:score,matched_terms:matched};}).filter(source=>source.relevance_score>=2).sort((a,b)=>b.relevance_score-a.relevance_score||String(b.last_verified_at||b.fetched_at).localeCompare(String(a.last_verified_at||a.fetched_at)));
+        const genericAuthorityTerms=new Set(["sns","aima","irs","iva"]); const substantiveTerms=normalizedTerms.filter(term=>!genericAuthorityTerms.has(term));
+        const scored: any[]=(candidates as any[]).map(source=>{const title=String(source.title).toLocaleLowerCase("pt");const body=(source.excerpts as string[]).join(" ").toLocaleLowerCase("pt");const matched=normalizedTerms.filter(term=>exactTermMatch(title,term)||exactTermMatch(body,term));const substantiveMatched=matched.filter(term=>substantiveTerms.includes(term));const score=matched.reduce((sum,term)=>sum+(exactTermMatch(title,term)?6:2),0);return {...source,relevance_score:score,matched_terms:matched,substantive_matched:substantiveMatched};}).filter(source=>source.relevance_score>=2&&source.substantive_matched.length>0&&sourceDomainAllowed(normalizedTerms,source.source_url)).sort((a,b)=>b.relevance_score-a.relevance_score||String(b.last_verified_at||b.fetched_at).localeCompare(String(a.last_verified_at||a.fetched_at)));
         const sources: any[] = []; const seenAuthorities=new Set<string>();
         for(const source of scored){const authority=String(source.source_authority||new URL(String(source.source_url)).hostname);if(seenAuthorities.has(authority)&&sources.length>=2)continue;sources.push(source);seenAuthorities.add(authority);if(sources.length>=4)break;}
         const needsOfficial = slot.risk_level === 'high' || slot.timing_class !== 'evergreen';
-        const valid = sources.length >= 2 && sources[0].relevance_score>=4 && (!needsOfficial || sources.some(s=>s.source_tier==='official'));
+        const valid = sources.length >= 1 && sources[0].relevance_score>=4 && (!needsOfficial || sources.some(s=>s.source_tier==='official'));
         if (!valid) { await sql`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${slot.id}`; results.push({slotId:slot.id,topic:slot.topic,state:'held',sources:sources.length}); continue; }
         const normalized=sources.map(s=>({documentId:s.id,url:s.source_url,title:s.title,publisher:s.source_authority,tier:s.source_tier,locale:s.original_lang,retrievedAt:s.last_verified_at||s.fetched_at,contentHash:s.content_hash,relevanceScore:s.relevance_score,matchedTerms:s.matched_terms,excerpts:(s.excerpts as string[]).slice(0,6)}));
         const bundleHash=hash(normalized); const freshnessDays=slot.risk_level==='high'?7:slot.risk_level==='medium'?30:90;
@@ -395,6 +408,8 @@ const server = http.createServer(async (req, res) => {
           });
           const candidate = DraftSchema.parse(generated.draft);
           if (!candidate.topic.toLocaleLowerCase("en").includes(String(selectedConcept.topic).split(":")[0].toLocaleLowerCase("en").slice(0, 24))) throw new Error("Draft drifted away from the predetermined editorial topic");
+          const publicCopy=[candidate.hook,candidate.caption,...candidate.slides.flatMap(slide=>[slide.title,slide.body,...slide.items])].join(" ");
+          if (/\b(?:sources?|excerpts?|documents?)\b.{0,60}\b(?:do not|does not|don't|cannot|fail(?:s|ed)? to|not enough)\b/i.test(publicCopy)) throw new Error("Draft discusses missing evidence instead of delivering the predetermined topic");
           validateSocialDraft(candidate);
           if (appearsPortuguese(candidate)) throw new Error("User-facing draft copy must be English; evidence quotes may remain Portuguese");
           const corpusText = evidenceSources.flatMap(s=>s.excerpts as string[]).join("\n").replace(/\s+/g, " ");
