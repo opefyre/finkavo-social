@@ -17,3 +17,5 @@ The app and existing Instagram posts establish this palette:
 - ink: `#1B2B29`
 
 The PNG logo is a fixed input and must never be recreated in CSS. The Lisbon desk image is an original generated background with no embedded text or branding; all copy and marks are rendered deterministically on top. CTAs are editorial text, never fake UI buttons.
+
+Typography matches the original Finkavo social campaign: self-hosted variable Fraunces for display headlines and self-hosted variable Noto Sans for supporting copy. The renderer embeds both Latin ranges, waits for them to load, and never uses condensed fonts, scaling transforms, or artificial font stretching.

@@ -7,13 +7,21 @@ export async function renderManifest(manifest: RenderManifest, root: string): Pr
   const directory = path.resolve(root, manifest.postId, manifest.revisionId);
   await mkdir(directory, { recursive: true });
   const assetRoot = path.resolve(process.env.RENDER_ASSET_ROOT || "branding/assets");
-  const [logo, background] = await Promise.all([
+  const [logo, background, frauncesLatin, frauncesLatinExt, notoLatin, notoLatinExt] = await Promise.all([
     readFile(path.join(assetRoot, "finkavo-logo-512.png")),
     readFile(path.join(assetRoot, "lisbon-desk-background-v1.png")),
+    readFile(path.join(assetRoot, "fonts/fraunces-normal-latin.woff2")),
+    readFile(path.join(assetRoot, "fonts/fraunces-normal-latin-ext.woff2")),
+    readFile(path.join(assetRoot, "fonts/noto-sans-normal-latin.woff2")),
+    readFile(path.join(assetRoot, "fonts/noto-sans-normal-latin-ext.woff2")),
   ]);
   const assets = {
     logoDataUrl: `data:image/png;base64,${logo.toString("base64")}`,
     backgroundDataUrl: `data:image/png;base64,${background.toString("base64")}`,
+    frauncesLatinDataUrl: `data:font/woff2;base64,${frauncesLatin.toString("base64")}`,
+    frauncesLatinExtDataUrl: `data:font/woff2;base64,${frauncesLatinExt.toString("base64")}`,
+    notoLatinDataUrl: `data:font/woff2;base64,${notoLatin.toString("base64")}`,
+    notoLatinExtDataUrl: `data:font/woff2;base64,${notoLatinExt.toString("base64")}`,
   };
   const browser = await chromium.launch({ headless: true });
   try {
@@ -21,6 +29,7 @@ export async function renderManifest(manifest: RenderManifest, root: string): Pr
     const outputs: string[] = [];
     for (const [index, slide] of manifest.slides.entries()) {
       await page.setContent(renderHtml(slide, index + 1, manifest.slides.length, assets), { waitUntil: "load" });
+      await page.evaluate(() => document.fonts.ready);
       const dimensions = await page.evaluate(() => {
         const slide = document.querySelector(".slide")?.getBoundingClientRect();
         return { overflow: document.documentElement.scrollHeight > 1350 || document.documentElement.scrollWidth > 1080, width: slide?.width, height: slide?.height };
