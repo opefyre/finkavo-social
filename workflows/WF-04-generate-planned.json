@@ -7,13 +7,13 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "45 6 * * *"
+              "expression": "2 8 * * *"
             }
           ]
         }
       },
       "id": "generate-manual",
-      "name": "Daily at 06:45 Lisbon",
+      "name": "Daily at 08:02 Lisbon",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
@@ -89,7 +89,7 @@
     }
   ],
   "connections": {
-    "Daily at 06:45 Lisbon": {
+    "Daily at 08:02 Lisbon": {
       "main": [
         [
           {

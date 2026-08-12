@@ -7,13 +7,13 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "30 6 * * *"
+              "expression": "0 8 * * *"
             }
           ]
         }
       },
       "id": "plan-schedule",
-      "name": "Daily at 06:30 Lisbon",
+      "name": "Daily at 08:00 Lisbon",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
@@ -110,7 +110,7 @@
     }
   ],
   "connections": {
-    "Daily at 06:30 Lisbon": {
+    "Daily at 08:00 Lisbon": {
       "main": [
         [
           {
