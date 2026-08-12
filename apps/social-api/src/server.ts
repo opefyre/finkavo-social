@@ -1,18 +1,46 @@
 import http from "node:http";
+import { createHash, randomBytes } from "node:crypto";
 import postgres from "postgres";
 import { z } from "zod";
 import { DraftSchema } from "./contracts.js";
 import { generateDraft } from "./openai.js";
+import { createBufferMediaUrl, createUploadUrl, verifyUploadedObject, type RenderFileInput } from "./storage.js";
+import { BufferError, createScheduledPost, getPost as getBufferPost } from "./buffer.js";
+import { notifyDiscord } from "./discord.js";
 
 const databaseUrl = process.env.DATABASE_URL;
 const apiToken = process.env.SOCIAL_API_TOKEN;
 if (!databaseUrl || !apiToken) throw new Error("DATABASE_URL and SOCIAL_API_TOKEN are required");
 const sql = postgres(databaseUrl, { max: 5, idle_timeout: 20, connect_timeout: 15 });
 const port = Number(process.env.SOCIAL_API_PORT || 4320);
+const reviewBaseUrl = process.env.REVIEW_BASE_URL;
+const reviewPathPrefix = (process.env.REVIEW_PATH_PREFIX || "").replace(/\/$/, "");
+
+const hash = (value: unknown) => createHash("sha256").update(typeof value === "string" ? value : JSON.stringify(value)).digest("hex");
+const fit = (value: unknown, max: number) => {
+  const text = String(value || "").trim();
+  if (text.length > max) throw new Error(`Approved render text exceeds its ${max}-character contract`);
+  return text;
+};
+const escapeHtml = (value: unknown) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]!);
+const appearsPortuguese = (draft: z.infer<typeof DraftSchema>) => {
+  const text = [draft.topic, draft.hook, draft.caption, draft.callToAction, ...draft.slides.flatMap((slide) => [slide.eyebrow, slide.title, slide.body, slide.altText])].join(" ").toLocaleLowerCase("pt");
+  const markers = text.match(/\b(?:para|com|uma|não|dos|das|que|até|rendimento|contribuição|declaração|trimestre|mensal|passo|prazo|pagamento|isenção|ajuste)\b/gu)?.length ?? 0;
+  return markers >= 5;
+};
 
 const send = (res: http.ServerResponse, status: number, body: unknown) => {
   res.writeHead(status, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
   res.end(JSON.stringify(body));
+};
+
+const sendHtml = (res: http.ServerResponse, status: number, body: string) => {
+  res.writeHead(status, {
+    "content-type": "text/html; charset=utf-8", "cache-control": "no-store",
+    "content-security-policy": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
+    "x-content-type-options": "nosniff", "referrer-policy": "no-referrer",
+  });
+  res.end(body);
 };
 
 async function readJson(req: http.IncomingMessage): Promise<unknown> {
@@ -26,8 +54,52 @@ async function readJson(req: http.IncomingMessage): Promise<unknown> {
   return JSON.parse(Buffer.concat(parts).toString("utf8") || "{}");
 }
 
+async function readForm(req: http.IncomingMessage): Promise<URLSearchParams> {
+  const parts: Buffer[] = [];
+  let size = 0;
+  for await (const part of req) {
+    size += part.length;
+    if (size > 32_000) throw new Error("Request body too large");
+    parts.push(part);
+  }
+  return new URLSearchParams(Buffer.concat(parts).toString("utf8"));
+}
+
+function reviewPage(post: Record<string, unknown>, revision: Record<string, unknown>, token: string, reviewer: string) {
+  const slides = revision.slides as Array<Record<string, unknown>>;
+  const sources = revision.source_bundle as Array<Record<string, unknown>>;
+  const altTexts = revision.alt_texts as string[];
+  const slideCards = slides.map((slide, index) => `<article><small>Slide ${index + 1}</small><h3>${escapeHtml(slide.title)}</h3><p>${escapeHtml(slide.body)}</p><p class="meta"><strong>Alt text:</strong> ${escapeHtml(altTexts[index])}</p></article>`).join("");
+  const sourceItems = sources.map((source) => `<li><a href="${escapeHtml(source.url)}" rel="noreferrer">${escapeHtml(source.title)}</a> — ${escapeHtml(source.publisher)}</li>`).join("");
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Review · ${escapeHtml(post.topic)}</title><style>
+  :root{font-family:Inter,ui-sans-serif,system-ui;color:#143735;background:#f6f2ea}body{margin:0}.wrap{max-width:1080px;margin:auto;padding:32px 20px 64px}header{display:flex;justify-content:space-between;gap:20px;align-items:start}.pill{background:#f0aa70;padding:6px 10px;border-radius:99px;font-weight:700;text-transform:uppercase;font-size:12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:24px 0}article,.panel{background:white;border:1px solid #d7ddd8;border-radius:14px;padding:20px;box-shadow:0 5px 18px #1437350d}article small,.meta{color:#5c706c;font-size:13px}h1{font-size:clamp(30px,5vw,52px);margin:.35em 0}h3{font-size:22px}.caption{white-space:pre-wrap;line-height:1.6}a{color:#175e58}form{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin-top:20px}label{display:grid;gap:6px;flex:1;min-width:240px}textarea{min-height:70px;padding:10px;border:1px solid #aebbb7;border-radius:8px}button{border:0;border-radius:9px;padding:12px 20px;font-weight:800;cursor:pointer}.approve{background:#175e58;color:white}.reject{background:#9d3535;color:white}.warning{border-left:5px solid #f0aa70}.identity{font-size:13px;color:#5c706c}</style></head><body><main class="wrap"><header><div><span class="pill">${escapeHtml(post.risk_level)} risk · ${escapeHtml(post.category)}</span><h1>${escapeHtml(post.topic)}</h1><p>${escapeHtml(revision.hook)}</p></div><p class="identity">Reviewer: ${escapeHtml(reviewer)}</p></header><section class="panel warning"><strong>Approval is revision-bound.</strong> Any change to copy, slides, or evidence invalidates this decision.</section><section class="grid">${slideCards}</section><section class="panel"><h2>Caption</h2><p class="caption">${escapeHtml(revision.caption)}</p><h2>Sources</h2><ul>${sourceItems}</ul><p class="meta">Evidence hash: ${escapeHtml(String(revision.evidence_hash).slice(0, 16))}…</p><form method="post" action="${escapeHtml(reviewPathPrefix)}/review/${escapeHtml(token)}/decision"><label>Optional review comment<textarea name="comment" maxlength="500"></textarea></label><button class="approve" name="decision" value="approved">Approve exact revision</button><button class="reject" name="decision" value="rejected">Reject</button></form></section></main></body></html>`;
+}
+
 const GenerateSchema = z.object({ documentId: z.string().uuid() });
-const RenderedSchema = z.object({ files: z.array(z.string().min(1)).min(1).max(10) });
+const ReviewRequestSchema = z.object({ expiresInMinutes: z.number().int().min(5).max(1440).default(60) });
+const RenderRequestSchema = z.object({ idempotencyKey: z.string().min(8).max(200) });
+const RenderFileSchema = z.object({ index: z.number().int().min(1).max(10), sha256: z.string().regex(/^[a-f0-9]{64}$/), bytes: z.number().int().positive().max(15_000_000), width: z.literal(1080), height: z.literal(1350), mimeType: z.literal("image/png") });
+const UploadRequestSchema = z.object({ files: z.array(RenderFileSchema).min(3).max(7) });
+const CompleteRenderSchema = z.object({ files: z.array(RenderFileSchema.extend({ key: z.string().min(10).max(500) })).min(3).max(7) });
+const FailJobSchema = z.object({ code: z.string().min(1).max(80), message: z.string().min(1).max(1000), retryable: z.boolean() });
+const ScheduleSchema = z.object({ scheduledAt: z.string().datetime({ offset: true }), idempotencyKey: z.string().min(8).max(200) });
+const DiscoverySchema = z.object({
+  url: z.string().url().max(2000), title: z.string().min(1).max(500), publisher: z.string().max(200).nullable().optional(),
+  locale: z.string().min(2).max(10).default("en"), publishedAt: z.string().datetime({ offset: true }).nullable().optional(),
+  category: z.string().min(1).max(80).default("general"), riskLevel: z.enum(["low", "medium", "high"]).default("medium"),
+});
+const DiscoveryBatchSchema = z.object({ items: z.array(DiscoverySchema).min(1).max(100), sourceKind: z.enum(["rss", "news_discovery", "official_notice"]).default("news_discovery") });
+
+function createRenderManifest(post: Record<string, unknown>, revision: Record<string, unknown>) {
+  const raw = revision.slides as Array<Record<string, unknown>>;
+  const slides = raw.map((slide, index) => {
+    const base = { eyebrow: fit(slide.eyebrow, 42), title: fit(slide.title, 82), sourceLabel: fit(slide.sourceLabel || post.source_authority || "Finkavo source-backed guide", 80) };
+    if (index === 0) return { ...base, type: "cover", category: fit(post.category || "Portugal finance", 32), subtitle: fit(slide.body, 150) };
+    if (index === raw.length - 1) return { ...base, type: "summary", body: fit(slide.body, 300), cta: fit(revision.call_to_action, 80) };
+    return { ...base, type: "content", body: fit(slide.body, 420) };
+  });
+  return { schemaVersion: 1, postId: String(post.id), revisionId: String(revision.id), locale: "en", templateVersion: "finkavo-v1", slides };
+}
 
 const server = http.createServer(async (req, res) => {
   try {
@@ -36,7 +108,82 @@ const server = http.createServer(async (req, res) => {
       await sql`SELECT 1`;
       return send(res, 200, { ok: true, service: "social-api" });
     }
+
+    const reviewMatch = url.pathname.match(/^\/review\/([A-Za-z0-9_-]{32,})$/);
+    if (req.method === "GET" && reviewMatch) {
+      const tokenHash = hash(reviewMatch[1]);
+      const [row] = await sql`
+        SELECT t.expires_at, t.used_at, p.*, r.id AS revision_id, r.hook AS revision_hook,
+               r.caption AS revision_caption, r.slides AS revision_slides, r.alt_texts,
+               r.source_bundle, r.evidence_hash
+        FROM social_review_token t
+        JOIN social_post p ON p.id = t.post_id
+        JOIN social_post_revision r ON r.id = t.revision_id
+        WHERE t.token_hash = ${tokenHash}
+        LIMIT 1
+      `;
+      if (!row || row.used_at || new Date(String(row.expires_at)) <= new Date()) return sendHtml(res, 410, "<h1>Review link expired or already used</h1>");
+      const reviewer = String(req.headers["tailscale-user-login"] || "Identity available through Tailscale Serve only");
+      return sendHtml(res, 200, reviewPage(row as Record<string, unknown>, {
+        hook: row.revision_hook, caption: row.revision_caption, slides: row.revision_slides,
+        alt_texts: row.alt_texts, source_bundle: row.source_bundle, evidence_hash: row.evidence_hash,
+      }, reviewMatch[1], reviewer));
+    }
+
+    const decisionMatch = url.pathname.match(/^\/review\/([A-Za-z0-9_-]{32,})\/decision$/);
+    if (req.method === "POST" && decisionMatch) {
+      const reviewer = req.headers["tailscale-user-login"];
+      if (!reviewer) return sendHtml(res, 403, "<h1>Approval requires an authenticated Tailscale Serve identity</h1>");
+      const form = await readForm(req);
+      const decision = z.enum(["approved", "rejected"]).parse(form.get("decision"));
+      const comment = z.string().max(500).parse(form.get("comment") || "");
+      const tokenHash = hash(decisionMatch[1]);
+      const result = await sql.begin(async (tx) => {
+        const [token] = await tx`
+          SELECT * FROM social_review_token
+          WHERE token_hash = ${tokenHash} AND used_at IS NULL AND expires_at > now()
+          FOR UPDATE
+        `;
+        if (!token) return null;
+        const [post] = await tx`SELECT current_revision_id FROM social_post WHERE id = ${token.post_id} FOR UPDATE`;
+        const [revision] = await tx`SELECT evidence_hash FROM social_post_revision WHERE id = ${token.revision_id}`;
+        if (!post || !revision || post.current_revision_id !== token.revision_id || revision.evidence_hash !== token.evidence_hash) return "changed";
+        await tx`UPDATE social_review_token SET used_at = now() WHERE id = ${token.id}`;
+        await tx`INSERT INTO social_approval (post_id, revision_id, evidence_hash, decision, reviewer, comment) VALUES (${token.post_id}, ${token.revision_id}, ${token.evidence_hash}, ${decision}, ${String(reviewer)}, ${comment || null})`;
+        if (decision === "approved") await tx`UPDATE social_post SET status = 'approved', approved_revision_id = ${token.revision_id}, approved_at = now(), approved_by = ${String(reviewer)}, updated_at = now() WHERE id = ${token.post_id}`;
+        else await tx`UPDATE social_post SET status = 'rejected', approved_revision_id = NULL, approved_at = NULL, approved_by = NULL, updated_at = now() WHERE id = ${token.post_id}`;
+        await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${token.post_id}, ${`post.${decision}`}, ${tx.json({ revisionId: token.revision_id, reviewer: String(reviewer) })})`;
+        return decision;
+      });
+      if (!result) return sendHtml(res, 410, "<h1>Review link expired or already used</h1>");
+      if (result === "changed") return sendHtml(res, 409, "<h1>This revision or its evidence changed. Approval was refused.</h1>");
+      return sendHtml(res, 200, `<h1>${result === "approved" ? "Approved" : "Rejected"}</h1><p>The exact reviewed revision was recorded. This link cannot be reused.</p>`);
+    }
+
     if (req.headers.authorization !== `Bearer ${apiToken}`) return send(res, 401, { error: "Unauthorized" });
+
+    if (req.method === "POST" && url.pathname === "/v1/discoveries") {
+      const { items, sourceKind } = DiscoveryBatchSchema.parse(await readJson(req));
+      let inserted = 0;
+      for (const item of items) {
+        const canonicalUrl = new URL(item.url); canonicalUrl.hash = "";
+        ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"].forEach((key) => canonicalUrl.searchParams.delete(key));
+        const contentHash = hash({ title: item.title.trim(), publishedAt: item.publishedAt || null });
+        const rows = await sql`
+          INSERT INTO social_discovery (canonical_url, title, publisher, locale, published_at, content_hash, source_kind, category, risk_level, raw_metadata)
+          VALUES (${canonicalUrl.toString()}, ${item.title.trim()}, ${item.publisher || null}, ${item.locale}, ${item.publishedAt || null}, ${contentHash}, ${sourceKind}, ${item.category}, ${item.riskLevel}, ${sql.json({ discoveredUrl: item.url })})
+          ON CONFLICT (canonical_url, content_hash) DO NOTHING RETURNING id
+        `;
+        inserted += rows.length;
+      }
+      await sql`INSERT INTO social_event (event_type, payload) VALUES ('discovery.ingested', ${sql.json({ received: items.length, inserted, sourceKind })})`;
+      return send(res, 200, { received: items.length, inserted, duplicates: items.length - inserted });
+    }
+
+    if (req.method === "GET" && url.pathname === "/v1/discoveries") {
+      const rows = await sql`SELECT id, canonical_url, title, publisher, locale, published_at, source_kind, evidence_state, category, risk_level, created_at FROM social_discovery ORDER BY COALESCE(published_at, created_at) DESC LIMIT 100`;
+      return send(res, 200, { discoveries: rows });
+    }
 
     if (req.method === "GET" && url.pathname === "/v1/candidates") {
       const requested = Number(url.searchParams.get("limit") || 10);
@@ -62,7 +209,8 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && url.pathname === "/v1/generate") {
       const { documentId } = GenerateSchema.parse(await readJson(req));
       const rows = await sql`
-        SELECT d.id, d.title, d.source_url, d.source_authority, d.fetched_at,
+        SELECT d.id, d.title, d.source_url, d.source_authority, d.source_tier, d.original_lang,
+               d.content_hash, d.fetched_at,
                array_agg(c.text ORDER BY c.chunk_index) FILTER (WHERE c.chunk_index < 6) AS excerpts
         FROM document d JOIN chunk c ON c.document_id = d.id AND c.vault_doc_id IS NULL
         WHERE d.id = ${documentId} AND d.verified_still_available = true AND d.freshness_confidence != 'retracted'
@@ -70,26 +218,68 @@ const server = http.createServer(async (req, res) => {
       `;
       if (!rows[0]) return send(res, 404, { error: "Public corpus document not found" });
       const source = rows[0] as Record<string, unknown>;
-      const { draft, model } = await generateDraft({
-        title: String(source.title), sourceUrl: String(source.source_url),
-        authority: source.source_authority ? String(source.source_authority) : null,
-        fetchedAt: String(source.fetched_at), excerpts: source.excerpts as string[],
-      });
-      const checked = DraftSchema.parse(draft);
+      let checked: z.infer<typeof DraftSchema> | null = null;
+      let model = "";
+      let lastGenerationError = "";
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          const generated = await generateDraft({
+            title: String(source.title), sourceUrl: String(source.source_url),
+            authority: source.source_authority ? String(source.source_authority) : null,
+            fetchedAt: String(source.fetched_at), excerpts: source.excerpts as string[],
+          });
+          const candidate = DraftSchema.parse(generated.draft);
+          if (appearsPortuguese(candidate)) throw new Error("User-facing draft copy must be English; evidence quotes may remain Portuguese");
+          const corpusText = (source.excerpts as string[]).join("\n").replace(/\s+/g, " ");
+          const unsupported = candidate.claims.find((claim) => !corpusText.includes(claim.evidenceQuote.replace(/\s+/g, " ")));
+          if (unsupported) throw new Error("A claim evidence quote was not found verbatim in the supplied corpus excerpts");
+          if (candidate.riskLevel === "high" && source.source_tier !== "official") throw new Error("High-risk content requires an official primary source");
+          checked = candidate;
+          model = generated.model;
+          break;
+        } catch (error) {
+          lastGenerationError = error instanceof Error ? error.message : "Generation validation failed";
+        }
+      }
+      if (!checked) {
+        await sql`INSERT INTO social_event (event_type, payload) VALUES ('generation.failed', ${sql.json({ documentId, error: lastGenerationError })})`;
+        return send(res, 422, { error: "Structured generation failed after two repair attempts" });
+      }
+      const sourceBundle = [{
+        documentId, url: String(source.source_url), title: String(source.title),
+        publisher: source.source_authority ? String(source.source_authority) : null,
+        locale: String(source.original_lang), retrievedAt: String(source.fetched_at),
+        contentHash: String(source.content_hash), tier: String(source.source_tier),
+      }];
+      const evidenceHash = hash({ sourceBundle, claims: checked.claims });
+      const contentHash = hash({ hook: checked.hook, caption: checked.caption, callToAction: checked.callToAction, hashtags: checked.hashtags, slides: checked.slides });
       const inserted = await sql.begin(async (tx) => {
         const [post] = await tx`
           INSERT INTO social_post (topic, source_document_id, source_url, source_title, source_authority, source_fetched_at,
-            hook, caption, call_to_action, hashtags, slides, model)
+            hook, caption, call_to_action, hashtags, slides, model, category, risk_level)
           VALUES (${checked.topic}, ${documentId}, ${String(source.source_url)}, ${String(source.title)},
             ${source.source_authority ? String(source.source_authority) : null}, ${String(source.fetched_at)},
-            ${checked.hook}, ${checked.caption}, ${checked.callToAction}, ${tx.json(checked.hashtags)}, ${tx.json(checked.slides)}, ${model})
+            ${checked.hook}, ${checked.caption}, ${checked.callToAction}, ${tx.json(checked.hashtags)}, ${tx.json(checked.slides)}, ${model}, ${checked.category}, ${checked.riskLevel})
           RETURNING *
         `;
-        for (const claim of checked.claims) await tx`
-          INSERT INTO social_claim (post_id, claim_text, evidence_quote, source_url)
-          VALUES (${post.id}, ${claim.claim}, ${claim.evidenceQuote}, ${String(source.source_url)})
+        const [revision] = await tx`
+          INSERT INTO social_post_revision (post_id, revision_number, locale, template_version, hook, caption, call_to_action,
+            hashtags, slides, alt_texts, source_bundle, evidence_hash, content_hash, model, prompt_version)
+          VALUES (${post.id}, 1, 'en', 'finkavo-v1', ${checked.hook}, ${checked.caption}, ${checked.callToAction},
+            ${tx.json(checked.hashtags)}, ${tx.json(checked.slides)}, ${tx.json(checked.slides.map((slide) => slide.altText))},
+            ${tx.json(sourceBundle)}, ${evidenceHash}, ${contentHash}, ${model}, 'v1') RETURNING *
         `;
-        await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'draft.created', ${tx.json({ model })})`;
+        await tx`UPDATE social_post SET current_revision_id = ${revision.id} WHERE id = ${post.id}`;
+        for (const claim of checked.claims) {
+          const [savedClaim] = await tx`
+            INSERT INTO social_claim (post_id, revision_id, claim_text, evidence_quote, source_url, risk_type, review_state)
+            VALUES (${post.id}, ${revision.id}, ${claim.claim}, ${claim.evidenceQuote}, ${String(source.source_url)}, ${checked.riskLevel}, 'supported') RETURNING id
+          `;
+          await tx`INSERT INTO social_claim_evidence (claim_id, document_id, source_url, source_title, publisher, locale, retrieved_at, content_hash, supporting_excerpt)
+            VALUES (${savedClaim.id}, ${documentId}, ${String(source.source_url)}, ${String(source.title)}, ${source.source_authority ? String(source.source_authority) : null}, ${String(source.original_lang)}, ${String(source.fetched_at)}, ${String(source.content_hash)}, ${claim.evidenceQuote})`;
+        }
+        await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'draft.created', ${tx.json({ model, revisionId: revision.id, evidenceHash, contentHash })})`;
+        post.current_revision_id = revision.id;
         return post;
       });
       return send(res, 201, { post: inserted });
@@ -103,21 +293,274 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { posts: rows });
     }
 
-    const approve = url.pathname.match(/^\/v1\/posts\/([0-9a-f-]+)\/approve$/i);
-    if (req.method === "POST" && approve) {
-      const [post] = await sql.begin(async (tx) => {
-        const [updated] = await tx`UPDATE social_post SET status = 'approved', approved_at = now(), approved_by = 'owner', updated_at = now() WHERE id = ${approve[1]} AND status = 'draft' RETURNING *`;
-        if (updated) await tx`INSERT INTO social_event (post_id, event_type) VALUES (${updated.id}, 'post.approved')`;
-        return [updated];
+    const reviewRequest = url.pathname.match(/^\/v1\/posts\/([0-9a-f-]+)\/request-review$/i);
+    if (req.method === "POST" && reviewRequest) {
+      const { expiresInMinutes } = ReviewRequestSchema.parse(await readJson(req));
+      const rawToken = randomBytes(32).toString("base64url");
+      const [created] = await sql.begin(async (tx) => {
+        const [post] = await tx`
+          SELECT p.id, p.status, p.current_revision_id, r.evidence_hash
+          FROM social_post p JOIN social_post_revision r ON r.id = p.current_revision_id
+          WHERE p.id = ${reviewRequest[1]} AND p.status = 'draft'
+          FOR UPDATE OF p
+        `;
+        if (!post) return [];
+        await tx`UPDATE social_review_token SET used_at = now() WHERE post_id = ${post.id} AND used_at IS NULL`;
+        const [token] = await tx`
+          INSERT INTO social_review_token (token_hash, post_id, revision_id, evidence_hash, expires_at)
+          VALUES (${hash(rawToken)}, ${post.id}, ${post.current_revision_id}, ${post.evidence_hash}, now() + (${expiresInMinutes}::STRING || ' minutes')::INTERVAL)
+          RETURNING expires_at
+        `;
+        await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'review.requested', ${tx.json({ revisionId: post.current_revision_id, expiresInMinutes })})`;
+        return [token];
       });
-      return post ? send(res, 200, { post }) : send(res, 409, { error: "Only draft posts can be approved" });
+      if (!created) return send(res, 409, { error: "Only a current draft revision can be sent for review" });
+      const base = reviewBaseUrl || `${url.protocol}//${url.host}`;
+      return send(res, 201, { reviewUrl: `${base.replace(/\/$/, "")}/review/${rawToken}`, expiresAt: created.expires_at });
     }
 
-    const rendered = url.pathname.match(/^\/v1\/posts\/([0-9a-f-]+)\/rendered$/i);
-    if (req.method === "POST" && rendered) {
-      const { files } = RenderedSchema.parse(await readJson(req));
-      const [post] = await sql`UPDATE social_post SET status = 'rendered', rendered_at = now(), render_files = ${sql.json(files)}, updated_at = now() WHERE id = ${rendered[1]} AND status = 'approved' RETURNING *`;
-      return post ? send(res, 200, { post }) : send(res, 409, { error: "Only approved posts can be marked rendered" });
+    const renderRequest = url.pathname.match(/^\/v1\/posts\/([0-9a-f-]+)\/request-render$/i);
+    if (req.method === "POST" && renderRequest) {
+      const { idempotencyKey } = RenderRequestSchema.parse(await readJson(req));
+      const job = await sql.begin(async (tx) => {
+        const [existing] = await tx`SELECT * FROM social_render_job WHERE idempotency_key = ${idempotencyKey}`;
+        if (existing) return existing;
+        const [row] = await tx`
+          SELECT p.*, r.id AS revision_id, r.slides AS revision_slides, r.call_to_action AS revision_cta,
+                 r.evidence_hash, r.content_hash
+          FROM social_post p JOIN social_post_revision r ON r.id = p.approved_revision_id
+          WHERE p.id = ${renderRequest[1]} AND p.status = 'approved' AND p.current_revision_id = p.approved_revision_id
+          FOR UPDATE OF p
+        `;
+        if (!row) return null;
+        const [approval] = await tx`SELECT id FROM social_approval WHERE post_id = ${row.id} AND revision_id = ${row.revision_id} AND evidence_hash = ${row.evidence_hash} AND decision = 'approved' ORDER BY decided_at DESC LIMIT 1`;
+        if (!approval) return null;
+        const manifest = createRenderManifest(row as Record<string, unknown>, { id: row.revision_id, slides: row.revision_slides, call_to_action: row.revision_cta });
+        const [created] = await tx`
+          INSERT INTO social_render_job (post_id, revision_id, idempotency_key, manifest, manifest_hash)
+          VALUES (${row.id}, ${row.revision_id}, ${idempotencyKey}, ${tx.json(manifest)}, ${hash(manifest)}) RETURNING *
+        `;
+        await tx`UPDATE social_post SET status = 'render_queued', updated_at = now() WHERE id = ${row.id}`;
+        await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${row.id}, 'render.queued', ${tx.json({ jobId: created.id, revisionId: row.revision_id })})`;
+        return created;
+      });
+      return job ? send(res, 201, { job }) : send(res, 409, { error: "An exact current approval is required before rendering" });
+    }
+
+    if (req.method === "POST" && url.pathname === "/v1/render-jobs/claim") {
+      const workerId = z.string().min(3).max(120).parse(req.headers["x-renderer-id"]);
+      const job = await sql.begin(async (tx) => {
+        await tx`UPDATE social_render_job SET status = 'retrying', lease_owner = NULL, lease_expires_at = NULL, available_at = now(), updated_at = now() WHERE status = 'leased' AND lease_expires_at < now()`;
+        const [candidate] = await tx`SELECT * FROM social_render_job WHERE status IN ('pending','retrying') AND available_at <= now() ORDER BY created_at LIMIT 1 FOR UPDATE SKIP LOCKED`;
+        if (!candidate) return null;
+        const [attemptRow] = await tx`SELECT COALESCE(max(attempt_number), 0) + 1 AS next_attempt FROM social_render_attempt WHERE job_id = ${candidate.id}`;
+        const attempt = Number(attemptRow.next_attempt);
+        const [claimed] = await tx`UPDATE social_render_job SET status = 'leased', attempt_count = ${attempt}, lease_owner = ${workerId}, lease_expires_at = now() + INTERVAL '10 minutes', updated_at = now() WHERE id = ${candidate.id} RETURNING *`;
+        await tx`INSERT INTO social_render_attempt (job_id, attempt_number, worker_id) VALUES (${candidate.id}, ${attempt}, ${workerId})`;
+        await tx`UPSERT INTO social_renderer_heartbeat (worker_id, version, last_seen_at, details) VALUES (${workerId}, 'finkavo-v1', now(), ${tx.json({ state: "rendering", jobId: candidate.id })})`;
+        return claimed;
+      });
+      return send(res, 200, { job });
+    }
+
+    const getRenderMatch = url.pathname.match(/^\/v1\/render-jobs\/([0-9a-f-]+)$/i);
+    if (req.method === "GET" && getRenderMatch) {
+      const [job] = await sql`SELECT id, post_id, revision_id, status, attempt_count, available_at, lease_owner, lease_expires_at, output_files, error_code, error_message, created_at, updated_at FROM social_render_job WHERE id = ${getRenderMatch[1]}`;
+      return job ? send(res, 200, { job }) : send(res, 404, { error: "Render job not found" });
+    }
+
+    if (req.method === "POST" && url.pathname === "/v1/renderer/heartbeat") {
+      const workerId = z.string().min(3).max(120).parse(req.headers["x-renderer-id"]);
+      await sql`UPSERT INTO social_renderer_heartbeat (worker_id, version, last_seen_at, details) VALUES (${workerId}, 'finkavo-v1', now(), ${sql.json({ state: "idle" })})`;
+      return send(res, 200, { ok: true });
+    }
+
+    const retryRenderMatch = url.pathname.match(/^\/v1\/render-jobs\/([0-9a-f-]+)\/retry$/i);
+    if (req.method === "POST" && retryRenderMatch) {
+      const [job] = await sql.begin(async (tx) => {
+        const [failed] = await tx`
+          SELECT j.* FROM social_render_job j
+          JOIN social_post p ON p.id = j.post_id
+          WHERE j.id = ${retryRenderMatch[1]} AND j.status = 'failed'
+            AND p.current_revision_id = j.revision_id
+            AND p.approved_revision_id = j.revision_id
+          FOR UPDATE OF j
+        `;
+        if (!failed) return [];
+        const [updated] = await tx`
+          UPDATE social_render_job SET status = 'retrying', attempt_count = 0,
+            available_at = now(), lease_owner = NULL, lease_expires_at = NULL,
+            error_code = NULL, error_message = NULL, updated_at = now()
+          WHERE id = ${failed.id} RETURNING *
+        `;
+        await tx`UPDATE social_post SET status = 'render_queued', updated_at = now() WHERE id = ${failed.post_id}`;
+        await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${failed.post_id}, 'render.requeued', ${tx.json({ jobId: failed.id, revisionId: failed.revision_id })})`;
+        return [updated];
+      });
+      return job ? send(res, 200, { job }) : send(res, 409, { error: "Only a failed render of the current approved revision can be retried" });
+    }
+
+    const uploadMatch = url.pathname.match(/^\/v1\/render-jobs\/([0-9a-f-]+)\/uploads$/i);
+    if (req.method === "POST" && uploadMatch) {
+      const workerId = z.string().min(3).max(120).parse(req.headers["x-renderer-id"]);
+      const { files } = UploadRequestSchema.parse(await readJson(req));
+      const [job] = await sql`SELECT * FROM social_render_job WHERE id = ${uploadMatch[1]} AND status = 'leased' AND lease_owner = ${workerId} AND lease_expires_at > now()`;
+      if (!job) return send(res, 409, { error: "Render lease is missing or expired" });
+      if (files.length !== (job.manifest as { slides: unknown[] }).slides.length) return send(res, 400, { error: "Rendered file count does not match manifest" });
+      const date = new Date(job.created_at as string);
+      const prefix = `social/carousels/${date.getUTCFullYear()}/${String(date.getUTCMonth() + 1).padStart(2, "0")}/${String(date.getUTCDate()).padStart(2, "0")}/${job.post_id}/${job.revision_id}`;
+      const uploads = await Promise.all(files.map(async (file) => {
+        const stored: RenderFileInput = { ...file, key: `${prefix}/${String(file.index).padStart(2, "0")}.png` };
+        return { ...stored, uploadUrl: await createUploadUrl(stored) };
+      }));
+      return send(res, 200, { uploads });
+    }
+
+    const completeMatch = url.pathname.match(/^\/v1\/render-jobs\/([0-9a-f-]+)\/complete$/i);
+    if (req.method === "POST" && completeMatch) {
+      const workerId = z.string().min(3).max(120).parse(req.headers["x-renderer-id"]);
+      const { files } = CompleteRenderSchema.parse(await readJson(req));
+      if (!(await Promise.all(files.map((file) => verifyUploadedObject(file)))).every(Boolean)) return send(res, 422, { error: "One or more R2 objects failed metadata verification" });
+      const [completed] = await sql.begin(async (tx) => {
+        const [job] = await tx`UPDATE social_render_job SET status = 'completed', output_files = ${tx.json(files)}, lease_expires_at = NULL, updated_at = now() WHERE id = ${completeMatch[1]} AND status = 'leased' AND lease_owner = ${workerId} AND lease_expires_at > now() RETURNING *`;
+        if (!job) return [];
+        await tx`UPDATE social_render_attempt SET finished_at = now(), outcome = 'completed' WHERE job_id = ${job.id} AND attempt_number = ${job.attempt_count}`;
+        await tx`UPDATE social_post SET status = 'rendered', rendered_at = now(), render_files = ${tx.json(files)}, updated_at = now() WHERE id = ${job.post_id} AND approved_revision_id = ${job.revision_id}`;
+        await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${job.post_id}, 'render.completed', ${tx.json({ jobId: job.id, files: files.map((file) => ({ key: file.key, sha256: file.sha256, bytes: file.bytes })) })})`;
+        await tx`UPSERT INTO social_renderer_heartbeat (worker_id, version, last_seen_at, details) VALUES (${workerId}, 'finkavo-v1', now(), ${tx.json({ state: "idle" })})`;
+        return [job];
+      });
+      return completed ? send(res, 200, { job: completed }) : send(res, 409, { error: "Render lease is missing or expired" });
+    }
+
+    const failRenderMatch = url.pathname.match(/^\/v1\/render-jobs\/([0-9a-f-]+)\/fail$/i);
+    if (req.method === "POST" && failRenderMatch) {
+      const workerId = z.string().min(3).max(120).parse(req.headers["x-renderer-id"]);
+      const failure = FailJobSchema.parse(await readJson(req));
+      const [updated] = await sql.begin(async (tx) => {
+        const [job] = await tx`SELECT * FROM social_render_job WHERE id = ${failRenderMatch[1]} AND status = 'leased' AND lease_owner = ${workerId} FOR UPDATE`;
+        if (!job) return [];
+        const retry = failure.retryable && Number(job.attempt_count) < 3;
+        const delayMinutes = Number(job.attempt_count) === 1 ? 2 : Number(job.attempt_count) === 2 ? 10 : 30;
+        const [next] = retry
+          ? await tx`UPDATE social_render_job SET status = 'retrying', available_at = now() + (${delayMinutes}::STRING || ' minutes')::INTERVAL, lease_owner = NULL, lease_expires_at = NULL, error_code = ${failure.code}, error_message = ${failure.message}, updated_at = now() WHERE id = ${job.id} RETURNING *`
+          : await tx`UPDATE social_render_job SET status = 'failed', lease_owner = NULL, lease_expires_at = NULL, error_code = ${failure.code}, error_message = ${failure.message}, updated_at = now() WHERE id = ${job.id} RETURNING *`;
+        await tx`UPDATE social_render_attempt SET finished_at = now(), outcome = ${retry ? "retrying" : "failed"}, error_code = ${failure.code}, error_message = ${failure.message} WHERE job_id = ${job.id} AND attempt_number = ${job.attempt_count}`;
+        await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${job.post_id}, ${retry ? "render.retrying" : "render.failed"}, ${tx.json({ jobId: job.id, attempt: job.attempt_count, delayMinutes: retry ? delayMinutes : null, code: failure.code })})`;
+        if (!retry) await tx`UPDATE social_post SET status = 'failed', updated_at = now() WHERE id = ${job.post_id}`;
+        return [next];
+      });
+      return updated ? send(res, 200, { job: updated }) : send(res, 409, { error: "Render job is not leased by this worker" });
+    }
+
+    const scheduleMatch = url.pathname.match(/^\/v1\/posts\/([0-9a-f-]+)\/schedule$/i);
+    if (req.method === "POST" && scheduleMatch) {
+      const { scheduledAt, idempotencyKey } = ScheduleSchema.parse(await readJson(req));
+      if (new Date(scheduledAt).getTime() < Date.now() + 10 * 60_000) return send(res, 400, { error: "Schedule must be at least 10 minutes in the future" });
+      const job = await sql.begin(async (tx) => {
+        const [existing] = await tx`SELECT * FROM social_publish_job WHERE idempotency_key = ${idempotencyKey}`;
+        if (existing) return existing;
+        const [post] = await tx`
+          SELECT p.*, r.id AS revision_id, j.id AS render_job_id
+          FROM social_post p
+          JOIN social_post_revision r ON r.id = p.approved_revision_id
+          JOIN social_render_job j ON j.post_id = p.id AND j.revision_id = r.id AND j.status = 'completed'
+          WHERE p.id = ${scheduleMatch[1]} AND p.status = 'rendered' AND p.current_revision_id = p.approved_revision_id
+          FOR UPDATE OF p
+        `;
+        if (!post || !(post.render_files as unknown[])?.length || !(post.caption as string)?.trim()) return null;
+        const [created] = await tx`INSERT INTO social_publish_job (post_id, revision_id, render_job_id, idempotency_key, scheduled_at) VALUES (${post.id}, ${post.revision_id}, ${post.render_job_id}, ${idempotencyKey}, ${scheduledAt}) RETURNING *`;
+        await tx`UPDATE social_post SET scheduled_at = ${scheduledAt}, updated_at = now() WHERE id = ${post.id}`;
+        await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'publish.queued', ${tx.json({ jobId: created.id, scheduledAt })})`;
+        return created;
+      });
+      return job ? send(res, 201, { job }) : send(res, 409, { error: "Only an approved, completed render of the current revision can be scheduled" });
+    }
+
+    if (req.method === "POST" && url.pathname === "/v1/publish-jobs/process") {
+      const workerId = z.string().min(3).max(120).parse(req.headers["x-publisher-id"] || "n8n-publisher");
+      const job: any = await sql.begin(async (tx) => {
+        await tx`UPDATE social_publish_job SET status = 'retrying', lease_owner = NULL, lease_expires_at = NULL, available_at = now(), updated_at = now() WHERE status = 'processing' AND lease_expires_at < now()`;
+        const [candidate] = await tx`SELECT * FROM social_publish_job WHERE status IN ('pending','retrying') AND available_at <= now() ORDER BY created_at LIMIT 1 FOR UPDATE SKIP LOCKED`;
+        if (!candidate) return null;
+        const attempt = Number(candidate.attempt_count) + 1;
+        const [claimed] = await tx`UPDATE social_publish_job SET status = 'processing', attempt_count = ${attempt}, lease_owner = ${workerId}, lease_expires_at = now() + INTERVAL '5 minutes', updated_at = now() WHERE id = ${candidate.id} RETURNING *`;
+        const [post] = await tx`SELECT caption, hashtags, render_files FROM social_post WHERE id = ${candidate.post_id}`;
+        const requestFingerprint = hash({ postId: candidate.post_id, revisionId: candidate.revision_id, scheduledAt: candidate.scheduled_at, files: post.render_files });
+        await tx`INSERT INTO social_publish_attempt (job_id, attempt_number, request_fingerprint) VALUES (${candidate.id}, ${attempt}, ${requestFingerprint})`;
+        return { ...claimed, post };
+      });
+      if (!job) return send(res, 200, { job: null });
+      try {
+        const channelId = process.env.BUFFER_CHANNEL_ID;
+        if (!channelId) throw new BufferError("BUFFER_CHANNEL_ID is not configured", "CHANNEL_NOT_CONFIGURED", false);
+        const storedFiles = job.post.render_files as Array<{ key: string }>;
+        const mediaUrls = await Promise.all(storedFiles.map((file) => createBufferMediaUrl(file.key)));
+        const hashtags = job.post.hashtags as string[];
+        const text = `${job.post.caption}${hashtags?.length ? `\n\n${hashtags.join(" ")}` : ""}`;
+        const providerPost = await createScheduledPost({ channelId, text, dueAt: new Date(job.scheduled_at as string).toISOString(), mediaUrls });
+        const [saved] = await sql.begin(async (tx) => {
+          const [updated] = await tx`UPDATE social_publish_job SET status = 'scheduled', provider_post_id = ${providerPost.id}, provider_status = ${providerPost.status || "scheduled"}, lease_owner = NULL, lease_expires_at = NULL, updated_at = now() WHERE id = ${job.id} AND status = 'processing' RETURNING *`;
+          await tx`UPDATE social_publish_attempt SET finished_at = now(), outcome = 'scheduled', provider_correlation_id = ${providerPost.id} WHERE job_id = ${job.id} AND attempt_number = ${job.attempt_count}`;
+          await tx`UPDATE social_post SET status = 'scheduled', buffer_post_id = ${providerPost.id}, updated_at = now() WHERE id = ${job.post_id}`;
+          await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${job.post_id}, 'publish.scheduled', ${tx.json({ jobId: job.id, bufferPostId: providerPost.id, scheduledAt: job.scheduled_at })})`;
+          return [updated];
+        });
+        return send(res, 200, { job: saved });
+      } catch (error) {
+        const failure = error instanceof BufferError ? error : new BufferError(error instanceof Error ? error.message : "Publish failure", "PUBLISH_FAILED", false, true);
+        const retry = failure.retryable && !failure.ambiguous && Number(job.attempt_count) < 3;
+        const blocked = failure.ambiguous;
+        const delayMinutes = Number(job.attempt_count) === 1 ? 2 : Number(job.attempt_count) === 2 ? 10 : 30;
+        const [failed] = await sql.begin(async (tx) => {
+          const [updated] = retry
+            ? await tx`UPDATE social_publish_job SET status = 'retrying', available_at = now() + (${delayMinutes}::STRING || ' minutes')::INTERVAL, lease_owner = NULL, lease_expires_at = NULL, error_code = ${failure.code}, error_message = ${failure.message}, updated_at = now() WHERE id = ${job.id} RETURNING *`
+            : await tx`UPDATE social_publish_job SET status = ${blocked ? "blocked" : "failed"}, lease_owner = NULL, lease_expires_at = NULL, error_code = ${failure.code}, error_message = ${failure.message}, updated_at = now() WHERE id = ${job.id} RETURNING *`;
+          await tx`UPDATE social_publish_attempt SET finished_at = now(), outcome = ${retry ? "retrying" : blocked ? "blocked" : "failed"}, error_code = ${failure.code}, error_message = ${failure.message} WHERE job_id = ${job.id} AND attempt_number = ${job.attempt_count}`;
+          await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${job.post_id}, ${retry ? "publish.retrying" : blocked ? "publish.blocked" : "publish.failed"}, ${tx.json({ jobId: job.id, attempt: job.attempt_count, code: failure.code, delayMinutes: retry ? delayMinutes : null })})`;
+          return [updated];
+        });
+        if (!retry) await notifyDiscord("errors", blocked ? "Publish result needs reconciliation" : "Publish failed", { post: job.post_id, code: failure.code, attempt: job.attempt_count });
+        return send(res, retry ? 202 : 422, { job: failed, error: failure.message });
+      }
+    }
+
+    if (req.method === "POST" && url.pathname === "/v1/publish-jobs/monitor") {
+      const jobs = await sql`SELECT * FROM social_publish_job WHERE status = 'scheduled' ORDER BY scheduled_at LIMIT 20`;
+      const results: Array<{ id: string; status: string }> = [];
+      for (const job of jobs) {
+        try {
+          const providerPost = await getBufferPost(String(job.provider_post_id));
+          if (!providerPost) continue;
+          if (providerPost.status === "sent") {
+            await sql.begin(async (tx) => {
+              await tx`UPDATE social_publish_job SET status = 'published', provider_status = 'sent', updated_at = now() WHERE id = ${job.id}`;
+              await tx`UPDATE social_post SET status = 'published', published_at = ${providerPost.sentAt || new Date().toISOString()}, updated_at = now() WHERE id = ${job.post_id}`;
+              await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${job.post_id}, 'publish.published', ${tx.json({ jobId: job.id, bufferPostId: job.provider_post_id })})`;
+            });
+            await notifyDiscord("published", "Instagram post published", { post: job.post_id, slides: (await sql`SELECT jsonb_array_length(render_files) AS count FROM social_post WHERE id = ${job.post_id}`)[0]?.count || "unknown" });
+          } else if (providerPost.status === "error") {
+            await sql`UPDATE social_publish_job SET status = 'failed', provider_status = 'error', error_code = 'BUFFER_POST_ERROR', error_message = 'Buffer reported post error', updated_at = now() WHERE id = ${job.id}`;
+            await notifyDiscord("errors", "Buffer reported publish failure", { post: job.post_id, bufferPost: job.provider_post_id });
+          } else await sql`UPDATE social_publish_job SET provider_status = ${providerPost.status}, updated_at = now() WHERE id = ${job.id}`;
+          results.push({ id: String(job.id), status: providerPost.status });
+        } catch (error) {
+          results.push({ id: String(job.id), status: `monitor_error:${error instanceof Error ? error.message : "unknown"}` });
+        }
+      }
+      return send(res, 200, { results });
+    }
+
+    if (req.method === "GET" && url.pathname === "/v1/health-report") {
+      const [counts] = await sql`SELECT count(*) FILTER (WHERE status = 'draft') AS drafts, count(*) FILTER (WHERE status = 'approved') AS approved, count(*) FILTER (WHERE status = 'rendered') AS rendered, count(*) FILTER (WHERE status = 'scheduled') AS scheduled, count(*) FILTER (WHERE status = 'published') AS published, count(*) FILTER (WHERE status IN ('blocked','failed')) AS blocked FROM social_post`;
+      const [renderer] = await sql`SELECT worker_id, version, last_seen_at FROM social_renderer_heartbeat ORDER BY last_seen_at DESC LIMIT 1`;
+      const [oldest] = await sql`SELECT min(created_at) AS oldest_job FROM social_render_job WHERE status IN ('pending','retrying')`;
+      return send(res, 200, { counts, renderer, oldestQueuedRender: oldest?.oldest_job || null, healthy: renderer ? Date.now() - new Date(renderer.last_seen_at as string).getTime() < 5 * 60_000 : false });
+    }
+
+    const approve = url.pathname.match(/^\/v1\/posts\/([0-9a-f-]+)\/approve$/i);
+    if (req.method === "POST" && approve) {
+      return send(res, 410, { error: "Direct approval is disabled. Request and use a signed, revision-bound review link." });
     }
 
     return send(res, 404, { error: "Not found" });

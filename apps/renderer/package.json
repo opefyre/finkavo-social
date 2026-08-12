@@ -7,6 +7,7 @@
     "build": "tsc -p tsconfig.json",
     "dev": "tsx watch src/server.ts",
     "start": "node dist/server.js",
+    "start:agent": "node dist/agent.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "render:fixture": "tsx src/render-fixture.ts"
@@ -14,4 +15,3 @@
   "dependencies": { "playwright": "1.54.2", "zod": "4.0.17" },
   "devDependencies": { "@types/node": "22.17.1", "tsx": "4.20.3", "typescript": "5.9.2", "vitest": "3.2.4" }
 }
-

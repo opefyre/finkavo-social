@@ -19,8 +19,10 @@ export async function generateDraft(candidate: Candidate): Promise<{ draft: Draf
       model,
       instructions: [
         "You create concise, practical, English-language carousel posts for Finkavo, a Portugal personal-finance product.",
+        "All user-facing output fields must be written in English, even when the evidence is Portuguese. Keep exact evidenceQuote values in their original source language.",
         "Use only the supplied source excerpts. Do not introduce dates, thresholds, eligibility rules, rates, or legal claims absent from them.",
         "Every claim must include a short exact supporting excerpt. Never provide individualized financial, tax, or legal advice.",
+        "Set riskLevel to high for tax, immigration, legal, deadline, fee, or eligibility content. Write useful alt text for every slide.",
         "Prefer 4-6 slides: clear hook, useful explanation, action checklist, and a source reminder.",
       ].join(" "),
       input: JSON.stringify(candidate),

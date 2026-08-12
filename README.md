@@ -2,14 +2,15 @@
 
 Local-first automation for producing source-backed English Instagram carousels for Finkavo.
 
-- `apps/renderer` — deterministic 1080 × 1350 carousel renderer
+- `apps/social-api` — durable workflow state, evidence, approval, R2, Buffer, monitoring, and audit API
+- `apps/renderer` — deterministic 1080 × 1350 carousel renderer and outbound job agent
 - `infrastructure/n8n` — self-hosted n8n configuration for the spare Mac
 - `workflows` — sanitized, version-controlled n8n exports
 - `config/sources.yaml` — free discovery sources and source policy
 - `branding` — project-local brand guidance
 - `CONTEXT.md` — reviewed architecture and operating rules
 
-The local MVP deliberately excludes unattended scheduling and publishing. Populated `.env` files, n8n data, credentials, and generated renders are ignored by Git.
+The local MVP includes scheduling and publish monitoring but keeps those n8n workflows inactive until notification webhooks are configured and a live Buffer test is explicitly approved. Populated `.env` files, n8n data, credentials, and generated renders are ignored by Git.
 
 ## Prerequisites
 
@@ -21,10 +22,10 @@ The local MVP deliberately excludes unattended scheduling and publishing. Popula
 ## First setup
 
 1. Copy `.env.example` to `.env`.
-2. Generate new n8n and renderer secrets; do not reuse Finkavo application secrets.
+2. Generate new n8n, renderer, and Social API secrets; do not reuse unrelated application secrets.
 3. Install dependencies with `pnpm install`.
 4. Install Chromium with `pnpm --filter @finkavo-social/renderer exec playwright install chromium`.
 5. On the spare Mac, run `zsh infrastructure/macos/install-local-services.sh`.
-6. Expose n8n privately with `tailscale serve --bg 5678`.
+6. Expose n8n and the review path privately with Tailscale Serve. Never enable Funnel for these services.
 
 See `infrastructure/macos/README.md` for the installed setup. The Docker configuration remains available as an alternative.

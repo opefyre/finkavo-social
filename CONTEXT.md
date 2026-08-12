@@ -1,7 +1,7 @@
 # Finkavo Social Content Workflow — Context and Architecture
 
-**Status:** reviewed design, ready for implementation planning  
-**Last reviewed:** 2026-08-11  
+**Status:** implemented local MVP; publishing remains intentionally disabled until Discord webhooks are configured and a live Buffer scheduling test is explicitly approved
+**Last reviewed:** 2026-08-12
 **Scope:** Instagram educational carousel workflow for Finkavo. This document defines the system; it does not contain credentials or production configuration.
 
 ## 1. Outcome
@@ -220,7 +220,7 @@ After approval, the Social API creates an immutable render manifest in R2 and qu
 3. Renders at 1080 × 1350 using pinned Node, Chromium/Playwright, fonts, and dependencies.
 4. Checks overflow, missing glyphs, image dimensions, safe zones, and slide count.
 5. Uploads PNGs to a versioned private R2 prefix using short-lived presigned upload URLs.
-6. Reports checksums and results; the API marks the job complete transactionally.
+6. Reports checksums and results; the API re-downloads each object to verify its SHA-256, byte size, MIME type, and PNG dimensions before marking the job complete transactionally.
 
 Suggested object key:
 

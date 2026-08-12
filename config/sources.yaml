@@ -31,12 +31,11 @@ inputs:
     notes: Fetch through the existing corpus freshness path where possible.
   - id: gdelt-portugal
     type: keyless_news_discovery
-    enabled: false
+    enabled: true
     endpoint: https://api.gdeltproject.org/api/v2/doc/doc
-    notes: Optional zero-cost discovery only. Enable after quality testing; never use as factual evidence.
+    notes: Zero-cost discovery only. The scheduled n8n workflow deduplicates results; never use these records as factual evidence.
   - id: rss-feeds
     type: rss_atom
     enabled: false
     feeds: []
     notes: Populate with verified feeds. Prefer feeds over commercial free-tier news APIs.
-

@@ -1,24 +1,16 @@
 # n8n workflow exports
 
-Sanitized n8n JSON exports will live here. Credential values and instance-specific IDs must never be committed.
+These exports contain no credentials or instance-specific credential IDs. After import, attach the shared Social API Bearer Auth credential to each local Social API request node. All publishing workflows remain inactive until Buffer is configured and an approved test is explicitly authorized.
 
-Planned workflows:
+## Workflow map
 
-1. `WF-01-discovery-ingestion.json`
-2. `WF-02-claim-verification.json`
-3. `WF-03-daily-planning.json`
-4. `WF-04-copy-generation.json`
-5. `WF-05-render-smoke.json` — renderer smoke test
-6. `WF-05-approve-draft.json` — explicit owner-controlled approval gate
-7. `WF-06-render-approved.json` — only renders approved database records
-8. `WF-08-buffer-scheduling.json`
-9. `WF-09-publish-monitor.json`
-10. `WF-10-health-report.json`
+1. `WF-01-discovery-ingestion.json` — every two hours, collects free GDELT Portugal results as discovery-only records; they can never serve as evidence.
+2. `WF-01-generate-draft.json` — manually selects an unused verified corpus source and creates a schema-validated English draft.
+3. `WF-05-request-review.json` — creates a signed, expiring, revision-bound private review link. It cannot approve directly.
+4. `WF-05-render-smoke.json` — deterministic renderer fixture test only.
+5. `WF-06-render-approved.json` — queues only the exact approved revision; the outbound renderer agent performs and verifies the upload.
+6. `WF-07-buffer-scheduling.json` — manually queues the latest completed render for 09:00 Lisbon the next day.
+7. `WF-08-publish-monitor.json` — processes one due Buffer job and reconciles scheduled posts every 15 minutes.
+8. `WF-09-health-report.json` — reads pipeline counts and renderer health daily at 08:00 Lisbon.
 
-They follow the Social API contract and database migrations; credentials stay in n8n.
-
-The committed exports intentionally contain no instance-specific credential IDs. After import, attach the Social API Bearer Auth credential to the Social API nodes and the Renderer Bearer Auth credential to renderer nodes. `WF-06` can only select records already marked `approved` in the database.
-
-Current manual order: run `WF-01`, inspect its final draft output, run `WF-05`
-only if the copy and source are acceptable, then run `WF-06`. No publishing
-workflow is active.
+The safe manual order is generate → request review → approve in the private page → queue render → schedule. Generation allows an initial attempt plus two repairs. Approval and rendering are immutable and idempotent. Publishing retries use 2/10/30-minute policy, while ambiguous Buffer results are blocked for reconciliation rather than blindly retried.

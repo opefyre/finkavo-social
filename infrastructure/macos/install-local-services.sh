@@ -65,7 +65,8 @@ chmod 600 "$ENV_FILE"
 cp "$PROJECT_DIR/infrastructure/macos/run-n8n.sh" "$CONFIG_ROOT/run-n8n.sh"
 cp "$PROJECT_DIR/infrastructure/macos/run-renderer.sh" "$CONFIG_ROOT/run-renderer.sh"
 cp "$PROJECT_DIR/infrastructure/macos/run-social-api.sh" "$CONFIG_ROOT/run-social-api.sh"
-chmod 700 "$CONFIG_ROOT/run-n8n.sh" "$CONFIG_ROOT/run-renderer.sh" "$CONFIG_ROOT/run-social-api.sh"
+cp "$PROJECT_DIR/infrastructure/macos/run-renderer-agent.sh" "$CONFIG_ROOT/run-renderer-agent.sh"
+chmod 700 "$CONFIG_ROOT/run-n8n.sh" "$CONFIG_ROOT/run-renderer.sh" "$CONFIG_ROOT/run-social-api.sh" "$CONFIG_ROOT/run-renderer-agent.sh"
 
 sed -e "s|__HOME__|$HOME|g" -e "s|__NODE_ROOT__|$NODE_ROOT|g" -e "s|__N8N_ROOT__|$N8N_ROOT|g" -e "s|__PROJECT_DIR__|$PROJECT_DIR|g" \
   "$PROJECT_DIR/infrastructure/macos/com.finkavo.social.n8n.plist.template" > "$LAUNCH_AGENTS/com.finkavo.social.n8n.plist"
@@ -73,7 +74,9 @@ sed -e "s|__HOME__|$HOME|g" -e "s|__NODE_ROOT__|$NODE_ROOT|g" -e "s|__PROJECT_DI
   "$PROJECT_DIR/infrastructure/macos/com.finkavo.social.renderer.plist.template" > "$LAUNCH_AGENTS/com.finkavo.social.renderer.plist"
 sed -e "s|__HOME__|$HOME|g" -e "s|__NODE_ROOT__|$NODE_ROOT|g" -e "s|__PROJECT_DIR__|$PROJECT_DIR|g" \
   "$PROJECT_DIR/infrastructure/macos/com.finkavo.social.api.plist.template" > "$LAUNCH_AGENTS/com.finkavo.social.api.plist"
-chmod 600 "$LAUNCH_AGENTS/com.finkavo.social.n8n.plist" "$LAUNCH_AGENTS/com.finkavo.social.renderer.plist" "$LAUNCH_AGENTS/com.finkavo.social.api.plist"
+sed -e "s|__HOME__|$HOME|g" -e "s|__NODE_ROOT__|$NODE_ROOT|g" -e "s|__PROJECT_DIR__|$PROJECT_DIR|g" \
+  "$PROJECT_DIR/infrastructure/macos/com.finkavo.social.renderer-agent.plist.template" > "$LAUNCH_AGENTS/com.finkavo.social.renderer-agent.plist"
+chmod 600 "$LAUNCH_AGENTS/com.finkavo.social.n8n.plist" "$LAUNCH_AGENTS/com.finkavo.social.renderer.plist" "$LAUNCH_AGENTS/com.finkavo.social.api.plist" "$LAUNCH_AGENTS/com.finkavo.social.renderer-agent.plist"
 
 cd "$PROJECT_DIR"
 "$NODE_ROOT/bin/corepack" pnpm --version >/dev/null
@@ -87,9 +90,20 @@ fi
 apps/renderer/node_modules/.bin/tsc -p apps/renderer/tsconfig.json
 apps/social-api/node_modules/.bin/tsc -p apps/social-api/tsconfig.json
 
-for label in com.finkavo.social.n8n com.finkavo.social.renderer com.finkavo.social.api; do
+for label in com.finkavo.social.n8n com.finkavo.social.renderer com.finkavo.social.api com.finkavo.social.renderer-agent; do
   launchctl bootout "gui/$(id -u)/$label" 2>/dev/null || true
-  launchctl bootstrap "gui/$(id -u)" "$LAUNCH_AGENTS/$label.plist"
+  loaded=false
+  for attempt in 1 2 3 4 5; do
+    if launchctl bootstrap "gui/$(id -u)" "$LAUNCH_AGENTS/$label.plist" 2>/dev/null; then
+      loaded=true
+      break
+    fi
+    sleep 1
+  done
+  if [[ "$loaded" != true ]]; then
+    print -u2 "Unable to load $label after five attempts"
+    exit 1
+  fi
   launchctl enable "gui/$(id -u)/$label"
   launchctl kickstart -k "gui/$(id -u)/$label"
 done
