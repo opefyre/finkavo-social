@@ -406,3 +406,17 @@ References:
 - Generated carousel objects have a verified 180-day Cloudflare R2 lifecycle rule.
 - The editorial calendar expands IRS, IVA, Social Security, IMI/AIMI, monthly fiscal-agenda, and selected occasion rules into occurrence-specific campaigns. Exact official evidence is required before generation.
 - Daily planning runs at 06:30 Lisbon, permits recurring deadline coverage, limits high-risk concentration, avoids repetitive sources/categories, and fills remaining capacity with socially useful verified evergreen material.
+
+## 14. Caption and template release — 2026-08-12
+
+- Instagram captions are one reviewed, deterministic package: a specific hook, useful body copy, concise text CTA, `finkavo.com`, and four to eight focused hashtags including `#Finkavo`. The generator cannot duplicate these sections, omit the website, use a weak hook, or exceed Instagram's caption limit.
+- The private review page shows the exact final caption that Buffer will receive. Publishing assembles the same approved fields; it does not invent or modify copy after approval.
+- Finkavo v3 contains five approved non-photographic visual families using the supplied logo, app palette, Fraunces display face, Noto Sans supporting face, fixed typography, source footer, and 1080 × 1350 safe zones:
+  - `petrol_editorial`: default brand editorial treatment;
+  - `cream_guide`: evergreen explanations and general guides;
+  - `mint_checklist`: checklists and common-mistake posts;
+  - `peach_deadline`: recurring deadlines and occasions;
+  - `ink_alert`: verified news and regulatory changes.
+- Template selection is deterministic from post intent, not an unrestricted AI design choice. Every family has a complete fixture, brand-font validation, overflow checks, and rendered visual reference images.
+- Recurring IRS, IVA, Social Security, IMI/AIMI, and fiscal-agenda obligations remain eligible each occurrence. Topic-history deduplication does not suppress a new deadline cycle.
+- Alt text remains attached to every reviewed slide and stored with the approved revision. It is not silently discarded from editorial state if a publishing provider lacks a per-image alt-text field.

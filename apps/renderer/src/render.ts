@@ -26,14 +26,20 @@ export async function renderManifest(manifest: RenderManifest, root: string): Pr
     const page = await browser.newPage({ viewport: { width: 1080, height: 1350 }, deviceScaleFactor: 1 });
     const outputs: string[] = [];
     for (const [index, slide] of manifest.slides.entries()) {
-      await page.setContent(renderHtml(slide, index + 1, manifest.slides.length, assets), { waitUntil: "load" });
+      await page.setContent(renderHtml(slide, index + 1, manifest.slides.length, assets, manifest.visualStyle), { waitUntil: "load" });
       await page.evaluate(() => document.fonts.ready);
       const dimensions = await page.evaluate(() => {
         const slide = document.querySelector(".slide")?.getBoundingClientRect();
-        return { overflow: document.documentElement.scrollHeight > 1350 || document.documentElement.scrollWidth > 1080, width: slide?.width, height: slide?.height };
+        const clipped = [...document.querySelectorAll(".top,.copy,.footer,h1,.body,.subtitle,li")].some((element) => {
+          const rect = element.getBoundingClientRect();
+          return rect.left < 0 || rect.right > 1080 || rect.top < 0 || rect.bottom > 1350;
+        });
+        const fonts = document.fonts.check('78px "Fraunces"') && document.fonts.check('31px "Noto Sans"');
+        return { overflow: document.documentElement.scrollHeight > 1350 || document.documentElement.scrollWidth > 1080 || clipped, fonts, width: slide?.width, height: slide?.height };
       });
       if (dimensions.width !== 1080 || dimensions.height !== 1350) throw new Error(`Slide ${index + 1} has an invalid ${dimensions.width} × ${dimensions.height} canvas`);
       if (dimensions.overflow) throw new Error(`Slide ${index + 1} overflows the canvas`);
+      if (!dimensions.fonts) throw new Error(`Slide ${index + 1} did not load the approved brand fonts`);
       const output = path.join(directory, `${String(index + 1).padStart(2, "0")}.png`);
       await page.screenshot({ path: output, type: "png" });
       outputs.push(output);

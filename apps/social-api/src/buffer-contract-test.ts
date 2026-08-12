@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { createScheduledPost, getPost } from "./buffer.js";
+import { composeInstagramCaption } from "./caption.js";
 import { bucket, createBufferMediaUrl } from "./storage.js";
 
 if (process.env.ALLOW_BUFFER_CONTRACT_TEST !== "yes") throw new Error("Set ALLOW_BUFFER_CONTRACT_TEST=yes after explicit approval");
@@ -27,7 +28,12 @@ const post = await createScheduledPost({
   channelId,
   mode: "shareNow",
   mediaUrls,
-  text: "[PIPELINE TEST] Finkavo five-slide carousel delivery validation. No financial information or advice.",
+  text: composeInstagramCaption({
+    hook: "Pipeline test: validating Finkavo’s five-slide Instagram delivery.",
+    body: "This controlled post checks image order, public media delivery, and the final Buffer handoff. It contains no financial or legal advice.",
+    callToAction: "Review all five slides, then delete this test.",
+    hashtags: ["#Finkavo", "#PortugalAdmin", "#InstagramCarousel", "#PipelineTest"],
+  }),
 });
 const verified = await getPost(post.id);
 process.stdout.write(`${JSON.stringify({ id: post.id, status: verified?.status || post.status, dueAt: verified?.dueAt || post.dueAt || null, assets: 5 })}\n`);

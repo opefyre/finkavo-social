@@ -10,6 +10,7 @@ import { notifyDiscord } from "./discord.js";
 import { retryDecision } from "./retry-policy.js";
 import { expandCalendar, loadEditorialCalendar, selectDailyMix } from "./planner.js";
 import { validateSocialDraft } from "./draft-quality.js";
+import { composeInstagramCaption } from "./caption.js";
 
 const databaseUrl = process.env.DATABASE_URL;
 const apiToken = process.env.SOCIAL_API_TOKEN;
@@ -83,10 +84,16 @@ function reviewPage(post: Record<string, unknown>, revision: Record<string, unkn
   const slides = revision.slides as Array<Record<string, unknown>>;
   const sources = revision.source_bundle as Array<Record<string, unknown>>;
   const altTexts = revision.alt_texts as string[];
+  const finalCaption = composeInstagramCaption({
+    hook: String(revision.hook),
+    body: String(revision.caption),
+    callToAction: String(revision.call_to_action),
+    hashtags: revision.hashtags as string[],
+  });
   const slideCards = slides.map((slide, index) => `<article><small>Slide ${index + 1}</small><h3>${escapeHtml(slide.title)}</h3><p>${escapeHtml(slide.body)}</p><p class="meta"><strong>Alt text:</strong> ${escapeHtml(altTexts[index])}</p></article>`).join("");
   const sourceItems = sources.map((source) => `<li><a href="${escapeHtml(source.url)}" rel="noreferrer">${escapeHtml(source.title)}</a> — ${escapeHtml(source.publisher)}</li>`).join("");
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Review · ${escapeHtml(post.topic)}</title><style>
-  :root{font-family:Inter,ui-sans-serif,system-ui;color:#143735;background:#f6f2ea}body{margin:0}.wrap{max-width:1080px;margin:auto;padding:32px 20px 64px}header{display:flex;justify-content:space-between;gap:20px;align-items:start}.pill{background:#f0aa70;padding:6px 10px;border-radius:99px;font-weight:700;text-transform:uppercase;font-size:12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:24px 0}article,.panel{background:white;border:1px solid #d7ddd8;border-radius:14px;padding:20px;box-shadow:0 5px 18px #1437350d}article small,.meta{color:#5c706c;font-size:13px}h1{font-size:clamp(30px,5vw,52px);margin:.35em 0}h3{font-size:22px}.caption{white-space:pre-wrap;line-height:1.6}a{color:#175e58}form{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin-top:20px}label{display:grid;gap:6px;flex:1;min-width:240px}textarea{min-height:70px;padding:10px;border:1px solid #aebbb7;border-radius:8px}button{border:0;border-radius:9px;padding:12px 20px;font-weight:800;cursor:pointer}.approve{background:#175e58;color:white}.reject{background:#9d3535;color:white}.warning{border-left:5px solid #f0aa70}.identity{font-size:13px;color:#5c706c}</style></head><body><main class="wrap"><header><div><span class="pill">${escapeHtml(post.risk_level)} risk · ${escapeHtml(post.category)}</span><h1>${escapeHtml(post.topic)}</h1><p>${escapeHtml(revision.hook)}</p></div><p class="identity">Reviewer: ${escapeHtml(reviewer)}</p></header><section class="panel warning"><strong>Approval is revision-bound.</strong> Any change to copy, slides, or evidence invalidates this decision.</section><section class="grid">${slideCards}</section><section class="panel"><h2>Caption</h2><p class="caption">${escapeHtml(revision.caption)}</p><h2>Sources</h2><ul>${sourceItems}</ul><p class="meta">Evidence hash: ${escapeHtml(String(revision.evidence_hash).slice(0, 16))}…</p><form method="post" action="${escapeHtml(reviewPathPrefix)}/review/${escapeHtml(token)}/decision"><label>Optional review comment<textarea name="comment" maxlength="500"></textarea></label><button class="approve" name="decision" value="approved">Approve exact revision</button><button class="reject" name="decision" value="rejected">Reject</button></form></section></main></body></html>`;
+  :root{font-family:Inter,ui-sans-serif,system-ui;color:#143735;background:#f6f2ea}body{margin:0}.wrap{max-width:1080px;margin:auto;padding:32px 20px 64px}header{display:flex;justify-content:space-between;gap:20px;align-items:start}.pill{background:#f0aa70;padding:6px 10px;border-radius:99px;font-weight:700;text-transform:uppercase;font-size:12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:24px 0}article,.panel{background:white;border:1px solid #d7ddd8;border-radius:14px;padding:20px;box-shadow:0 5px 18px #1437350d}article small,.meta{color:#5c706c;font-size:13px}h1{font-size:clamp(30px,5vw,52px);margin:.35em 0}h3{font-size:22px}.caption{white-space:pre-wrap;line-height:1.6}a{color:#175e58}form{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin-top:20px}label{display:grid;gap:6px;flex:1;min-width:240px}textarea{min-height:70px;padding:10px;border:1px solid #aebbb7;border-radius:8px}button{border:0;border-radius:9px;padding:12px 20px;font-weight:800;cursor:pointer}.approve{background:#175e58;color:white}.reject{background:#9d3535;color:white}.warning{border-left:5px solid #f0aa70}.identity{font-size:13px;color:#5c706c}</style></head><body><main class="wrap"><header><div><span class="pill">${escapeHtml(post.risk_level)} risk · ${escapeHtml(post.category)}</span><h1>${escapeHtml(post.topic)}</h1><p>${escapeHtml(revision.hook)}</p></div><p class="identity">Reviewer: ${escapeHtml(reviewer)}</p></header><section class="panel warning"><strong>Approval is revision-bound.</strong> Any change to copy, slides, or evidence invalidates this decision.</section><section class="grid">${slideCards}</section><section class="panel"><h2>Final Instagram caption</h2><p class="caption">${escapeHtml(finalCaption)}</p><h2>Sources</h2><ul>${sourceItems}</ul><p class="meta">Evidence hash: ${escapeHtml(String(revision.evidence_hash).slice(0, 16))}…</p><form method="post" action="${escapeHtml(reviewPathPrefix)}/review/${escapeHtml(token)}/decision"><label>Optional review comment<textarea name="comment" maxlength="500"></textarea></label><button class="approve" name="decision" value="approved">Approve exact revision</button><button class="reject" name="decision" value="rejected">Reject</button></form></section></main></body></html>`;
 }
 
 const GenerateSchema = z.object({ documentId: z.string().uuid().optional(), conceptId: z.string().uuid().optional() }).refine((value) => value.documentId || value.conceptId, "documentId or conceptId is required");
@@ -116,7 +123,17 @@ function createRenderManifest(post: Record<string, unknown>, revision: Record<st
     if (type === "bullets" || type === "steps") return { ...base, type, icon, items: (slide.items as unknown[]).map((item) => fit(item, 130)).slice(0, 5) };
     return { ...base, type: "content", icon, body: fit(slide.body, 420), ...(slide.highlight ? { highlight: fit(slide.highlight, 80) } : {}) };
   });
-  return { schemaVersion: 1, postId: String(post.id), revisionId: String(revision.id), locale: "en", templateVersion: "finkavo-v2", slides };
+  const intent = String(post.post_intent || "evergreen_explainer");
+  const visualStyle = intent === "deadline_reminder" || intent === "occasion"
+    ? "peach_deadline"
+    : intent === "regulatory_change" || intent === "timely_news"
+      ? "ink_alert"
+      : intent === "checklist" || intent === "common_mistake"
+        ? "mint_checklist"
+        : intent === "evergreen_explainer"
+          ? "cream_guide"
+          : "petrol_editorial";
+  return { schemaVersion: 1, postId: String(post.id), revisionId: String(revision.id), locale: "en", templateVersion: "finkavo-v3", visualStyle, slides };
 }
 
 const server = http.createServer(async (req, res) => {
@@ -132,7 +149,8 @@ const server = http.createServer(async (req, res) => {
       const tokenHash = hash(reviewMatch[1]);
       const [row] = await sql`
         SELECT t.expires_at, t.used_at, p.*, r.id AS revision_id, r.hook AS revision_hook,
-               r.caption AS revision_caption, r.slides AS revision_slides, r.alt_texts,
+               r.caption AS revision_caption, r.call_to_action AS revision_cta, r.hashtags AS revision_hashtags,
+               r.slides AS revision_slides, r.alt_texts,
                r.source_bundle, r.evidence_hash
         FROM social_review_token t
         JOIN social_post p ON p.id = t.post_id
@@ -143,7 +161,8 @@ const server = http.createServer(async (req, res) => {
       if (!row || row.used_at || new Date(String(row.expires_at)) <= new Date()) return sendHtml(res, 410, "<h1>Review link expired or already used</h1>");
       const reviewer = String(req.headers["tailscale-user-login"] || "Identity available through Tailscale Serve only");
       return sendHtml(res, 200, reviewPage(row as Record<string, unknown>, {
-        hook: row.revision_hook, caption: row.revision_caption, slides: row.revision_slides,
+        hook: row.revision_hook, caption: row.revision_caption, call_to_action: row.revision_cta,
+        hashtags: row.revision_hashtags, slides: row.revision_slides,
         alt_texts: row.alt_texts, source_bundle: row.source_bundle, evidence_hash: row.evidence_hash,
       }, reviewMatch[1], reviewer));
     }
@@ -419,7 +438,7 @@ const server = http.createServer(async (req, res) => {
         const [revision] = await tx`
           INSERT INTO social_post_revision (post_id, revision_number, locale, template_version, hook, caption, call_to_action,
             hashtags, slides, alt_texts, source_bundle, evidence_hash, content_hash, model, prompt_version, post_intent, search_keywords)
-          VALUES (${post.id}, 1, 'en', 'finkavo-v2', ${checked.hook}, ${checked.caption}, ${checked.callToAction},
+          VALUES (${post.id}, 1, 'en', 'finkavo-v3', ${checked.hook}, ${checked.caption}, ${checked.callToAction},
             ${tx.json(checked.hashtags)}, ${tx.json(checked.slides)}, ${tx.json(checked.slides.map((slide) => slide.altText))},
             ${tx.json(sourceBundle)}, ${evidenceHash}, ${contentHash}, ${model}, 'v2', ${checked.postIntent}, ${tx.json(checked.searchKeywords)}) RETURNING *
         `;
@@ -514,7 +533,7 @@ const server = http.createServer(async (req, res) => {
         const attempt = Number(attemptRow.next_attempt);
         const [claimed] = await tx`UPDATE social_render_job SET status = 'leased', attempt_count = ${attempt}, lease_owner = ${workerId}, lease_expires_at = now() + INTERVAL '10 minutes', updated_at = now() WHERE id = ${candidate.id} RETURNING *`;
         await tx`INSERT INTO social_render_attempt (job_id, attempt_number, worker_id) VALUES (${candidate.id}, ${attempt}, ${workerId})`;
-        await tx`UPSERT INTO social_renderer_heartbeat (worker_id, version, last_seen_at, details) VALUES (${workerId}, 'finkavo-v1', now(), ${tx.json({ state: "rendering", jobId: candidate.id })})`;
+        await tx`UPSERT INTO social_renderer_heartbeat (worker_id, version, last_seen_at, details) VALUES (${workerId}, 'finkavo-v3', now(), ${tx.json({ state: "rendering", jobId: candidate.id })})`;
         return claimed;
       });
       return send(res, 200, { job });
@@ -528,7 +547,7 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method === "POST" && url.pathname === "/v1/renderer/heartbeat") {
       const workerId = z.string().min(3).max(120).parse(req.headers["x-renderer-id"]);
-      await sql`UPSERT INTO social_renderer_heartbeat (worker_id, version, last_seen_at, details) VALUES (${workerId}, 'finkavo-v1', now(), ${sql.json({ state: "idle" })})`;
+      await sql`UPSERT INTO social_renderer_heartbeat (worker_id, version, last_seen_at, details) VALUES (${workerId}, 'finkavo-v3', now(), ${sql.json({ state: "idle" })})`;
       return send(res, 200, { ok: true });
     }
 
@@ -584,7 +603,7 @@ const server = http.createServer(async (req, res) => {
         await tx`UPDATE social_render_attempt SET finished_at = now(), outcome = 'completed' WHERE job_id = ${job.id} AND attempt_number = ${job.attempt_count}`;
         await tx`UPDATE social_post SET status = 'rendered', rendered_at = now(), render_files = ${tx.json(files)}, updated_at = now() WHERE id = ${job.post_id} AND approved_revision_id = ${job.revision_id}`;
         await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${job.post_id}, 'render.completed', ${tx.json({ jobId: job.id, files: files.map((file) => ({ key: file.key, sha256: file.sha256, bytes: file.bytes })) })})`;
-        await tx`UPSERT INTO social_renderer_heartbeat (worker_id, version, last_seen_at, details) VALUES (${workerId}, 'finkavo-v1', now(), ${tx.json({ state: "idle" })})`;
+        await tx`UPSERT INTO social_renderer_heartbeat (worker_id, version, last_seen_at, details) VALUES (${workerId}, 'finkavo-v3', now(), ${tx.json({ state: "idle" })})`;
         return [job];
       });
       return completed ? send(res, 200, { job: completed }) : send(res, 409, { error: "Render lease is missing or expired" });
@@ -643,7 +662,7 @@ const server = http.createServer(async (req, res) => {
         if (!candidate) return null;
         const attempt = Number(candidate.attempt_count) + 1;
         const [claimed] = await tx`UPDATE social_publish_job SET status = 'processing', attempt_count = ${attempt}, lease_owner = ${workerId}, lease_expires_at = now() + INTERVAL '5 minutes', updated_at = now() WHERE id = ${candidate.id} RETURNING *`;
-        const [post] = await tx`SELECT caption, hashtags, render_files FROM social_post WHERE id = ${candidate.post_id}`;
+        const [post] = await tx`SELECT hook, caption, call_to_action, hashtags, render_files FROM social_post WHERE id = ${candidate.post_id}`;
         const requestFingerprint = hash({ postId: candidate.post_id, revisionId: candidate.revision_id, scheduledAt: candidate.scheduled_at, files: post.render_files });
         await tx`INSERT INTO social_publish_attempt (job_id, attempt_number, request_fingerprint) VALUES (${candidate.id}, ${attempt}, ${requestFingerprint})`;
         return { ...claimed, post };
@@ -655,7 +674,7 @@ const server = http.createServer(async (req, res) => {
         const storedFiles = job.post.render_files as Array<{ key: string }>;
         const mediaUrls = await Promise.all(storedFiles.map((file) => createBufferMediaUrl(file.key)));
         const hashtags = job.post.hashtags as string[];
-        const text = `${job.post.caption}${hashtags?.length ? `\n\n${hashtags.join(" ")}` : ""}`;
+        const text = composeInstagramCaption({ hook: String(job.post.hook), body: String(job.post.caption), callToAction: String(job.post.call_to_action), hashtags });
         const providerPost = await createScheduledPost({ channelId, text, dueAt: new Date(job.scheduled_at as string).toISOString(), mediaUrls });
         const [saved] = await sql.begin(async (tx) => {
           const [updated] = await tx`UPDATE social_publish_job SET status = 'scheduled', provider_post_id = ${providerPost.id}, provider_status = ${providerPost.status || "scheduled"}, lease_owner = NULL, lease_expires_at = NULL, updated_at = now() WHERE id = ${job.id} AND status = 'processing' RETURNING *`;
