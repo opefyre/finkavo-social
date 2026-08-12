@@ -14,6 +14,7 @@ import { validateSocialDraft } from "./draft-quality.js";
 import { composeInstagramCaption } from "./caption.js";
 import { loadAnnualPlan, rowsForDate } from "./annual-plan.js";
 import { findFactCard } from "./fact-cards.js";
+import { authenticatedReviewer } from "./access-auth.js";
 
 const databaseUrl = process.env.DATABASE_URL;
 const apiToken = process.env.SOCIAL_API_TOKEN;
@@ -208,6 +209,8 @@ const server = http.createServer(async (req, res) => {
 
     const reviewMatch = url.pathname.match(/^\/review\/([A-Za-z0-9_-]{32,})$/);
     if (req.method === "GET" && reviewMatch) {
+      const reviewer = await authenticatedReviewer(req.headers);
+      if (!reviewer) return sendHtml(res, 403, "<h1>Approval requires an authenticated owner identity</h1>");
       const tokenHash = hash(reviewMatch[1]);
       const [row] = await sql`
         SELECT t.expires_at, t.used_at, p.*, r.id AS revision_id, r.hook AS revision_hook,
@@ -221,7 +224,6 @@ const server = http.createServer(async (req, res) => {
         LIMIT 1
       `;
       if (!row || row.used_at || new Date(String(row.expires_at)) <= new Date()) return sendHtml(res, 410, "<h1>Review link expired or already used</h1>");
-      const reviewer = String(req.headers["tailscale-user-login"] || "Identity available through Tailscale Serve only");
       return sendHtml(res, 200, reviewPage(row as Record<string, unknown>, {
         hook: row.revision_hook, caption: row.revision_caption, call_to_action: row.revision_cta,
         hashtags: row.revision_hashtags, slides: row.revision_slides,
@@ -231,8 +233,8 @@ const server = http.createServer(async (req, res) => {
 
     const decisionMatch = url.pathname.match(/^\/review\/([A-Za-z0-9_-]{32,})\/decision$/);
     if (req.method === "POST" && decisionMatch) {
-      const reviewer = req.headers["tailscale-user-login"];
-      if (!reviewer) return sendHtml(res, 403, "<h1>Approval requires an authenticated Tailscale Serve identity</h1>");
+      const reviewer = await authenticatedReviewer(req.headers);
+      if (!reviewer) return sendHtml(res, 403, "<h1>Approval requires an authenticated owner identity</h1>");
       const form = await readForm(req);
       const decision = z.enum(["approved", "rejected"]).parse(form.get("decision"));
       const comment = z.string().max(500).parse(form.get("comment") || "");

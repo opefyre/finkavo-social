@@ -369,7 +369,7 @@ Deferred:
 - Official Portuguese sources are the evidence allowlist. GDELT is free discovery-only input and can never serve as factual evidence.
 - Buffer uses the dedicated Finkavo Instagram channel and a least-privilege personal API key. Publishing stays human-gated.
 - Generated carousel media under `social/carousels/` expires after 180 days. Database audit records, hashes, evidence, and provider IDs remain durable.
-- Approval occurs on the private, Tailscale-authenticated Finkavo review page. Discord is notification-only.
+- Approval occurs on `approve.finkavo.com`, protected by Cloudflare Access and restricted to `opefyre@gmail.com`. The public hostname reaches the localhost-only origin through Cloudflare Tunnel; the origin validates the signed Access JWT, audience, issuer, expiry, and reviewer email. Links therefore work securely on phones without Tailscale. Discord provides the full image/caption preview and the approval link.
 
 ## 12. External contracts verified on 2026-08-11
 
@@ -394,7 +394,7 @@ References:
 - OpenAI structured output creates English drafts with evidence quotes; the API key remains in the protected host environment.
 - n8n stores encrypted Bearer credentials and retains ten final modular workflows: six scheduled discovery/planning/operations workflows and four human-triggered editorial workflows.
 - A real official-source draft completed `draft → approved → rendered` and produced six 1080 × 1350 PNGs.
-- The review UI and all application services remain private behind Tailscale. Only exact R2 media object URLs are publicly readable for Buffer; listing and writes remain private.
+- Application services remain localhost-only. Administrative access stays behind Tailscale; the review UI alone is reachable through a Cloudflare Tunnel and requires Cloudflare Access authentication. Only exact R2 media object URLs are publicly readable for Buffer; listing and writes remain private.
 - Buffer scheduling, status reconciliation, lease recovery, retry/dead-letter behavior, and Discord approval/published/error/system notifications are configured.
 - A guarded five-image Buffer contract post successfully reached Instagram using the current media contract and public R2 custom domain.
 - n8n state, encryption configuration, and service secrets are backed up daily on the spare Mac with 30-day local retention; a verified recovery copy is held in Finkavo's protected secrets folder on the primary Mac.

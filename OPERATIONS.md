@@ -5,7 +5,7 @@
 - Apple Silicon spare Mac, Node 22.23.1, n8n 2.4.8.
 - Project copy: `~/social-posts-workflow`.
 - n8n, renderer, Social API, and renderer agent are per-user LaunchAgents with `RunAtLoad` and `KeepAlive`.
-- All services listen on localhost. The editor and review route are available only through private Tailscale Serve; Funnel is not configured.
+- All origin services listen on localhost. Reviews are published at `https://approve.finkavo.com` through Cloudflare Tunnel and protected by Cloudflare Access; only `opefyre@gmail.com` is allowed. Tailscale remains the private administration path.
 - Logs are under `~/Library/Logs/FinkavoSocial`.
 
 Local health endpoints:
@@ -43,7 +43,7 @@ Re-running `infrastructure/macos/install-local-services.sh` is safe. It preserve
 1. Broad-news and official-portal discovery workflows collect Portugal signals every two hours. They remain `discovery_only` until exact official evidence exists in the fresh canonical corpus.
 2. At 06:30 Lisbon, the launch-phase planner expands recurring deadlines/occasions, prioritizes verified official changes, applies repeat-aware campaign rules, and selects up to five diverse concepts. It allows the next occurrence of a recurring obligation even when that subject was covered previously.
 3. Generate a draft from a planned, current canonical corpus document. The JSON contract enforces English social copy, a clear post intent, search phrases, exact source excerpts, approved icons/layouts, renderer-safe lengths, 3–7 slides, and no more than two repair attempts. Caption copy is packaged as hook, body, text CTA, `finkavo.com`, and four to eight focused hashtags.
-4. Request the private review link. It is expiring, single-use, authenticated by Tailscale identity, and tied to the exact revision/evidence hash. The page shows the exact final Instagram caption and all slide alt text before approval.
+4. Request the review link. It is expiring, single-use, authenticated by Cloudflare Access, usable from phone or desktop, and tied to the exact revision/evidence hash. The page shows the exact final Instagram caption and all slide alt text before approval.
 5. Approve or reject in the review page. Direct API approval is disabled.
 6. Queue rendering. The outbound Mac agent uploads through presigned R2 URLs; the API re-downloads and verifies all file hashes, sizes, MIME types, and dimensions.
 7. Schedule only after review. Up to five approved renders are assigned to 08:30, 11:30, 14:30, 18:00, and 21:00 Lisbon. Ambiguous provider errors are blocked for reconciliation rather than retried.
@@ -51,7 +51,7 @@ Re-running `infrastructure/macos/install-local-services.sh` is safe. It preserve
 ## Verified on 2026-08-12
 
 - n8n, renderer, Social API, and renderer agent healthy.
-- Private Tailscale review UI authenticated and revision-bound.
+- Cloudflare Access review UI authenticated to the owner email and revision-bound; the origin also validates Cloudflare's signed Access JWT.
 - Single-use approval recorded with reviewer identity; replay and mutation protections implemented.
 - Additive CockroachDB migrations through `0005_editorial_intelligence.sql` applied.
 - Dedicated `finkavo-social` R2 bucket and bucket-scoped read/write credential configured.
