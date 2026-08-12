@@ -386,6 +386,7 @@ const server = http.createServer(async (req, res) => {
             authority: source.publisher ? String(source.publisher) : null,
             fetchedAt: String(source.retrievedAt), excerpts: evidenceSources.flatMap(s=>s.excerpts as string[]),
             sources: evidenceSources.map(s=>({title:String(s.title),sourceUrl:String(s.url),authority:s.publisher?String(s.publisher):null,fetchedAt:String(s.retrievedAt),excerpts:s.excerpts as string[]})),
+            ...(lastGenerationError ? { repairFeedback: lastGenerationError } : {}),
             ...(selectedConcept ? { editorialContext: { topic: String(selectedConcept.topic), reason: selectedConcept.reason ? String(selectedConcept.reason) : null, campaignStage: selectedConcept.campaign_stage ? String(selectedConcept.campaign_stage) : null, plannedFor: selectedConcept.planned_for ? String(selectedConcept.planned_for) : null, expiresAt: selectedConcept.expires_at ? String(selectedConcept.expires_at) : null } } : {}),
           });
           const candidate = DraftSchema.parse(generated.draft);
@@ -405,7 +406,7 @@ const server = http.createServer(async (req, res) => {
       }
       if (!checked) {
         await sql`INSERT INTO social_event (event_type, payload) VALUES ('generation.failed', ${sql.json({ documentId, error: lastGenerationError })})`;
-        return send(res, 422, { error: "Structured generation failed after two repair attempts" });
+        return send(res, 422, { error: "Structured generation failed after the initial attempt and two targeted repairs", detail: lastGenerationError });
       }
       const sourceBundle = evidenceSources.map(s=>({documentId:String(s.documentId),url:String(s.url),title:String(s.title),publisher:s.publisher?String(s.publisher):null,locale:String(s.locale),retrievedAt:String(s.retrievedAt),contentHash:String(s.contentHash),tier:String(s.tier)}));
       const evidenceHash = hash({ sourceBundle, claims: checked.claims });

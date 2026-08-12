@@ -8,6 +8,7 @@ type Candidate = {
   excerpts: string[];
   editorialContext?: { topic: string; reason: string | null; campaignStage: string | null; plannedFor: string | null; expiresAt: string | null };
   sources?: Array<{ title: string; sourceUrl: string; authority: string | null; fetchedAt: string; excerpts: string[] }>;
+  repairFeedback?: string;
 };
 
 export async function generateDraft(candidate: Candidate): Promise<{ draft: Draft; model: string }> {
@@ -34,6 +35,8 @@ export async function generateDraft(candidate: Candidate): Promise<{ draft: Draf
         "Provide 2-6 natural search phrases a person might use on Instagram or Google. Repeat recurring deadlines when the supplied candidate is a new filing period; do not treat prior coverage as a reason to omit it.",
         "When editorialContext is present, follow its campaign stage and timing. Never infer the exact legal deadline from editorialContext alone; the date must also appear in the supplied official excerpts.",
         "Every body, bullet, evidence quote, and CTA must be a complete thought and must never be cut off to satisfy a character limit. Keep the CTA under 65 characters. Use sentence case rather than all-caps emphasis.",
+        "Every cover, content, and summary body must end with a period, question mark, exclamation mark, or closing parenthesis. Every bullet and step must also end with one of those characters.",
+        "If repairFeedback is supplied, correct that exact validation problem while preserving the predetermined topic and evidence-bound meaning.",
         "Alt text must describe only the text, layout type, and approved icon actually requested in the structured slide. Do not invent photos, crossed-out symbols, people, charts, or illustrations that the template will not render.",
         "Use cover as the first slide and summary as the final slide. Bullets and steps need 2-5 complete items; other slide types must have a complete body. Do not place unused copy in fields the chosen slide type will ignore.",
         "Slide copy is a clean English paraphrase of supported facts, not a raw corpus fragment. Never include Markdown markers, chunk labels such as 'D1', dangling quotation marks, or all-caps emphasis. Every body and list item ends with normal sentence punctuation.",
