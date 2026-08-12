@@ -1,0 +1,117 @@
+{
+  "version": 1,
+  "cards": [
+    {
+      "id": "nif-basics",
+      "match": ["NIF"],
+      "authority": "gov.pt",
+      "sourceUrl": "https://www2.gov.pt/servicos/pedir-o-numero-de-identificacao-fiscal-para-pessoa-singular",
+      "sourceTitle": "Request a Portuguese tax identification number for an individual",
+      "facts": [
+        "NIF means Número de Identificação Fiscal.",
+        "A NIF is the Portuguese tax identification number assigned to a person for tax and administrative purposes.",
+        "The NIF is commonly requested for contracts, employment, banking, housing, invoices and dealings with Portuguese public services.",
+        "A NIF identifies the taxpayer; it is not proof of immigration status, residence permission or Social Security registration.",
+        "Keep the number available, but do not publish photographs of documents containing it."
+      ]
+    },
+    {
+      "id": "niss-basics",
+      "match": ["NISS"],
+      "authority": "Segurança Social",
+      "sourceUrl": "https://www.seg-social.pt/pedido-de-formulario-niss-cidadao-estrangeiro",
+      "sourceTitle": "Requesting a NISS for a foreign citizen",
+      "facts": [
+        "NISS means Número de Identificação da Segurança Social.",
+        "The NISS identifies a person within Portugal's Social Security system.",
+        "A NISS is different from a NIF: the NIF is used for tax identification and the NISS is used for Social Security.",
+        "A person may need a NISS for employment, contributions and access to Social Security processes.",
+        "Receiving a NISS does not by itself prove immigration status or entitlement to a benefit."
+      ]
+    },
+    {
+      "id": "cmd-basics",
+      "match": ["Chave Móvel Digital", "Digital Mobile Key"],
+      "authority": "Autenticação.gov",
+      "sourceUrl": "https://www.autenticacao.gov.pt/chave-movel-digital",
+      "sourceTitle": "Chave Móvel Digital",
+      "facts": [
+        "Chave Móvel Digital is a Portuguese digital authentication method.",
+        "It allows a user to access participating public and private online services using a mobile number and a PIN.",
+        "Authentication may also require a temporary security code.",
+        "The service can also be used for qualified digital signatures when the signature function is activated.",
+        "Never share the PIN or temporary security codes."
+      ]
+    },
+    {
+      "id": "iban-basics",
+      "match": ["IBAN"],
+      "authority": "Banco de Portugal",
+      "sourceUrl": "https://clientebancario.bportugal.pt/pt-pt/iban",
+      "sourceTitle": "IBAN",
+      "facts": [
+        "IBAN means International Bank Account Number.",
+        "An IBAN identifies a payment account in a standardized format.",
+        "A Portuguese IBAN begins with PT50.",
+        "An IBAN is used for transfers and direct debits; it is not a bank-card number.",
+        "Confirm the recipient before sending money because an apparently valid IBAN does not prove who controls the account."
+      ]
+    },
+    {
+      "id": "iuc-basics",
+      "match": ["IUC"],
+      "authority": "Autoridade Tributária",
+      "sourceUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Impostos/Pages/IUC.aspx",
+      "sourceTitle": "Imposto Único de Circulação",
+      "facts": [
+        "IUC means Imposto Único de Circulação.",
+        "IUC is a Portuguese annual tax associated with eligible vehicles.",
+        "The person responsible for payment and the applicable date depend on the vehicle's registration and the current legal rules.",
+        "Vehicle owners should check the current amount and payment reference in Portal das Finanças.",
+        "Do not assume that selling or transferring a vehicle automatically removes every pending obligation; confirm that the registration was updated."
+      ]
+    },
+    {
+      "id": "imi-basics",
+      "match": ["IMI"],
+      "authority": "Autoridade Tributária",
+      "sourceUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Impostos/Pages/IMI.aspx",
+      "sourceTitle": "Imposto Municipal sobre Imóveis",
+      "facts": [
+        "IMI means Imposto Municipal sobre Imóveis.",
+        "IMI is a municipal property tax in Portugal.",
+        "The tax is generally calculated using the property's taxable value and the rate set within the applicable legal range.",
+        "Payment notices and current payment details should be checked in Portal das Finanças.",
+        "IMI is different from IMT, which is associated with certain property transfers."
+      ]
+    },
+    {
+      "id": "sns24-basics",
+      "match": ["SNS 24"],
+      "authority": "SNS 24",
+      "sourceUrl": "https://www.sns24.gov.pt/",
+      "sourceTitle": "SNS 24",
+      "facts": [
+        "SNS 24 is a Portuguese National Health Service contact and digital-service channel.",
+        "SNS 24 provides health information, triage and access to selected digital health services.",
+        "The SNS 24 telephone number is 808 24 24 24.",
+        "For a life-threatening emergency, call 112 rather than waiting for online guidance.",
+        "Available services and eligibility can vary, so users should follow the current instructions shown by SNS 24."
+      ]
+    },
+    {
+      "id": "complaints-book-basics",
+      "match": ["Livro de Reclamações", "complaints book"],
+      "authority": "Direção-Geral do Consumidor",
+      "sourceUrl": "https://www.livroreclamacoes.pt/Inicio/",
+      "sourceTitle": "Livro de Reclamações",
+      "facts": [
+        "Livro de Reclamações is Portugal's official complaints-book system for covered businesses and public-service providers.",
+        "Depending on the provider, a complaint may be submitted through the physical book or the official electronic platform.",
+        "A complaint should clearly identify the provider, explain what happened and state the requested resolution.",
+        "Keep copies of contracts, invoices, messages and the complaint submission.",
+        "Submitting a complaint does not guarantee a particular outcome, but it creates a formal record for the competent authority."
+      ]
+    }
+  ]
+}

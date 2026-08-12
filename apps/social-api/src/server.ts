@@ -12,6 +12,7 @@ import { expandCalendar, loadEditorialCalendar, selectDailyMix } from "./planner
 import { validateSocialDraft } from "./draft-quality.js";
 import { composeInstagramCaption } from "./caption.js";
 import { loadAnnualPlan, rowsForDate } from "./annual-plan.js";
+import { findFactCard } from "./fact-cards.js";
 
 const databaseUrl = process.env.DATABASE_URL;
 const apiToken = process.env.SOCIAL_API_TOKEN;
@@ -295,6 +296,7 @@ const server = http.createServer(async (req, res) => {
       const slots = await sql`SELECT * FROM social_editorial_plan_slot WHERE publish_date=${planningDate} AND status IN ('planned','researching','evidence_ready','held') ORDER BY slot_number`;
       const results=[];
       for (const slot of slots) {
+        const factCard=slot.timing_class==='evergreen'?await findFactCard(String(slot.topic)):null;
         const terms = (slot.search_terms as string[]).map(v=>v.trim()).filter(v=>v.length >= 3);
         const pattern = terms.map(v=>v.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|");
         const candidates = pattern ? await sql`
@@ -314,9 +316,9 @@ const server = http.createServer(async (req, res) => {
         for(const source of scored){const authority=String(source.source_authority||new URL(String(source.source_url)).hostname);if(seenAuthorities.has(authority)&&sources.length>=1)continue;sources.push(source);seenAuthorities.add(authority);if(sources.length>=2)break;}
         const needsOfficial = slot.risk_level === 'high' || slot.timing_class !== 'evergreen';
         const minimumRelevance = slot.risk_level === 'high' || slot.timing_class !== 'evergreen' ? 6 : slot.risk_level === 'medium' ? 4 : 2;
-        const valid = sources.length >= 1 && sources[0].relevance_score>=minimumRelevance && (!needsOfficial || sources.some(s=>s.source_tier==='official'));
+        const valid = factCard ? sources.length >= 1 : sources.length >= 1 && sources[0].relevance_score>=minimumRelevance && (!needsOfficial || sources.some(s=>s.source_tier==='official'));
         if (!valid) { await sql`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${slot.id}`; results.push({slotId:slot.id,topic:slot.topic,state:'held',sources:sources.length}); continue; }
-        const normalized=sources.map(s=>({documentId:s.id,url:s.source_url,title:s.title,publisher:s.source_authority,tier:s.source_tier,locale:s.original_lang,retrievedAt:s.last_verified_at||s.fetched_at,contentHash:s.content_hash,relevanceScore:s.relevance_score,matchedTerms:s.matched_terms,excerpts:(s.excerpts as string[]).slice(0,6)}));
+        const normalized=sources.map((s,index)=>({documentId:s.id,url:index===0&&factCard?factCard.sourceUrl:s.source_url,title:index===0&&factCard?factCard.sourceTitle:s.title,publisher:index===0&&factCard?factCard.authority:s.source_authority,tier:s.source_tier,locale:s.original_lang,retrievedAt:s.last_verified_at||s.fetched_at,contentHash:index===0&&factCard?hash(factCard):s.content_hash,relevanceScore:factCard&&index===0?100:s.relevance_score,matchedTerms:factCard&&index===0?factCard.match:s.matched_terms,excerpts:index===0&&factCard?factCard.facts:(s.excerpts as string[]).slice(0,6)}));
         const bundleHash=hash(normalized); const freshnessDays=slot.risk_level==='high'?7:slot.risk_level==='medium'?30:90;
         const [bundle]=await sql`INSERT INTO social_topic_evidence_bundle (plan_slot_id,bundle_hash,sources,verification_state,verified_at,expires_at) VALUES (${slot.id},${bundleHash},${sql.json(normalized)},'verified',now(),now()+(${freshnessDays}::STRING||' days')::INTERVAL) ON CONFLICT (plan_slot_id,bundle_hash) DO UPDATE SET verification_state='verified',verified_at=now(),expires_at=excluded.expires_at RETURNING *`;
         const primary=normalized.find(s=>s.tier==='official')||normalized[0]; const fingerprint=`plan:${slot.plan_version}:${planningDate}:${slot.slot_number}`;
