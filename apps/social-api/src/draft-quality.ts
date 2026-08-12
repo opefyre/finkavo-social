@@ -3,7 +3,7 @@ import { validateCaptionParts } from "./caption.js";
 
 const endsIncomplete = (value: string) => /(?:\b(?:and|or|to|the|a|an|of|in|on|for|with|from|by|as)|[,;:—-])$/i.test(value.trim().replace(/[.!?)]$/, "").trim());
 const completeSentence = (value: string) => /[.!?)]$/.test(value.trim()) && !endsIncomplete(value);
-const hasPresentationArtifacts = (value: string) => /\*\*|^\s*[-*]\s|^[A-Za-z0-9]+,\s*[A-Z]\d+:|\b(?!(?:AIMA|IRS|IVA|NISS|IMI|AIMI|EU)\b)[A-ZÁÉÍÓÚÇ]{4,}\b/.test(value);
+const hasPresentationArtifacts = (value: string) => /\bnoneof\b/i.test(value) || /\*\*|^\s*[-*]\s|^[A-Za-z0-9]+,\s*[A-Z]\d+:|\b(?!(?:AIMA|IRS|IVA|NISS|IMI|AIMI|SEPA|IEFP|IBAN|SNS|EEA|IRN|EU)\b)[A-ZÁÉÍÓÚÇ]{4,}\b/.test(value);
 
 export function validateSocialDraft(draft: Draft) {
   validateCaptionParts({ hook: draft.hook, body: draft.caption, callToAction: draft.callToAction, hashtags: draft.hashtags });
