@@ -28,6 +28,7 @@ export async function renderManifest(manifest: RenderManifest, root: string): Pr
     for (const [index, slide] of manifest.slides.entries()) {
       await page.setContent(renderHtml(slide, index + 1, manifest.slides.length, assets, manifest.visualStyle), { waitUntil: "load" });
       await page.evaluate(() => document.fonts.ready);
+      await page.evaluate(() => window.scrollTo(0, 0));
       const dimensions = await page.evaluate(() => {
         const slide = document.querySelector(".slide")?.getBoundingClientRect();
         const clipped = [...document.querySelectorAll(".top,.copy,.footer,h1,.body,.subtitle,li")].some((element) => {
