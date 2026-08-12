@@ -440,9 +440,23 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method === "POST" && url.pathname === "/v1/generate") {
       const generationInput = GenerateSchema.parse(await readJson(req));
-      const [selectedConcept] = await sql`SELECT c.*,b.sources,b.bundle_hash,b.expires_at FROM social_post_concept c JOIN social_topic_evidence_bundle b ON b.id=c.evidence_bundle_id WHERE c.id=${generationInput.conceptId} AND c.status='planned' AND b.verification_state='verified' AND b.expires_at>now()`;
-      if (!selectedConcept) return send(res,409,{error:"Concept lacks a current verified multi-source evidence bundle"});
-      const evidenceSources=selectedConcept.sources as Array<Record<string,unknown>>; const source=evidenceSources[0]; const documentId=String(source.documentId);
+      const [selectedConcept] = await sql`SELECT c.*,b.sources,b.bundle_hash,b.expires_at FROM social_post_concept c LEFT JOIN social_topic_evidence_bundle b ON b.id=c.evidence_bundle_id AND b.verification_state='verified' AND b.expires_at>now() WHERE c.id=${generationInput.conceptId} AND c.status='planned'`;
+      if (!selectedConcept) return send(res,409,{error:"Concept is not planned or its evidence is unavailable"});
+      let evidenceSources=(selectedConcept.sources || []) as Array<Record<string,unknown>>;
+      if (!evidenceSources.length && selectedConcept.document_id) {
+        const [document] = await sql`
+          SELECT d.id,d.title,d.source_url,d.source_authority,d.source_tier,d.original_lang,d.content_hash,
+                 COALESCE(d.last_verified_at,d.fetched_at) AS retrieved_at,
+                 array_agg(c.text ORDER BY c.chunk_index) FILTER (WHERE c.chunk_index < 10) AS excerpts
+          FROM document d JOIN chunk c ON c.document_id=d.id AND c.vault_doc_id IS NULL
+          WHERE d.id=${selectedConcept.document_id} AND d.verified_still_available=true AND d.freshness_confidence='fresh'
+            AND d.source_tier IN ('official','professional','editorial')
+          GROUP BY d.id
+        `;
+        if (document) evidenceSources=[{ documentId:document.id,url:document.source_url,title:document.title,publisher:document.source_authority,tier:document.source_tier,locale:document.original_lang,retrievedAt:document.retrieved_at,contentHash:document.content_hash,relevanceScore:50,excerpts:document.excerpts }];
+      }
+      if (!evidenceSources.length) return send(res,409,{error:"Concept has no current verified source material"});
+      const source=evidenceSources[0]; const documentId=String(source.documentId);
       let checked: z.infer<typeof DraftSchema> | null = null;
       let model = "";
       let lastGenerationError = "";
