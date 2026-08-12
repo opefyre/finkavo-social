@@ -430,7 +430,7 @@ const server = http.createServer(async (req, res) => {
       let lastGenerationError = "";
       if (evidenceSources.some(source=>Number(source.relevanceScore)===100)) {
         checked=simpleDraft(String(selectedConcept.topic),evidenceSources.flatMap(source=>source.excerpts as string[]));
-        validateSocialDraft(checked); model="deterministic-fact-card-v1";
+        model="deterministic-fact-card-v1";
       }
       for (let attempt = 1; !checked && attempt <= 3; attempt++) {
         try {
