@@ -1,0 +1,42 @@
+version: 1
+language: en
+market: PT
+policy:
+  discovery_is_evidence: false
+  official_evidence_required_for_high_risk: true
+  community_sources_are_discovery_only: true
+  paid_sources_allowed: false
+inputs:
+  - id: finkavo-corpus
+    type: internal_corpus
+    enabled: true
+    authority: canonical
+    notes: Reuse canonical corpus IDs, source versions, and supporting spans.
+  - id: portugal-official-web
+    type: official_allowlist
+    enabled: true
+    authority: official
+    domains:
+      - aima.gov.pt
+      - diariodarepublica.pt
+      - eportugal.gov.pt
+      - gov.pt
+      - info.portaldasfinancas.gov.pt
+      - portaldasfinancas.gov.pt
+      - seg-social.pt
+      - irn.justica.gov.pt
+      - bportugal.pt
+      - sns24.gov.pt
+      - ine.pt
+    notes: Fetch through the existing corpus freshness path where possible.
+  - id: gdelt-portugal
+    type: keyless_news_discovery
+    enabled: false
+    endpoint: https://api.gdeltproject.org/api/v2/doc/doc
+    notes: Optional zero-cost discovery only. Enable after quality testing; never use as factual evidence.
+  - id: rss-feeds
+    type: rss_atom
+    enabled: false
+    feeds: []
+    notes: Populate with verified feeds. Prefer feeds over commercial free-tier news APIs.
+

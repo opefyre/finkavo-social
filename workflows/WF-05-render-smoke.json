@@ -1,0 +1,69 @@
+{
+  "name": "WF-05 Carousel Rendering — Smoke Test",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "9ca94b2f-f15d-4b06-93c1-9f03378f9b51",
+      "name": "Run manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-520, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { schemaVersion: 1, postId: `n8n-smoke-${Date.now()}`, revisionId: 'v1', locale: 'en', templateVersion: 'finkavo-v1', slides: [ { type: 'cover', category: 'Portugal admin', title: 'Your first week in Portugal', subtitle: 'Five practical tasks to make life easier', sourceLabel: 'Finkavo smoke test — not for publishing' }, { type: 'bullets', title: 'Start with the essentials', items: ['Confirm your Portuguese address.', 'Keep your NIF details consistent.', 'Save official receipts and confirmations.'], sourceLabel: 'Local workflow test' }, { type: 'summary', title: 'Build one reliable record', body: 'Keep the same name, address, and contact details across official services whenever possible.', cta: 'Save this checklist', sourceLabel: 'Finkavo • Portugal, made clearer.' } ] } }];"
+      },
+      "id": "6ce88872-58bb-4d73-861e-24e1365f581e",
+      "name": "Build safe fixture",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-280, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:4310/render",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.RENDERER_API_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify($json) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "5f03475f-e831-4433-b045-25379e564585",
+      "name": "Render carousel",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-20, 0]
+    }
+  ],
+  "connections": {
+    "Run manually": {
+      "main": [[{ "node": "Build safe fixture", "type": "main", "index": 0 }]]
+    },
+    "Build safe fixture": {
+      "main": [[{ "node": "Render carousel", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  },
+  "active": false,
+  "versionId": "a99485ce-8504-4130-8104-707bc483ab67",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}
+

@@ -1,0 +1,22 @@
+{
+  "name": "@finkavo-social/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "migrate": "node dist/migrate.js",
+    "start": "node dist/server.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "postgres": "3.4.7",
+    "zod": "4.0.17"
+  },
+  "devDependencies": {
+    "@types/node": "22.17.1",
+    "typescript": "5.9.2",
+    "vitest": "3.2.4"
+  }
+}
