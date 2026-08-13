@@ -9,7 +9,7 @@ These exports contain no credentials or instance-specific credential IDs. After 
 3. `WF-02-verification.json` — promotes only official notices that exactly match fresh canonical corpus evidence.
 4. `WF-03-daily-planning.json` — at 08:00 Lisbon, loads that day's five predetermined annual-plan topics, checks the flexible news slot, builds current evidence bundles, and replaces unsupported flexible slots only with named verified reserves.
 5. `WF-04-generate-planned.json` — at 08:02 Lisbon, generates social-first English drafts only from that day's verified topic-led plan.
-6. `WF-05-request-review.json` — from 08:10 to 08:30 Lisbon, creates signed, expiring, revision-bound private review links for up to five drafts created that day. It cannot approve directly or reuse an older draft.
+6. `WF-05-request-review.json` — from 08:10 to 08:30 Lisbon, creates signed, expiring, revision-bound private review links for up to five drafts assigned to that day's plan. It cannot approve directly or reuse a draft from another plan date.
 7. `WF-06-render-approved.json` — queues up to five exact approved revisions; the outbound renderer agent performs and verifies the uploads.
 8. `WF-07-buffer-scheduling.json` — manually assigns up to five completed renders to 08:30, 11:30, 14:30, 18:00, and 21:00 Lisbon the next day.
 9. `WF-08-publish-monitor.json` — processes one due Buffer job and reconciles scheduled posts every 15 minutes.

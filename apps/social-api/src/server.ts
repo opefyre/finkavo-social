@@ -602,10 +602,10 @@ const server = http.createServer(async (req, res) => {
       const inserted = await sql.begin(async (tx) => {
         const [post] = await tx`
           INSERT INTO social_post (topic, source_document_id, source_url, source_title, source_authority, source_fetched_at,
-            hook, caption, call_to_action, hashtags, slides, model, category, risk_level, post_intent, search_keywords,subject_family,user_question,content_intent,occurrence_key)
+            hook, caption, call_to_action, hashtags, slides, model, category, risk_level, post_intent, search_keywords,subject_family,user_question,content_intent,occurrence_key,planned_for)
           VALUES (${checked.topic}, ${documentId}, ${String(source.url)}, ${String(source.title)},
             ${source.publisher ? String(source.publisher) : null}, ${String(source.retrievedAt)},
-            ${checked.hook}, ${checked.caption}, ${checked.callToAction}, ${tx.json(checked.hashtags)}, ${tx.json(checked.slides)}, ${model}, ${checked.category}, ${checked.riskLevel}, ${checked.postIntent}, ${tx.json(checked.searchKeywords)},${selectedConcept.subject_family},${selectedConcept.user_question},${selectedConcept.content_intent},${selectedConcept.occurrence_key})
+            ${checked.hook}, ${checked.caption}, ${checked.callToAction}, ${tx.json(checked.hashtags)}, ${tx.json(checked.slides)}, ${model}, ${checked.category}, ${checked.riskLevel}, ${checked.postIntent}, ${tx.json(checked.searchKeywords)},${selectedConcept.subject_family},${selectedConcept.user_question},${selectedConcept.content_intent},${selectedConcept.occurrence_key},${selectedConcept.planned_for})
           RETURNING *
         `;
         const [revision] = await tx`
@@ -637,15 +637,20 @@ const server = http.createServer(async (req, res) => {
       const status = url.searchParams.get("status");
       const createdOn = url.searchParams.get("createdOn");
       const createdDate = createdOn === "today" ? lisbonDate(new Date()) : createdOn;
+      const plannedFor = url.searchParams.get("plannedFor");
+      const plannedDate = plannedFor === "today" ? lisbonDate(new Date()) : plannedFor;
       if (createdDate && !/^\d{4}-\d{2}-\d{2}$/.test(createdDate)) return send(res, 400, { error: "createdOn must be today or YYYY-MM-DD" });
-      const rows = status && createdDate
+      if (plannedDate && !/^\d{4}-\d{2}-\d{2}$/.test(plannedDate)) return send(res, 400, { error: "plannedFor must be today or YYYY-MM-DD" });
+      const rows = status && plannedDate
+        ? await sql`SELECT * FROM social_post WHERE status=${status} AND planned_for=${plannedDate} ORDER BY created_at DESC LIMIT 5`
+        : status && createdDate
         ? await sql`SELECT * FROM social_post WHERE status=${status} AND (created_at AT TIME ZONE 'Europe/Lisbon')::DATE=${createdDate} ORDER BY created_at DESC LIMIT 5`
         : status
           ? await sql`SELECT * FROM social_post WHERE status=${status} ORDER BY created_at DESC LIMIT 50`
           : createdDate
             ? await sql`SELECT * FROM social_post WHERE (created_at AT TIME ZONE 'Europe/Lisbon')::DATE=${createdDate} ORDER BY created_at DESC LIMIT 50`
             : await sql`SELECT * FROM social_post ORDER BY created_at DESC LIMIT 50`;
-      return send(res, 200, { createdOn: createdDate || null, posts: rows });
+      return send(res, 200, { createdOn: createdDate || null, plannedFor: plannedDate || null, posts: rows });
     }
 
     if (req.method === "POST" && url.pathname === "/v1/automation/advance") {
