@@ -331,11 +331,12 @@ const server = http.createServer(async (req, res) => {
       if (!selected.length) return send(res, 409, { error: "The requested date is outside the approved rolling annual plan" });
       const planned = [];
       for (const item of selected) {
-        const identity = editorialIdentity(item);
+        const derivedIdentity = editorialIdentity(item);
+        const identity = { subjectFamily:item.brief.subjectFamily||derivedIdentity.subjectFamily,userQuestion:item.brief.userQuestion||derivedIdentity.userQuestion,contentIntent:item.brief.contentIntent||derivedIdentity.contentIntent,occurrenceKey:item.brief.occurrenceKey||derivedIdentity.occurrenceKey,campaignStage:derivedIdentity.campaignStage };
         const [slot] = await sql`
-          INSERT INTO social_editorial_plan_slot (plan_version,publish_date,publish_time,slot_number,pillar,angle,topic,audience,risk_level,timing_class,reserve_kind,search_terms,required_authority,occurrence_number,subject_family,user_question,content_intent,occurrence_key,campaign_stage)
-          VALUES (${plan.version},${item.date},${item.time},${item.slot},${item.pillar},${item.angle},${item.title},${item.audience},${item.risk},${item.timing},${item.reserve},${sql.json(item.evidenceTerms.split("|").map(v=>v.trim()).filter(Boolean))},${item.authority},${item.occurrence},${identity.subjectFamily},${identity.userQuestion},${identity.contentIntent},${identity.occurrenceKey},${identity.campaignStage})
-          ON CONFLICT (plan_version,publish_date,slot_number) DO UPDATE SET topic=excluded.topic,audience=excluded.audience,risk_level=excluded.risk_level,timing_class=excluded.timing_class,search_terms=excluded.search_terms,required_authority=excluded.required_authority,subject_family=excluded.subject_family,user_question=excluded.user_question,content_intent=excluded.content_intent,occurrence_key=excluded.occurrence_key,campaign_stage=excluded.campaign_stage,updated_at=now()
+          INSERT INTO social_editorial_plan_slot (plan_version,publish_date,publish_time,slot_number,pillar,angle,topic,audience,risk_level,timing_class,reserve_kind,search_terms,required_authority,occurrence_number,subject_family,user_question,content_intent,occurrence_key,campaign_stage,brief)
+          VALUES (${plan.version},${item.date},${item.time},${item.slot},${item.pillar},${item.angle},${item.title},${item.audience},${item.risk},${item.timing},${item.reserve},${sql.json(item.evidenceTerms.split("|").map(v=>v.trim()).filter(Boolean))},${item.authority},${item.occurrence},${identity.subjectFamily},${identity.userQuestion},${identity.contentIntent},${identity.occurrenceKey},${identity.campaignStage},${sql.json(item.brief)})
+          ON CONFLICT (plan_version,publish_date,slot_number) DO UPDATE SET topic=excluded.topic,audience=excluded.audience,risk_level=excluded.risk_level,timing_class=excluded.timing_class,search_terms=excluded.search_terms,required_authority=excluded.required_authority,subject_family=excluded.subject_family,user_question=excluded.user_question,content_intent=excluded.content_intent,occurrence_key=excluded.occurrence_key,campaign_stage=excluded.campaign_stage,brief=excluded.brief,updated_at=now()
           RETURNING *
         `;
         planned.push(slot);
@@ -463,7 +464,7 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method === "POST" && url.pathname === "/v1/generate") {
       const generationInput = GenerateSchema.parse(await readJson(req));
-      const [selectedConcept] = await sql`SELECT c.*,b.sources,b.bundle_hash,b.expires_at FROM social_post_concept c LEFT JOIN social_topic_evidence_bundle b ON b.id=c.evidence_bundle_id AND b.verification_state='verified' AND b.expires_at>now() WHERE c.id=${generationInput.conceptId} AND c.status='planned'`;
+      const [selectedConcept] = await sql`SELECT c.*,b.sources,b.bundle_hash,b.expires_at,s.brief FROM social_post_concept c LEFT JOIN social_topic_evidence_bundle b ON b.id=c.evidence_bundle_id AND b.verification_state='verified' AND b.expires_at>now() LEFT JOIN social_editorial_plan_slot s ON s.id=c.plan_slot_id WHERE c.id=${generationInput.conceptId} AND c.status='planned'`;
       if (!selectedConcept) return send(res,409,{error:"Concept is not planned or its evidence is unavailable"});
       let evidenceSources=(selectedConcept.sources || []) as Array<Record<string,unknown>>;
       if (!evidenceSources.length && selectedConcept.document_id) {
@@ -495,7 +496,7 @@ const server = http.createServer(async (req, res) => {
             fetchedAt: String(source.retrievedAt), excerpts: evidenceSources.flatMap(s=>s.excerpts as string[]),
             sources: evidenceSources.map(s=>({title:String(s.title),sourceUrl:String(s.url),authority:s.publisher?String(s.publisher):null,fetchedAt:String(s.retrievedAt),excerpts:s.excerpts as string[]})),
             ...(lastGenerationError ? { repairFeedback: lastGenerationError } : {}),
-            ...(selectedConcept ? { editorialContext: { topic: String(selectedConcept.topic), reason: selectedConcept.reason ? String(selectedConcept.reason) : null, campaignStage: selectedConcept.campaign_stage ? String(selectedConcept.campaign_stage) : null, plannedFor: selectedConcept.planned_for ? String(selectedConcept.planned_for) : null, expiresAt: selectedConcept.expires_at ? String(selectedConcept.expires_at) : null } } : {}),
+            ...(selectedConcept ? { editorialContext: { topic: String(selectedConcept.topic), reason: selectedConcept.reason ? String(selectedConcept.reason) : null, campaignStage: selectedConcept.campaign_stage ? String(selectedConcept.campaign_stage) : null, plannedFor: selectedConcept.planned_for ? String(selectedConcept.planned_for) : null, expiresAt: selectedConcept.expires_at ? String(selectedConcept.expires_at) : null, purpose:selectedConcept.brief?.purpose?String(selectedConcept.brief.purpose):undefined,userQuestion:selectedConcept.brief?.userQuestion?String(selectedConcept.brief.userQuestion):undefined,requiredAnswers:Array.isArray(selectedConcept.brief?.requiredAnswers)?selectedConcept.brief.requiredAnswers.map(String):undefined } } : {}),
           });
           const candidate = DraftSchema.parse(generated.draft);
           candidate.slides= candidate.slides.map(slide=>({...slide,body:slide.body?finishSentence(slide.body):slide.body,items:slide.items.map(finishSentence)}));

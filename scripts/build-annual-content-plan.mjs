@@ -10,7 +10,6 @@ const angles = [
   ["audience", "{topic} for {audience}"],
   ["golden_tip", "{topic}: one golden tip and what to verify"],
 ];
-const contexts = ["first-time setup", "after changing address", "before an appointment", "after a rejected request", "for a mixed-nationality household", "when an online portal fails", "without fluent Portuguese", "records worth keeping", "annual document review", "questions to ask a professional"];
 
 const pillars = [
   { id: "identity_access", audience: "new residents", risk: "medium", terms: ["NIF", "NISS", "Chave Móvel Digital", "Portal das Finanças", "Segurança Social Direta"], topics: [
@@ -94,7 +93,7 @@ const campaigns = [
   ["2027-07-28", "social_security", "Quarterly Social Security declaration: final July checks", "rule_locked", "Segurança Social"],
 ];
 
-const campaignMap = new Map(campaigns.map((item) => [item[0], item]));
+const campaignMap = Map.groupBy(campaigns, (item) => item[0]);
 const lowerRiskPillars = pillars.filter((pillar) => pillar.risk !== "high");
 const iso = (date) => date.toISOString().slice(0, 10);
 const csv = (value) => `"${String(value).replaceAll('"', '""')}"`;
@@ -135,44 +134,73 @@ function evidenceTermsFor(topic, title, pillar) {
 }
 const rows = [];
 const seen = new Map();
+const usedBriefs90 = new Set();
+const campaignSlotOrder = [3, 2, 1, 4, 0];
+const intentByAngle = { foundation:"evergreen_explainer", action:"checklist", edge_case:"common_mistake", audience:"audience_specific", golden_tip:"golden_tip" };
+const answerPrompts = {
+  foundation: topic => [`Define ${topic} without jargon.`, "Explain who encounters it and why it matters.", "Clarify the most important limitation or confusion."],
+  action: topic => [`State when someone should handle ${topic}.`, "List the preparation and official-channel steps in order.", "Explain what proof or confirmation to retain."],
+  edge_case: topic => [`Identify the normal route for ${topic}.`, "Explain two realistic mistakes or exceptions.", "Give the safe next action when the normal route fails."],
+  audience: topic => [`Explain how ${topic} applies to the named audience.`, "Separate universal rules from audience-dependent details.", "Give one concrete action the audience can take."],
+  golden_tip: topic => [`Explain the single highest-value habit for ${topic}.`, "Show what to verify before acting.", "State what record, receipt, or confirmation to keep."],
+};
+function briefFor({ topic, pillar, angle, timing, reserve, authority, date, title }) {
+  const recurring=["official_locked","rule_locked","must_reverify","occasion","seasonal"].includes(timing);
+  return {
+    subjectFamily:pillar.id,
+    userQuestion:`How should ${pillar.audience} handle ${topic}?`,
+    purpose: recurring ? `Help ${pillar.audience} act safely around the ${date} occurrence.` : `Give ${pillar.audience} one complete, practical answer about ${topic}.`,
+    requiredAnswers:answerPrompts[angle](topic),
+    sourcePolicy:{requiredAuthority:authority,officialRequired:pillar.risk==="high"||timing!=="evergreen",freshnessDays:pillar.risk==="high"?7:pillar.risk==="medium"?30:90},
+    timingBehavior:recurring?"fixed_or_campaign":"flexible_evergreen",
+    fallback:reserve==="breaking_news"?{kind:"named_evergreen",title:title.replace(/^NEWS RESERVE — fallback:\s*/,"")}:null,
+    contentIntent:recurring?(timing==="occasion"||timing==="seasonal"?"occasion":"deadline_reminder"):intentByAngle[angle],
+    occurrenceKey:recurring?`${pillar.id}:${date}:${topic.toLowerCase().replace(/[^a-z0-9]+/g,"-")}`:null,
+  };
+}
 
 for (let day = 0; day < days; day++) {
   const date = new Date(start); date.setUTCDate(start.getUTCDate() + day);
   const dateText = iso(date);
-  let highRiskCount = 0;
+  const todaysCampaigns=campaignMap.get(dateText)||[];
+  let highRiskCount = todaysCampaigns.filter(campaign=>pillars.find(item=>item.id===campaign[1])?.risk==="high").length;
   for (let slot = 0; slot < slots.length; slot++) {
     let pillarIndex = (day * 3 + slot * 5) % pillars.length;
     let pillar = pillars[pillarIndex];
     if (pillar.risk === "high" && highRiskCount >= 2) pillar = lowerRiskPillars[(day + slot) % lowerRiskPillars.length];
-    const topic = pillar.topics[(Math.floor(day / 2) + slot * 7) % pillar.topics.length];
+    let topicIndex=(Math.floor(day / 2)+slot*7)%pillar.topics.length;
+    let topic=pillar.topics[topicIndex];
     const [angle, pattern] = angles[(day + slot) % angles.length];
+    if(day<90){for(let attempt=0;attempt<pillar.topics.length;attempt++){const candidate=pillar.topics[(topicIndex+attempt)%pillar.topics.length];const identity=`${pillar.id}|${candidate}|${pillar.audience}|${intentByAngle[angle]}`.toLowerCase();if(!usedBriefs90.has(identity)){topic=candidate;usedBriefs90.add(identity);break;}}}
     let title = pattern.replace("{topic}", topic).replace("{audience}", pillar.audience);
     let timing = "evergreen";
     let authority = "Corpus authority allowlist";
     let reserve = slot === 3 ? "breaking_news" : "none";
-    if (slot === 3 && campaignMap.has(dateText)) {
-      const campaign = campaignMap.get(dateText);
+    const campaignIndex=campaignSlotOrder.indexOf(slot);
+    let isCampaign=false;
+    if (campaignIndex>=0 && todaysCampaigns[campaignIndex]) {
+      const campaign = todaysCampaigns[campaignIndex];
       pillar = pillars.find((item) => item.id === campaign[1]) ?? pillar;
-      title = campaign[2]; timing = campaign[3]; authority = campaign[4]; reserve = "date_locked";
+      title = campaign[2]; topic=campaign[2]; timing = campaign[3]; authority = campaign[4]; reserve = "date_locked";
+      isCampaign=true;
     } else if (slot === 3) {
       title = `NEWS RESERVE — fallback: ${title}`;
       timing = "news_flex";
       authority = "Official-source verification required; otherwise use fallback";
     }
-    const newsPrefix = title.startsWith("NEWS RESERVE — fallback: ") ? "NEWS RESERVE — fallback: " : "";
     const key = title.replace(/^NEWS RESERVE — fallback: /, "");
     const occurrence = (seen.get(key) ?? 0) + 1; seen.set(key, occurrence);
-    if (occurrence > 1) title = `${newsPrefix}${key} — ${contexts[(occurrence - 2) % contexts.length]}`;
-    if (pillar.risk === "high") highRiskCount++;
-    rows.push({ date: dateText, time: slots[slot], slot: slot + 1, pillar: pillar.id, angle, title, audience: pillar.audience, risk: pillar.risk, timing, reserve, evidenceTerms: evidenceTermsFor(topic, title, pillar).join(" | "), searchTerms: pillar.terms.join(" | "), authority, occurrence });
+    if (pillar.risk === "high"&&!isCampaign) highRiskCount++;
+    const brief=briefFor({topic,pillar,angle,timing,reserve,authority,date:dateText,title});
+    rows.push({ date: dateText, time: slots[slot], slot: slot + 1, pillar: pillar.id, angle, title, audience: pillar.audience, risk: pillar.risk, timing, reserve, evidenceTerms: evidenceTermsFor(topic, title, pillar).join(" | "), searchTerms: pillar.terms.join(" | "), authority, occurrence, curationStatus:day<90?"curated_90_day":"annual_candidate", brief });
   }
 }
 
 await mkdir("plans", { recursive: true });
-const headers = Object.keys(rows[0]);
+const headers = Object.keys(rows[0]).filter(key=>key!=="brief");
 await writeFile("plans/finkavo-rolling-year-2026-08-13.csv", `${headers.map(csv).join(",")}\n${rows.map((row) => headers.map((key) => csv(row[key])).join(",")).join("\n")}\n`);
-await writeFile("plans/finkavo-rolling-year-2026-08-13.json", `${JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), rows }, null, 2)}\n`);
-await writeFile("plans/finkavo-editorial-catalog.json", `${JSON.stringify({ version: 1, period: { start: iso(start), days }, slots, angles: angles.map(([id]) => id), pillars, campaigns: campaigns.map(([date, pillar, title, timing, authority]) => ({ date, pillar, title, timing, authority })) }, null, 2)}\n`);
+await writeFile("plans/finkavo-rolling-year-2026-08-13.json", `${JSON.stringify({ version: 2, generatedAt: new Date().toISOString(), rows }, null, 2)}\n`);
+await writeFile("plans/finkavo-editorial-catalog.json", `${JSON.stringify({ version: 2, period: { start: iso(start), days }, slots, angles: angles.map(([id]) => id), pillars, campaigns: campaigns.map(([date, pillar, title, timing, authority]) => ({ date, pillar, title, timing, authority })) }, null, 2)}\n`);
 const summary = {
   period: { start: iso(start), end: rows.at(-1).date },
   totalSlots: rows.length,
@@ -181,6 +209,7 @@ const summary = {
   evergreen: rows.filter((row) => row.timing === "evergreen").length,
   pillars: Object.fromEntries(pillars.map((pillar) => [pillar.id, rows.filter((row) => row.pillar === pillar.id).length])),
   duplicateExactTitles: rows.length - new Set(rows.map((row) => row.title)).size,
+  curated90DayBriefs: rows.filter(row=>row.curationStatus==="curated_90_day").length,
 };
 await writeFile("plans/finkavo-rolling-year-summary.json", `${JSON.stringify(summary, null, 2)}\n`);
 console.log(JSON.stringify(summary, null, 2));

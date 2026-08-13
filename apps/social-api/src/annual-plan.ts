@@ -5,6 +5,12 @@ export type AnnualPlanRow = {
   audience: string; risk: "low" | "medium" | "high"; timing: string; reserve: string;
   searchTerms: string; authority: string; occurrence: number;
   evidenceTerms: string;
+  curationStatus: "curated_90_day" | "annual_candidate";
+  brief: {
+    subjectFamily:string; userQuestion:string; purpose:string; requiredAnswers:string[];
+    sourcePolicy:{requiredAuthority:string;officialRequired:boolean;freshnessDays:number};
+    timingBehavior:string; fallback:{kind:string;title:string}|null; contentIntent:string; occurrenceKey:string|null;
+  };
 };
 
 type AnnualPlan = { version: number; generatedAt: string; rows: AnnualPlanRow[] };

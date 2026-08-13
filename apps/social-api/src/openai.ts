@@ -6,7 +6,7 @@ type Candidate = {
   authority: string | null;
   fetchedAt: string;
   excerpts: string[];
-  editorialContext?: { topic: string; reason: string | null; campaignStage: string | null; plannedFor: string | null; expiresAt: string | null };
+  editorialContext?: { topic: string; reason: string | null; campaignStage: string | null; plannedFor: string | null; expiresAt: string | null; purpose?: string; userQuestion?: string; requiredAnswers?: string[] };
   sources?: Array<{ title: string; sourceUrl: string; authority: string | null; fetchedAt: string; excerpts: string[] }>;
   repairFeedback?: string;
 };
@@ -35,6 +35,7 @@ export async function generateDraft(candidate: Candidate): Promise<{ draft: Draf
         "Write a practical 8-65 character callToAction. Return 4-8 focused hashtags including #Finkavo; prefer specific topic and audience tags over broad tags. The publisher appends finkavo.com and assembles the final hook/body/CTA/link/hashtag caption deterministically.",
         "Provide 2-6 natural search phrases a person might use on Instagram or Google. Repeat recurring deadlines when the supplied candidate is a new filing period; do not treat prior coverage as a reason to omit it.",
         "When editorialContext is present, follow its campaign stage and timing. Never infer the exact legal deadline from editorialContext alone; the date must also appear in the supplied official excerpts.",
+        "When an editorial purpose, user question, and required answers are supplied, the draft must answer all of them directly. If the evidence cannot support one, fail rather than substituting adjacent facts.",
         "Every body, bullet, evidence quote, and CTA must be a complete thought and must never be cut off to satisfy a character limit. Keep the CTA under 65 characters. Use sentence case rather than all-caps emphasis.",
         "Every cover, content, and summary body must end with a period, question mark, exclamation mark, or closing parenthesis. Every bullet and step must also end with one of those characters.",
         "If repairFeedback is supplied, correct that exact validation problem while preserving the predetermined topic and evidence-bound meaning.",
