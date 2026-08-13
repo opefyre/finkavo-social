@@ -6,6 +6,9 @@ const good = DraftSchema.parse({ topic:"Portugal deadline",category:"tax",riskLe
 
 describe("social draft quality", () => {
   it("accepts complete deterministic social copy", () => expect(() => validateSocialDraft(good)).not.toThrow());
+  it.each(["low","medium","high"] as const)("accepts a complete %s-risk post", riskLevel => {
+    const candidate=structuredClone(good);candidate.riskLevel=riskLevel;expect(()=>validateSocialDraft(candidate)).not.toThrow();
+  });
   it("rejects truncated, markdown, and invented-visual copy", () => {
     const broken = structuredClone(good);
     broken.slides[1]!.items[0] = "- **The count resumes on the 1st day of the month";

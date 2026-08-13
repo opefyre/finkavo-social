@@ -39,18 +39,18 @@ This is the authoritative completion tracker. A box is checked only after the im
 
 ## 6. Quality gates
 
-- [ ] Enforce planned-topic coverage and source specificity before draft creation.
-- [ ] Enforce factual support, current dates, English-only copy, caption completeness, and useful/non-generic content.
-- [ ] Enforce visual QA: real logo, brand font/colors, no clipping, no stretching, readable type, complete slides, and valid media URLs.
-- [ ] Add a final pre-Discord editorial score and block anything below threshold.
-- [ ] Validate representative low-, medium-, and high-risk posts plus deliberate failure cases.
+- [x] Enforce planned-topic coverage and source specificity before draft creation.
+- [x] Enforce factual support, current dates, English-only copy, caption completeness, and useful/non-generic content.
+- [x] Enforce visual QA: real logo, brand font/colors, no clipping, no stretching, readable type, complete slides, and valid media URLs.
+- [x] Add a final pre-Discord editorial score and block anything below threshold.
+- [x] Validate representative low-, medium-, and high-risk posts plus deliberate failure cases.
 
 ## 7. Operations and reporting
 
-- [ ] Send a daily Discord report containing five planned topics, evidence status, news candidates, held reasons, approvals, and publishing schedule.
-- [ ] Add weekly maintenance: verify the next 14 days, repair held topics, audit duplicates, and replenish reserves.
-- [ ] Add monthly maintenance: verify the next 90 days and review content performance.
-- [ ] Add measurable alerting for failed schedules, missing approval batches, stale renderer heartbeat, and publication-confirmation failures.
+- [x] Send a daily Discord report containing five planned topics, evidence status, news candidates, held reasons, approvals, and publishing schedule.
+- [x] Add weekly maintenance: verify the next 14 days, repair held topics, audit duplicates, and replenish reserves.
+- [x] Add monthly maintenance: verify the next 90 days and review content performance.
+- [x] Add measurable alerting for failed schedules, missing approval batches, stale renderer heartbeat, and publication-confirmation failures.
 
 ## 8. Production completion
 
@@ -77,3 +77,8 @@ This is the authoritative completion tracker. A box is checked only after the im
 | 2026-08-13 | Calendar completion and reverification | Validator: 34 events, 44 campaign stages, 31 confirmed and 2 deliberately held for same-day reverification; deployed evidence workflow preserves holds | Pass |
 | 2026-08-13 | Flexible news decision | Production WF-03 updated in place; live preview waits before cutoff and selects evidence-current named reserve at cutoff | Pass |
 | 2026-08-13 | Official-news replacement safety | Topic-specific source gate; self-cleaning live official-change preview returned `verified_news`; candidate remained unmutated and approval was not bypassed | Pass |
+| 2026-08-13 | Draft and editorial quality gates | Evidence bundle required for planned content; factual quote, date freshness, English, caption, identity, specific-hook and pre-Discord score gates; 29 API test cases including all risk levels and deliberate failures | Pass |
+| 2026-08-13 | Visual quality gate | Spare-Mac renderer produced five 1080×1350 slides with approved logo/fonts, no clipping/overlap/stretching; fixture visually inspected; public-media contract remains enforced before Buffer | Pass |
+| 2026-08-13 | Daily Discord operations report | Live Discord delivery returned exactly five current-version slots with evidence, held reasons, candidate count, approvals and schedule; duplicate plan versions automatically retired | Pass |
+| 2026-08-13 | Maintenance and alerts | Active WF-10: 15-minute alert checks, Monday 14-day plan/evidence/duplicate/reserve maintenance, monthly 90-day/performance review; live alert detected incomplete 2/5 batch | Pass |
+| 2026-08-13 | Evidence-hold fallback | Tomorrow live plan: four unsupported topics replaced by named evidence-current reserve briefs; final report 5 planned, 5 verified, 0 held | Pass |
