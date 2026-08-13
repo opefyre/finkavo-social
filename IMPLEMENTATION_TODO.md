@@ -25,7 +25,7 @@ This is the authoritative completion tracker. A box is checked only after the im
 
 ## 4. Evergreen reserve
 
-- [x] Build at least 90 distinct, evidence-ready evergreen briefs.
+- [ ] Build at least 90 distinct, evidence-ready evergreen briefs.
 - [x] Ensure reserve coverage across all 14 editorial pillars and major user journeys.
 - [x] Prevent reserve use when its evidence is stale or its subject recently ran for the same audience and purpose.
 
@@ -73,4 +73,4 @@ This is the authoritative completion tracker. A box is checked only after the im
 | 2026-08-13 | Evidence holds and canonical fixed-date sources | Live API automatically holds `must_reverify`; fixed-date research is restricted to the calendar's exact canonical URL; deployed service running; five-slot campaign-day API check passed | Pass |
 | 2026-08-13 | Canonical official monitoring | Six directly fetchable authority pages; canonical URL + normalized visible-text hash snapshots; repeat hash unchanged; n8n workflow replaced in place and published | Pass |
 | 2026-08-13 | Calendar expansion | 34 scoped events, 44 campaign stages, full mainland 2026–27 school cycle, remaining in-period national holidays, plus explicit AIMA/ACT continuous monitoring rules | Pass |
-| 2026-08-13 | Evergreen reserve | 98 unique briefs; seven in each of 14 pillars; exact canonical official source and 7/30/90-day freshness policies; runtime blocks stale evidence and same identity used within 90 days; 22 API tests pass | Pass |
+| 2026-08-13 | Evergreen reserve structure | 98 unique briefs; seven in each of 14 pillars; exact canonical-source and 7/30/90-day freshness policies; runtime blocks stale evidence and same identity used within 90 days; live audit: 7 eligible, 91 held pending corpus coverage | Partial |
