@@ -5,8 +5,8 @@ This is the authoritative completion tracker. A box is checked only after the im
 ## 1. Editorial-plan cleanup and identity
 
 - [ ] Replace mechanically varied titles with distinct, intentional topic briefs.
-- [ ] Add structured identity to every brief: `subject_family`, `user_question`, `audience`, `intent`, `occurrence_key`, and `campaign_stage`.
-- [ ] Make duplicate controls use structured identity while allowing legitimate recurring deadline campaigns.
+- [x] Add structured identity to every brief: `subject_family`, `user_question`, `audience`, `intent`, `occurrence_key`, and `campaign_stage`.
+- [x] Make duplicate controls use structured identity while allowing legitimate recurring deadline campaigns.
 - [ ] Validate the full plan has no duplicate subject/question/audience/intent combination without an occurrence or campaign-stage reason.
 
 ## 2. Verified 90-day plan
@@ -66,4 +66,4 @@ This is the authoritative completion tracker. A box is checked only after the im
 | Date | Item | Evidence | Result |
 |---|---|---|---|
 | 2026-08-13 | Tracker created | Requirements converted into implementation and validation gates | Pass |
-
+| 2026-08-13 | Structured editorial identity | Migration `0007`; identity and duplicate tests; live schema/API verification | Pass |
