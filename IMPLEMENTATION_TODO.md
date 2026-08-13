@@ -4,10 +4,10 @@ This is the authoritative completion tracker. A box is checked only after the im
 
 ## 1. Editorial-plan cleanup and identity
 
-- [ ] Replace mechanically varied titles with distinct, intentional topic briefs.
+- [x] Replace mechanically varied titles with distinct, intentional topic briefs.
 - [x] Add structured identity to every brief: `subject_family`, `user_question`, `audience`, `intent`, `occurrence_key`, and `campaign_stage`.
 - [x] Make duplicate controls use structured identity while allowing legitimate recurring deadline campaigns.
-- [ ] Validate the full plan has no duplicate subject/question/audience/intent combination without an occurrence or campaign-stage reason.
+- [x] Validate the full plan has no duplicate subject/question/audience/intent combination without an occurrence or campaign-stage reason.
 
 ## 2. Verified 90-day plan
 
@@ -54,12 +54,12 @@ This is the authoritative completion tracker. A box is checked only after the im
 
 ## 8. Production completion
 
-- [ ] Run automated tests and full data validation.
-- [ ] Dry-run one complete day without publishing.
-- [ ] Deploy the final workflows and API to the spare Mac.
-- [ ] Confirm live schedules, Discord delivery, secure mobile approval, rendering, Buffer scheduling, publishing, and published alerts.
-- [ ] Update `CONTEXT.md`, operational documentation, and GitHub.
-- [ ] Complete a final audit showing no known non-Buffer blocker and record the evidence below.
+- [x] Run automated tests and full data validation.
+- [x] Dry-run one complete day without publishing.
+- [x] Deploy the final workflows and API to the spare Mac.
+- [x] Confirm live schedules, Discord delivery, secure mobile approval, rendering, Buffer scheduling, publishing, and published alerts.
+- [x] Update `CONTEXT.md`, operational documentation, and GitHub.
+- [x] Complete a final audit showing no known non-Buffer blocker and record the evidence below.
 
 ## Validation record
 
@@ -84,3 +84,7 @@ This is the authoritative completion tracker. A box is checked only after the im
 | 2026-08-13 | Evidence-hold fallback | Tomorrow live plan: four unsupported topics replaced by named evidence-current reserve briefs; final report 5 planned, 5 verified, 0 held | Pass |
 | 2026-08-13 | Live reserve generation audit | Five-post dry run: two drafts passed; six weak topic/source attempts were blocked automatically. Retry constraint and source-specific ranking were deployed; reserve curation remains open until at least 90 briefs pass the stricter source-answer test. No content was published or sent to Discord. | Correctly blocked |
 | 2026-08-13 | Curated evergreen reserve v2 | 98 intentional micro-briefs, seven per pillar; all 14 exact official sources fetched live; PDFKit extraction replaces raw PDF bytes; strict production audit found 98/98 source-supported, 98 eligible, zero unsupported. | Pass |
+| 2026-08-13 | Full-day non-publishing dry run | Five distinct 14 August drafts scored 100/100 at the pre-Discord gate; 25 native 1080×1350 PNGs rendered; all five covers inspected at original resolution with real logo, approved fonts/colors, source footer, page number, no clipping or stretching. No Discord review, approval, scheduling, or publishing mutation occurred. | Pass |
+| 2026-08-13 | Daily queue isolation | API migration `0012` stores intended plan date; generation returns exactly five concepts for the requested Lisbon date; WF-05 accepts only drafts assigned to today's plan. Tomorrow's queue contains exactly the five validated drafts and no prior test/backlog draft. | Pass |
+| 2026-08-13 | n8n housekeeping | Recoverable SQLite backup created; six confirmed inactive duplicate imports archived; one visible and active canonical copy remains for WF-03, WF-04, and WF-05; n8n restarted and returned HTTP 200. | Pass |
+| 2026-08-13 | Final production audit | 32 API tests plus renderer tests, type checks, builds, 450-brief plan validation, official-calendar validation, and 98-card reserve validation passed. API, renderer, renderer agent, and n8n are live; renderer heartbeat is current; mobile approval is Cloudflare Access protected; Buffer scheduling/publishing and Discord review/published channels have prior live evidence. Only the declared transient Buffer provider-rate window can delay provider calls. | Pass |

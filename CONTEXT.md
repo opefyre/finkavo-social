@@ -1,7 +1,7 @@
 # Finkavo Social Content Workflow — Context and Architecture
 
 **Status:** topic-led annual editorial and publishing system; human approval required
-**Last reviewed:** 2026-08-12
+**Last reviewed:** 2026-08-13
 **Scope:** Instagram educational carousel workflow for Finkavo. This document defines the system; it does not contain credentials or production configuration.
 
 ## 1. Outcome
@@ -392,7 +392,7 @@ References:
 - A private Social API runs on the spare Mac and uses additive `social_*` tables in CockroachDB.
 - Candidate selection reads only public corpus chunks, excludes unavailable/retracted documents, and prioritizes official sources.
 - OpenAI structured output creates English drafts with evidence quotes; the API key remains in the protected host environment.
-- n8n stores encrypted Bearer credentials and retains ten final modular workflows: six scheduled discovery/planning/operations workflows and four human-triggered editorial workflows.
+- n8n stores encrypted Bearer credentials. The visible inventory has one canonical copy of each workflow; obsolete imports are archived after a recoverable database backup. Scheduled workflows cover discovery, official monitoring, verification, planning, generation, review delivery, live progression, health, and maintenance; manual render/schedule/monitor exports remain available for recovery.
 - A real official-source draft completed `draft → approved → rendered` and produced six 1080 × 1350 PNGs.
 - Application services remain localhost-only. Administrative access stays behind Tailscale; the review UI alone is reachable through a Cloudflare Tunnel and requires Cloudflare Access authentication. Only exact R2 media object URLs are publicly readable for Buffer; listing and writes remain private.
 - Buffer scheduling, status reconciliation, lease recovery, retry/dead-letter behavior, and Discord approval/published/error/system notifications are configured.
@@ -401,7 +401,19 @@ References:
 - All four services passed a restart-recovery drill. Workflow state remained intact and the renderer heartbeat recovered.
 - Generated carousel objects have a verified 180-day Cloudflare R2 lifecycle rule.
 - The editorial calendar expands IRS, IVA, Social Security, IMI/AIMI, monthly fiscal-agenda, and selected occasion rules into occurrence-specific campaigns. Exact official evidence is required before generation.
-- Daily planning runs at 06:30 Lisbon, permits recurring deadline coverage, limits high-risk concentration, avoids repetitive sources/categories, and fills remaining capacity with socially useful verified evergreen material.
+- Daily planning starts at 08:00 Lisbon, generation starts at 08:02, Discord review delivery retries from 08:10 through 08:30, and the daily report runs at 08:25. Each post stores its intended `planned_for` date; generation and review queues are date-scoped, so stale drafts and future backlog concepts cannot enter the morning batch.
+
+## 15. Annual content-system completion — 2026-08-13
+
+- The rolling plan contains 1,825 named slots: five per day for 365 days. The next 90 days contain 450 validated, unique editorial identities with purpose, audience, required answers, timing behavior, source policy, and fallback rules.
+- The official calendar contains deadline campaigns, national occasions, school cycles, and monitored public-service changes. Recurring obligations use occurrence and campaign-stage identity, so earlier coverage never suppresses a new IRS, IVA, Social Security, IMI, AIMI, or IUC cycle.
+- The evergreen reserve contains 98 source-specific briefs, seven in each of 14 pillars. A live strict audit confirmed every brief is answered by its exact official source; stale or recently repeated identities are ineligible.
+- Canonical authority pages are monitored directly by content hash. News and RSS are discovery only. A flexible slot accepts a change only after official evidence verification; otherwise a named verified reserve replaces it at cutoff.
+- Pre-Discord quality scoring blocks weak hooks, incomplete captions, unsupported claims, stale high-risk evidence, Portuguese user-facing copy, duplicate identities, generic content, and visual-policy violations.
+- A complete five-post non-publishing dry run passed with five 100/100 editorial scores and 25 native 1080 × 1350 PNGs. All five covers were visually inspected at original resolution for the real logo, approved fonts/colors, readable hierarchy, complete source footer, and page number.
+- Daily Discord reporting includes five planned topics, evidence state, news candidates, holds, approval state, and schedule. The operations workflow checks alerts every 15 minutes, verifies the next 14 days weekly, and reviews the next 90 days monthly.
+- Production services are the localhost-only Social API, renderer/agent, and n8n on the spare Mac, plus Cloudflare Access/Tunnel for secure phone approval, R2 for public-by-exact-URL media, Buffer for Instagram, and Discord for preview/operations messages.
+- Buffer rate-limit exhaustion is treated as a transient provider condition: durable jobs remain queued/scheduled, no approved content is regenerated, polling stops for the batch, and processing resumes after the provider window resets.
 
 ## 14. Caption and template release — 2026-08-12
 
