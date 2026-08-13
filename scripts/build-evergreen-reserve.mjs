@@ -4,7 +4,7 @@ const catalog=JSON.parse(await readFile(new URL("../plans/finkavo-editorial-cata
 const sources={
   identity_access:["https://www2.gov.pt/servicos/pedir-o-numero-de-identificacao-fiscal-para-pessoa-singular","gov.pt"],
   immigration_residency:["https://aima.gov.pt/pt/viver/autorizacao-de-residencia-regime-e-requisitos-gerais-art-o-77-o-n-o-1","AIMA"],
-  citizenship_civil:["https://diariodarepublica.pt/dr/legislacao-consolidada/lei/1981-34536975-148074251","Diário da República / Lei da Nacionalidade"],
+  citizenship_civil:["https://files.diariodarepublica.pt/1s/2024/03/04600/0000200019.pdf","Diário da República / Lei da Nacionalidade"],
   freelance_business:["https://www2.gov.pt/servicos/abrir-atividade-nas-financas","gov.pt / Autoridade Tributária"],
   iva:["https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00924.aspx","Autoridade Tributária"],
   irs:["https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/Paginas/default.aspx","Autoridade Tributária"],
