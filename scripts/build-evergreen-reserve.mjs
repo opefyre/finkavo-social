@@ -4,18 +4,18 @@ const catalog=JSON.parse(await readFile(new URL("../plans/finkavo-editorial-cata
 const sources={
   identity_access:["https://www2.gov.pt/servicos/pedir-o-numero-de-identificacao-fiscal-para-pessoa-singular","gov.pt"],
   immigration_residency:["https://aima.gov.pt/pt/viver/autorizacao-de-residencia-regime-e-requisitos-gerais-art-o-77-o-n-o-1","AIMA"],
-  citizenship_civil:["https://justica.gov.pt/Como-obter-nacionalidade-portuguesa","Justiça/IRN"],
+  citizenship_civil:["https://diariodarepublica.pt/dr/legislacao-consolidada/lei/1981-34536975-148074251","Diário da República / Lei da Nacionalidade"],
   freelance_business:["https://www2.gov.pt/servicos/abrir-atividade-nas-financas","gov.pt / Autoridade Tributária"],
-  iva:["https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/IVA/Pages/default.aspx","Autoridade Tributária"],
+  iva:["https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00924.aspx","Autoridade Tributária"],
   irs:["https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/Paginas/default.aspx","Autoridade Tributária"],
   social_security:["https://www.seg-social.pt/trabalhadores-independentes","Segurança Social"],
   housing_property:["https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Paginas/default.aspx","Autoridade Tributária"],
-  banking_money:["https://clientebancario.bportugal.pt/pt-pt","Banco de Portugal"],
+  banking_money:["https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf","Banco de Portugal"],
   employment:["https://portal.act.gov.pt/Pages/Home.aspx","ACT"],
-  health_family:["https://www.sns24.gov.pt/","SNS 24"],
+  health_family:["https://www2.gov.pt/pt/servicos/pedir-o-numero-de-utente-do-sns?p_p_resource_id=usefulinformationAction","gov.pt / SNS"],
   driving_transport:["https://www.imt-ip.pt/sites/IMTT/Portugues/Condutores/CartaConducao/Paginas/Carta-de-Conducao.aspx","IMT"],
   education_children:["https://www.dgeste.mec.pt/","DGEstE"],
-  daily_life_consumer:["https://www2.gov.pt/servicos/usar-o-livro-de-reclamacoes","gov.pt / Direção-Geral do Consumidor"],
+  daily_life_consumer:["https://www.asae.gov.pt/reclamacoes-e-denuncias/livro-de-reclamacoes.aspx","ASAE / Livro de Reclamações"],
 };
 const cards=[];
 for(const pillar of catalog.pillars){

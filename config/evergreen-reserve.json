@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-08-13T17:26:11.945Z",
+  "generatedAt": "2026-08-13T17:33:21.168Z",
   "minimum": 90,
   "cards": [
     {
@@ -423,8 +423,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://justica.gov.pt/Como-obter-nacionalidade-portuguesa",
-        "requiredAuthority": "Justiça/IRN",
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/1981-34536975-148074251",
+        "requiredAuthority": "Diário da República / Lei da Nacionalidade",
         "officialRequired": true,
         "freshnessDays": 7
       },
@@ -452,8 +452,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://justica.gov.pt/Como-obter-nacionalidade-portuguesa",
-        "requiredAuthority": "Justiça/IRN",
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/1981-34536975-148074251",
+        "requiredAuthority": "Diário da República / Lei da Nacionalidade",
         "officialRequired": true,
         "freshnessDays": 7
       },
@@ -481,8 +481,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://justica.gov.pt/Como-obter-nacionalidade-portuguesa",
-        "requiredAuthority": "Justiça/IRN",
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/1981-34536975-148074251",
+        "requiredAuthority": "Diário da República / Lei da Nacionalidade",
         "officialRequired": true,
         "freshnessDays": 7
       },
@@ -510,8 +510,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://justica.gov.pt/Como-obter-nacionalidade-portuguesa",
-        "requiredAuthority": "Justiça/IRN",
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/1981-34536975-148074251",
+        "requiredAuthority": "Diário da República / Lei da Nacionalidade",
         "officialRequired": true,
         "freshnessDays": 7
       },
@@ -539,8 +539,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://justica.gov.pt/Como-obter-nacionalidade-portuguesa",
-        "requiredAuthority": "Justiça/IRN",
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/1981-34536975-148074251",
+        "requiredAuthority": "Diário da República / Lei da Nacionalidade",
         "officialRequired": true,
         "freshnessDays": 7
       },
@@ -568,8 +568,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://justica.gov.pt/Como-obter-nacionalidade-portuguesa",
-        "requiredAuthority": "Justiça/IRN",
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/1981-34536975-148074251",
+        "requiredAuthority": "Diário da República / Lei da Nacionalidade",
         "officialRequired": true,
         "freshnessDays": 7
       },
@@ -597,8 +597,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://justica.gov.pt/Como-obter-nacionalidade-portuguesa",
-        "requiredAuthority": "Justiça/IRN",
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/1981-34536975-148074251",
+        "requiredAuthority": "Diário da República / Lei da Nacionalidade",
         "officialRequired": true,
         "freshnessDays": 7
       },
@@ -829,7 +829,7 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/IVA/Pages/default.aspx",
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00924.aspx",
         "requiredAuthority": "Autoridade Tributária",
         "officialRequired": true,
         "freshnessDays": 7
@@ -858,7 +858,7 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/IVA/Pages/default.aspx",
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00924.aspx",
         "requiredAuthority": "Autoridade Tributária",
         "officialRequired": true,
         "freshnessDays": 7
@@ -887,7 +887,7 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/IVA/Pages/default.aspx",
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00924.aspx",
         "requiredAuthority": "Autoridade Tributária",
         "officialRequired": true,
         "freshnessDays": 7
@@ -916,7 +916,7 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/IVA/Pages/default.aspx",
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00924.aspx",
         "requiredAuthority": "Autoridade Tributária",
         "officialRequired": true,
         "freshnessDays": 7
@@ -945,7 +945,7 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/IVA/Pages/default.aspx",
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00924.aspx",
         "requiredAuthority": "Autoridade Tributária",
         "officialRequired": true,
         "freshnessDays": 7
@@ -974,7 +974,7 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/IVA/Pages/default.aspx",
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00924.aspx",
         "requiredAuthority": "Autoridade Tributária",
         "officialRequired": true,
         "freshnessDays": 7
@@ -1003,7 +1003,7 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/IVA/Pages/default.aspx",
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00924.aspx",
         "requiredAuthority": "Autoridade Tributária",
         "officialRequired": true,
         "freshnessDays": 7
@@ -1641,7 +1641,7 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://clientebancario.bportugal.pt/pt-pt",
+        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
@@ -1670,7 +1670,7 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://clientebancario.bportugal.pt/pt-pt",
+        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
@@ -1699,7 +1699,7 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://clientebancario.bportugal.pt/pt-pt",
+        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
@@ -1728,7 +1728,7 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://clientebancario.bportugal.pt/pt-pt",
+        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
@@ -1757,7 +1757,7 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://clientebancario.bportugal.pt/pt-pt",
+        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
@@ -1786,7 +1786,7 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://clientebancario.bportugal.pt/pt-pt",
+        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
@@ -1815,7 +1815,7 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://clientebancario.bportugal.pt/pt-pt",
+        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
@@ -2047,8 +2047,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.sns24.gov.pt/",
-        "requiredAuthority": "SNS 24",
+        "canonicalUrl": "https://www2.gov.pt/pt/servicos/pedir-o-numero-de-utente-do-sns?p_p_resource_id=usefulinformationAction",
+        "requiredAuthority": "gov.pt / SNS",
         "officialRequired": true,
         "freshnessDays": 30
       },
@@ -2076,8 +2076,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.sns24.gov.pt/",
-        "requiredAuthority": "SNS 24",
+        "canonicalUrl": "https://www2.gov.pt/pt/servicos/pedir-o-numero-de-utente-do-sns?p_p_resource_id=usefulinformationAction",
+        "requiredAuthority": "gov.pt / SNS",
         "officialRequired": true,
         "freshnessDays": 30
       },
@@ -2105,8 +2105,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.sns24.gov.pt/",
-        "requiredAuthority": "SNS 24",
+        "canonicalUrl": "https://www2.gov.pt/pt/servicos/pedir-o-numero-de-utente-do-sns?p_p_resource_id=usefulinformationAction",
+        "requiredAuthority": "gov.pt / SNS",
         "officialRequired": true,
         "freshnessDays": 30
       },
@@ -2134,8 +2134,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.sns24.gov.pt/",
-        "requiredAuthority": "SNS 24",
+        "canonicalUrl": "https://www2.gov.pt/pt/servicos/pedir-o-numero-de-utente-do-sns?p_p_resource_id=usefulinformationAction",
+        "requiredAuthority": "gov.pt / SNS",
         "officialRequired": true,
         "freshnessDays": 30
       },
@@ -2163,8 +2163,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.sns24.gov.pt/",
-        "requiredAuthority": "SNS 24",
+        "canonicalUrl": "https://www2.gov.pt/pt/servicos/pedir-o-numero-de-utente-do-sns?p_p_resource_id=usefulinformationAction",
+        "requiredAuthority": "gov.pt / SNS",
         "officialRequired": true,
         "freshnessDays": 30
       },
@@ -2192,8 +2192,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.sns24.gov.pt/",
-        "requiredAuthority": "SNS 24",
+        "canonicalUrl": "https://www2.gov.pt/pt/servicos/pedir-o-numero-de-utente-do-sns?p_p_resource_id=usefulinformationAction",
+        "requiredAuthority": "gov.pt / SNS",
         "officialRequired": true,
         "freshnessDays": 30
       },
@@ -2221,8 +2221,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.sns24.gov.pt/",
-        "requiredAuthority": "SNS 24",
+        "canonicalUrl": "https://www2.gov.pt/pt/servicos/pedir-o-numero-de-utente-do-sns?p_p_resource_id=usefulinformationAction",
+        "requiredAuthority": "gov.pt / SNS",
         "officialRequired": true,
         "freshnessDays": 30
       },
@@ -2656,8 +2656,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www2.gov.pt/servicos/usar-o-livro-de-reclamacoes",
-        "requiredAuthority": "gov.pt / Direção-Geral do Consumidor",
+        "canonicalUrl": "https://www.asae.gov.pt/reclamacoes-e-denuncias/livro-de-reclamacoes.aspx",
+        "requiredAuthority": "ASAE / Livro de Reclamações",
         "officialRequired": true,
         "freshnessDays": 90
       },
@@ -2685,8 +2685,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www2.gov.pt/servicos/usar-o-livro-de-reclamacoes",
-        "requiredAuthority": "gov.pt / Direção-Geral do Consumidor",
+        "canonicalUrl": "https://www.asae.gov.pt/reclamacoes-e-denuncias/livro-de-reclamacoes.aspx",
+        "requiredAuthority": "ASAE / Livro de Reclamações",
         "officialRequired": true,
         "freshnessDays": 90
       },
@@ -2714,8 +2714,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www2.gov.pt/servicos/usar-o-livro-de-reclamacoes",
-        "requiredAuthority": "gov.pt / Direção-Geral do Consumidor",
+        "canonicalUrl": "https://www.asae.gov.pt/reclamacoes-e-denuncias/livro-de-reclamacoes.aspx",
+        "requiredAuthority": "ASAE / Livro de Reclamações",
         "officialRequired": true,
         "freshnessDays": 90
       },
@@ -2743,8 +2743,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www2.gov.pt/servicos/usar-o-livro-de-reclamacoes",
-        "requiredAuthority": "gov.pt / Direção-Geral do Consumidor",
+        "canonicalUrl": "https://www.asae.gov.pt/reclamacoes-e-denuncias/livro-de-reclamacoes.aspx",
+        "requiredAuthority": "ASAE / Livro de Reclamações",
         "officialRequired": true,
         "freshnessDays": 90
       },
@@ -2772,8 +2772,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www2.gov.pt/servicos/usar-o-livro-de-reclamacoes",
-        "requiredAuthority": "gov.pt / Direção-Geral do Consumidor",
+        "canonicalUrl": "https://www.asae.gov.pt/reclamacoes-e-denuncias/livro-de-reclamacoes.aspx",
+        "requiredAuthority": "ASAE / Livro de Reclamações",
         "officialRequired": true,
         "freshnessDays": 90
       },
@@ -2801,8 +2801,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www2.gov.pt/servicos/usar-o-livro-de-reclamacoes",
-        "requiredAuthority": "gov.pt / Direção-Geral do Consumidor",
+        "canonicalUrl": "https://www.asae.gov.pt/reclamacoes-e-denuncias/livro-de-reclamacoes.aspx",
+        "requiredAuthority": "ASAE / Livro de Reclamações",
         "officialRequired": true,
         "freshnessDays": 90
       },
@@ -2830,8 +2830,8 @@
         "Clarify the main limitation, exception, or proof to retain."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www2.gov.pt/servicos/usar-o-livro-de-reclamacoes",
-        "requiredAuthority": "gov.pt / Direção-Geral do Consumidor",
+        "canonicalUrl": "https://www.asae.gov.pt/reclamacoes-e-denuncias/livro-de-reclamacoes.aspx",
+        "requiredAuthority": "ASAE / Livro de Reclamações",
         "officialRequired": true,
         "freshnessDays": 90
       },
