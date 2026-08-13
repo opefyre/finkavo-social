@@ -18,10 +18,10 @@ This is the authoritative completion tracker. A box is checked only after the im
 
 ## 3. Deadlines, occasions, and campaigns
 
-- [ ] Complete the official calendar for IRS, IVA, Social Security, IMI, AIMI, IUC, employment, education, immigration, and relevant public-service cycles.
-- [ ] Add Portuguese national occasions, useful seasonal moments, and selected official events.
+- [x] Complete the official calendar for IRS, IVA, Social Security, IMI, AIMI, IUC, employment, education, immigration, and relevant public-service cycles.
+- [x] Add Portuguese national occasions, useful seasonal moments, and selected official events.
 - [x] Create preparation, reminder, last-call, and after-deadline stages where genuinely useful.
-- [ ] Add same-day or freshness-window reverification for dates, thresholds, eligibility, and closures.
+- [x] Add same-day or freshness-window reverification for dates, thresholds, eligibility, and closures.
 
 ## 4. Evergreen reserve
 
@@ -34,8 +34,8 @@ This is the authoritative completion tracker. A box is checked only after the im
 - [x] Monitor canonical official authority pages directly; keep news/RSS as discovery only.
 - [x] Resolve discovery links to original sources and reject aggregators as evidence.
 - [x] Detect material page changes using canonical URL and content hash.
-- [ ] Implement verified-news replacement for the flexible slot, with an automatic named evergreen fallback at cutoff.
-- [ ] Validate an official change can replace a flexible slot without bypassing evidence or approval.
+- [x] Implement verified-news replacement for the flexible slot, with an automatic named evergreen fallback at cutoff.
+- [x] Validate an official change can replace a flexible slot without bypassing evidence or approval.
 
 ## 6. Quality gates
 
@@ -74,3 +74,6 @@ This is the authoritative completion tracker. A box is checked only after the im
 | 2026-08-13 | Canonical official monitoring | Six directly fetchable authority pages; canonical URL + normalized visible-text hash snapshots; repeat hash unchanged; n8n workflow replaced in place and published | Pass |
 | 2026-08-13 | Calendar expansion | 34 scoped events, 44 campaign stages, full mainland 2026–27 school cycle, remaining in-period national holidays, plus explicit AIMA/ACT continuous monitoring rules | Pass |
 | 2026-08-13 | Evergreen reserve | 98 unique briefs, seven per pillar; 14/14 exact official sources stored append-only; live audit 98 eligible and 0 evidence holds; freshness and 90-day same-identity reuse gates validated | Pass |
+| 2026-08-13 | Calendar completion and reverification | Validator: 34 events, 44 campaign stages, 31 confirmed and 2 deliberately held for same-day reverification; deployed evidence workflow preserves holds | Pass |
+| 2026-08-13 | Flexible news decision | Production WF-03 updated in place; live preview waits before cutoff and selects evidence-current named reserve at cutoff | Pass |
+| 2026-08-13 | Official-news replacement safety | Topic-specific source gate; self-cleaning live official-change preview returned `verified_news`; candidate remained unmutated and approval was not bypassed | Pass |

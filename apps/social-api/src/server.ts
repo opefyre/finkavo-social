@@ -19,6 +19,7 @@ import { findDuplicate, type DuplicateCandidate } from "./duplicate.js";
 import { editorialIdentity } from "./editorial-identity.js";
 import { eligibleReserveCards, loadEvergreenReserve } from "./evergreen-reserve.js";
 import { sourceSupportsNewsTopic } from "./news-evidence.js";
+import { editorialScore } from "./editorial-score.js";
 
 const databaseUrl = process.env.DATABASE_URL;
 const apiToken = process.env.SOCIAL_API_TOKEN;
@@ -517,6 +518,7 @@ const server = http.createServer(async (req, res) => {
       const [selectedConcept] = await sql`SELECT c.*,b.sources,b.bundle_hash,b.expires_at,s.brief FROM social_post_concept c LEFT JOIN social_topic_evidence_bundle b ON b.id=c.evidence_bundle_id AND b.verification_state='verified' AND b.expires_at>now() LEFT JOIN social_editorial_plan_slot s ON s.id=c.plan_slot_id WHERE c.id=${generationInput.conceptId} AND c.status='planned'`;
       if (!selectedConcept) return send(res,409,{error:"Concept is not planned or its evidence is unavailable"});
       let evidenceSources=(selectedConcept.sources || []) as Array<Record<string,unknown>>;
+      if(selectedConcept.plan_slot_id&&!evidenceSources.length)return send(res,409,{error:"Planned content requires a current verified topic-specific evidence bundle"});
       if (!evidenceSources.length && selectedConcept.document_id) {
         const [document] = await sql`
           SELECT d.id,d.title,d.source_url,d.source_authority,d.source_tier,d.original_lang,d.content_hash,
@@ -695,11 +697,14 @@ const server = http.createServer(async (req, res) => {
       const { expiresInMinutes } = ReviewRequestSchema.parse(await readJson(req));
       const [previewSource] = await sql`
         SELECT p.*, r.id AS revision_id, r.slides AS revision_slides, r.call_to_action AS revision_cta,
-               r.hook AS revision_hook, r.caption AS revision_caption, r.hashtags AS revision_hashtags
+               r.hook AS revision_hook, r.caption AS revision_caption, r.hashtags AS revision_hashtags,
+               r.source_bundle AS revision_sources
         FROM social_post p JOIN social_post_revision r ON r.id = p.current_revision_id
         WHERE p.id = ${reviewRequest[1]} AND p.status = 'draft'
       `;
       if (!previewSource) return send(res, 409, { error: "Only a current draft revision can be sent for review" });
+      const quality=editorialScore({topic:String(previewSource.topic),hook:String(previewSource.revision_hook),caption:String(previewSource.revision_caption),callToAction:String(previewSource.revision_cta),hashtags:previewSource.revision_hashtags as string[],slides:previewSource.revision_slides as Array<{title?:string;body?:string;items?:string[];sourceLabel?:string}>,sources:previewSource.revision_sources as Array<{url?:string;tier?:string}>,riskLevel:String(previewSource.risk_level),subjectFamily:String(previewSource.subject_family||""),userQuestion:String(previewSource.user_question||""),contentIntent:String(previewSource.content_intent||"")});
+      if(!quality.passed){await sql.begin(async tx=>{await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${previewSource.id}`;await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${previewSource.id},'quality.editorial_score_blocked',${tx.json({stage:'pre_discord',score:quality.score,failures:quality.failures})})`;});return send(res,422,{error:"Post failed the pre-Discord editorial gate",...quality});}
       const duplicate = await findRecentDuplicate(previewSource as DuplicateCandidate, String(previewSource.id));
       if (duplicate) {
         await sql.begin(async tx => {
