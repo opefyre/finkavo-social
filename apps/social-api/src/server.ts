@@ -76,6 +76,8 @@ const classifyTopic = (value: unknown) => {
   if (/nif|finan.as/.test(text)) return "nif";
   return "general";
 };
+const officialDomains = ["aima.gov.pt", "diariodarepublica.pt", "dre.pt", "gov.pt", "portaldasfinancas.gov.pt", "seg-social.pt", "irn.justica.gov.pt", "bportugal.pt", "sns24.gov.pt", "ine.pt", "dgeste.mec.pt", "act.gov.pt"];
+const isOfficialUrl = (value:string) => { try { const hostname=new URL(value).hostname.replace(/^www\./,""); return officialDomains.some(domain=>hostname===domain||hostname.endsWith(`.${domain}`)); } catch { return false; } };
 const exactTermMatch = (text: string, term: string) => {
   const escaped=term.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
   return new RegExp(`(^|[^a-zà-ÿ0-9])${escaped}([^a-zà-ÿ0-9]|$)`,"iu").test(text);
@@ -194,6 +196,7 @@ const DiscoverySchema = z.object({
   category: z.string().min(1).max(80).default("general"), riskLevel: z.enum(["low", "medium", "high"]).default("medium"),
 });
 const DiscoveryBatchSchema = z.object({ items: z.array(DiscoverySchema).min(1).max(100), sourceKind: z.enum(["rss", "news_discovery", "official_notice"]).default("news_discovery") });
+const OfficialSnapshotSchema=z.object({url:z.string().url(),httpStatus:z.number().int().min(100).max(599),body:z.string().max(900_000),fetchedAt:z.string().datetime().optional()});
 
 function createRenderManifest(post: Record<string, unknown>, revision: Record<string, unknown>) {
   const raw = revision.slides as Array<Record<string, unknown>>;
@@ -395,6 +398,20 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { concepts: rows });
     }
 
+    if(req.method==="POST"&&url.pathname==="/v1/official-sources/snapshot"){
+      const input=OfficialSnapshotSchema.parse(await readJson(req));
+      const canonical=new URL(input.url);canonical.hash="";canonical.search="";const canonicalUrl=canonical.toString();
+      if(!isOfficialUrl(canonicalUrl))return send(res,400,{error:"Only canonical official-authority URLs can be monitored"});
+      const normalized=input.body.replace(/<script[\s\S]*?<\/script>/gi,"").replace(/<style[\s\S]*?<\/style>/gi,"").replace(/\s+/g," ").trim();
+      if(input.httpStatus<200||input.httpStatus>=400||normalized.length<100)return send(res,422,{error:"Official page fetch is unusable",httpStatus:input.httpStatus,contentLength:normalized.length});
+      const contentHash=hash(normalized);const [previous]=await sql`SELECT content_hash FROM social_official_source_snapshot WHERE canonical_url=${canonicalUrl} ORDER BY fetched_at DESC LIMIT 1`;
+      const changed=Boolean(previous&&previous.content_hash!==contentHash);
+      await sql`INSERT INTO social_official_source_snapshot (canonical_url,http_status,content_hash,content_length,changed,fetched_at) VALUES (${canonicalUrl},${input.httpStatus},${contentHash},${normalized.length},${changed},${input.fetchedAt||new Date().toISOString()}) ON CONFLICT (canonical_url,content_hash) DO UPDATE SET fetched_at=excluded.fetched_at,http_status=excluded.http_status,content_length=excluded.content_length`;
+      if(changed){const title=(normalized.match(/<title[^>]*>([^<]+)<\/title>/i)?.[1]||`Official page changed: ${canonical.hostname}`).trim().slice(0,300);await sql`INSERT INTO social_discovery (canonical_url,title,publisher,locale,content_hash,source_kind,category,risk_level,raw_metadata) VALUES (${canonicalUrl},${title},${canonical.hostname},'pt',${contentHash},'official_notice',${classifyTopic(title)},'high',${sql.json({monitor:'canonical_page',previousHash:previous.content_hash})}) ON CONFLICT (canonical_url,content_hash) DO NOTHING`;}
+      await sql`INSERT INTO social_event (event_type,payload) VALUES ('official_source.checked',${sql.json({canonicalUrl,contentHash,changed,httpStatus:input.httpStatus,contentLength:normalized.length})})`;
+      return send(res,200,{canonicalUrl,contentHash,changed,baseline:!previous});
+    }
+
     if (req.method === "POST" && url.pathname === "/v1/discoveries") {
       const { items, sourceKind } = DiscoveryBatchSchema.parse(await readJson(req));
       let inserted = 0;
@@ -420,7 +437,6 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method === "POST" && url.pathname === "/v1/verification/triage") {
       const discoveries = await sql`SELECT * FROM social_discovery WHERE evidence_state='discovery_only' ORDER BY COALESCE(published_at, created_at) DESC LIMIT 100`;
-      const officialDomains = ["aima.gov.pt", "diariodarepublica.pt", "dre.pt", "gov.pt", "portaldasfinancas.gov.pt", "seg-social.pt", "irn.justica.gov.pt", "bportugal.pt", "sns24.gov.pt", "ine.pt"];
       let promoted = 0;
       let held = 0;
       for (const discovery of discoveries) {

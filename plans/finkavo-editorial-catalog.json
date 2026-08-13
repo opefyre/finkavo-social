@@ -797,6 +797,45 @@
       "calendarStatus": "confirmed_rule",
       "campaignStage": "occasion",
       "scope": "National mandatory holiday"
+    },
+    {
+      "date": "2026-09-01",
+      "pillar": "education_children",
+      "title": "School starts between 11 and 15 September: family admin checklist",
+      "timing": "official_locked",
+      "authority": "https://www.dgeste.mec.pt/wp-content/uploads/2024/07/despacho8368-2024-07-25-calendario-escolar-2024-25-2027-28.pdf",
+      "sourceKey": "schoolCalendar2026_2027",
+      "eventKey": "school-start-2026-mainland",
+      "eventDate": "2026-09-11",
+      "calendarStatus": "confirmed",
+      "campaignStage": "preparation",
+      "scope": "Mainland public preschool, basic and secondary schools start between 11 and 15 September; individual schools choose within the window"
+    },
+    {
+      "date": "2026-09-10",
+      "pillar": "education_children",
+      "title": "Before school starts: confirm your school’s exact first day and documents",
+      "timing": "official_locked",
+      "authority": "https://www.dgeste.mec.pt/wp-content/uploads/2024/07/despacho8368-2024-07-25-calendario-escolar-2024-25-2027-28.pdf",
+      "sourceKey": "schoolCalendar2026_2027",
+      "eventKey": "school-start-2026-mainland",
+      "eventDate": "2026-09-11",
+      "calendarStatus": "confirmed",
+      "campaignStage": "reminder",
+      "scope": "Mainland public preschool, basic and secondary schools start between 11 and 15 September; individual schools choose within the window"
+    },
+    {
+      "date": "2026-09-11",
+      "pillar": "education_children",
+      "title": "Portugal’s school-start window opens today: check your school’s date",
+      "timing": "official_locked",
+      "authority": "https://www.dgeste.mec.pt/wp-content/uploads/2024/07/despacho8368-2024-07-25-calendario-escolar-2024-25-2027-28.pdf",
+      "sourceKey": "schoolCalendar2026_2027",
+      "eventKey": "school-start-2026-mainland",
+      "eventDate": "2026-09-11",
+      "calendarStatus": "confirmed",
+      "campaignStage": "window_open",
+      "scope": "Mainland public preschool, basic and secondary schools start between 11 and 15 September; individual schools choose within the window"
     }
   ]
 }

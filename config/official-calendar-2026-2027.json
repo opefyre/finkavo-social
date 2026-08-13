@@ -9,7 +9,8 @@
     "atImiAimi": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx",
     "socialSecurityQuarterly": "https://www.seg-social.pt/documents/10152/15974914/1009u002520Trabalhadoru002520independenteu002520-u002520novou002520regime/87b6e00c-523d-4718-8a88-942ea804c18a",
     "nationalHolidays": "https://www.dgaep.gov.pt/stap/infoPage.cfm?objid=9a36961c-71bc-40de-8ee0-5cdeb2dea832",
-    "educationPortal": "https://portaleducacao.gov.pt/"
+    "educationPortal": "https://portaleducacao.gov.pt/",
+    "schoolCalendar2026_2027": "https://www.dgeste.mec.pt/wp-content/uploads/2024/07/despacho8368-2024-07-25-calendario-escolar-2024-25-2027-28.pdf"
   },
   "events": [
     {"key":"irs-2026-filing","date":"2026-06-30","subjectFamily":"irs","title":"2026 IRS filing window closes","status":"confirmed","source":"atIrs2026","scope":"2025 income filed in 2026"},
@@ -29,6 +30,6 @@
     {"key":"ss-quarterly-2026-q4","date":"2027-01-31","subjectFamily":"social_security","title":"Self-employed quarterly declaration month ends","status":"confirmed_rule","source":"socialSecurityQuarterly","scope":"Workers subject to the quarterly declaration"},
     {"key":"irs-2027-filing","date":"2027-06-30","subjectFamily":"irs","title":"2027 IRS filing deadline candidate","status":"must_reverify","source":"atIrs2026","scope":"Do not publish a 2027 date until AT publishes the 2027 calendar"},
     {"key":"iva-2027-q4-return","date":"2027-02-20","subjectFamily":"iva","title":"Quarterly IVA return candidate","status":"must_reverify","source":"atDeclarations2026","scope":"Do not publish a 2027 date until AT publishes the 2027 calendar"},
-    {"key":"school-start-2026-mainland","date":"2026-09-15","subjectFamily":"education_children","title":"Mainland school-start preparation window","status":"must_reverify","source":"educationPortal","scope":"Schools start within an official window; do not state one universal start date"}
+    {"key":"school-start-2026-mainland","date":"2026-09-11","subjectFamily":"education_children","title":"Mainland school-start window opens","status":"confirmed","source":"schoolCalendar2026_2027","scope":"Mainland public preschool, basic and secondary schools start between 11 and 15 September; individual schools choose within the window","campaign":[{"publishDate":"2026-09-01","stage":"preparation","title":"School starts between 11 and 15 September: family admin checklist"},{"publishDate":"2026-09-10","stage":"reminder","title":"Before school starts: confirm your school’s exact first day and documents"},{"publishDate":"2026-09-11","stage":"window_open","title":"Portugal’s school-start window opens today: check your school’s date"}]}
   ]
 }

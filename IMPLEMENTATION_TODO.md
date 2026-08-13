@@ -13,7 +13,7 @@ This is the authoritative completion tracker. A box is checked only after the im
 
 - [x] Curate the next 90 days: five specific briefs per day, each with purpose, required answers, source policy, timing class, and fallback behavior.
 - [x] Verify every fixed-date brief against a current official source.
-- [ ] Hold any slot that lacks adequate evidence; never fill it with generic copy.
+- [x] Hold any slot that lacks adequate evidence; never fill it with generic copy.
 - [x] Validate all 450 briefs structurally and editorially.
 
 ## 3. Deadlines, occasions, and campaigns
@@ -70,3 +70,4 @@ This is the authoritative completion tracker. A box is checked only after the im
 | 2026-08-13 | Curated 90-day brief set | Plan v2 validator: 450 briefs, 90 days, 450 unique identities, complete source/fallback policies, high-risk cap | Pass |
 | 2026-08-13 | Official-calendar foundation | 18 scoped events; 14 current/rule-confirmed; 3 explicitly held for reverification; official-domain validator | Pass |
 | 2026-08-13 | Calendar-to-plan integration | Calendar generates 25 campaign stages; all stages inside the curated window appear once with matching event, stage, date, status, and canonical source | Pass |
+| 2026-08-13 | Evidence holds and canonical fixed-date sources | Live API automatically holds `must_reverify`; fixed-date research is restricted to the calendar's exact canonical URL; deployed service running; five-slot campaign-day API check passed | Pass |

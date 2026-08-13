@@ -5,7 +5,7 @@ for(const event of data.events){
   if(keys.has(event.key))errors.push(`duplicate key ${event.key}`);keys.add(event.key);
   if(!/^\d{4}-\d{2}-\d{2}$/.test(event.date)||Number.isNaN(Date.parse(`${event.date}T12:00:00Z`)))errors.push(`${event.key}: invalid date`);
   const url=data.sources[event.source];if(!url)errors.push(`${event.key}: missing source`);
-  else if(!/^https:\/\/(?:[^/]+\.)?(?:portaldasfinancas\.gov\.pt|seg-social\.pt|dgaep\.gov\.pt|portaleducacao\.gov\.pt)\//.test(url))errors.push(`${event.key}: source is not an allowed official domain`);
+  else if(!/^https:\/\/(?:[^/]+\.)?(?:portaldasfinancas\.gov\.pt|seg-social\.pt|dgaep\.gov\.pt|portaleducacao\.gov\.pt|dgeste\.mec\.pt)\//.test(url))errors.push(`${event.key}: source is not an allowed official domain`);
   if(event.status==="must_reverify"&&!/Do not publish|do not state/i.test(event.scope))errors.push(`${event.key}: missing publication hold`);
   if(!event.scope)errors.push(`${event.key}: missing applicability scope`);
   const stages=new Set();

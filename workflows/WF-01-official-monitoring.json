@@ -1,118 +1,34 @@
 {
-  "name": "WF-01 Official Portugal Change Monitoring (RSS)",
+  "name": "WF-01 Canonical Official Source Monitoring",
   "nodes": [
     {
-      "parameters": {
-        "rule": {
-          "interval": [
-            {
-                "field": "cronExpression",
-                "expression": "45 */3 * * *"
-            }
-          ]
-        }
-      },
-      "id": "official-schedule",
-      "name": "Every 2 hours",
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.2,
-      "position": [
-        -520,
-        0
-      ]
+      "parameters": {"rule":{"interval":[{"field":"cronExpression","expression":"45 */3 * * *"}]}},
+      "id": "official-schedule", "name": "Every 3 hours", "type": "n8n-nodes-base.scheduleTrigger", "typeVersion": 1.2, "position": [-700,0]
     },
     {
-      "parameters": {
-        "url": "https://news.google.com/rss/search?q=(site%3Agov.pt%20OR%20site%3Aaima.gov.pt%20OR%20site%3Aportaldasfinancas.gov.pt%20OR%20site%3Aseg-social.pt)%20Portugal&hl=pt-PT&gl=PT&ceid=PT:pt-150"
-      },
-      "id": "official-fetch",
-      "name": "Fetch official portal changes",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1.2,
-      "retryOnFail": true,
-      "maxTries": 3,
-      "waitBetweenTries": 30000,
-      "position": [
-        -280,
-        0
-      ]
+      "parameters": {"jsCode":"const urls=['https://aima.gov.pt/pt/noticias','https://www.gov.pt/noticias','https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Pages/default.aspx','https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/prazos/Paginas/default.aspx','https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx','https://www.seg-social.pt/trabalhadores-independentes','https://diariodarepublica.pt/dr/home','https://clientebancario.bportugal.pt/pt-pt/noticias','https://www.dgeste.mec.pt/?page_id=53180'];return urls.map(url=>({json:{url}}));"},
+      "id": "official-urls", "name": "Canonical URLs", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [-480,0]
     },
     {
-      "parameters": {
-        "jsCode": "const classify=t=>{t=t.toLowerCase();if(/aima|residen|visa|migrant|estrangeir/.test(t))return'aima';if(/irs|rendimento/.test(t))return'irs';if(/iva|imposto|fiscal|tax/.test(t))return'tax';if(/seguran.a social|niss/.test(t))return'social_security';if(/casa|im.vel|habita/.test(t))return'housing';if(/emprego|trabalho/.test(t))return'employment';return'government'};const items=$input.all().map(({json:a})=>({url:a.link,title:a.title,publisher:a.creator||a.author||null,locale:'pt',publishedAt:a.isoDate||a.pubDate||null,category:classify(a.title||''),riskLevel:/prazo|deadline|lei|law|tax|irs|iva|residen|visa/i.test(a.title||'')?'high':'medium'})).filter(a=>a.url&&a.title).slice(0,100);return items.length?[{json:{items,sourceKind:'official_notice'}}]:[];"
-      },
-      "id": "official-normalize",
-      "name": "Classify official notices",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -40,
-        0
-      ]
+      "parameters": {"url":"={{ $json.url }}","options":{"timeout":120000,"response":{"response":{"fullResponse":true,"neverError":true,"responseFormat":"text"}}}},
+      "id": "official-fetch", "name": "Fetch canonical page", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "retryOnFail": true, "maxTries": 3, "waitBetweenTries": 30000, "position": [-240,0]
     },
     {
-      "parameters": {
-        "method": "POST",
-        "url": "http://127.0.0.1:4320/v1/discoveries",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpBearerAuth",
-        "sendBody": true,
-        "contentType": "raw",
-        "rawContentType": "application/json",
-        "body": "={{ JSON.stringify($json) }}",
-        "options": {
-          "timeout": 120000
-        }
-      },
-      "id": "official-store",
-      "name": "Store official discoveries",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        200,
-        0
-      ]
+      "parameters": {"jsCode":"const inputs=$input.all();const urls=$('Canonical URLs').all();return inputs.map((item,index)=>({json:{url:urls[index].json.url,httpStatus:Number(item.json.statusCode||200),body:String(item.json.body||''),fetchedAt:new Date().toISOString()}}));"},
+      "id": "official-normalize", "name": "Build snapshots", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [0,0]
+    },
+    {
+      "parameters": {"method":"POST","url":"http://127.0.0.1:4320/v1/official-sources/snapshot","authentication":"genericCredentialType","genericAuthType":"httpBearerAuth","sendBody":true,"contentType":"raw","rawContentType":"application/json","body":"={{ JSON.stringify($json) }}","options":{"timeout":120000}},
+      "id": "official-store", "name": "Compare and store snapshot", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [240,0]
     }
   ],
   "connections": {
-    "Every 2 hours": {
-      "main": [
-        [
-          {
-            "node": "Fetch official portal changes",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Fetch official portal changes": {
-      "main": [
-        [
-          {
-            "node": "Classify official notices",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Classify official notices": {
-      "main": [
-        [
-          {
-            "node": "Store official discoveries",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    }
+    "Every 3 hours":{"main":[[{"node":"Canonical URLs","type":"main","index":0}]]},
+    "Canonical URLs":{"main":[[{"node":"Fetch canonical page","type":"main","index":0}]]},
+    "Fetch canonical page":{"main":[[{"node":"Build snapshots","type":"main","index":0}]]},
+    "Build snapshots":{"main":[[{"node":"Compare and store snapshot","type":"main","index":0}]]}
   },
-  "settings": {
-    "executionOrder": "v1",
-    "timezone": "Europe/Lisbon"
-  },
-  "active": false,
-  "tags": []
+  "settings":{"executionOrder":"v1","timezone":"Europe/Lisbon"},
+  "active":false,
+  "tags":[]
 }
