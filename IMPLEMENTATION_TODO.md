@@ -68,3 +68,4 @@ This is the authoritative completion tracker. A box is checked only after the im
 | 2026-08-13 | Tracker created | Requirements converted into implementation and validation gates | Pass |
 | 2026-08-13 | Structured editorial identity | Migration `0007`; identity and duplicate tests; live schema/API verification | Pass |
 | 2026-08-13 | Curated 90-day brief set | Plan v2 validator: 450 briefs, 90 days, 450 unique identities, complete source/fallback policies, high-risk cap | Pass |
+| 2026-08-13 | Official-calendar foundation | 18 scoped events; 14 current/rule-confirmed; 3 explicitly held for reverification; official-domain validator | Pass |

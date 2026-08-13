@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "jurisdiction": "Portugal mainland unless scope says otherwise",
+  "verifiedAt": "2026-08-13T17:00:00+01:00",
+  "sources": {
+    "atPayments2026": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Pages/Quadro_res_Pag_2026.aspx",
+    "atDeclarations2026": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Documents/Obrigacoes_declarativas.pdf",
+    "atIrs2026": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/prazos/Paginas/default.aspx",
+    "atImiAimi": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx",
+    "socialSecurityQuarterly": "https://www.seg-social.pt/documents/10152/15974914/1009u002520Trabalhadoru002520independenteu002520-u002520novou002520regime/87b6e00c-523d-4718-8a88-942ea804c18a",
+    "nationalHolidays": "https://www.dgaep.gov.pt/stap/infoPage.cfm?objid=9a36961c-71bc-40de-8ee0-5cdeb2dea832",
+    "educationPortal": "https://portaleducacao.gov.pt/"
+  },
+  "events": [
+    {"key":"irs-2026-filing","date":"2026-06-30","subjectFamily":"irs","title":"2026 IRS filing window closes","status":"confirmed","source":"atIrs2026","scope":"2025 income filed in 2026"},
+    {"key":"irs-2026-assessment","date":"2026-08-31","subjectFamily":"irs","title":"IRS assessment, refund or payment checkpoint","status":"confirmed","source":"atPayments2026","scope":"Only people whose assessment or notice applies"},
+    {"key":"imi-2026-august","date":"2026-08-31","subjectFamily":"housing_property","title":"August IMI instalment month ends","status":"confirmed","source":"atImiAimi","scope":"Only bills above €500 have an August instalment"},
+    {"key":"iva-2026-q2-return","date":"2026-09-21","subjectFamily":"iva","title":"Quarterly IVA return checkpoint","status":"confirmed","source":"atDeclarations2026","scope":"Quarterly IVA taxpayers; exact 2026 calendar date"},
+    {"key":"iva-2026-q2-payment","date":"2026-09-25","subjectFamily":"iva","title":"Quarterly IVA payment checkpoint","status":"confirmed","source":"atPayments2026","scope":"Quarterly IVA taxpayers with payment due"},
+    {"key":"aimi-2026-payment","date":"2026-09-30","subjectFamily":"housing_property","title":"AIMI payment deadline","status":"confirmed","source":"atPayments2026","scope":"Only taxpayers with an AIMI assessment"},
+    {"key":"republic-day-2026","date":"2026-10-05","subjectFamily":"daily_life_consumer","title":"Republic Day public holiday","status":"confirmed_rule","source":"nationalHolidays","scope":"National mandatory holiday"},
+    {"key":"ss-quarterly-2026-q3","date":"2026-10-31","subjectFamily":"social_security","title":"Self-employed quarterly declaration month ends","status":"confirmed_rule","source":"socialSecurityQuarterly","scope":"Workers subject to the quarterly declaration"},
+    {"key":"world-savings-day-2026","date":"2026-10-31","subjectFamily":"banking_money","title":"World Savings Day","status":"occasion","source":"atPayments2026","scope":"Educational occasion; no legal deadline claim"},
+    {"key":"all-saints-2026","date":"2026-11-01","subjectFamily":"daily_life_consumer","title":"All Saints' Day public holiday","status":"confirmed_rule","source":"nationalHolidays","scope":"National mandatory holiday"},
+    {"key":"imi-2026-november","date":"2026-11-30","subjectFamily":"housing_property","title":"November IMI instalment month ends","status":"confirmed","source":"atImiAimi","scope":"Second or third instalment according to bill amount"},
+    {"key":"restoration-2026","date":"2026-12-01","subjectFamily":"daily_life_consumer","title":"Restoration of Independence public holiday","status":"confirmed_rule","source":"nationalHolidays","scope":"National mandatory holiday"},
+    {"key":"immaculate-conception-2026","date":"2026-12-08","subjectFamily":"daily_life_consumer","title":"Immaculate Conception public holiday","status":"confirmed_rule","source":"nationalHolidays","scope":"National mandatory holiday"},
+    {"key":"christmas-2026","date":"2026-12-25","subjectFamily":"daily_life_consumer","title":"Christmas Day public holiday","status":"confirmed_rule","source":"nationalHolidays","scope":"National mandatory holiday"},
+    {"key":"ss-quarterly-2026-q4","date":"2027-01-31","subjectFamily":"social_security","title":"Self-employed quarterly declaration month ends","status":"confirmed_rule","source":"socialSecurityQuarterly","scope":"Workers subject to the quarterly declaration"},
+    {"key":"irs-2027-filing","date":"2027-06-30","subjectFamily":"irs","title":"2027 IRS filing deadline candidate","status":"must_reverify","source":"atIrs2026","scope":"Do not publish a 2027 date until AT publishes the 2027 calendar"},
+    {"key":"iva-2027-q4-return","date":"2027-02-20","subjectFamily":"iva","title":"Quarterly IVA return candidate","status":"must_reverify","source":"atDeclarations2026","scope":"Do not publish a 2027 date until AT publishes the 2027 calendar"},
+    {"key":"school-start-2026-mainland","date":"2026-09-15","subjectFamily":"education_children","title":"Mainland school-start preparation window","status":"must_reverify","source":"educationPortal","scope":"Schools start within an official window; do not state one universal start date"}
+  ]
+}
