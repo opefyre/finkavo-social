@@ -525,7 +525,7 @@ const server = http.createServer(async (req, res) => {
       if (duplicate) {
         await sql.begin(async tx => {
           await tx`UPDATE social_post_concept SET status='used',updated_at=now() WHERE id=${selectedConcept.id}`;
-          await tx`INSERT INTO social_event(event_type,payload) VALUES('quality.duplicate_blocked',${tx.json({ conceptId: selectedConcept.id, duplicateOf: duplicate.post.id, reason: duplicate.reason, stage: 'generation' })})`;
+          await tx`INSERT INTO social_event(event_type,payload) VALUES('quality.duplicate_blocked',${tx.json({ conceptId: String(selectedConcept.id), duplicateOf: String(duplicate.post.id), reason: duplicate.reason, stage: 'generation' })})`;
         });
         return send(res, 409, { error: "Duplicate topic blocked", duplicateOf: duplicate.post.id, reason: duplicate.reason });
       }
@@ -652,7 +652,7 @@ const server = http.createServer(async (req, res) => {
         await sql.begin(async tx => {
           await tx`UPDATE social_review_token SET used_at=now() WHERE post_id=${previewSource.id} AND used_at IS NULL`;
           await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${previewSource.id} AND status='draft'`;
-          await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${previewSource.id},'quality.duplicate_blocked',${tx.json({ duplicateOf: duplicate.post.id, reason: duplicate.reason, stage: 'review_request' })})`;
+          await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${previewSource.id},'quality.duplicate_blocked',${tx.json({ duplicateOf: String(duplicate.post.id), reason: duplicate.reason, stage: 'review_request' })})`;
         });
         return send(res, 409, { error: "Duplicate topic blocked", duplicateOf: duplicate.post.id, reason: duplicate.reason });
       }
