@@ -29,4 +29,18 @@ describe("duplicateReason", () => {
       { topic: "Keeping foreign medical records usable: mistakes, exceptions and edge cases", post_intent: "common_mistake" },
     )).toBeNull();
   });
+
+  it("blocks the same structured evergreen brief", () => {
+    expect(duplicateReason(
+      { topic:"How NISS works",audience:"new residents",subject_family:"identity_access",user_question:"what is niss",content_intent:"evergreen_explainer" },
+      { topic:"NISS explained",audience:"new residents",subject_family:"identity_access",user_question:"what is niss",content_intent:"evergreen_explainer" },
+    )).toBe("identical editorial brief");
+  });
+
+  it("allows different occurrences of a recurring campaign", () => {
+    expect(duplicateReason(
+      { topic:"Quarterly IVA reminder",postIntent:"deadline_reminder",occurrence_key:"iva:2027-q1" },
+      { topic:"Quarterly IVA reminder",post_intent:"deadline_reminder",occurrence_key:"iva:2027-q2" },
+    )).toBeNull();
+  });
 });

@@ -16,6 +16,7 @@ import { loadAnnualPlan, rowsForDate } from "./annual-plan.js";
 import { findFactCard } from "./fact-cards.js";
 import { authenticatedReviewer } from "./access-auth.js";
 import { findDuplicate, type DuplicateCandidate } from "./duplicate.js";
+import { editorialIdentity } from "./editorial-identity.js";
 
 const databaseUrl = process.env.DATABASE_URL;
 const apiToken = process.env.SOCIAL_API_TOKEN;
@@ -44,7 +45,7 @@ const addLisbonDays = (day: string, days: number) => {
   return lisbonDate(new Date(Date.UTC(year, month - 1, date + days, 12)));
 };
 const recentActivePosts = async (excludeId?: string) => sql`
-  SELECT p.id,p.topic,p.category,p.post_intent,r.content_hash
+  SELECT p.id,p.topic,p.category,p.audience,p.post_intent,p.subject_family,p.user_question,p.content_intent,p.occurrence_key,r.content_hash
   FROM social_post p LEFT JOIN social_post_revision r ON r.id=p.current_revision_id
   WHERE p.status NOT IN ('blocked','rejected','failed')
     AND p.created_at > now() - INTERVAL '365 days'
@@ -330,10 +331,11 @@ const server = http.createServer(async (req, res) => {
       if (!selected.length) return send(res, 409, { error: "The requested date is outside the approved rolling annual plan" });
       const planned = [];
       for (const item of selected) {
+        const identity = editorialIdentity(item);
         const [slot] = await sql`
-          INSERT INTO social_editorial_plan_slot (plan_version,publish_date,publish_time,slot_number,pillar,angle,topic,audience,risk_level,timing_class,reserve_kind,search_terms,required_authority,occurrence_number)
-          VALUES (${plan.version},${item.date},${item.time},${item.slot},${item.pillar},${item.angle},${item.title},${item.audience},${item.risk},${item.timing},${item.reserve},${sql.json(item.evidenceTerms.split("|").map(v=>v.trim()).filter(Boolean))},${item.authority},${item.occurrence})
-          ON CONFLICT (plan_version,publish_date,slot_number) DO UPDATE SET topic=excluded.topic,audience=excluded.audience,risk_level=excluded.risk_level,timing_class=excluded.timing_class,search_terms=excluded.search_terms,required_authority=excluded.required_authority,updated_at=now()
+          INSERT INTO social_editorial_plan_slot (plan_version,publish_date,publish_time,slot_number,pillar,angle,topic,audience,risk_level,timing_class,reserve_kind,search_terms,required_authority,occurrence_number,subject_family,user_question,content_intent,occurrence_key,campaign_stage)
+          VALUES (${plan.version},${item.date},${item.time},${item.slot},${item.pillar},${item.angle},${item.title},${item.audience},${item.risk},${item.timing},${item.reserve},${sql.json(item.evidenceTerms.split("|").map(v=>v.trim()).filter(Boolean))},${item.authority},${item.occurrence},${identity.subjectFamily},${identity.userQuestion},${identity.contentIntent},${identity.occurrenceKey},${identity.campaignStage})
+          ON CONFLICT (plan_version,publish_date,slot_number) DO UPDATE SET topic=excluded.topic,audience=excluded.audience,risk_level=excluded.risk_level,timing_class=excluded.timing_class,search_terms=excluded.search_terms,required_authority=excluded.required_authority,subject_family=excluded.subject_family,user_question=excluded.user_question,content_intent=excluded.content_intent,occurrence_key=excluded.occurrence_key,campaign_stage=excluded.campaign_stage,updated_at=now()
           RETURNING *
         `;
         planned.push(slot);
@@ -374,7 +376,7 @@ const server = http.createServer(async (req, res) => {
         const bundleHash=hash(normalized); const freshnessDays=slot.risk_level==='high'?7:slot.risk_level==='medium'?30:90;
         const [bundle]=await sql`INSERT INTO social_topic_evidence_bundle (plan_slot_id,bundle_hash,sources,verification_state,verified_at,expires_at) VALUES (${slot.id},${bundleHash},${sql.json(normalized)},'verified',now(),now()+(${freshnessDays}::STRING||' days')::INTERVAL) ON CONFLICT (plan_slot_id,bundle_hash) DO UPDATE SET verification_state='verified',verified_at=now(),expires_at=excluded.expires_at RETURNING *`;
         const primary=normalized.find(s=>s.tier==='official')||normalized[0]; const fingerprint=`plan:${slot.plan_version}:${planningDate}:${slot.slot_number}`;
-        const [concept]=await sql`INSERT INTO social_post_concept (document_id,topic,category,risk_level,priority,timeliness,fingerprint,status,planned_for,reason,repeat_allowed,score,plan_slot_id,evidence_bundle_id) VALUES (${primary.documentId},${slot.topic},${slot.pillar},${slot.risk_level},${100-Number(slot.slot_number)},${slot.timing_class},${fingerprint},'planned',${planningDate},${`Predetermined annual-plan topic for ${slot.audience}`},true,${100-Number(slot.slot_number)},${slot.id},${bundle.id}) ON CONFLICT (fingerprint) DO UPDATE SET document_id=excluded.document_id,evidence_bundle_id=excluded.evidence_bundle_id,status=CASE WHEN social_post_concept.status='used' THEN 'used' ELSE 'planned' END,updated_at=now() RETURNING *`;
+        const [concept]=await sql`INSERT INTO social_post_concept (document_id,topic,category,risk_level,priority,timeliness,fingerprint,status,planned_for,reason,repeat_allowed,score,plan_slot_id,evidence_bundle_id,subject_family,user_question,content_intent,occurrence_key) VALUES (${primary.documentId},${slot.topic},${slot.pillar},${slot.risk_level},${100-Number(slot.slot_number)},${slot.timing_class},${fingerprint},'planned',${planningDate},${`Predetermined annual-plan topic for ${slot.audience}`},true,${100-Number(slot.slot_number)},${slot.id},${bundle.id},${slot.subject_family},${slot.user_question},${slot.content_intent},${slot.occurrence_key}) ON CONFLICT (fingerprint) DO UPDATE SET document_id=excluded.document_id,evidence_bundle_id=excluded.evidence_bundle_id,subject_family=excluded.subject_family,user_question=excluded.user_question,content_intent=excluded.content_intent,occurrence_key=excluded.occurrence_key,status=CASE WHEN social_post_concept.status='used' THEN 'used' ELSE 'planned' END,updated_at=now() RETURNING *`;
         await sql`UPDATE social_editorial_plan_slot SET status='evidence_ready',updated_at=now() WHERE id=${slot.id}`;
         results.push({slotId:slot.id,conceptId:concept.id,topic:slot.topic,state:'verified',sources:normalized.map(source=>({title:source.title,url:source.url,tier:source.tier,relevanceScore:source.relevanceScore,matchedTerms:source.matchedTerms})),bundleHash});
       }
@@ -521,7 +523,7 @@ const server = http.createServer(async (req, res) => {
       const sourceBundle = evidenceSources.map(s=>({documentId:String(s.documentId),url:String(s.url),title:String(s.title),publisher:s.publisher?String(s.publisher):null,locale:String(s.locale),retrievedAt:String(s.retrievedAt),contentHash:String(s.contentHash),tier:String(s.tier)}));
       const evidenceHash = hash({ sourceBundle, claims: checked.claims });
       const contentHash = hash({ hook: checked.hook, caption: checked.caption, callToAction: checked.callToAction, hashtags: checked.hashtags, searchKeywords: checked.searchKeywords, postIntent: checked.postIntent, slides: checked.slides });
-      const duplicate = await findRecentDuplicate({ topic: checked.topic, category: checked.category, postIntent: checked.postIntent, content_hash: contentHash });
+      const duplicate = await findRecentDuplicate({ topic: checked.topic, category: checked.category, audience: "English-speaking people in Portugal", postIntent: checked.postIntent, content_hash: contentHash, subject_family: selectedConcept.subject_family, user_question: selectedConcept.user_question, content_intent: selectedConcept.content_intent, occurrence_key: selectedConcept.occurrence_key });
       if (duplicate) {
         await sql.begin(async tx => {
           await tx`UPDATE social_post_concept SET status='used',updated_at=now() WHERE id=${selectedConcept.id}`;
@@ -532,10 +534,10 @@ const server = http.createServer(async (req, res) => {
       const inserted = await sql.begin(async (tx) => {
         const [post] = await tx`
           INSERT INTO social_post (topic, source_document_id, source_url, source_title, source_authority, source_fetched_at,
-            hook, caption, call_to_action, hashtags, slides, model, category, risk_level, post_intent, search_keywords)
+            hook, caption, call_to_action, hashtags, slides, model, category, risk_level, post_intent, search_keywords,subject_family,user_question,content_intent,occurrence_key)
           VALUES (${checked.topic}, ${documentId}, ${String(source.url)}, ${String(source.title)},
             ${source.publisher ? String(source.publisher) : null}, ${String(source.retrievedAt)},
-            ${checked.hook}, ${checked.caption}, ${checked.callToAction}, ${tx.json(checked.hashtags)}, ${tx.json(checked.slides)}, ${model}, ${checked.category}, ${checked.riskLevel}, ${checked.postIntent}, ${tx.json(checked.searchKeywords)})
+            ${checked.hook}, ${checked.caption}, ${checked.callToAction}, ${tx.json(checked.hashtags)}, ${tx.json(checked.slides)}, ${model}, ${checked.category}, ${checked.riskLevel}, ${checked.postIntent}, ${tx.json(checked.searchKeywords)},${selectedConcept.subject_family},${selectedConcept.user_question},${selectedConcept.content_intent},${selectedConcept.occurrence_key})
           RETURNING *
         `;
         const [revision] = await tx`

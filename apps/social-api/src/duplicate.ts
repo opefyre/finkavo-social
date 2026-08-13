@@ -13,7 +13,7 @@ const subjectPatterns: Array<[string, RegExp]> = [
   ["modelo3", /\bmodelo\s*3\b/i], ["cmd", /chave m[oó]vel digital/i],
 ];
 
-export type DuplicateCandidate = { id?: unknown; topic?: unknown; category?: unknown; post_intent?: unknown; postIntent?: unknown; content_hash?: unknown };
+export type DuplicateCandidate = { id?: unknown; topic?: unknown; category?: unknown; audience?: unknown; post_intent?: unknown; postIntent?: unknown; content_hash?: unknown; subject_family?: unknown; user_question?: unknown; content_intent?: unknown; occurrence_key?: unknown };
 
 const normalized = (value: unknown) => String(value || "").toLocaleLowerCase("en").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
 const tokens = (value: unknown) => new Set(normalized(value).split(" ").filter(token => token.length >= 3 && !stopWords.has(token)));
@@ -25,7 +25,13 @@ export function duplicateReason(candidate: DuplicateCandidate, existing: Duplica
   const candidateTopic = normalized(candidate.topic);
   const existingTopic = normalized(existing.topic);
   if (!candidateTopic || !existingTopic) return null;
+  if (candidate.occurrence_key && existing.occurrence_key && candidate.occurrence_key === existing.occurrence_key) return "identical campaign occurrence";
+  if (candidate.occurrence_key && existing.occurrence_key && candidate.occurrence_key !== existing.occurrence_key) return null;
   if (candidateTopic === existingTopic) return "identical topic";
+  if (candidate.subject_family && candidate.user_question && candidate.content_intent &&
+      candidate.subject_family === existing.subject_family && candidate.user_question === existing.user_question &&
+      candidate.content_intent === existing.content_intent && String(candidate.audience || "") === String(existing.audience || "") &&
+      !candidate.occurrence_key && !existing.occurrence_key) return "identical editorial brief";
   if (recurringIntents.has(intent(candidate)) || recurringIntents.has(intent(existing))) return null;
 
   const candidateSubjects = subjects(candidate.topic);
