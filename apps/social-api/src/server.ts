@@ -338,6 +338,7 @@ const server = http.createServer(async (req, res) => {
       const plan = await loadAnnualPlan();
       const selected = rowsForDate(plan, planningDate).slice(0, capacity);
       if (!selected.length) return send(res, 409, { error: "The requested date is outside the approved rolling annual plan" });
+      await sql`UPDATE social_editorial_plan_slot SET status='replaced',updated_at=now() WHERE publish_date=${planningDate} AND plan_version<>${plan.version} AND status IN ('planned','researching','evidence_ready','held')`;
       const planned = [];
       for (const item of selected) {
         const derivedIdentity = editorialIdentity(item);
@@ -357,7 +358,7 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && url.pathname === "/v1/evidence/research") {
       const { date } = ResearchSchema.parse(await readJson(req));
       const planningDate = date || new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Lisbon", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
-      const slots = await sql`SELECT * FROM social_editorial_plan_slot WHERE publish_date=${planningDate} AND status IN ('planned','researching','evidence_ready','held') ORDER BY slot_number`;
+      const slots = await sql`SELECT * FROM social_editorial_plan_slot WHERE publish_date=${planningDate} AND plan_version=(SELECT max(plan_version) FROM social_editorial_plan_slot WHERE publish_date=${planningDate}) AND status IN ('planned','researching','evidence_ready','held') ORDER BY slot_number`;
       const results=[];
       for (const slot of slots) {
         if(slot.status==='evidence_ready'){
@@ -432,7 +433,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     if(req.method==="POST"&&url.pathname==="/v1/news/decide-flex-slot"){
-      const {date,cutoffReached,dryRun}=NewsDecisionSchema.parse(await readJson(req));const [slot]=await sql`SELECT * FROM social_editorial_plan_slot WHERE publish_date=${date} AND timing_class='news_flex' AND status IN ('planned','held') ORDER BY slot_number LIMIT 1`;
+      const {date,cutoffReached,dryRun}=NewsDecisionSchema.parse(await readJson(req));const [slot]=await sql`SELECT * FROM social_editorial_plan_slot WHERE publish_date=${date} AND plan_version=(SELECT max(plan_version) FROM social_editorial_plan_slot WHERE publish_date=${date}) AND timing_class='news_flex' AND status IN ('planned','held') ORDER BY slot_number LIMIT 1`;
       if(!slot)return send(res,409,{error:"No undecided flexible slot exists for this date"});
       const existing=await recentActivePosts();
       const newsRows=await sql`SELECT c.*,d.source_url,d.source_authority,d.title AS source_title,d.original_lang,d.content_hash,COALESCE(d.last_verified_at,d.fetched_at) AS retrieved_at,array_agg(ch.text ORDER BY ch.chunk_index) FILTER (WHERE ch.id IS NOT NULL) AS excerpts FROM social_post_concept c JOIN document d ON d.id=c.document_id AND d.source_tier='official' AND d.verified_still_available=true AND d.freshness_confidence='fresh' LEFT JOIN chunk ch ON ch.document_id=d.id AND ch.vault_doc_id IS NULL WHERE c.status='eligible' AND c.timeliness='official_change' GROUP BY c.id,d.id ORDER BY c.created_at DESC LIMIT 20`;
@@ -1005,7 +1006,7 @@ const server = http.createServer(async (req, res) => {
 
     if(req.method==="POST"&&url.pathname==="/v1/reports/daily"){
       const {date}=ReportSchema.parse(await readJson(req));const day=date||lisbonDate(new Date());
-      const slots=await sql`SELECT s.slot_number,s.publish_time,s.topic,s.status,s.reserve_kind,s.campaign_stage,b.verification_state,b.expires_at FROM social_editorial_plan_slot s LEFT JOIN LATERAL (SELECT verification_state,expires_at FROM social_topic_evidence_bundle WHERE plan_slot_id=s.id ORDER BY verified_at DESC LIMIT 1) b ON true WHERE s.publish_date=${day} ORDER BY s.slot_number`;
+      const slots=await sql`SELECT s.slot_number,s.publish_time,s.topic,s.status,s.reserve_kind,s.campaign_stage,b.verification_state,b.expires_at FROM social_editorial_plan_slot s LEFT JOIN LATERAL (SELECT verification_state,expires_at FROM social_topic_evidence_bundle WHERE plan_slot_id=s.id ORDER BY verified_at DESC LIMIT 1) b ON true WHERE s.publish_date=${day} AND s.plan_version=(SELECT max(plan_version) FROM social_editorial_plan_slot WHERE publish_date=${day}) ORDER BY s.slot_number`;
       const approvals=await sql`SELECT p.topic,p.status,p.scheduled_at FROM social_post p WHERE (p.created_at AT TIME ZONE 'Europe/Lisbon')::DATE=${day} OR (p.scheduled_at AT TIME ZONE 'Europe/Lisbon')::DATE=${day} ORDER BY p.scheduled_at NULLS LAST,p.created_at`;
       const [news]=await sql`SELECT count(*) AS count FROM social_post_concept WHERE status='eligible' AND timeliness='official_change'`;
       const held=slots.filter(row=>row.status==='held').map(row=>`${row.slot_number}. ${row.topic} (${row.campaign_stage||row.reserve_kind||'evidence unavailable'})`);
