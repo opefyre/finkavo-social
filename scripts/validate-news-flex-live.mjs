@@ -1,4 +1,4 @@
-import postgres from "postgres";
+import postgres from "../apps/social-api/node_modules/postgres/src/index.js";
 import { randomUUID } from "node:crypto";
 
 const { DATABASE_URL, SOCIAL_API_TOKEN, SOCIAL_API_PORT = "4320" } = process.env;
