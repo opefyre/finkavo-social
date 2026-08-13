@@ -6,7 +6,7 @@
       "id": "official-schedule", "name": "Every 3 hours", "type": "n8n-nodes-base.scheduleTrigger", "typeVersion": 1.2, "position": [-700,0]
     },
     {
-      "parameters": {"jsCode":"const urls=['https://aima.gov.pt/pt/noticias','https://www.gov.pt/noticias','https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Pages/default.aspx','https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/prazos/Paginas/default.aspx','https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx','https://www.seg-social.pt/trabalhadores-independentes','https://diariodarepublica.pt/dr/home','https://clientebancario.bportugal.pt/pt-pt/noticias','https://www.dgeste.mec.pt/?page_id=53180'];return urls.map(url=>({json:{url}}));"},
+      "parameters": {"jsCode":"const urls=['https://www.gov.pt/noticias','https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Pages/default.aspx','https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/prazos/Paginas/default.aspx','https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx','https://www.seg-social.pt/trabalhadores-independentes','https://diariodarepublica.pt/dr/home','https://clientebancario.bportugal.pt/pt-pt/noticias','https://www.dgeste.mec.pt/?page_id=53180'];return urls.map(url=>({json:{url}}));"},
       "id": "official-urls", "name": "Canonical URLs", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [-480,0]
     },
     {
