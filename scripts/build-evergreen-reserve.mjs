@@ -32,7 +32,7 @@ const profiles={
     f("Documents for a naturalisation request","Where should applicants verify the documents for naturalisation?","Direct readers to the IRN document requirements.",["documentos","pedido"]),
     f("Submitting a Portuguese nationality request","Which official authority handles a naturalisation request?","Identify IRN as the official process owner.",["IRN","Naturalização"]),
     f("Checking the correct nationality pathway","Why should applicants select the exact IRN nationality route first?","Explain that requirements depend on the official route selected.",["Nacionalidade","aquisição"]),
-    f("Legal basis for Portuguese naturalisation","Where is the legal framework for naturalisation linked?","Point readers to the legal framework on the official page.",["legislação","Naturalização"]),
+    f("Legal basis for Portuguese nationality requests","Which current nationality laws does the official page flag?","Point readers to the current nationality law and regulation named on the page.",["Lei da Nacionalidade","Regulamento da Nacionalidade Portuguesa"]),
     f("Avoiding unofficial nationality checklists","What should be checked before relying on a nationality checklist?","Tell readers to compare it with the current IRN route.",["IRN","documentos","Nacionalidade"]),
   ]},
   freelance_business:{source:source("https://www2.gov.pt/servicos/abrir-atividade-nas-financas","gov.pt / Autoridade Tributária"),facts:[
@@ -51,7 +51,7 @@ const profiles={
     f("IVA rates in Madeira and the Azores","Why must location be checked before applying an IVA rate?","Explain that regional rates differ, using the source values.",["Madeira","Açores","taxa"]),
     f("Article 9 IVA exemption","What kind of IVA exemption does Article 9 cover at a high level?","Explain the nature-based exemption examples present in the guide.",["artigo 9","isenção","saúde","educação"]),
     f("Article 53 IVA exemption","What does the guide say Article 53 exemption depends on?","Explain the turnover and activity conditions stated in the source.",["artigo 53","volume de negócios","isenção"]),
-    f("What happens to IVA collected from a customer","What must a non-exempt independent worker do with charged IVA?","Explain that charged IVA is delivered to the state.",["cobra ao cliente","entregue ao Estado"]),
+    f("What happens to IVA collected from a customer","What must a non-exempt independent worker do with charged IVA?","Explain that charged IVA is delivered to the state.",["cobra ao cliente","entregue ao Estado"],source("https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes","gov.pt / Autoridade Tributária")),
   ]},
   irs:{source:source("https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/Paginas/default.aspx","Autoridade Tributária"),facts:[
     f("The official IRS declaration hub","Where should someone start checking current IRS filing information?","Identify the AT declaration hub.",["Declaração","Autoridade Tributária"]),
@@ -62,14 +62,14 @@ const profiles={
     f("Checking e-Fatura before IRS filing","Which official expense system is linked from the IRS declaration hub?","Identify e-Fatura as the linked official area.",["e-Fatura"]),
     f("Finding IRS deductions and benefits","Where does AT group deduction and tax-benefit information?","Point to the deductions and benefits section.",["Deduções","benefícios fiscais"]),
   ]},
-  social_security:{source:source("https://www.seg-social.pt/storage1/files/1009---Novo-Regime-dos-Trabalhadores-Independentes-v1-09-8TvHiLaPC6okosI9oUn9_A.pdf","Segurança Social"),facts:[
-    f("Who the self-employed Social Security guide covers","Which workers are covered by the official independent-worker guide?","Describe the guide's covered-worker scope.",["trabalhadores independentes","Guia Prático"]),
-    f("Starting Social Security coverage as an independent worker","What does the guide say about the start of independent-worker coverage?","Explain only the starting rule present in the guide.",["início","enquadramento","trabalhador independente"]),
+  social_security:{source:source("https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes","gov.pt / Segurança Social"),facts:[
+    f("Why independent workers contribute to Social Security","What protection does the official guide associate with contributions?","Explain the social protections listed by gov.pt.",["doença","parentalidade","reforma"]),
+    f("How independent-worker contributions are calculated","Which income basis does the current guide use in its example rule?","Explain only the current calculation basis stated by gov.pt.",["rendimento médio trimestral","contribuições"]),
     f("Quarterly declarations for independent workers","What is the purpose of the quarterly Social Security declaration?","Explain the declaration using the guide's wording.",["declaração trimestral","rendimentos"]),
-    f("Which income enters a quarterly declaration","Which income categories does the guide distinguish for the declaration?","Summarise only the categories in the official guide.",["prestação de serviços","produção e venda de bens"]),
-    f("Correcting a Social Security quarterly declaration","What correction period does the official guide provide?","State only the correction mechanism and period in the guide.",["corrigir","declaração trimestral"]),
-    f("Monthly contributions for independent workers","When does the guide say independent-worker contributions are paid?","State the payment timing found in the guide.",["pagamento","contribuições","mensal"]),
-    f("Independent work alongside employed work","Where does the guide address combining independent and employed work?","Explain that the official guide contains conditions for this situation.",["trabalhador por conta de outrem","atividade independente"]),
+    f("Relevant income for independent-worker contributions","Which income measure does the guide use for Social Security contributions?","Explain the relevant quarterly income measure in the source.",["rendimento médio trimestral","Segurança Social"]),
+    f("The first-year Social Security exemption","What first-year exemption does the current guide describe?","Explain only the exemption and opt-in choice stated by gov.pt.",["12 meses","isenção"]),
+    f("Monthly Social Security deductions for independent workers","Does the guide describe Social Security deductions as monthly?","Explain the monthly contribution cadence.",["descontos mensais","Segurança Social"]),
+    f("Independent work alongside an employment contract","When does the guide discuss exemption while combining both work types?","Summarise only the conditions stated in the current guide.",["contrato de trabalho","isenção"]),
   ]},
   housing_property:{source:source("https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Paginas/default.aspx","Autoridade Tributária"),facts:[
     f("The official tax hub for homes and property","Where should property owners start checking Portuguese tax information?","Identify the AT Casa e propriedades hub.",["Casa e propriedades"]),
@@ -80,14 +80,14 @@ const profiles={
     f("Finding IMI information","Where can owners verify the current annual IMI rules?","Point to the annual-tax area without inventing dates or rates.",["Imposto anual","IMI"]),
     f("Finding AIMI information","Where can owners verify current AIMI information?","Point to the annual-tax area without inventing thresholds.",["AIMI","Imposto anual"]),
   ]},
-  banking_money:{source:source("https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf","Banco de Portugal"),facts:[
-    f("What an IBAN identifies","What does an IBAN identify in a payment?","Explain the account identifier described by Banco de Portugal.",["IBAN","conta"]),
-    f("The country code in a Portuguese IBAN","How does a Portuguese IBAN begin?","Explain the Portuguese country-code component.",["PT","IBAN"]),
-    f("The check digits in an IBAN","Why does an IBAN contain check digits?","Explain the validation role described in the source.",["dígitos de controlo","IBAN"]),
-    f("The bank identifier inside a Portuguese IBAN","Which part identifies the institution?","Describe the institution-identification component.",["identificação da instituição","IBAN"]),
-    f("The account component inside a Portuguese IBAN","Which part represents the account number?","Describe the account component in the official structure.",["número de conta","IBAN"]),
-    f("Checking an IBAN before a transfer","Which IBAN elements should be checked before sending money?","Turn the official structure into a verification checklist.",["IBAN","estrutura","dígitos"]),
-    f("IBAN versus a bank-account number","Why is an IBAN more than the domestic account number?","Explain the additional country, institution and check components.",["International Bank Account Number","conta","instituição"]),
+  banking_money:{source:source("https://clientebancario.bportugal.pt/en/how-order-transfers","Banco de Portugal"),facts:[
+    f("Channels for ordering a bank transfer","Where can a standard or instant transfer be ordered?","List the branch and digital channels in the official guide.",["branches","homebanking","smartphone app"]),
+    f("Payer details needed for a transfer","Which payer details can a payment provider request?","Explain the payer name and account IBAN fields.",["Their data","IBAN of their payment account"]),
+    f("The amount field in a bank transfer","Which transaction amount must the payer provide?","Identify the amount of the credit transfer as required data.",["amount of the credit transfer"]),
+    f("Ways to identify a transfer beneficiary","Which identifiers can be used for the payee?","Explain the IBAN and SPIN identifier alternatives.",["payee’s payment account","mobile phone number","tax identification number"]),
+    f("Linking an identifier to SPIN","What must a recipient link before receiving transfers through SPIN?","Explain the identifier-to-IBAN link.",["link their mobile phone number","NIF","IBAN"]),
+    f("The structure of a Portuguese IBAN","How many characters does a Portuguese IBAN have and how does it begin?","State the 25-character and PT50 structure.",["25 characters","begins with PT50"]),
+    f("Confirming the payee before a transfer","What confirmation appears after entering a payee identifier?","Explain the account-holder name confirmation.",["name of the first account holder","payee confirmation"]),
   ]},
   employment:{source:source("https://www.gov.pt/guias/trabalhar-em-portugal","gov.pt / ACT"),facts:[
     f("What an employment contract should establish","What core employment relationship details should a worker identify?","Summarise the contract details present in the guide.",["contrato de trabalho","trabalhador","empregador"]),

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generatedAt": "2026-08-13T18:56:19.432Z",
+  "generatedAt": "2026-08-13T19:00:25.183Z",
   "minimum": 90,
   "cards": [
     {
@@ -448,13 +448,13 @@
     {
       "id": "reserve-citizenship_civil-06",
       "subjectFamily": "citizenship_civil",
-      "topic": "Legal basis for Portuguese naturalisation",
-      "userQuestion": "Where is the legal framework for naturalisation linked?",
+      "topic": "Legal basis for Portuguese nationality requests",
+      "userQuestion": "Which current nationality laws does the official page flag?",
       "audience": "residents building a long-term life",
       "contentIntent": "common_mistake",
-      "purpose": "Give residents building a long-term life one source-backed practical answer to: Where is the legal framework for naturalisation linked?",
+      "purpose": "Give residents building a long-term life one source-backed practical answer to: Which current nationality laws does the official page flag?",
       "requiredAnswers": [
-        "Point readers to the legal framework on the official page."
+        "Point readers to the current nationality law and regulation named on the page."
       ],
       "sourcePolicy": {
         "canonicalUrl": "https://irn.justica.gov.pt/Nacionalidade/Naturalizacao",
@@ -463,8 +463,8 @@
         "freshnessDays": 7
       },
       "evidenceTerms": [
-        "legislação",
-        "Naturalização"
+        "Lei da Nacionalidade",
+        "Regulamento da Nacionalidade Portuguesa"
       ],
       "status": "available_when_exact_source_answers_brief"
     },
@@ -807,7 +807,7 @@
         "Explain that charged IVA is delivered to the state."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www2.gov.pt/cidadaos-europeus-viajar-viver-e-fazer-negocios-em-portugal/impostos-para-atividades-economicas-em-portugal/imposto-sobre-valor-acrescentado-iva-em-portugal",
+        "canonicalUrl": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
         "requiredAuthority": "gov.pt / Autoridade Tributária",
         "officialRequired": true,
         "freshnessDays": 7
@@ -978,47 +978,47 @@
     {
       "id": "reserve-social_security-01",
       "subjectFamily": "social_security",
-      "topic": "Who the self-employed Social Security guide covers",
-      "userQuestion": "Which workers are covered by the official independent-worker guide?",
+      "topic": "Why independent workers contribute to Social Security",
+      "userQuestion": "What protection does the official guide associate with contributions?",
       "audience": "workers and freelancers",
       "contentIntent": "evergreen_explainer",
-      "purpose": "Give workers and freelancers one source-backed practical answer to: Which workers are covered by the official independent-worker guide?",
+      "purpose": "Give workers and freelancers one source-backed practical answer to: What protection does the official guide associate with contributions?",
       "requiredAnswers": [
-        "Describe the guide's covered-worker scope."
+        "Explain the social protections listed by gov.pt."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.seg-social.pt/storage1/files/1009---Novo-Regime-dos-Trabalhadores-Independentes-v1-09-8TvHiLaPC6okosI9oUn9_A.pdf",
-        "requiredAuthority": "Segurança Social",
+        "canonicalUrl": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "requiredAuthority": "gov.pt / Segurança Social",
         "officialRequired": true,
         "freshnessDays": 7
       },
       "evidenceTerms": [
-        "trabalhadores independentes",
-        "Guia Prático"
+        "doença",
+        "parentalidade",
+        "reforma"
       ],
       "status": "available_when_exact_source_answers_brief"
     },
     {
       "id": "reserve-social_security-02",
       "subjectFamily": "social_security",
-      "topic": "Starting Social Security coverage as an independent worker",
-      "userQuestion": "What does the guide say about the start of independent-worker coverage?",
+      "topic": "How independent-worker contributions are calculated",
+      "userQuestion": "Which income basis does the current guide use in its example rule?",
       "audience": "workers and freelancers",
       "contentIntent": "checklist",
-      "purpose": "Give workers and freelancers one source-backed practical answer to: What does the guide say about the start of independent-worker coverage?",
+      "purpose": "Give workers and freelancers one source-backed practical answer to: Which income basis does the current guide use in its example rule?",
       "requiredAnswers": [
-        "Explain only the starting rule present in the guide."
+        "Explain only the current calculation basis stated by gov.pt."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.seg-social.pt/storage1/files/1009---Novo-Regime-dos-Trabalhadores-Independentes-v1-09-8TvHiLaPC6okosI9oUn9_A.pdf",
-        "requiredAuthority": "Segurança Social",
+        "canonicalUrl": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "requiredAuthority": "gov.pt / Segurança Social",
         "officialRequired": true,
         "freshnessDays": 7
       },
       "evidenceTerms": [
-        "início",
-        "enquadramento",
-        "trabalhador independente"
+        "rendimento médio trimestral",
+        "contribuições"
       ],
       "status": "available_when_exact_source_answers_brief"
     },
@@ -1034,8 +1034,8 @@
         "Explain the declaration using the guide's wording."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.seg-social.pt/storage1/files/1009---Novo-Regime-dos-Trabalhadores-Independentes-v1-09-8TvHiLaPC6okosI9oUn9_A.pdf",
-        "requiredAuthority": "Segurança Social",
+        "canonicalUrl": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "requiredAuthority": "gov.pt / Segurança Social",
         "officialRequired": true,
         "freshnessDays": 7
       },
@@ -1048,93 +1048,92 @@
     {
       "id": "reserve-social_security-04",
       "subjectFamily": "social_security",
-      "topic": "Which income enters a quarterly declaration",
-      "userQuestion": "Which income categories does the guide distinguish for the declaration?",
+      "topic": "Relevant income for independent-worker contributions",
+      "userQuestion": "Which income measure does the guide use for Social Security contributions?",
       "audience": "workers and freelancers",
       "contentIntent": "evergreen_explainer",
-      "purpose": "Give workers and freelancers one source-backed practical answer to: Which income categories does the guide distinguish for the declaration?",
+      "purpose": "Give workers and freelancers one source-backed practical answer to: Which income measure does the guide use for Social Security contributions?",
       "requiredAnswers": [
-        "Summarise only the categories in the official guide."
+        "Explain the relevant quarterly income measure in the source."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.seg-social.pt/storage1/files/1009---Novo-Regime-dos-Trabalhadores-Independentes-v1-09-8TvHiLaPC6okosI9oUn9_A.pdf",
-        "requiredAuthority": "Segurança Social",
+        "canonicalUrl": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "requiredAuthority": "gov.pt / Segurança Social",
         "officialRequired": true,
         "freshnessDays": 7
       },
       "evidenceTerms": [
-        "prestação de serviços",
-        "produção e venda de bens"
+        "rendimento médio trimestral",
+        "Segurança Social"
       ],
       "status": "available_when_exact_source_answers_brief"
     },
     {
       "id": "reserve-social_security-05",
       "subjectFamily": "social_security",
-      "topic": "Correcting a Social Security quarterly declaration",
-      "userQuestion": "What correction period does the official guide provide?",
+      "topic": "The first-year Social Security exemption",
+      "userQuestion": "What first-year exemption does the current guide describe?",
       "audience": "workers and freelancers",
       "contentIntent": "checklist",
-      "purpose": "Give workers and freelancers one source-backed practical answer to: What correction period does the official guide provide?",
+      "purpose": "Give workers and freelancers one source-backed practical answer to: What first-year exemption does the current guide describe?",
       "requiredAnswers": [
-        "State only the correction mechanism and period in the guide."
+        "Explain only the exemption and opt-in choice stated by gov.pt."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.seg-social.pt/storage1/files/1009---Novo-Regime-dos-Trabalhadores-Independentes-v1-09-8TvHiLaPC6okosI9oUn9_A.pdf",
-        "requiredAuthority": "Segurança Social",
+        "canonicalUrl": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "requiredAuthority": "gov.pt / Segurança Social",
         "officialRequired": true,
         "freshnessDays": 7
       },
       "evidenceTerms": [
-        "corrigir",
-        "declaração trimestral"
+        "12 meses",
+        "isenção"
       ],
       "status": "available_when_exact_source_answers_brief"
     },
     {
       "id": "reserve-social_security-06",
       "subjectFamily": "social_security",
-      "topic": "Monthly contributions for independent workers",
-      "userQuestion": "When does the guide say independent-worker contributions are paid?",
+      "topic": "Monthly Social Security deductions for independent workers",
+      "userQuestion": "Does the guide describe Social Security deductions as monthly?",
       "audience": "workers and freelancers",
       "contentIntent": "common_mistake",
-      "purpose": "Give workers and freelancers one source-backed practical answer to: When does the guide say independent-worker contributions are paid?",
+      "purpose": "Give workers and freelancers one source-backed practical answer to: Does the guide describe Social Security deductions as monthly?",
       "requiredAnswers": [
-        "State the payment timing found in the guide."
+        "Explain the monthly contribution cadence."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.seg-social.pt/storage1/files/1009---Novo-Regime-dos-Trabalhadores-Independentes-v1-09-8TvHiLaPC6okosI9oUn9_A.pdf",
-        "requiredAuthority": "Segurança Social",
+        "canonicalUrl": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "requiredAuthority": "gov.pt / Segurança Social",
         "officialRequired": true,
         "freshnessDays": 7
       },
       "evidenceTerms": [
-        "pagamento",
-        "contribuições",
-        "mensal"
+        "descontos mensais",
+        "Segurança Social"
       ],
       "status": "available_when_exact_source_answers_brief"
     },
     {
       "id": "reserve-social_security-07",
       "subjectFamily": "social_security",
-      "topic": "Independent work alongside employed work",
-      "userQuestion": "Where does the guide address combining independent and employed work?",
+      "topic": "Independent work alongside an employment contract",
+      "userQuestion": "When does the guide discuss exemption while combining both work types?",
       "audience": "workers and freelancers",
       "contentIntent": "evergreen_explainer",
-      "purpose": "Give workers and freelancers one source-backed practical answer to: Where does the guide address combining independent and employed work?",
+      "purpose": "Give workers and freelancers one source-backed practical answer to: When does the guide discuss exemption while combining both work types?",
       "requiredAnswers": [
-        "Explain that the official guide contains conditions for this situation."
+        "Summarise only the conditions stated in the current guide."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.seg-social.pt/storage1/files/1009---Novo-Regime-dos-Trabalhadores-Independentes-v1-09-8TvHiLaPC6okosI9oUn9_A.pdf",
-        "requiredAuthority": "Segurança Social",
+        "canonicalUrl": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "requiredAuthority": "gov.pt / Segurança Social",
         "officialRequired": true,
         "freshnessDays": 7
       },
       "evidenceTerms": [
-        "trabalhador por conta de outrem",
-        "atividade independente"
+        "contrato de trabalho",
+        "isenção"
       ],
       "status": "available_when_exact_source_answers_brief"
     },
@@ -1299,114 +1298,116 @@
     {
       "id": "reserve-banking_money-01",
       "subjectFamily": "banking_money",
-      "topic": "What an IBAN identifies",
-      "userQuestion": "What does an IBAN identify in a payment?",
+      "topic": "Channels for ordering a bank transfer",
+      "userQuestion": "Where can a standard or instant transfer be ordered?",
       "audience": "people managing money in Portugal",
       "contentIntent": "evergreen_explainer",
-      "purpose": "Give people managing money in Portugal one source-backed practical answer to: What does an IBAN identify in a payment?",
+      "purpose": "Give people managing money in Portugal one source-backed practical answer to: Where can a standard or instant transfer be ordered?",
       "requiredAnswers": [
-        "Explain the account identifier described by Banco de Portugal."
+        "List the branch and digital channels in the official guide."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
+        "canonicalUrl": "https://clientebancario.bportugal.pt/en/how-order-transfers",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
       },
       "evidenceTerms": [
-        "IBAN",
-        "conta"
+        "branches",
+        "homebanking",
+        "smartphone app"
       ],
       "status": "available_when_exact_source_answers_brief"
     },
     {
       "id": "reserve-banking_money-02",
       "subjectFamily": "banking_money",
-      "topic": "The country code in a Portuguese IBAN",
-      "userQuestion": "How does a Portuguese IBAN begin?",
+      "topic": "Payer details needed for a transfer",
+      "userQuestion": "Which payer details can a payment provider request?",
       "audience": "people managing money in Portugal",
       "contentIntent": "checklist",
-      "purpose": "Give people managing money in Portugal one source-backed practical answer to: How does a Portuguese IBAN begin?",
+      "purpose": "Give people managing money in Portugal one source-backed practical answer to: Which payer details can a payment provider request?",
       "requiredAnswers": [
-        "Explain the Portuguese country-code component."
+        "Explain the payer name and account IBAN fields."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
+        "canonicalUrl": "https://clientebancario.bportugal.pt/en/how-order-transfers",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
       },
       "evidenceTerms": [
-        "PT",
-        "IBAN"
+        "Their data",
+        "IBAN of their payment account"
       ],
       "status": "available_when_exact_source_answers_brief"
     },
     {
       "id": "reserve-banking_money-03",
       "subjectFamily": "banking_money",
-      "topic": "The check digits in an IBAN",
-      "userQuestion": "Why does an IBAN contain check digits?",
+      "topic": "The amount field in a bank transfer",
+      "userQuestion": "Which transaction amount must the payer provide?",
       "audience": "people managing money in Portugal",
       "contentIntent": "common_mistake",
-      "purpose": "Give people managing money in Portugal one source-backed practical answer to: Why does an IBAN contain check digits?",
+      "purpose": "Give people managing money in Portugal one source-backed practical answer to: Which transaction amount must the payer provide?",
       "requiredAnswers": [
-        "Explain the validation role described in the source."
+        "Identify the amount of the credit transfer as required data."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
+        "canonicalUrl": "https://clientebancario.bportugal.pt/en/how-order-transfers",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
       },
       "evidenceTerms": [
-        "dígitos de controlo",
-        "IBAN"
+        "amount of the credit transfer"
       ],
       "status": "available_when_exact_source_answers_brief"
     },
     {
       "id": "reserve-banking_money-04",
       "subjectFamily": "banking_money",
-      "topic": "The bank identifier inside a Portuguese IBAN",
-      "userQuestion": "Which part identifies the institution?",
+      "topic": "Ways to identify a transfer beneficiary",
+      "userQuestion": "Which identifiers can be used for the payee?",
       "audience": "people managing money in Portugal",
       "contentIntent": "evergreen_explainer",
-      "purpose": "Give people managing money in Portugal one source-backed practical answer to: Which part identifies the institution?",
+      "purpose": "Give people managing money in Portugal one source-backed practical answer to: Which identifiers can be used for the payee?",
       "requiredAnswers": [
-        "Describe the institution-identification component."
+        "Explain the IBAN and SPIN identifier alternatives."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
+        "canonicalUrl": "https://clientebancario.bportugal.pt/en/how-order-transfers",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
       },
       "evidenceTerms": [
-        "identificação da instituição",
-        "IBAN"
+        "payee’s payment account",
+        "mobile phone number",
+        "tax identification number"
       ],
       "status": "available_when_exact_source_answers_brief"
     },
     {
       "id": "reserve-banking_money-05",
       "subjectFamily": "banking_money",
-      "topic": "The account component inside a Portuguese IBAN",
-      "userQuestion": "Which part represents the account number?",
+      "topic": "Linking an identifier to SPIN",
+      "userQuestion": "What must a recipient link before receiving transfers through SPIN?",
       "audience": "people managing money in Portugal",
       "contentIntent": "checklist",
-      "purpose": "Give people managing money in Portugal one source-backed practical answer to: Which part represents the account number?",
+      "purpose": "Give people managing money in Portugal one source-backed practical answer to: What must a recipient link before receiving transfers through SPIN?",
       "requiredAnswers": [
-        "Describe the account component in the official structure."
+        "Explain the identifier-to-IBAN link."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
+        "canonicalUrl": "https://clientebancario.bportugal.pt/en/how-order-transfers",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
       },
       "evidenceTerms": [
-        "número de conta",
+        "link their mobile phone number",
+        "NIF",
         "IBAN"
       ],
       "status": "available_when_exact_source_answers_brief"
@@ -1414,48 +1415,46 @@
     {
       "id": "reserve-banking_money-06",
       "subjectFamily": "banking_money",
-      "topic": "Checking an IBAN before a transfer",
-      "userQuestion": "Which IBAN elements should be checked before sending money?",
+      "topic": "The structure of a Portuguese IBAN",
+      "userQuestion": "How many characters does a Portuguese IBAN have and how does it begin?",
       "audience": "people managing money in Portugal",
       "contentIntent": "common_mistake",
-      "purpose": "Give people managing money in Portugal one source-backed practical answer to: Which IBAN elements should be checked before sending money?",
+      "purpose": "Give people managing money in Portugal one source-backed practical answer to: How many characters does a Portuguese IBAN have and how does it begin?",
       "requiredAnswers": [
-        "Turn the official structure into a verification checklist."
+        "State the 25-character and PT50 structure."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
+        "canonicalUrl": "https://clientebancario.bportugal.pt/en/how-order-transfers",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
       },
       "evidenceTerms": [
-        "IBAN",
-        "estrutura",
-        "dígitos"
+        "25 characters",
+        "begins with PT50"
       ],
       "status": "available_when_exact_source_answers_brief"
     },
     {
       "id": "reserve-banking_money-07",
       "subjectFamily": "banking_money",
-      "topic": "IBAN versus a bank-account number",
-      "userQuestion": "Why is an IBAN more than the domestic account number?",
+      "topic": "Confirming the payee before a transfer",
+      "userQuestion": "What confirmation appears after entering a payee identifier?",
       "audience": "people managing money in Portugal",
       "contentIntent": "evergreen_explainer",
-      "purpose": "Give people managing money in Portugal one source-backed practical answer to: Why is an IBAN more than the domestic account number?",
+      "purpose": "Give people managing money in Portugal one source-backed practical answer to: What confirmation appears after entering a payee identifier?",
       "requiredAnswers": [
-        "Explain the additional country, institution and check components."
+        "Explain the account-holder name confirmation."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
+        "canonicalUrl": "https://clientebancario.bportugal.pt/en/how-order-transfers",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
       },
       "evidenceTerms": [
-        "International Bank Account Number",
-        "conta",
-        "instituição"
+        "name of the first account holder",
+        "payee confirmation"
       ],
       "status": "available_when_exact_source_answers_brief"
     },
