@@ -47,7 +47,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const posts=($json.posts||[]).slice(0,5); if(!posts.length) throw new Error('No draft is waiting for review'); return posts.map(post=>({json:{postId:post.id,expiresInMinutes:180}}));"
+        "jsCode": "const posts=($json.posts||[]).slice(0,5); return posts.map(post=>({json:{postId:post.id,expiresInMinutes:180}}));"
       },
       "id": "1a1ca4ce-ebef-4dcc-a42e-69ed0ccca0b9",
       "name": "Require draft",
