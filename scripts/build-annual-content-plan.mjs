@@ -95,6 +95,16 @@ const campaigns = [
 
 const campaignMap = Map.groupBy(campaigns, (item) => item[0]);
 const lowerRiskPillars = pillars.filter((pillar) => pillar.risk !== "high");
+const authorityProfiles = {
+  identity_access:"gov.pt, Autoridade Tributária, Segurança Social, or Autenticação.gov as applicable",
+  immigration_residency:"AIMA, gov.pt, Diário da República, or IRN as applicable",
+  citizenship_civil:"IRN, gov.pt, or Diário da República", freelance_business:"Autoridade Tributária, Segurança Social, gov.pt, or Diário da República",
+  iva:"Autoridade Tributária or Diário da República", irs:"Autoridade Tributária or Diário da República",
+  social_security:"Segurança Social, gov.pt, or Diário da República", housing_property:"Autoridade Tributária, gov.pt, Diário da República, or the responsible municipality",
+  banking_money:"Banco de Portugal, European Central Bank, or gov.pt", employment:"ACT, Segurança Social, IEFP, gov.pt, or Diário da República",
+  health_family:"SNS, SNS 24, gov.pt, or Diário da República", driving_transport:"IMT, Autoridade Tributária, gov.pt, or Diário da República",
+  education_children:"Direção-Geral da Educação, DGES, gov.pt, or Diário da República", daily_life_consumer:"gov.pt, Direção-Geral do Consumidor, ANACOM, ERSE, or the responsible municipality",
+};
 const iso = (date) => date.toISOString().slice(0, 10);
 const csv = (value) => `"${String(value).replaceAll('"', '""')}"`;
 const evidenceGlossary = [
@@ -115,7 +125,7 @@ const evidenceGlossary = [
   [/\bimt\b/i, ["IMT", "Imposto Municipal sobre as Transmissões"]],
   [/driving licen[cs]e/i, ["carta de condução", "IMT"]],
   [/school|education|enrolment/i, ["matrículas", "Portal das Matrículas", "educação"]],
-  [/employment|work contract|payslip/i, ["contrato de trabalho", "Código do Trabalho"]],
+  [/employment contract|employee|job|payslip/i, ["contrato de trabalho", "Código do Trabalho"]],
   [/rent|tenant|landlord|lease/i, ["arrendamento", "contrato de arrendamento"]],
   [/bank|iban|sepa/i, ["Banco de Portugal", "IBAN", "SEPA"]],
   [/consumer|complaint/i, ["Livro de Reclamações", "Direção-Geral do Consumidor"]],
@@ -151,7 +161,7 @@ function briefFor({ topic, pillar, angle, timing, reserve, authority, date, titl
     userQuestion:`How should ${pillar.audience} handle ${topic}?`,
     purpose: recurring ? `Help ${pillar.audience} act safely around the ${date} occurrence.` : `Give ${pillar.audience} one complete, practical answer about ${topic}.`,
     requiredAnswers:answerPrompts[angle](topic),
-    sourcePolicy:{requiredAuthority:authority,officialRequired:pillar.risk==="high"||timing!=="evergreen",freshnessDays:pillar.risk==="high"?7:pillar.risk==="medium"?30:90},
+    sourcePolicy:{requiredAuthority:authority,officialRequired:pillar.risk!=="low"||timing!=="evergreen",freshnessDays:pillar.risk==="high"?7:pillar.risk==="medium"?30:90},
     timingBehavior:recurring?"fixed_or_campaign":"flexible_evergreen",
     fallback:reserve==="breaking_news"?{kind:"named_evergreen",title:title.replace(/^NEWS RESERVE — fallback:\s*/,"")}:null,
     contentIntent:recurring?(timing==="occasion"||timing==="seasonal"?"occasion":"deadline_reminder"):intentByAngle[angle],
@@ -174,7 +184,7 @@ for (let day = 0; day < days; day++) {
     if(day<90){for(let attempt=0;attempt<pillar.topics.length;attempt++){const candidate=pillar.topics[(topicIndex+attempt)%pillar.topics.length];const identity=`${pillar.id}|${candidate}|${pillar.audience}|${intentByAngle[angle]}`.toLowerCase();if(!usedBriefs90.has(identity)){topic=candidate;usedBriefs90.add(identity);break;}}}
     let title = pattern.replace("{topic}", topic).replace("{audience}", pillar.audience);
     let timing = "evergreen";
-    let authority = "Corpus authority allowlist";
+    let authority = authorityProfiles[pillar.id];
     let reserve = slot === 3 ? "breaking_news" : "none";
     const campaignIndex=campaignSlotOrder.indexOf(slot);
     let isCampaign=false;

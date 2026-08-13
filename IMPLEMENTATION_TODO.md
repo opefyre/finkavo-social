@@ -11,10 +11,10 @@ This is the authoritative completion tracker. A box is checked only after the im
 
 ## 2. Verified 90-day plan
 
-- [ ] Curate the next 90 days: five specific briefs per day, each with purpose, required answers, source policy, timing class, and fallback behavior.
+- [x] Curate the next 90 days: five specific briefs per day, each with purpose, required answers, source policy, timing class, and fallback behavior.
 - [ ] Verify every fixed-date brief against a current official source.
 - [ ] Hold any slot that lacks adequate evidence; never fill it with generic copy.
-- [ ] Validate all 450 briefs structurally and editorially.
+- [x] Validate all 450 briefs structurally and editorially.
 
 ## 3. Deadlines, occasions, and campaigns
 
@@ -67,3 +67,4 @@ This is the authoritative completion tracker. A box is checked only after the im
 |---|---|---|---|
 | 2026-08-13 | Tracker created | Requirements converted into implementation and validation gates | Pass |
 | 2026-08-13 | Structured editorial identity | Migration `0007`; identity and duplicate tests; live schema/API verification | Pass |
+| 2026-08-13 | Curated 90-day brief set | Plan v2 validator: 450 briefs, 90 days, 450 unique identities, complete source/fallback policies, high-risk cap | Pass |

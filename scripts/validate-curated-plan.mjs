@@ -12,6 +12,9 @@ for(const row of rows){
   const b=row.brief;
   if(!b||!b.subjectFamily||!b.userQuestion||!b.purpose||b.requiredAnswers?.length!==3)errors.push(`${row.date}/${row.slot}: incomplete brief`);
   if(!b?.sourcePolicy?.requiredAuthority||![7,30,90].includes(b.sourcePolicy.freshnessDays))errors.push(`${row.date}/${row.slot}: incomplete source policy`);
+  if(row.risk!=="low"&&!b?.sourcePolicy?.officialRequired)errors.push(`${row.date}/${row.slot}: official source not required for ${row.risk}-risk brief`);
+  if(/Corpus authority allowlist/i.test(b?.sourcePolicy?.requiredAuthority||""))errors.push(`${row.date}/${row.slot}: generic authority profile`);
+  if(row.pillar==="social_security"&&/self-employment/i.test(row.title)&&/Código do Trabalho/.test(row.evidenceTerms))errors.push(`${row.date}/${row.slot}: employment-law terms misrouted to self-employment`);
   if(row.reserve==="breaking_news"&&!b?.fallback?.title)errors.push(`${row.date}/${row.slot}: missing named fallback`);
   const identity=[b?.subjectFamily,b?.userQuestion,row.audience,b?.contentIntent,b?.occurrenceKey||""].join("|").toLowerCase();
   if(identities.has(identity))errors.push(`${row.date}/${row.slot}: duplicate brief with ${identities.get(identity)}`); else identities.set(identity,`${row.date}/${row.slot}`);
