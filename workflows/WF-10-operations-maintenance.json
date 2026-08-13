@@ -1,0 +1,13 @@
+{
+  "name": "WF-10 Operations Alerts and Maintenance",
+  "nodes": [
+    {"parameters":{"rule":{"interval":[{"field":"cronExpression","expression":"*/15 * * * *"}]}},"id":"alerts-trigger","name":"Every 15 minutes","type":"n8n-nodes-base.scheduleTrigger","typeVersion":1.2,"position":[-320,-180]},
+    {"parameters":{"method":"POST","url":"http://127.0.0.1:4320/v1/alerts/check","authentication":"genericCredentialType","genericAuthType":"httpBearerAuth","sendBody":true,"contentType":"raw","rawContentType":"application/json","body":"={}","options":{"timeout":30000}},"id":"alerts-check","name":"Check operational alerts","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[0,-180],"credentials":{"httpBearerAuth":{"id":"socialApiBearer01","name":"Finkavo Social API"}}},
+    {"parameters":{"rule":{"interval":[{"field":"cronExpression","expression":"0 7 * * 1"}]}},"id":"weekly-trigger","name":"Monday at 07:00 Lisbon","type":"n8n-nodes-base.scheduleTrigger","typeVersion":1.2,"position":[-320,0]},
+    {"parameters":{"method":"POST","url":"http://127.0.0.1:4320/v1/maintenance/weekly","authentication":"genericCredentialType","genericAuthType":"httpBearerAuth","sendBody":true,"contentType":"raw","rawContentType":"application/json","body":"={}","options":{"timeout":120000}},"id":"weekly-run","name":"Run 14-day maintenance","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[0,0],"credentials":{"httpBearerAuth":{"id":"socialApiBearer01","name":"Finkavo Social API"}}},
+    {"parameters":{"rule":{"interval":[{"field":"cronExpression","expression":"0 7 1 * *"}]}},"id":"monthly-trigger","name":"Monthly at 07:00 Lisbon","type":"n8n-nodes-base.scheduleTrigger","typeVersion":1.2,"position":[-320,180]},
+    {"parameters":{"method":"POST","url":"http://127.0.0.1:4320/v1/maintenance/monthly","authentication":"genericCredentialType","genericAuthType":"httpBearerAuth","sendBody":true,"contentType":"raw","rawContentType":"application/json","body":"={}","options":{"timeout":120000}},"id":"monthly-run","name":"Run 90-day review","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[0,180],"credentials":{"httpBearerAuth":{"id":"socialApiBearer01","name":"Finkavo Social API"}}}
+  ],
+  "connections":{"Every 15 minutes":{"main":[[{"node":"Check operational alerts","type":"main","index":0}]]},"Monday at 07:00 Lisbon":{"main":[[{"node":"Run 14-day maintenance","type":"main","index":0}]]},"Monthly at 07:00 Lisbon":{"main":[[{"node":"Run 90-day review","type":"main","index":0}]]}},
+  "settings":{"executionOrder":"v1","timezone":"Europe/Lisbon"},"active":false,"tags":[]
+}

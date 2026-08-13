@@ -1016,6 +1016,34 @@ const server = http.createServer(async (req, res) => {
       return send(res,200,{date:day,planned:slots.length,verified:slots.filter(row=>row.verification_state==='verified'&&new Date(String(row.expires_at))>new Date()).length,held:held.length,newsCandidates:Number(news.count),approvalStates:approvals.length,discordSent:sent,topics:topicLines});
     }
 
+    if(req.method==="POST"&&url.pathname==="/v1/maintenance/weekly"){
+      ReportSchema.parse(await readJson(req));const today=lisbonDate(new Date());const end=addLisbonDays(today,13);const plan=await loadAnnualPlan();
+      const upcoming=plan.rows.filter(row=>row.date>=today&&row.date<=end);const identities=new Set<string>();const duplicateIdentities:string[]=[];
+      for(const row of upcoming){const key=[row.brief.subjectFamily,row.brief.userQuestion,row.audience,row.brief.contentIntent,row.brief.occurrenceKey||row.brief.campaignStage||''].join('|');if(identities.has(key))duplicateIdentities.push(key);identities.add(key);}
+      const repaired=await sql`UPDATE social_editorial_plan_slot s SET status='evidence_ready',updated_at=now() WHERE s.publish_date BETWEEN ${today} AND ${end} AND s.status='held' AND EXISTS (SELECT 1 FROM social_topic_evidence_bundle b WHERE b.plan_slot_id=s.id AND b.verification_state='verified' AND b.expires_at>now()) RETURNING s.id`;
+      const held=await sql`SELECT publish_date,slot_number,topic FROM social_editorial_plan_slot WHERE publish_date BETWEEN ${today} AND ${end} AND status='held' ORDER BY publish_date,slot_number`;
+      const cards=await loadEvergreenReserve();const urls=[...new Set(cards.map(card=>card.sourcePolicy.canonicalUrl))];const evidence=await sql`SELECT canonical_url AS "canonicalUrl",max(verified_at) AS "verifiedAt" FROM social_reserve_evidence WHERE canonical_url IN ${sql(urls)} AND available=true GROUP BY canonical_url`;const reserveEligible=eligibleReserveCards(cards,evidence.map(row=>({canonicalUrl:String(row.canonicalUrl),verifiedAt:String(row.verifiedAt)})),[]).length;
+      const details={window:`${today} to ${end}`,plannedBriefs:upcoming.length,duplicateIdentities:duplicateIdentities.length,repairedEvidenceHolds:repaired.length,remainingHolds:held.length,reserveEligible};await notifyDiscord('system','Finkavo weekly content maintenance',details);
+      return send(res,200,{...details,held});
+    }
+
+    if(req.method==="POST"&&url.pathname==="/v1/maintenance/monthly"){
+      ReportSchema.parse(await readJson(req));const today=lisbonDate(new Date());const end=addLisbonDays(today,89);const plan=await loadAnnualPlan();const upcoming=plan.rows.filter(row=>row.date>=today&&row.date<=end);
+      const [performance]=await sql`SELECT count(*) FILTER (WHERE status='published') AS published,count(*) FILTER (WHERE status IN ('blocked','failed','rejected')) AS unsuccessful,count(*) FILTER (WHERE status='approved') AS approved FROM social_post WHERE created_at>now()-INTERVAL '30 days'`;
+      const [coverage]=await sql`SELECT count(*) AS active_slots,count(*) FILTER (WHERE status='held') AS held FROM social_editorial_plan_slot WHERE publish_date BETWEEN ${today} AND ${end} AND plan_version=(SELECT max(plan_version) FROM social_editorial_plan_slot)`;
+      const details={window:`${today} to ${end}`,plannedBriefs:upcoming.length,activeSlots:Number(coverage.active_slots),held:Number(coverage.held),published30d:Number(performance.published),unsuccessful30d:Number(performance.unsuccessful),approved30d:Number(performance.approved)};await notifyDiscord('system','Finkavo monthly 90-day content review',details);return send(res,200,details);
+    }
+
+    if(req.method==="POST"&&url.pathname==="/v1/alerts/check"){
+      ReportSchema.parse(await readJson(req));const now=new Date();const today=lisbonDate(now);const lisbonTime=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Lisbon',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(now);const alerts:string[]=[];
+      const [renderer]=await sql`SELECT last_seen_at FROM social_renderer_heartbeat ORDER BY last_seen_at DESC LIMIT 1`;if(!renderer||now.getTime()-new Date(String(renderer.last_seen_at)).getTime()>5*60_000)alerts.push('Renderer heartbeat is stale');
+      const [failed]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='failed' AND updated_at>now()-INTERVAL '24 hours'`;if(Number(failed.count)>0)alerts.push(`${failed.count} publish schedule(s) failed in the last 24 hours`);
+      const [overdue]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='scheduled' AND scheduled_at<now()-INTERVAL '20 minutes'`;if(Number(overdue.count)>0)alerts.push(`${overdue.count} publication confirmation(s) are overdue`);
+      if(lisbonTime>='08:35'){const [batch]=await sql`SELECT count(*) AS count FROM social_post WHERE (created_at AT TIME ZONE 'Europe/Lisbon')::DATE=${today} AND status IN ('draft','ready_for_review','approved','render_queued','rendering','rendered','scheduled','published')`;if(Number(batch.count)<5)alerts.push(`Approval batch is incomplete: ${batch.count}/5 posts`);}
+      const signature=hash({today,alerts});let sent=false;if(alerts.length){const [existing]=await sql`SELECT id FROM social_event WHERE event_type='operations.alert_sent' AND payload->>'signature'=${signature} LIMIT 1`;if(!existing){sent=await notifyDiscord('errors','Finkavo pipeline alert',{date:today,problems:alerts.join('\n')});await sql`INSERT INTO social_event(event_type,payload) VALUES('operations.alert_sent',${sql.json({signature,alerts})})`;}}
+      return send(res,200,{date:today,alerts,sent});
+    }
+
     const approve = url.pathname.match(/^\/v1\/posts\/([0-9a-f-]+)\/approve$/i);
     if (req.method === "POST" && approve) {
       return send(res, 410, { error: "Direct approval is disabled. Request and use a signed, revision-bound review link." });
