@@ -8,6 +8,14 @@ for(const event of data.events){
   else if(!/^https:\/\/(?:[^/]+\.)?(?:portaldasfinancas\.gov\.pt|seg-social\.pt|dgaep\.gov\.pt|portaleducacao\.gov\.pt)\//.test(url))errors.push(`${event.key}: source is not an allowed official domain`);
   if(event.status==="must_reverify"&&!/Do not publish|do not state/i.test(event.scope))errors.push(`${event.key}: missing publication hold`);
   if(!event.scope)errors.push(`${event.key}: missing applicability scope`);
+  const stages=new Set();
+  for(const campaign of event.campaign??[]){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(campaign.publishDate)||Number.isNaN(Date.parse(`${campaign.publishDate}T12:00:00Z`)))errors.push(`${event.key}: invalid campaign publish date`);
+    if(campaign.publishDate>event.date&&campaign.stage!=="after_deadline")errors.push(`${event.key}: ${campaign.stage} is after event date`);
+    if(campaign.stage==="after_deadline"&&campaign.publishDate<=event.date)errors.push(`${event.key}: after-deadline stage is not after event date`);
+    if(!campaign.title||campaign.title.length<25)errors.push(`${event.key}: incomplete campaign title`);
+    if(stages.has(campaign.stage))errors.push(`${event.key}: duplicate campaign stage ${campaign.stage}`);stages.add(campaign.stage);
+  }
 }
-const report={valid:!errors.length,events:data.events.length,confirmed:data.events.filter(e=>e.status==="confirmed"||e.status==="confirmed_rule").length,mustReverify:data.events.filter(e=>e.status==="must_reverify").length,errors};
+const report={valid:!errors.length,events:data.events.length,campaignStages:data.events.flatMap(e=>e.campaign??[]).length,confirmed:data.events.filter(e=>e.status==="confirmed"||e.status==="confirmed_rule").length,mustReverify:data.events.filter(e=>e.status==="must_reverify").length,errors};
 console.log(JSON.stringify(report,null,2));if(errors.length)process.exitCode=1;

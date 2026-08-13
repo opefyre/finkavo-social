@@ -332,7 +332,7 @@ const server = http.createServer(async (req, res) => {
       const planned = [];
       for (const item of selected) {
         const derivedIdentity = editorialIdentity(item);
-        const identity = { subjectFamily:item.brief.subjectFamily||derivedIdentity.subjectFamily,userQuestion:item.brief.userQuestion||derivedIdentity.userQuestion,contentIntent:item.brief.contentIntent||derivedIdentity.contentIntent,occurrenceKey:item.brief.occurrenceKey||derivedIdentity.occurrenceKey,campaignStage:derivedIdentity.campaignStage };
+        const identity = { subjectFamily:item.brief.subjectFamily||derivedIdentity.subjectFamily,userQuestion:item.brief.userQuestion||derivedIdentity.userQuestion,contentIntent:item.brief.contentIntent||derivedIdentity.contentIntent,occurrenceKey:item.brief.occurrenceKey||derivedIdentity.occurrenceKey,campaignStage:item.brief.campaignStage||derivedIdentity.campaignStage };
         const [slot] = await sql`
           INSERT INTO social_editorial_plan_slot (plan_version,publish_date,publish_time,slot_number,pillar,angle,topic,audience,risk_level,timing_class,reserve_kind,search_terms,required_authority,occurrence_number,subject_family,user_question,content_intent,occurrence_key,campaign_stage,brief)
           VALUES (${plan.version},${item.date},${item.time},${item.slot},${item.pillar},${item.angle},${item.title},${item.audience},${item.risk},${item.timing},${item.reserve},${sql.json(item.evidenceTerms.split("|").map(v=>v.trim()).filter(Boolean))},${item.authority},${item.occurrence},${identity.subjectFamily},${identity.userQuestion},${identity.contentIntent},${identity.occurrenceKey},${identity.campaignStage},${sql.json(item.brief)})
@@ -351,6 +351,11 @@ const server = http.createServer(async (req, res) => {
       const slots = await sql`SELECT * FROM social_editorial_plan_slot WHERE publish_date=${planningDate} AND status IN ('planned','researching','evidence_ready','held') ORDER BY slot_number`;
       const results=[];
       for (const slot of slots) {
+        if(slot.timing_class==='must_reverify'){
+          await sql`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${slot.id}`;
+          results.push({slotId:slot.id,topic:slot.topic,state:'held',reason:'official_date_requires_reverification'});
+          continue;
+        }
         const factCard=slot.timing_class==='evergreen'?await findFactCard(String(slot.topic)):null;
         const terms = (slot.search_terms as string[]).map(v=>v.trim()).filter(v=>v.length >= 3);
         const pattern = terms.map(v=>v.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|");
@@ -366,7 +371,8 @@ const server = http.createServer(async (req, res) => {
         ` : [];
         const normalizedTerms=terms.map(v=>v.toLocaleLowerCase("pt"));
         const genericAuthorityTerms=new Set(["sns","aima","irs","iva"]); const substantiveTerms=normalizedTerms.filter(term=>!genericAuthorityTerms.has(term));
-        const scored: any[]=(candidates as any[]).map(source=>{const title=String(source.title).toLocaleLowerCase("pt");const body=(source.excerpts as string[]).join(" ").toLocaleLowerCase("pt");const matched=normalizedTerms.filter(term=>exactTermMatch(title,term)||exactTermMatch(body,term));const substantiveMatched=matched.filter(term=>substantiveTerms.includes(term));const score=matched.reduce((sum,term)=>sum+(exactTermMatch(title,term)?6:2),0);return {...source,relevance_score:score,matched_terms:matched,substantive_matched:substantiveMatched};}).filter(source=>source.relevance_score>=2&&source.substantive_matched.length>0&&sourceDomainAllowed(normalizedTerms,source.source_url)&&sourceScopeAllowed(slot.topic,source.title)).sort((a,b)=>b.relevance_score-a.relevance_score||String(b.last_verified_at||b.fetched_at).localeCompare(String(a.last_verified_at||a.fetched_at)));
+        const canonicalSource=/^https:\/\//.test(String(slot.required_authority))?String(slot.required_authority).replace(/\/$/,""):null;
+        const scored: any[]=(candidates as any[]).map(source=>{const title=String(source.title).toLocaleLowerCase("pt");const body=(source.excerpts as string[]).join(" ").toLocaleLowerCase("pt");const matched=normalizedTerms.filter(term=>exactTermMatch(title,term)||exactTermMatch(body,term));const substantiveMatched=matched.filter(term=>substantiveTerms.includes(term));const score=matched.reduce((sum,term)=>sum+(exactTermMatch(title,term)?6:2),0);return {...source,relevance_score:score,matched_terms:matched,substantive_matched:substantiveMatched};}).filter(source=>source.relevance_score>=2&&source.substantive_matched.length>0&&sourceDomainAllowed(normalizedTerms,source.source_url)&&sourceScopeAllowed(slot.topic,source.title)&&(!canonicalSource||String(source.source_url).replace(/\/$/,"")===canonicalSource)).sort((a,b)=>b.relevance_score-a.relevance_score||String(b.last_verified_at||b.fetched_at).localeCompare(String(a.last_verified_at||a.fetched_at)));
         const sources: any[] = []; const seenAuthorities=new Set<string>();
         for(const source of scored){const authority=String(source.source_authority||new URL(String(source.source_url)).hostname);if(seenAuthorities.has(authority)&&sources.length>=1)continue;sources.push(source);seenAuthorities.add(authority);if(sources.length>=2)break;}
         const needsOfficial = slot.risk_level === 'high' || slot.timing_class !== 'evergreen';

@@ -12,7 +12,7 @@ This is the authoritative completion tracker. A box is checked only after the im
 ## 2. Verified 90-day plan
 
 - [x] Curate the next 90 days: five specific briefs per day, each with purpose, required answers, source policy, timing class, and fallback behavior.
-- [ ] Verify every fixed-date brief against a current official source.
+- [x] Verify every fixed-date brief against a current official source.
 - [ ] Hold any slot that lacks adequate evidence; never fill it with generic copy.
 - [x] Validate all 450 briefs structurally and editorially.
 
@@ -20,7 +20,7 @@ This is the authoritative completion tracker. A box is checked only after the im
 
 - [ ] Complete the official calendar for IRS, IVA, Social Security, IMI, AIMI, IUC, employment, education, immigration, and relevant public-service cycles.
 - [ ] Add Portuguese national occasions, useful seasonal moments, and selected official events.
-- [ ] Create preparation, reminder, last-call, and after-deadline stages where genuinely useful.
+- [x] Create preparation, reminder, last-call, and after-deadline stages where genuinely useful.
 - [ ] Add same-day or freshness-window reverification for dates, thresholds, eligibility, and closures.
 
 ## 4. Evergreen reserve
@@ -69,3 +69,4 @@ This is the authoritative completion tracker. A box is checked only after the im
 | 2026-08-13 | Structured editorial identity | Migration `0007`; identity and duplicate tests; live schema/API verification | Pass |
 | 2026-08-13 | Curated 90-day brief set | Plan v2 validator: 450 briefs, 90 days, 450 unique identities, complete source/fallback policies, high-risk cap | Pass |
 | 2026-08-13 | Official-calendar foundation | 18 scoped events; 14 current/rule-confirmed; 3 explicitly held for reverification; official-domain validator | Pass |
+| 2026-08-13 | Calendar-to-plan integration | Calendar generates 25 campaign stages; all stages inside the curated window appear once with matching event, stage, date, status, and canonical source | Pass |

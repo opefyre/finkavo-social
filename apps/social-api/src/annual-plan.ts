@@ -10,6 +10,7 @@ export type AnnualPlanRow = {
     subjectFamily:string; userQuestion:string; purpose:string; requiredAnswers:string[];
     sourcePolicy:{requiredAuthority:string;officialRequired:boolean;freshnessDays:number};
     timingBehavior:string; fallback:{kind:string;title:string}|null; contentIntent:string; occurrenceKey:string|null;
+    campaignStage:string|null; calendarEventDate:string|null; calendarStatus:string|null; applicabilityScope:string|null;
   };
 };
 

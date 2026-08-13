@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 
 const start = new Date("2026-08-13T12:00:00Z");
 const days = 365;
@@ -56,44 +56,23 @@ const pillars = [
   ]},
 ];
 
-const campaigns = [
-  ["2026-08-31", "irs", "IRS assessment, refund or payment: verify your notice before 31 August", "official_locked", "Autoridade Tributária"],
-  ["2026-08-31", "housing_property", "August IMI instalment: who should check for a payment notice", "official_locked", "Autoridade Tributária"],
-  ["2026-09-15", "education_children", "Portugal school year starts this week: family admin checklist", "official_locked", "Portal da Educação"],
-  ["2026-09-25", "iva", "Quarterly IVA payment window: verify the September deadline", "official_locked", "Autoridade Tributária"],
-  ["2026-09-30", "housing_property", "AIMI payment deadline: check whether a notice applies to you", "official_locked", "Autoridade Tributária"],
-  ["2026-10-05", "daily_life_consumer", "Republic Day in Portugal: what closes and what remains available online", "official_locked", "DGAEP"],
-  ["2026-10-24", "banking_money", "World Savings Day: five Portugal money-admin habits", "occasion", "Banco de Portugal"],
-  ["2026-10-28", "social_security", "Quarterly Social Security declaration: prepare before 31 October", "official_locked", "Segurança Social"],
-  ["2026-11-25", "housing_property", "November IMI instalment: final checks before month-end", "official_locked", "Autoridade Tributária"],
-  ["2026-12-01", "daily_life_consumer", "Restoration of Independence Day: Portugal public-service availability", "official_locked", "DGAEP"],
-  ["2026-12-08", "daily_life_consumer", "8 December public holiday: plan appointments and payments", "official_locked", "DGAEP"],
-  ["2026-12-18", "immigration_residency", "International Migrants Day: a Portugal document-health check", "occasion", "United Nations"],
-  ["2026-12-22", "daily_life_consumer", "Before Christmas: download the documents you may need during closures", "seasonal", "DGAEP"],
-  ["2027-01-02", "identity_access", "New-year Portugal admin reset: addresses, passwords and expiring documents", "seasonal", "Multiple official sources"],
-  ["2027-01-10", "social_security", "January quarterly declaration: records to collect now", "rule_locked", "Segurança Social"],
-  ["2027-01-28", "social_security", "Quarterly Social Security declaration: last checks before month-end", "rule_locked", "Segurança Social"],
-  ["2027-02-05", "irs", "IRS preparation: household and invoice checkpoints to verify", "must_reverify", "Autoridade Tributária"],
-  ["2027-02-12", "irs", "e-Fatura and household deadlines: verify the current-year dates", "must_reverify", "Autoridade Tributária"],
-  ["2027-03-01", "irs", "March IRS preparation: review deductions before filing opens", "must_reverify", "Autoridade Tributária"],
-  ["2027-03-15", "daily_life_consumer", "World Consumer Rights Day: using Portugal’s complaints system", "occasion", "Direção-Geral do Consumidor"],
-  ["2027-03-25", "irs", "IRS filing opens soon: your evidence and access checklist", "rule_locked", "Autoridade Tributária"],
-  ["2027-04-01", "irs", "Portugal IRS filing window: what to check before submitting", "rule_locked", "Autoridade Tributária"],
-  ["2027-04-23", "daily_life_consumer", "25 April in Portugal: public holiday and civic context", "official_locked", "DGAEP"],
-  ["2027-04-25", "daily_life_consumer", "Freedom Day: a practical guide for international residents", "official_locked", "Government of Portugal"],
-  ["2027-04-28", "social_security", "Quarterly Social Security declaration: final checks", "rule_locked", "Segurança Social"],
-  ["2027-05-01", "employment", "Labour Day in Portugal: public holiday and worker-admin essentials", "official_locked", "DGAEP"],
-  ["2027-05-15", "housing_property", "May IMI payment: find and verify your payment notice", "must_reverify", "Autoridade Tributária"],
-  ["2027-06-01", "irs", "Final month for IRS: what remains to check", "rule_locked", "Autoridade Tributária"],
-  ["2027-06-10", "daily_life_consumer", "Portugal Day: practical ways international residents can participate", "official_locked", "Government of Portugal"],
-  ["2027-06-20", "irs", "Ten days before the usual IRS deadline: submission checklist", "rule_locked", "Autoridade Tributária"],
-  ["2027-06-27", "irs", "IRS last call: verify the official deadline before filing", "must_reverify", "Autoridade Tributária"],
-  ["2027-07-01", "education_children", "School enrolment and renewal season: official portals to check", "must_reverify", "Portal da Educação"],
-  ["2027-07-10", "social_security", "July quarterly declaration: prepare the previous quarter’s records", "rule_locked", "Segurança Social"],
-  ["2027-07-28", "social_security", "Quarterly Social Security declaration: final July checks", "rule_locked", "Segurança Social"],
-];
+const officialCalendar = JSON.parse(await readFile(new URL("../config/official-calendar-2026-2027.json", import.meta.url), "utf8"));
+const timingForStatus = { confirmed: "official_locked", confirmed_rule: "rule_locked", must_reverify: "must_reverify", occasion: "occasion" };
+const campaigns = officialCalendar.events.flatMap((event) => (event.campaign ?? []).map((stage) => ({
+  date: stage.publishDate,
+  pillar: event.subjectFamily,
+  title: stage.title,
+  timing: timingForStatus[event.status],
+  authority: officialCalendar.sources[event.source],
+  sourceKey: event.source,
+  eventKey: event.key,
+  eventDate: event.date,
+  calendarStatus: event.status,
+  campaignStage: stage.stage,
+  scope: event.scope,
+})));
 
-const campaignMap = Map.groupBy(campaigns, (item) => item[0]);
+const campaignMap = Map.groupBy(campaigns, (item) => item.date);
 const lowerRiskPillars = pillars.filter((pillar) => pillar.risk !== "high");
 const authorityProfiles = {
   identity_access:"gov.pt, Autoridade Tributária, Segurança Social, or Autenticação.gov as applicable",
@@ -154,7 +133,7 @@ const answerPrompts = {
   audience: topic => [`Explain how ${topic} applies to the named audience.`, "Separate universal rules from audience-dependent details.", "Give one concrete action the audience can take."],
   golden_tip: topic => [`Explain the single highest-value habit for ${topic}.`, "Show what to verify before acting.", "State what record, receipt, or confirmation to keep."],
 };
-function briefFor({ topic, pillar, angle, timing, reserve, authority, date, title }) {
+function briefFor({ topic, pillar, angle, timing, reserve, authority, date, title, campaign }) {
   const recurring=["official_locked","rule_locked","must_reverify","occasion","seasonal"].includes(timing);
   return {
     subjectFamily:pillar.id,
@@ -165,7 +144,11 @@ function briefFor({ topic, pillar, angle, timing, reserve, authority, date, titl
     timingBehavior:recurring?"fixed_or_campaign":"flexible_evergreen",
     fallback:reserve==="breaking_news"?{kind:"named_evergreen",title:title.replace(/^NEWS RESERVE — fallback:\s*/,"")}:null,
     contentIntent:recurring?(timing==="occasion"||timing==="seasonal"?"occasion":"deadline_reminder"):intentByAngle[angle],
-    occurrenceKey:recurring?`${pillar.id}:${date}:${topic.toLowerCase().replace(/[^a-z0-9]+/g,"-")}`:null,
+    occurrenceKey:campaign?.eventKey ?? (recurring?`${pillar.id}:${date}:${topic.toLowerCase().replace(/[^a-z0-9]+/g,"-")}`:null),
+    campaignStage:campaign?.campaignStage ?? (recurring ? "single" : null),
+    calendarEventDate:campaign?.eventDate ?? null,
+    calendarStatus:campaign?.calendarStatus ?? null,
+    applicabilityScope:campaign?.scope ?? null,
   };
 }
 
@@ -173,7 +156,7 @@ for (let day = 0; day < days; day++) {
   const date = new Date(start); date.setUTCDate(start.getUTCDate() + day);
   const dateText = iso(date);
   const todaysCampaigns=campaignMap.get(dateText)||[];
-  let highRiskCount = todaysCampaigns.filter(campaign=>pillars.find(item=>item.id===campaign[1])?.risk==="high").length;
+  let highRiskCount = todaysCampaigns.filter(campaign=>pillars.find(item=>item.id===campaign.pillar)?.risk==="high").length;
   for (let slot = 0; slot < slots.length; slot++) {
     let pillarIndex = (day * 3 + slot * 5) % pillars.length;
     let pillar = pillars[pillarIndex];
@@ -190,8 +173,8 @@ for (let day = 0; day < days; day++) {
     let isCampaign=false;
     if (campaignIndex>=0 && todaysCampaigns[campaignIndex]) {
       const campaign = todaysCampaigns[campaignIndex];
-      pillar = pillars.find((item) => item.id === campaign[1]) ?? pillar;
-      title = campaign[2]; topic=campaign[2]; timing = campaign[3]; authority = campaign[4]; reserve = "date_locked";
+      pillar = pillars.find((item) => item.id === campaign.pillar) ?? pillar;
+      title = campaign.title; topic=campaign.title; timing = campaign.timing; authority = campaign.authority; reserve = "date_locked";
       isCampaign=true;
     } else if (slot === 3) {
       title = `NEWS RESERVE — fallback: ${title}`;
@@ -201,7 +184,8 @@ for (let day = 0; day < days; day++) {
     const key = title.replace(/^NEWS RESERVE — fallback: /, "");
     const occurrence = (seen.get(key) ?? 0) + 1; seen.set(key, occurrence);
     if (pillar.risk === "high"&&!isCampaign) highRiskCount++;
-    const brief=briefFor({topic,pillar,angle,timing,reserve,authority,date:dateText,title});
+    const campaign = isCampaign ? todaysCampaigns[campaignIndex] : null;
+    const brief=briefFor({topic,pillar,angle,timing,reserve,authority,date:dateText,title,campaign});
     rows.push({ date: dateText, time: slots[slot], slot: slot + 1, pillar: pillar.id, angle, title, audience: pillar.audience, risk: pillar.risk, timing, reserve, evidenceTerms: evidenceTermsFor(topic, title, pillar).join(" | "), searchTerms: pillar.terms.join(" | "), authority, occurrence, curationStatus:day<90?"curated_90_day":"annual_candidate", brief });
   }
 }
@@ -210,7 +194,7 @@ await mkdir("plans", { recursive: true });
 const headers = Object.keys(rows[0]).filter(key=>key!=="brief");
 await writeFile("plans/finkavo-rolling-year-2026-08-13.csv", `${headers.map(csv).join(",")}\n${rows.map((row) => headers.map((key) => csv(row[key])).join(",")).join("\n")}\n`);
 await writeFile("plans/finkavo-rolling-year-2026-08-13.json", `${JSON.stringify({ version: 2, generatedAt: new Date().toISOString(), rows }, null, 2)}\n`);
-await writeFile("plans/finkavo-editorial-catalog.json", `${JSON.stringify({ version: 2, period: { start: iso(start), days }, slots, angles: angles.map(([id]) => id), pillars, campaigns: campaigns.map(([date, pillar, title, timing, authority]) => ({ date, pillar, title, timing, authority })) }, null, 2)}\n`);
+await writeFile("plans/finkavo-editorial-catalog.json", `${JSON.stringify({ version: 2, period: { start: iso(start), days }, slots, angles: angles.map(([id]) => id), pillars, campaigns }, null, 2)}\n`);
 const summary = {
   period: { start: iso(start), end: rows.at(-1).date },
   totalSlots: rows.length,

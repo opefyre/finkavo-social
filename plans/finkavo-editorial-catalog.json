@@ -474,242 +474,329 @@
   ],
   "campaigns": [
     {
+      "date": "2026-08-17",
+      "pillar": "irs",
+      "title": "IRS notices in August: check whether you have a refund or payment action",
+      "timing": "official_locked",
+      "authority": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Pages/Quadro_res_Pag_2026.aspx",
+      "sourceKey": "atPayments2026",
+      "eventKey": "irs-2026-assessment",
+      "eventDate": "2026-08-31",
+      "calendarStatus": "confirmed",
+      "campaignStage": "preparation",
+      "scope": "Only people whose assessment or notice applies"
+    },
+    {
+      "date": "2026-08-28",
+      "pillar": "irs",
+      "title": "IRS 31 August checkpoint: review your assessment or payment notice",
+      "timing": "official_locked",
+      "authority": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Pages/Quadro_res_Pag_2026.aspx",
+      "sourceKey": "atPayments2026",
+      "eventKey": "irs-2026-assessment",
+      "eventDate": "2026-08-31",
+      "calendarStatus": "confirmed",
+      "campaignStage": "reminder",
+      "scope": "Only people whose assessment or notice applies"
+    },
+    {
       "date": "2026-08-31",
       "pillar": "irs",
-      "title": "IRS assessment, refund or payment: verify your notice before 31 August",
+      "title": "IRS today: act only if your assessment or payment notice requires it",
       "timing": "official_locked",
-      "authority": "Autoridade Tributária"
+      "authority": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Pages/Quadro_res_Pag_2026.aspx",
+      "sourceKey": "atPayments2026",
+      "eventKey": "irs-2026-assessment",
+      "eventDate": "2026-08-31",
+      "calendarStatus": "confirmed",
+      "campaignStage": "last_call",
+      "scope": "Only people whose assessment or notice applies"
+    },
+    {
+      "date": "2026-09-02",
+      "pillar": "irs",
+      "title": "Missed an IRS payment shown on your notice? Check the official next step",
+      "timing": "official_locked",
+      "authority": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Pages/Quadro_res_Pag_2026.aspx",
+      "sourceKey": "atPayments2026",
+      "eventKey": "irs-2026-assessment",
+      "eventDate": "2026-08-31",
+      "calendarStatus": "confirmed",
+      "campaignStage": "after_deadline",
+      "scope": "Only people whose assessment or notice applies"
+    },
+    {
+      "date": "2026-08-19",
+      "pillar": "housing_property",
+      "title": "August IMI instalment: check whether your bill is above €500",
+      "timing": "official_locked",
+      "authority": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx",
+      "sourceKey": "atImiAimi",
+      "eventKey": "imi-2026-august",
+      "eventDate": "2026-08-31",
+      "calendarStatus": "confirmed",
+      "campaignStage": "preparation",
+      "scope": "Only bills above €500 have an August instalment"
+    },
+    {
+      "date": "2026-08-28",
+      "pillar": "housing_property",
+      "title": "IMI August reminder: confirm your instalment and payment reference",
+      "timing": "official_locked",
+      "authority": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx",
+      "sourceKey": "atImiAimi",
+      "eventKey": "imi-2026-august",
+      "eventDate": "2026-08-31",
+      "calendarStatus": "confirmed",
+      "campaignStage": "reminder",
+      "scope": "Only bills above €500 have an August instalment"
     },
     {
       "date": "2026-08-31",
       "pillar": "housing_property",
-      "title": "August IMI instalment: who should check for a payment notice",
+      "title": "IMI today: pay only if your notice includes an August instalment",
       "timing": "official_locked",
-      "authority": "Autoridade Tributária"
+      "authority": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx",
+      "sourceKey": "atImiAimi",
+      "eventKey": "imi-2026-august",
+      "eventDate": "2026-08-31",
+      "calendarStatus": "confirmed",
+      "campaignStage": "last_call",
+      "scope": "Only bills above €500 have an August instalment"
     },
     {
-      "date": "2026-09-15",
-      "pillar": "education_children",
-      "title": "Portugal school year starts this week: family admin checklist",
+      "date": "2026-09-07",
+      "pillar": "iva",
+      "title": "Quarterly IVA return: prepare Q2 records before 21 September",
       "timing": "official_locked",
-      "authority": "Portal da Educação"
+      "authority": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Documents/Obrigacoes_declarativas.pdf",
+      "sourceKey": "atDeclarations2026",
+      "eventKey": "iva-2026-q2-return",
+      "eventDate": "2026-09-21",
+      "calendarStatus": "confirmed",
+      "campaignStage": "preparation",
+      "scope": "Quarterly IVA taxpayers; exact 2026 calendar date"
+    },
+    {
+      "date": "2026-09-17",
+      "pillar": "iva",
+      "title": "Quarterly IVA return: four-day filing checklist",
+      "timing": "official_locked",
+      "authority": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Documents/Obrigacoes_declarativas.pdf",
+      "sourceKey": "atDeclarations2026",
+      "eventKey": "iva-2026-q2-return",
+      "eventDate": "2026-09-21",
+      "calendarStatus": "confirmed",
+      "campaignStage": "reminder",
+      "scope": "Quarterly IVA taxpayers; exact 2026 calendar date"
+    },
+    {
+      "date": "2026-09-21",
+      "pillar": "iva",
+      "title": "Quarterly IVA return due today: submit and keep the receipt",
+      "timing": "official_locked",
+      "authority": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Documents/Obrigacoes_declarativas.pdf",
+      "sourceKey": "atDeclarations2026",
+      "eventKey": "iva-2026-q2-return",
+      "eventDate": "2026-09-21",
+      "calendarStatus": "confirmed",
+      "campaignStage": "last_call",
+      "scope": "Quarterly IVA taxpayers; exact 2026 calendar date"
+    },
+    {
+      "date": "2026-09-22",
+      "pillar": "iva",
+      "title": "Filed quarterly IVA? Check whether payment is due by 25 September",
+      "timing": "official_locked",
+      "authority": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Pages/Quadro_res_Pag_2026.aspx",
+      "sourceKey": "atPayments2026",
+      "eventKey": "iva-2026-q2-payment",
+      "eventDate": "2026-09-25",
+      "calendarStatus": "confirmed",
+      "campaignStage": "preparation",
+      "scope": "Quarterly IVA taxpayers with payment due"
     },
     {
       "date": "2026-09-25",
       "pillar": "iva",
-      "title": "Quarterly IVA payment window: verify the September deadline",
+      "title": "Quarterly IVA payment today: verify the amount and keep proof",
       "timing": "official_locked",
-      "authority": "Autoridade Tributária"
+      "authority": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Pages/Quadro_res_Pag_2026.aspx",
+      "sourceKey": "atPayments2026",
+      "eventKey": "iva-2026-q2-payment",
+      "eventDate": "2026-09-25",
+      "calendarStatus": "confirmed",
+      "campaignStage": "last_call",
+      "scope": "Quarterly IVA taxpayers with payment due"
+    },
+    {
+      "date": "2026-09-16",
+      "pillar": "housing_property",
+      "title": "AIMI payment: how to tell whether the September deadline applies",
+      "timing": "official_locked",
+      "authority": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Pages/Quadro_res_Pag_2026.aspx",
+      "sourceKey": "atPayments2026",
+      "eventKey": "aimi-2026-payment",
+      "eventDate": "2026-09-30",
+      "calendarStatus": "confirmed",
+      "campaignStage": "preparation",
+      "scope": "Only taxpayers with an AIMI assessment"
+    },
+    {
+      "date": "2026-09-27",
+      "pillar": "housing_property",
+      "title": "AIMI reminder: verify your assessment and payment details",
+      "timing": "official_locked",
+      "authority": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Pages/Quadro_res_Pag_2026.aspx",
+      "sourceKey": "atPayments2026",
+      "eventKey": "aimi-2026-payment",
+      "eventDate": "2026-09-30",
+      "calendarStatus": "confirmed",
+      "campaignStage": "reminder",
+      "scope": "Only taxpayers with an AIMI assessment"
     },
     {
       "date": "2026-09-30",
       "pillar": "housing_property",
-      "title": "AIMI payment deadline: check whether a notice applies to you",
+      "title": "AIMI due today: act only if you received an assessment",
       "timing": "official_locked",
-      "authority": "Autoridade Tributária"
+      "authority": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Pages/Quadro_res_Pag_2026.aspx",
+      "sourceKey": "atPayments2026",
+      "eventKey": "aimi-2026-payment",
+      "eventDate": "2026-09-30",
+      "calendarStatus": "confirmed",
+      "campaignStage": "last_call",
+      "scope": "Only taxpayers with an AIMI assessment"
+    },
+    {
+      "date": "2026-10-02",
+      "pillar": "daily_life_consumer",
+      "title": "Republic Day on Monday: plan public-service errands before the holiday",
+      "timing": "rule_locked",
+      "authority": "https://www.dgaep.gov.pt/stap/infoPage.cfm?objid=9a36961c-71bc-40de-8ee0-5cdeb2dea832",
+      "sourceKey": "nationalHolidays",
+      "eventKey": "republic-day-2026",
+      "eventDate": "2026-10-05",
+      "calendarStatus": "confirmed_rule",
+      "campaignStage": "preparation",
+      "scope": "National mandatory holiday"
     },
     {
       "date": "2026-10-05",
       "pillar": "daily_life_consumer",
-      "title": "Republic Day in Portugal: what closes and what remains available online",
-      "timing": "official_locked",
-      "authority": "DGAEP"
+      "title": "Republic Day in Portugal: what the public holiday means for your plans",
+      "timing": "rule_locked",
+      "authority": "https://www.dgaep.gov.pt/stap/infoPage.cfm?objid=9a36961c-71bc-40de-8ee0-5cdeb2dea832",
+      "sourceKey": "nationalHolidays",
+      "eventKey": "republic-day-2026",
+      "eventDate": "2026-10-05",
+      "calendarStatus": "confirmed_rule",
+      "campaignStage": "occasion",
+      "scope": "National mandatory holiday"
     },
     {
-      "date": "2026-10-24",
-      "pillar": "banking_money",
-      "title": "World Savings Day: five Portugal money-admin habits",
-      "timing": "occasion",
-      "authority": "Banco de Portugal"
+      "date": "2026-10-17",
+      "pillar": "social_security",
+      "title": "October Social Security declaration: collect your quarterly income records",
+      "timing": "rule_locked",
+      "authority": "https://www.seg-social.pt/documents/10152/15974914/1009u002520Trabalhadoru002520independenteu002520-u002520novou002520regime/87b6e00c-523d-4718-8a88-942ea804c18a",
+      "sourceKey": "socialSecurityQuarterly",
+      "eventKey": "ss-quarterly-2026-q3",
+      "eventDate": "2026-10-31",
+      "calendarStatus": "confirmed_rule",
+      "campaignStage": "preparation",
+      "scope": "Workers subject to the quarterly declaration"
     },
     {
       "date": "2026-10-28",
       "pillar": "social_security",
-      "title": "Quarterly Social Security declaration: prepare before 31 October",
-      "timing": "official_locked",
-      "authority": "Segurança Social"
+      "title": "Self-employed Social Security: final quarterly declaration checks",
+      "timing": "rule_locked",
+      "authority": "https://www.seg-social.pt/documents/10152/15974914/1009u002520Trabalhadoru002520independenteu002520-u002520novou002520regime/87b6e00c-523d-4718-8a88-942ea804c18a",
+      "sourceKey": "socialSecurityQuarterly",
+      "eventKey": "ss-quarterly-2026-q3",
+      "eventDate": "2026-10-31",
+      "calendarStatus": "confirmed_rule",
+      "campaignStage": "reminder",
+      "scope": "Workers subject to the quarterly declaration"
     },
     {
-      "date": "2026-11-25",
-      "pillar": "housing_property",
-      "title": "November IMI instalment: final checks before month-end",
-      "timing": "official_locked",
-      "authority": "Autoridade Tributária"
+      "date": "2026-10-31",
+      "pillar": "social_security",
+      "title": "Quarterly Social Security declaration: complete it today if it applies",
+      "timing": "rule_locked",
+      "authority": "https://www.seg-social.pt/documents/10152/15974914/1009u002520Trabalhadoru002520independenteu002520-u002520novou002520regime/87b6e00c-523d-4718-8a88-942ea804c18a",
+      "sourceKey": "socialSecurityQuarterly",
+      "eventKey": "ss-quarterly-2026-q3",
+      "eventDate": "2026-10-31",
+      "calendarStatus": "confirmed_rule",
+      "campaignStage": "last_call",
+      "scope": "Workers subject to the quarterly declaration"
     },
     {
-      "date": "2026-12-01",
-      "pillar": "daily_life_consumer",
-      "title": "Restoration of Independence Day: Portugal public-service availability",
-      "timing": "official_locked",
-      "authority": "DGAEP"
+      "date": "2026-11-02",
+      "pillar": "social_security",
+      "title": "Missed the quarterly Social Security declaration? Check correction options",
+      "timing": "rule_locked",
+      "authority": "https://www.seg-social.pt/documents/10152/15974914/1009u002520Trabalhadoru002520independenteu002520-u002520novou002520regime/87b6e00c-523d-4718-8a88-942ea804c18a",
+      "sourceKey": "socialSecurityQuarterly",
+      "eventKey": "ss-quarterly-2026-q3",
+      "eventDate": "2026-10-31",
+      "calendarStatus": "confirmed_rule",
+      "campaignStage": "after_deadline",
+      "scope": "Workers subject to the quarterly declaration"
     },
     {
-      "date": "2026-12-08",
-      "pillar": "daily_life_consumer",
-      "title": "8 December public holiday: plan appointments and payments",
-      "timing": "official_locked",
-      "authority": "DGAEP"
-    },
-    {
-      "date": "2026-12-18",
-      "pillar": "immigration_residency",
-      "title": "International Migrants Day: a Portugal document-health check",
+      "date": "2026-10-24",
+      "pillar": "banking_money",
+      "title": "Before World Savings Day: five money-admin habits for life in Portugal",
       "timing": "occasion",
-      "authority": "United Nations"
+      "authority": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Pages/Quadro_res_Pag_2026.aspx",
+      "sourceKey": "atPayments2026",
+      "eventKey": "world-savings-day-2026",
+      "eventDate": "2026-10-31",
+      "calendarStatus": "occasion",
+      "campaignStage": "occasion_lead",
+      "scope": "Educational occasion; no legal deadline claim"
     },
     {
-      "date": "2026-12-22",
-      "pillar": "daily_life_consumer",
-      "title": "Before Christmas: download the documents you may need during closures",
-      "timing": "seasonal",
-      "authority": "DGAEP"
-    },
-    {
-      "date": "2027-01-02",
-      "pillar": "identity_access",
-      "title": "New-year Portugal admin reset: addresses, passwords and expiring documents",
-      "timing": "seasonal",
-      "authority": "Multiple official sources"
-    },
-    {
-      "date": "2027-01-10",
-      "pillar": "social_security",
-      "title": "January quarterly declaration: records to collect now",
-      "timing": "rule_locked",
-      "authority": "Segurança Social"
-    },
-    {
-      "date": "2027-01-28",
-      "pillar": "social_security",
-      "title": "Quarterly Social Security declaration: last checks before month-end",
-      "timing": "rule_locked",
-      "authority": "Segurança Social"
-    },
-    {
-      "date": "2027-02-05",
-      "pillar": "irs",
-      "title": "IRS preparation: household and invoice checkpoints to verify",
-      "timing": "must_reverify",
-      "authority": "Autoridade Tributária"
-    },
-    {
-      "date": "2027-02-12",
-      "pillar": "irs",
-      "title": "e-Fatura and household deadlines: verify the current-year dates",
-      "timing": "must_reverify",
-      "authority": "Autoridade Tributária"
-    },
-    {
-      "date": "2027-03-01",
-      "pillar": "irs",
-      "title": "March IRS preparation: review deductions before filing opens",
-      "timing": "must_reverify",
-      "authority": "Autoridade Tributária"
-    },
-    {
-      "date": "2027-03-15",
-      "pillar": "daily_life_consumer",
-      "title": "World Consumer Rights Day: using Portugal’s complaints system",
+      "date": "2026-10-31",
+      "pillar": "banking_money",
+      "title": "World Savings Day: run a 15-minute Portugal money check",
       "timing": "occasion",
-      "authority": "Direção-Geral do Consumidor"
+      "authority": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Pages/Quadro_res_Pag_2026.aspx",
+      "sourceKey": "atPayments2026",
+      "eventKey": "world-savings-day-2026",
+      "eventDate": "2026-10-31",
+      "calendarStatus": "occasion",
+      "campaignStage": "occasion",
+      "scope": "Educational occasion; no legal deadline claim"
     },
     {
-      "date": "2027-03-25",
-      "pillar": "irs",
-      "title": "IRS filing opens soon: your evidence and access checklist",
-      "timing": "rule_locked",
-      "authority": "Autoridade Tributária"
-    },
-    {
-      "date": "2027-04-01",
-      "pillar": "irs",
-      "title": "Portugal IRS filing window: what to check before submitting",
-      "timing": "rule_locked",
-      "authority": "Autoridade Tributária"
-    },
-    {
-      "date": "2027-04-23",
+      "date": "2026-10-30",
       "pillar": "daily_life_consumer",
-      "title": "25 April in Portugal: public holiday and civic context",
-      "timing": "official_locked",
-      "authority": "DGAEP"
+      "title": "All Saints’ Day weekend: check local schedules before travelling",
+      "timing": "rule_locked",
+      "authority": "https://www.dgaep.gov.pt/stap/infoPage.cfm?objid=9a36961c-71bc-40de-8ee0-5cdeb2dea832",
+      "sourceKey": "nationalHolidays",
+      "eventKey": "all-saints-2026",
+      "eventDate": "2026-11-01",
+      "calendarStatus": "confirmed_rule",
+      "campaignStage": "preparation",
+      "scope": "National mandatory holiday"
     },
     {
-      "date": "2027-04-25",
+      "date": "2026-11-01",
       "pillar": "daily_life_consumer",
-      "title": "Freedom Day: a practical guide for international residents",
-      "timing": "official_locked",
-      "authority": "Government of Portugal"
-    },
-    {
-      "date": "2027-04-28",
-      "pillar": "social_security",
-      "title": "Quarterly Social Security declaration: final checks",
+      "title": "All Saints’ Day in Portugal: a practical note for international residents",
       "timing": "rule_locked",
-      "authority": "Segurança Social"
-    },
-    {
-      "date": "2027-05-01",
-      "pillar": "employment",
-      "title": "Labour Day in Portugal: public holiday and worker-admin essentials",
-      "timing": "official_locked",
-      "authority": "DGAEP"
-    },
-    {
-      "date": "2027-05-15",
-      "pillar": "housing_property",
-      "title": "May IMI payment: find and verify your payment notice",
-      "timing": "must_reverify",
-      "authority": "Autoridade Tributária"
-    },
-    {
-      "date": "2027-06-01",
-      "pillar": "irs",
-      "title": "Final month for IRS: what remains to check",
-      "timing": "rule_locked",
-      "authority": "Autoridade Tributária"
-    },
-    {
-      "date": "2027-06-10",
-      "pillar": "daily_life_consumer",
-      "title": "Portugal Day: practical ways international residents can participate",
-      "timing": "official_locked",
-      "authority": "Government of Portugal"
-    },
-    {
-      "date": "2027-06-20",
-      "pillar": "irs",
-      "title": "Ten days before the usual IRS deadline: submission checklist",
-      "timing": "rule_locked",
-      "authority": "Autoridade Tributária"
-    },
-    {
-      "date": "2027-06-27",
-      "pillar": "irs",
-      "title": "IRS last call: verify the official deadline before filing",
-      "timing": "must_reverify",
-      "authority": "Autoridade Tributária"
-    },
-    {
-      "date": "2027-07-01",
-      "pillar": "education_children",
-      "title": "School enrolment and renewal season: official portals to check",
-      "timing": "must_reverify",
-      "authority": "Portal da Educação"
-    },
-    {
-      "date": "2027-07-10",
-      "pillar": "social_security",
-      "title": "July quarterly declaration: prepare the previous quarter’s records",
-      "timing": "rule_locked",
-      "authority": "Segurança Social"
-    },
-    {
-      "date": "2027-07-28",
-      "pillar": "social_security",
-      "title": "Quarterly Social Security declaration: final July checks",
-      "timing": "rule_locked",
-      "authority": "Segurança Social"
+      "authority": "https://www.dgaep.gov.pt/stap/infoPage.cfm?objid=9a36961c-71bc-40de-8ee0-5cdeb2dea832",
+      "sourceKey": "nationalHolidays",
+      "eventKey": "all-saints-2026",
+      "eventDate": "2026-11-01",
+      "calendarStatus": "confirmed_rule",
+      "campaignStage": "occasion",
+      "scope": "National mandatory holiday"
     }
   ]
 }
