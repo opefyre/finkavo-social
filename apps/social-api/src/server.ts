@@ -405,8 +405,11 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === "GET" && url.pathname === "/v1/planning/queue") {
-      const rows = await sql`SELECT c.* FROM social_post_concept c JOIN social_topic_evidence_bundle b ON b.id=c.evidence_bundle_id AND b.verification_state='verified' AND b.expires_at>now() WHERE c.status='planned' AND c.planned_for<=current_date+7 ORDER BY c.planned_for,c.score DESC LIMIT 25`;
-      return send(res, 200, { concepts: rows });
+      const requestedDate = url.searchParams.get("date");
+      const planningDate = requestedDate || lisbonDate(new Date());
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(planningDate)) return send(res, 400, { error: "date must be YYYY-MM-DD" });
+      const rows = await sql`SELECT c.* FROM social_post_concept c JOIN social_topic_evidence_bundle b ON b.id=c.evidence_bundle_id AND b.verification_state='verified' AND b.expires_at>now() WHERE c.status='planned' AND c.planned_for=${planningDate} ORDER BY c.score DESC LIMIT 5`;
+      return send(res, 200, { date: planningDate, concepts: rows });
     }
 
     if(req.method==="POST"&&url.pathname==="/v1/official-sources/snapshot"){
@@ -632,10 +635,17 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method === "GET" && url.pathname === "/v1/posts") {
       const status = url.searchParams.get("status");
-      const rows = status
-        ? await sql`SELECT * FROM social_post WHERE status = ${status} ORDER BY created_at DESC LIMIT 50`
-        : await sql`SELECT * FROM social_post ORDER BY created_at DESC LIMIT 50`;
-      return send(res, 200, { posts: rows });
+      const createdOn = url.searchParams.get("createdOn");
+      const createdDate = createdOn === "today" ? lisbonDate(new Date()) : createdOn;
+      if (createdDate && !/^\d{4}-\d{2}-\d{2}$/.test(createdDate)) return send(res, 400, { error: "createdOn must be today or YYYY-MM-DD" });
+      const rows = status && createdDate
+        ? await sql`SELECT * FROM social_post WHERE status=${status} AND (created_at AT TIME ZONE 'Europe/Lisbon')::DATE=${createdDate} ORDER BY created_at DESC LIMIT 5`
+        : status
+          ? await sql`SELECT * FROM social_post WHERE status=${status} ORDER BY created_at DESC LIMIT 50`
+          : createdDate
+            ? await sql`SELECT * FROM social_post WHERE (created_at AT TIME ZONE 'Europe/Lisbon')::DATE=${createdDate} ORDER BY created_at DESC LIMIT 50`
+            : await sql`SELECT * FROM social_post ORDER BY created_at DESC LIMIT 50`;
+      return send(res, 200, { createdOn: createdDate || null, posts: rows });
     }
 
     if (req.method === "POST" && url.pathname === "/v1/automation/advance") {

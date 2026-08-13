@@ -23,7 +23,7 @@
     },
     {
       "parameters": {
-        "url": "http://127.0.0.1:4320/v1/posts?status=draft",
+        "url": "http://127.0.0.1:4320/v1/posts?status=draft&createdOn=today",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpBearerAuth",
         "options": {
