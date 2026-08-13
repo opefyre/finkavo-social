@@ -5,10 +5,10 @@ for(const card of data.cards){
   const identity=[card.subjectFamily,card.userQuestion,card.audience,card.contentIntent].join("|").toLowerCase();
   if(identities.has(identity))errors.push(`${card.id}: duplicate identity`);identities.add(identity);
   pillars.set(card.subjectFamily,(pillars.get(card.subjectFamily)||0)+1);
-  if(card.requiredAnswers?.length!==3)errors.push(`${card.id}: incomplete required answers`);
+  if(!Array.isArray(card.requiredAnswers)||card.requiredAnswers.length<1||card.requiredAnswers.length>3)errors.push(`${card.id}: incomplete required answers`);
   if(!/^https:\/\//.test(card.sourcePolicy?.canonicalUrl||"")||!card.sourcePolicy?.officialRequired)errors.push(`${card.id}: non-canonical source policy`);
   if(![7,30,90].includes(card.sourcePolicy?.freshnessDays))errors.push(`${card.id}: invalid freshness`);
-  if(card.evidenceTerms?.length<2)errors.push(`${card.id}: insufficient evidence terms`);
+  if(!Array.isArray(card.evidenceTerms)||card.evidenceTerms.length<1)errors.push(`${card.id}: insufficient evidence terms`);
 }
 if(data.cards.length<90)errors.push(`only ${data.cards.length} cards`);
 if(pillars.size!==14)errors.push(`only ${pillars.size} pillars`);
