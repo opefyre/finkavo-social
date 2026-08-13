@@ -143,6 +143,11 @@
           "name": "Finkavo Social API"
         }
       }
+    },
+    {
+      "parameters":{"method":"POST","url":"http://127.0.0.1:4320/v1/reserve/replace-held","authentication":"genericCredentialType","genericAuthType":"httpBearerAuth","sendBody":true,"contentType":"raw","rawContentType":"application/json","body":"={}","options":{"timeout":30000}},
+      "id":"held-fallback","name":"Replace evidence holds with named reserve","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[980,0],
+      "credentials":{"httpBearerAuth":{"id":"socialApiBearer01","name":"Finkavo Social API"}}
     }
   ],
   "connections": {
@@ -180,7 +185,8 @@
       ]
     },
     "Verify official change candidates": {"main":[[{"node":"Choose verified news or named reserve","type":"main","index":0}]]},
-    "Choose verified news or named reserve": {"main":[[{"node":"Build verified multi-source evidence bundles","type":"main","index":0}]]}
+    "Choose verified news or named reserve": {"main":[[{"node":"Build verified multi-source evidence bundles","type":"main","index":0}]]},
+    "Build verified multi-source evidence bundles": {"main":[[{"node":"Replace evidence holds with named reserve","type":"main","index":0}]]}
   },
   "settings": {
     "executionOrder": "v1",
