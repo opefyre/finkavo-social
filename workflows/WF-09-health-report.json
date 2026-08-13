@@ -1,1 +1,68 @@
-{"name":"WF-09 Daily Health Report","nodes":[{"parameters":{"rule":{"interval":[{"field":"cronExpression","expression":"0 8 * * *"}]}},"id":"027277ae-3894-4453-913e-3cb3c0e32877","name":"Daily at 08:00","type":"n8n-nodes-base.scheduleTrigger","typeVersion":1.2,"position":[-300,0]},{"parameters":{"url":"http://127.0.0.1:4320/v1/health-report","authentication":"genericCredentialType","genericAuthType":"httpBearerAuth","options":{"timeout":30000}},"id":"33352513-3f22-4ed3-a4c8-e924b18561a1","name":"Get pipeline health","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[0,0]}],"connections":{"Daily at 08:00":{"main":[[{"node":"Get pipeline health","type":"main","index":0}]]}},"settings":{"executionOrder":"v1","timezone":"Europe/Lisbon"},"active":false,"tags":[]}
+{
+  "name": "WF-09 Daily Health Report",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "id": "027277ae-3894-4453-913e-3cb3c0e32877",
+      "name": "Daily at 08:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -300,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:4320/v1/health-report",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "33352513-3f22-4ed3-a4c8-e924b18561a1",
+      "name": "Get pipeline health",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "socialApiBearer01",
+          "name": "Finkavo Social API"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Daily at 08:00": {
+      "main": [
+        [
+          {
+            "node": "Get pipeline health",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Lisbon"
+  },
+  "active": false,
+  "tags": []
+}

@@ -1,1 +1,118 @@
-{"name":"WF-01 Official Portugal Change Monitoring","nodes":[{"parameters":{"rule":{"interval":[{"field":"hours","hoursInterval":2}]}},"id":"official-schedule","name":"Every 2 hours","type":"n8n-nodes-base.scheduleTrigger","typeVersion":1.2,"position":[-520,0]},{"parameters":{"url":"https://api.gdeltproject.org/api/v2/doc/doc?query=(domain:aima.gov.pt%20OR%20domain:gov.pt%20OR%20domain:portaldasfinancas.gov.pt%20OR%20domain:seg-social.pt%20OR%20domain:diariodarepublica.pt)%20(Portugal%20OR%20portuguese)&mode=ArtList&format=json&maxrecords=75&sort=DateDesc","options":{"timeout":30000}},"id":"official-fetch","name":"Fetch official portal changes","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[-280,0]},{"parameters":{"jsCode":"const classify=t=>{t=t.toLowerCase();if(/aima|residen|visa|migrant|estrangeir/.test(t))return'aima';if(/irs|rendimento/.test(t))return'irs';if(/iva|imposto|fiscal|tax/.test(t))return'tax';if(/seguran.a social|niss/.test(t))return'social_security';if(/casa|im.vel|habita/.test(t))return'housing';if(/emprego|trabalho/.test(t))return'employment';return'government'};const items=($json.articles||[]).filter(a=>a.url&&a.title).map(a=>({url:a.url,title:a.title,publisher:a.domain||null,locale:a.language==='Portuguese'?'pt':'en',publishedAt:null,category:classify(a.title),riskLevel:/prazo|deadline|lei|law|tax|irs|iva|residen|visa/i.test(a.title)?'high':'medium'}));return items.length?[{json:{items,sourceKind:'official_notice'}}]:[];"},"id":"official-normalize","name":"Classify official notices","type":"n8n-nodes-base.code","typeVersion":2,"position":[-40,0]},{"parameters":{"method":"POST","url":"http://127.0.0.1:4320/v1/discoveries","authentication":"genericCredentialType","genericAuthType":"httpBearerAuth","sendBody":true,"contentType":"raw","rawContentType":"application/json","body":"={{ JSON.stringify($json) }}","options":{"timeout":30000}},"id":"official-store","name":"Store official discoveries","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[200,0]}],"connections":{"Every 2 hours":{"main":[[{"node":"Fetch official portal changes","type":"main","index":0}]]},"Fetch official portal changes":{"main":[[{"node":"Classify official notices","type":"main","index":0}]]},"Classify official notices":{"main":[[{"node":"Store official discoveries","type":"main","index":0}]]}},"settings":{"executionOrder":"v1","timezone":"Europe/Lisbon"},"active":false,"tags":[]}
+{
+  "name": "WF-01 Official Portugal Change Monitoring (RSS)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+                "field": "cronExpression",
+                "expression": "45 */3 * * *"
+            }
+          ]
+        }
+      },
+      "id": "official-schedule",
+      "name": "Every 2 hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -520,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://news.google.com/rss/search?q=(site%3Agov.pt%20OR%20site%3Aaima.gov.pt%20OR%20site%3Aportaldasfinancas.gov.pt%20OR%20site%3Aseg-social.pt)%20Portugal&hl=pt-PT&gl=PT&ceid=PT:pt-150"
+      },
+      "id": "official-fetch",
+      "name": "Fetch official portal changes",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 30000,
+      "position": [
+        -280,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const classify=t=>{t=t.toLowerCase();if(/aima|residen|visa|migrant|estrangeir/.test(t))return'aima';if(/irs|rendimento/.test(t))return'irs';if(/iva|imposto|fiscal|tax/.test(t))return'tax';if(/seguran.a social|niss/.test(t))return'social_security';if(/casa|im.vel|habita/.test(t))return'housing';if(/emprego|trabalho/.test(t))return'employment';return'government'};const items=$input.all().map(({json:a})=>({url:a.link,title:a.title,publisher:a.creator||a.author||null,locale:'pt',publishedAt:a.isoDate||a.pubDate||null,category:classify(a.title||''),riskLevel:/prazo|deadline|lei|law|tax|irs|iva|residen|visa/i.test(a.title||'')?'high':'medium'})).filter(a=>a.url&&a.title).slice(0,100);return items.length?[{json:{items,sourceKind:'official_notice'}}]:[];"
+      },
+      "id": "official-normalize",
+      "name": "Classify official notices",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -40,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:4320/v1/discoveries",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify($json) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "official-store",
+      "name": "Store official discoveries",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        200,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Every 2 hours": {
+      "main": [
+        [
+          {
+            "node": "Fetch official portal changes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch official portal changes": {
+      "main": [
+        [
+          {
+            "node": "Classify official notices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify official notices": {
+      "main": [
+        [
+          {
+            "node": "Store official discoveries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Lisbon"
+  },
+  "active": false,
+  "tags": []
+}
