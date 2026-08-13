@@ -6,7 +6,7 @@
       "id": "official-schedule", "name": "Every 3 hours", "type": "n8n-nodes-base.scheduleTrigger", "typeVersion": 1.2, "position": [-700,0]
     },
     {
-      "parameters": {"jsCode":"const urls=['https://www.gov.pt/noticias','https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Pages/default.aspx','https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/prazos/Paginas/default.aspx','https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx','https://www.seg-social.pt/trabalhadores-independentes','https://diariodarepublica.pt/dr/home','https://clientebancario.bportugal.pt/pt-pt/noticias','https://www.dgeste.mec.pt/?page_id=53180'];return urls.map(url=>({json:{url}}));"},
+      "parameters": {"jsCode":"const urls=['https://www.gov.pt/noticias','https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/calendario_fiscal/Pages/default.aspx','https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/prazos/Paginas/default.aspx','https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx','https://www.seg-social.pt/trabalhadores-independentes','https://diariodarepublica.pt/dr/home','https://bpstat.bportugal.pt/conteudos/noticias','https://www.dgeste.mec.pt/?page_id=53180'];return urls.map(url=>({json:{url}}));"},
       "id": "official-urls", "name": "Canonical URLs", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [-480,0]
     },
     {
@@ -14,7 +14,7 @@
       "id": "official-fetch", "name": "Fetch canonical page", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "retryOnFail": true, "maxTries": 3, "waitBetweenTries": 30000, "position": [-240,0]
     },
     {
-      "parameters": {"jsCode":"const inputs=$input.all();const urls=$('Canonical URLs').all();return inputs.map((item,index)=>({json:{url:urls[index].json.url,httpStatus:Number(item.json.statusCode||200),body:String(item.json.body||''),fetchedAt:new Date().toISOString()}}));"},
+      "parameters": {"jsCode":"const inputs=$input.all();const urls=$('Canonical URLs').all();return inputs.map((item,index)=>({json:{url:urls[index].json.url,httpStatus:Number(item.json.statusCode||200),body:String(item.json.body||'').slice(0,750000),fetchedAt:new Date().toISOString()}}));"},
       "id": "official-normalize", "name": "Build snapshots", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [0,0]
     },
     {

@@ -41,7 +41,7 @@ inputs:
       - https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx
       - https://www.seg-social.pt/trabalhadores-independentes
       - https://diariodarepublica.pt/dr/home
-      - https://clientebancario.bportugal.pt/pt-pt/noticias
+      - https://bpstat.bportugal.pt/conteudos/noticias
     notes: Changes are discovery signals until the exact official URL and current content version exist in the canonical corpus.
   - id: gdelt-portugal
     type: keyless_news_discovery

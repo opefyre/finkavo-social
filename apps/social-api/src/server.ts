@@ -402,12 +402,13 @@ const server = http.createServer(async (req, res) => {
       const input=OfficialSnapshotSchema.parse(await readJson(req));
       const canonical=new URL(input.url);canonical.hash="";canonical.search="";const canonicalUrl=canonical.toString();
       if(!isOfficialUrl(canonicalUrl))return send(res,400,{error:"Only canonical official-authority URLs can be monitored"});
-      const normalized=input.body.replace(/<script[\s\S]*?<\/script>/gi,"").replace(/<style[\s\S]*?<\/style>/gi,"").replace(/\s+/g," ").trim();
+      const pageTitle=(input.body.match(/<title[^>]*>([^<]+)<\/title>/i)?.[1]||`Official page changed: ${canonical.hostname}`).replace(/\s+/g," ").trim().slice(0,300);
+      const normalized=input.body.replace(/<!--[\s\S]*?-->/g,"").replace(/<script[\s\S]*?<\/script>/gi,"").replace(/<style[\s\S]*?<\/style>/gi,"").replace(/<[^>]+>/g," ").replace(/&nbsp;|&#160;/gi," ").replace(/&amp;/gi,"&").replace(/\s+/g," ").trim();
       if(input.httpStatus<200||input.httpStatus>=400||normalized.length<100)return send(res,422,{error:"Official page fetch is unusable",httpStatus:input.httpStatus,contentLength:normalized.length});
       const contentHash=hash(normalized);const [previous]=await sql`SELECT content_hash FROM social_official_source_snapshot WHERE canonical_url=${canonicalUrl} ORDER BY fetched_at DESC LIMIT 1`;
       const changed=Boolean(previous&&previous.content_hash!==contentHash);
       await sql`INSERT INTO social_official_source_snapshot (canonical_url,http_status,content_hash,content_length,changed,fetched_at) VALUES (${canonicalUrl},${input.httpStatus},${contentHash},${normalized.length},${changed},${input.fetchedAt||new Date().toISOString()}) ON CONFLICT (canonical_url,content_hash) DO UPDATE SET fetched_at=excluded.fetched_at,http_status=excluded.http_status,content_length=excluded.content_length`;
-      if(changed){const title=(normalized.match(/<title[^>]*>([^<]+)<\/title>/i)?.[1]||`Official page changed: ${canonical.hostname}`).trim().slice(0,300);await sql`INSERT INTO social_discovery (canonical_url,title,publisher,locale,content_hash,source_kind,category,risk_level,raw_metadata) VALUES (${canonicalUrl},${title},${canonical.hostname},'pt',${contentHash},'official_notice',${classifyTopic(title)},'high',${sql.json({monitor:'canonical_page',previousHash:previous.content_hash})}) ON CONFLICT (canonical_url,content_hash) DO NOTHING`;}
+      if(changed){await sql`INSERT INTO social_discovery (canonical_url,title,publisher,locale,content_hash,source_kind,category,risk_level,raw_metadata) VALUES (${canonicalUrl},${pageTitle},${canonical.hostname},'pt',${contentHash},'official_notice',${classifyTopic(pageTitle)},'high',${sql.json({monitor:'canonical_page',previousHash:previous.content_hash})}) ON CONFLICT (canonical_url,content_hash) DO NOTHING`;}
       await sql`INSERT INTO social_event (event_type,payload) VALUES ('official_source.checked',${sql.json({canonicalUrl,contentHash,changed,httpStatus:input.httpStatus,contentLength:normalized.length})})`;
       return send(res,200,{canonicalUrl,contentHash,changed,baseline:!previous});
     }
