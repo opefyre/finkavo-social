@@ -15,6 +15,7 @@ import { composeInstagramCaption } from "./caption.js";
 import { loadAnnualPlan, rowsForDate } from "./annual-plan.js";
 import { findFactCard } from "./fact-cards.js";
 import { authenticatedReviewer } from "./access-auth.js";
+import { findDuplicate, type DuplicateCandidate } from "./duplicate.js";
 
 const databaseUrl = process.env.DATABASE_URL;
 const apiToken = process.env.SOCIAL_API_TOKEN;
@@ -42,6 +43,16 @@ const addLisbonDays = (day: string, days: number) => {
   const [year, month, date] = day.split("-").map(Number);
   return lisbonDate(new Date(Date.UTC(year, month - 1, date + days, 12)));
 };
+const recentActivePosts = async (excludeId?: string) => sql`
+  SELECT p.id,p.topic,p.category,p.post_intent,r.content_hash
+  FROM social_post p LEFT JOIN social_post_revision r ON r.id=p.current_revision_id
+  WHERE p.status NOT IN ('blocked','rejected','failed')
+    AND p.created_at > now() - INTERVAL '365 days'
+    ${excludeId ? sql`AND p.id <> ${excludeId}` : sql``}
+  ORDER BY p.created_at DESC
+`;
+const findRecentDuplicate = async (candidate: DuplicateCandidate, excludeId?: string) =>
+  findDuplicate(candidate, await recentActivePosts(excludeId) as DuplicateCandidate[]);
 const fit = (value: unknown, max: number) => {
   const text = String(value || "").trim();
   if (text.length > max) throw new Error(`Approved render text exceeds its ${max}-character contract`);
@@ -510,6 +521,14 @@ const server = http.createServer(async (req, res) => {
       const sourceBundle = evidenceSources.map(s=>({documentId:String(s.documentId),url:String(s.url),title:String(s.title),publisher:s.publisher?String(s.publisher):null,locale:String(s.locale),retrievedAt:String(s.retrievedAt),contentHash:String(s.contentHash),tier:String(s.tier)}));
       const evidenceHash = hash({ sourceBundle, claims: checked.claims });
       const contentHash = hash({ hook: checked.hook, caption: checked.caption, callToAction: checked.callToAction, hashtags: checked.hashtags, searchKeywords: checked.searchKeywords, postIntent: checked.postIntent, slides: checked.slides });
+      const duplicate = await findRecentDuplicate({ topic: checked.topic, category: checked.category, postIntent: checked.postIntent, content_hash: contentHash });
+      if (duplicate) {
+        await sql.begin(async tx => {
+          await tx`UPDATE social_post_concept SET status='used',updated_at=now() WHERE id=${selectedConcept.id}`;
+          await tx`INSERT INTO social_event(event_type,payload) VALUES('quality.duplicate_blocked',${tx.json({ conceptId: selectedConcept.id, duplicateOf: duplicate.post.id, reason: duplicate.reason, stage: 'generation' })})`;
+        });
+        return send(res, 409, { error: "Duplicate topic blocked", duplicateOf: duplicate.post.id, reason: duplicate.reason });
+      }
       const inserted = await sql.begin(async (tx) => {
         const [post] = await tx`
           INSERT INTO social_post (topic, source_document_id, source_url, source_title, source_authority, source_fetched_at,
@@ -628,6 +647,15 @@ const server = http.createServer(async (req, res) => {
         WHERE p.id = ${reviewRequest[1]} AND p.status = 'draft'
       `;
       if (!previewSource) return send(res, 409, { error: "Only a current draft revision can be sent for review" });
+      const duplicate = await findRecentDuplicate(previewSource as DuplicateCandidate, String(previewSource.id));
+      if (duplicate) {
+        await sql.begin(async tx => {
+          await tx`UPDATE social_review_token SET used_at=now() WHERE post_id=${previewSource.id} AND used_at IS NULL`;
+          await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${previewSource.id} AND status='draft'`;
+          await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${previewSource.id},'quality.duplicate_blocked',${tx.json({ duplicateOf: duplicate.post.id, reason: duplicate.reason, stage: 'review_request' })})`;
+        });
+        return send(res, 409, { error: "Duplicate topic blocked", duplicateOf: duplicate.post.id, reason: duplicate.reason });
+      }
       const previewFiles = await renderReviewPreview(createRenderManifest(previewSource as Record<string, unknown>, {
         id: previewSource.revision_id,
         slides: previewSource.revision_slides,
