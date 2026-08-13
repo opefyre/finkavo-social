@@ -25,8 +25,8 @@ This is the authoritative completion tracker. A box is checked only after the im
 
 ## 4. Evergreen reserve
 
-- [ ] Build at least 90 distinct, source-specific, generation-tested evergreen briefs.
-- [ ] Ensure reserve coverage across all 14 editorial pillars and major user journeys with a source that answers each brief.
+- [x] Build at least 90 distinct, source-specific evergreen briefs and validate their exact official-source coverage.
+- [x] Ensure reserve coverage across all 14 editorial pillars and major user journeys with a source that answers each brief.
 - [x] Prevent reserve use when its evidence is stale or its subject recently ran for the same audience and purpose.
 
 ## 5. Source and news reliability
@@ -83,3 +83,4 @@ This is the authoritative completion tracker. A box is checked only after the im
 | 2026-08-13 | Maintenance and alerts | Active WF-10: 15-minute alert checks, Monday 14-day plan/evidence/duplicate/reserve maintenance, monthly 90-day/performance review; live alert detected incomplete 2/5 batch | Pass |
 | 2026-08-13 | Evidence-hold fallback | Tomorrow live plan: four unsupported topics replaced by named evidence-current reserve briefs; final report 5 planned, 5 verified, 0 held | Pass |
 | 2026-08-13 | Live reserve generation audit | Five-post dry run: two drafts passed; six weak topic/source attempts were blocked automatically. Retry constraint and source-specific ranking were deployed; reserve curation remains open until at least 90 briefs pass the stricter source-answer test. No content was published or sent to Discord. | Correctly blocked |
+| 2026-08-13 | Curated evergreen reserve v2 | 98 intentional micro-briefs, seven per pillar; all 14 exact official sources fetched live; PDFKit extraction replaces raw PDF bytes; strict production audit found 98/98 source-supported, 98 eligible, zero unsupported. | Pass |

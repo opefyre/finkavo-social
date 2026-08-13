@@ -21,4 +21,10 @@ describe("social draft quality", () => {
     expect(() => assertEnglishUserCopy(["How your contribution is calculated: 21,4% sobre a base mensal calculada a partir da declaração trimestral.", "Regra geral de contribuição para trabalhadores independentes. O pagamento é mensal."])).toThrow(/English/);
     expect(() => assertEnglishUserCopy(["A Portuguese NIF is a tax identification number. Keep your Número de Identificação Fiscal available."])).not.toThrow();
   });
+  it("accepts legitimate official and payment acronyms", () => {
+    const candidate=structuredClone(good);
+    candidate.slides[0]!.body="Use ASAE for the official complaints route.";
+    candidate.slides[1]!.items=["Check the IBAN and NIB before a SWIFT transfer.","Use SPIN only through your payment provider."];
+    expect(()=>validateSocialDraft(candidate)).not.toThrow();
+  });
 });

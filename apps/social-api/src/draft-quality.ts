@@ -3,7 +3,7 @@ import { validateCaptionParts } from "./caption.js";
 
 const endsIncomplete = (value: string) => /(?:\b(?:and|or|to|the|a|an|of|in|on|for|with|from|by|as)|[,;:—-])$/i.test(value.trim().replace(/[.!?)]$/, "").trim());
 const completeSentence = (value: string) => /[.!?)]$/.test(value.trim()) && !endsIncomplete(value);
-const hasPresentationArtifacts = (value: string) => /\bnoneof\b/i.test(value) || /\*\*|^\s*[-*]\s|^[A-Za-z0-9]+,\s*[A-Z]\d+:|\b(?!(?:AIMA|IRS|IVA|NISS|IMI|AIMI|SEPA|IEFP|IBAN|SNS|EEA|IRN|EU)\b)[A-ZÁÉÍÓÚÇ]{4,}\b/.test(value);
+const hasPresentationArtifacts = (value: string) => /\bnoneof\b/i.test(value) || /\*\*|^\s*[-*]\s|^[A-Za-z0-9]+,\s*[A-Z]\d+:|\b(?!(?:AIMA|ASAE|AIMI|ACT|BIC|CIVA|CPAS|DGE|DGESTE|EEA|EU|IBAN|IEFP|IMI|IMT|IRN|IRS|IVA|NIB|NIPC|NIF|NISS|PLNM|REPSAE|SEPA|SNS|SPIN|SWIFT)\b)[A-ZÁÉÍÓÚÇ]{4,}\b/.test(value);
 const portugueseMarkers = /\b(?:a|ao|aos|as|com|como|da|das|de|declaração|do|dos|e|em|é|isenção|mensal|não|o|os|pagamento|para|passo|pela|pelo|por|prazo|regime|rendimento|sobre|trimestral|uma|valor)\b/giu;
 
 export function assertEnglishUserCopy(values: unknown[]) {
