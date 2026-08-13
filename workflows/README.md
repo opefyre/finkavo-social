@@ -1,6 +1,6 @@
 # n8n workflow exports
 
-These exports contain no credentials or instance-specific credential IDs. After import, attach the shared Social API Bearer Auth credential to each local Social API request node. All publishing workflows remain inactive until Buffer is configured and an approved test is explicitly authorized.
+These exports contain no secrets. The production instance attaches its encrypted Social API Bearer credential after import. Scheduled production workflows are active; the separate manual render, schedule, and monitor exports remain inactive recovery controls.
 
 ## Workflow map
 

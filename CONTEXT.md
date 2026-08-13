@@ -347,7 +347,7 @@ Deferred:
 - trend scraping or unofficial Instagram automation;
 - optimization driven by Buffer's experimental metrics;
 - more than one Instagram channel;
-- five-post daily cadence.
+- cadence above five posts per day.
 
 ## 10. Acceptance criteria for the implementation phase
 
