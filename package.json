@@ -14,6 +14,8 @@
     "plan:build": "node scripts/build-annual-content-plan.mjs",
     "plan:validate": "node scripts/validate-curated-plan.mjs",
     "calendar:validate": "node scripts/validate-official-calendar.mjs",
+    "reserve:build": "node scripts/build-evergreen-reserve.mjs",
+    "reserve:validate": "node scripts/validate-evergreen-reserve.mjs",
     "n8n:up": "docker compose --env-file .env -f infrastructure/n8n/compose.yaml up -d",
     "n8n:down": "docker compose --env-file .env -f infrastructure/n8n/compose.yaml down",
     "n8n:logs": "docker compose --env-file .env -f infrastructure/n8n/compose.yaml logs -f n8n"

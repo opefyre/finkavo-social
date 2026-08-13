@@ -17,6 +17,7 @@ import { findFactCard } from "./fact-cards.js";
 import { authenticatedReviewer } from "./access-auth.js";
 import { findDuplicate, type DuplicateCandidate } from "./duplicate.js";
 import { editorialIdentity } from "./editorial-identity.js";
+import { eligibleReserveCards, loadEvergreenReserve } from "./evergreen-reserve.js";
 
 const databaseUrl = process.env.DATABASE_URL;
 const apiToken = process.env.SOCIAL_API_TOKEN;
@@ -411,6 +412,14 @@ const server = http.createServer(async (req, res) => {
       if(changed){await sql`INSERT INTO social_discovery (canonical_url,title,publisher,locale,content_hash,source_kind,category,risk_level,raw_metadata) VALUES (${canonicalUrl},${pageTitle},${canonical.hostname},'pt',${contentHash},'official_notice',${classifyTopic(pageTitle)},'high',${sql.json({monitor:'canonical_page',previousHash:previous.content_hash})}) ON CONFLICT (canonical_url,content_hash) DO NOTHING`;}
       await sql`INSERT INTO social_event (event_type,payload) VALUES ('official_source.checked',${sql.json({canonicalUrl,contentHash,changed,httpStatus:input.httpStatus,contentLength:normalized.length})})`;
       return send(res,200,{canonicalUrl,contentHash,changed,baseline:!previous});
+    }
+
+    if(req.method==="GET"&&url.pathname==="/v1/reserve/eligible"){
+      const cards=await loadEvergreenReserve();const urls=[...new Set(cards.map(card=>card.sourcePolicy.canonicalUrl))];
+      const documents=await sql`SELECT source_url AS "canonicalUrl",COALESCE(last_verified_at,fetched_at) AS "verifiedAt" FROM document WHERE source_url IN ${sql(urls)} AND source_tier='official' AND verified_still_available=true AND freshness_confidence='fresh'`;
+      const recent=await sql`SELECT subject_family AS "subjectFamily",user_question AS "userQuestion",audience,content_intent AS "contentIntent",created_at AS "usedAt" FROM social_post WHERE created_at>now()-INTERVAL '90 days' AND status NOT IN ('blocked','rejected','failed')`;
+      const eligible=eligibleReserveCards(cards,documents.map(row=>({canonicalUrl:String(row.canonicalUrl),verifiedAt:String(row.verifiedAt)})),recent.map(row=>({subjectFamily:String(row.subjectFamily||""),userQuestion:String(row.userQuestion||""),audience:String(row.audience||""),contentIntent:String(row.contentIntent||""),usedAt:String(row.usedAt)})));
+      return send(res,200,{total:cards.length,eligible:eligible.length,held:cards.length-eligible.length,cards:eligible});
     }
 
     if (req.method === "POST" && url.pathname === "/v1/discoveries") {

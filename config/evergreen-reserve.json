@@ -1,0 +1,2849 @@
+{
+  "version": 1,
+  "generatedAt": "2026-08-13T17:26:11.945Z",
+  "minimum": 90,
+  "cards": [
+    {
+      "id": "reserve-identity_access-01",
+      "subjectFamily": "identity_access",
+      "topic": "What a Portuguese NIF is",
+      "userQuestion": "What does someone living in Portugal need to know about what a portuguese nif is?",
+      "audience": "new residents",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give new residents a complete practical answer about What a Portuguese NIF is.",
+      "requiredAnswers": [
+        "Explain What a Portuguese NIF is in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/pedir-o-numero-de-identificacao-fiscal-para-pessoa-singular",
+        "requiredAuthority": "gov.pt",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "What a Portuguese NIF is",
+        "NIF",
+        "NISS",
+        "Chave Móvel Digital",
+        "Portal das Finanças",
+        "Segurança Social Direta"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-identity_access-02",
+      "subjectFamily": "identity_access",
+      "topic": "Getting a NIF as a resident",
+      "userQuestion": "What does someone living in Portugal need to know about getting a nif as a resident?",
+      "audience": "new residents",
+      "contentIntent": "checklist",
+      "purpose": "Give new residents a complete practical answer about Getting a NIF as a resident.",
+      "requiredAnswers": [
+        "Explain Getting a NIF as a resident in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/pedir-o-numero-de-identificacao-fiscal-para-pessoa-singular",
+        "requiredAuthority": "gov.pt",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Getting a NIF as a resident",
+        "NIF",
+        "NISS",
+        "Chave Móvel Digital",
+        "Portal das Finanças",
+        "Segurança Social Direta"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-identity_access-03",
+      "subjectFamily": "identity_access",
+      "topic": "Getting a NIF before moving",
+      "userQuestion": "What does someone living in Portugal need to know about getting a nif before moving?",
+      "audience": "new residents",
+      "contentIntent": "common_mistake",
+      "purpose": "Give new residents a complete practical answer about Getting a NIF before moving.",
+      "requiredAnswers": [
+        "Explain Getting a NIF before moving in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/pedir-o-numero-de-identificacao-fiscal-para-pessoa-singular",
+        "requiredAuthority": "gov.pt",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Getting a NIF before moving",
+        "NIF",
+        "NISS",
+        "Chave Móvel Digital",
+        "Portal das Finanças",
+        "Segurança Social Direta"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-identity_access-04",
+      "subjectFamily": "identity_access",
+      "topic": "Finding your NIF on official documents",
+      "userQuestion": "What does someone living in Portugal need to know about finding your nif on official documents?",
+      "audience": "new residents",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give new residents a complete practical answer about Finding your NIF on official documents.",
+      "requiredAnswers": [
+        "Explain Finding your NIF on official documents in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/pedir-o-numero-de-identificacao-fiscal-para-pessoa-singular",
+        "requiredAuthority": "gov.pt",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Finding your NIF on official documents",
+        "NIF",
+        "NISS",
+        "Chave Móvel Digital",
+        "Portal das Finanças",
+        "Segurança Social Direta"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-identity_access-05",
+      "subjectFamily": "identity_access",
+      "topic": "Changing the address linked to your NIF",
+      "userQuestion": "What does someone living in Portugal need to know about changing the address linked to your nif?",
+      "audience": "new residents",
+      "contentIntent": "checklist",
+      "purpose": "Give new residents a complete practical answer about Changing the address linked to your NIF.",
+      "requiredAnswers": [
+        "Explain Changing the address linked to your NIF in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/pedir-o-numero-de-identificacao-fiscal-para-pessoa-singular",
+        "requiredAuthority": "gov.pt",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Changing the address linked to your NIF",
+        "NIF",
+        "NISS",
+        "Chave Móvel Digital",
+        "Portal das Finanças",
+        "Segurança Social Direta"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-identity_access-06",
+      "subjectFamily": "identity_access",
+      "topic": "Tax representation and when it applies",
+      "userQuestion": "What does someone living in Portugal need to know about tax representation and when it applies?",
+      "audience": "new residents",
+      "contentIntent": "common_mistake",
+      "purpose": "Give new residents a complete practical answer about Tax representation and when it applies.",
+      "requiredAnswers": [
+        "Explain Tax representation and when it applies in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/pedir-o-numero-de-identificacao-fiscal-para-pessoa-singular",
+        "requiredAuthority": "gov.pt",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Tax representation and when it applies",
+        "NIF",
+        "NISS",
+        "Chave Móvel Digital",
+        "Portal das Finanças",
+        "Segurança Social Direta"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-identity_access-07",
+      "subjectFamily": "identity_access",
+      "topic": "What a NISS is",
+      "userQuestion": "What does someone living in Portugal need to know about what a niss is?",
+      "audience": "new residents",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give new residents a complete practical answer about What a NISS is.",
+      "requiredAnswers": [
+        "Explain What a NISS is in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/pedir-o-numero-de-identificacao-fiscal-para-pessoa-singular",
+        "requiredAuthority": "gov.pt",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "What a NISS is",
+        "NIF",
+        "NISS",
+        "Chave Móvel Digital",
+        "Portal das Finanças",
+        "Segurança Social Direta"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-immigration_residency-01",
+      "subjectFamily": "immigration_residency",
+      "topic": "Visa versus residence permit",
+      "userQuestion": "What does someone living in Portugal need to know about visa versus residence permit?",
+      "audience": "international residents",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give international residents a complete practical answer about Visa versus residence permit.",
+      "requiredAnswers": [
+        "Explain Visa versus residence permit in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://aima.gov.pt/pt/viver/autorizacao-de-residencia-regime-e-requisitos-gerais-art-o-77-o-n-o-1",
+        "requiredAuthority": "AIMA",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Visa versus residence permit",
+        "AIMA",
+        "autorização de residência",
+        "visto",
+        "reagrupamento familiar",
+        "CPLP"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-immigration_residency-02",
+      "subjectFamily": "immigration_residency",
+      "topic": "Residence title versus EU registration certificate",
+      "userQuestion": "What does someone living in Portugal need to know about residence title versus eu registration certificate?",
+      "audience": "international residents",
+      "contentIntent": "checklist",
+      "purpose": "Give international residents a complete practical answer about Residence title versus EU registration certificate.",
+      "requiredAnswers": [
+        "Explain Residence title versus EU registration certificate in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://aima.gov.pt/pt/viver/autorizacao-de-residencia-regime-e-requisitos-gerais-art-o-77-o-n-o-1",
+        "requiredAuthority": "AIMA",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Residence title versus EU registration certificate",
+        "AIMA",
+        "autorização de residência",
+        "visto",
+        "reagrupamento familiar",
+        "CPLP"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-immigration_residency-03",
+      "subjectFamily": "immigration_residency",
+      "topic": "Preparing for an AIMA appointment",
+      "userQuestion": "What does someone living in Portugal need to know about preparing for an aima appointment?",
+      "audience": "international residents",
+      "contentIntent": "common_mistake",
+      "purpose": "Give international residents a complete practical answer about Preparing for an AIMA appointment.",
+      "requiredAnswers": [
+        "Explain Preparing for an AIMA appointment in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://aima.gov.pt/pt/viver/autorizacao-de-residencia-regime-e-requisitos-gerais-art-o-77-o-n-o-1",
+        "requiredAuthority": "AIMA",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Preparing for an AIMA appointment",
+        "AIMA",
+        "autorização de residência",
+        "visto",
+        "reagrupamento familiar",
+        "CPLP"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-immigration_residency-04",
+      "subjectFamily": "immigration_residency",
+      "topic": "Residence renewal preparation",
+      "userQuestion": "What does someone living in Portugal need to know about residence renewal preparation?",
+      "audience": "international residents",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give international residents a complete practical answer about Residence renewal preparation.",
+      "requiredAnswers": [
+        "Explain Residence renewal preparation in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://aima.gov.pt/pt/viver/autorizacao-de-residencia-regime-e-requisitos-gerais-art-o-77-o-n-o-1",
+        "requiredAuthority": "AIMA",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Residence renewal preparation",
+        "AIMA",
+        "autorização de residência",
+        "visto",
+        "reagrupamento familiar",
+        "CPLP"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-immigration_residency-05",
+      "subjectFamily": "immigration_residency",
+      "topic": "Using the AIMA renewals portal",
+      "userQuestion": "What does someone living in Portugal need to know about using the aima renewals portal?",
+      "audience": "international residents",
+      "contentIntent": "checklist",
+      "purpose": "Give international residents a complete practical answer about Using the AIMA renewals portal.",
+      "requiredAnswers": [
+        "Explain Using the AIMA renewals portal in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://aima.gov.pt/pt/viver/autorizacao-de-residencia-regime-e-requisitos-gerais-art-o-77-o-n-o-1",
+        "requiredAuthority": "AIMA",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Using the AIMA renewals portal",
+        "AIMA",
+        "autorização de residência",
+        "visto",
+        "reagrupamento familiar",
+        "CPLP"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-immigration_residency-06",
+      "subjectFamily": "immigration_residency",
+      "topic": "Family reunification basics",
+      "userQuestion": "What does someone living in Portugal need to know about family reunification basics?",
+      "audience": "international residents",
+      "contentIntent": "common_mistake",
+      "purpose": "Give international residents a complete practical answer about Family reunification basics.",
+      "requiredAnswers": [
+        "Explain Family reunification basics in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://aima.gov.pt/pt/viver/autorizacao-de-residencia-regime-e-requisitos-gerais-art-o-77-o-n-o-1",
+        "requiredAuthority": "AIMA",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Family reunification basics",
+        "AIMA",
+        "autorização de residência",
+        "visto",
+        "reagrupamento familiar",
+        "CPLP"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-immigration_residency-07",
+      "subjectFamily": "immigration_residency",
+      "topic": "D7 residence route",
+      "userQuestion": "What does someone living in Portugal need to know about d7 residence route?",
+      "audience": "international residents",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give international residents a complete practical answer about D7 residence route.",
+      "requiredAnswers": [
+        "Explain D7 residence route in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://aima.gov.pt/pt/viver/autorizacao-de-residencia-regime-e-requisitos-gerais-art-o-77-o-n-o-1",
+        "requiredAuthority": "AIMA",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "D7 residence route",
+        "AIMA",
+        "autorização de residência",
+        "visto",
+        "reagrupamento familiar",
+        "CPLP"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-citizenship_civil-01",
+      "subjectFamily": "citizenship_civil",
+      "topic": "Residence and citizenship are different processes",
+      "userQuestion": "What does someone living in Portugal need to know about residence and citizenship are different processes?",
+      "audience": "residents building a long-term life",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give residents building a long-term life a complete practical answer about Residence and citizenship are different processes.",
+      "requiredAnswers": [
+        "Explain Residence and citizenship are different processes in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://justica.gov.pt/Como-obter-nacionalidade-portuguesa",
+        "requiredAuthority": "Justiça/IRN",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Residence and citizenship are different processes",
+        "IRN",
+        "cidadania",
+        "nacionalidade",
+        "registo civil",
+        "Nascer Cidadão"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-citizenship_civil-02",
+      "subjectFamily": "citizenship_civil",
+      "topic": "Portuguese citizenship document checklist",
+      "userQuestion": "What does someone living in Portugal need to know about portuguese citizenship document checklist?",
+      "audience": "residents building a long-term life",
+      "contentIntent": "checklist",
+      "purpose": "Give residents building a long-term life a complete practical answer about Portuguese citizenship document checklist.",
+      "requiredAnswers": [
+        "Explain Portuguese citizenship document checklist in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://justica.gov.pt/Como-obter-nacionalidade-portuguesa",
+        "requiredAuthority": "Justiça/IRN",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Portuguese citizenship document checklist",
+        "IRN",
+        "cidadania",
+        "nacionalidade",
+        "registo civil",
+        "Nascer Cidadão"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-citizenship_civil-03",
+      "subjectFamily": "citizenship_civil",
+      "topic": "Counting legal residence time",
+      "userQuestion": "What does someone living in Portugal need to know about counting legal residence time?",
+      "audience": "residents building a long-term life",
+      "contentIntent": "common_mistake",
+      "purpose": "Give residents building a long-term life a complete practical answer about Counting legal residence time.",
+      "requiredAnswers": [
+        "Explain Counting legal residence time in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://justica.gov.pt/Como-obter-nacionalidade-portuguesa",
+        "requiredAuthority": "Justiça/IRN",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Counting legal residence time",
+        "IRN",
+        "cidadania",
+        "nacionalidade",
+        "registo civil",
+        "Nascer Cidadão"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-citizenship_civil-04",
+      "subjectFamily": "citizenship_civil",
+      "topic": "Birth registration in Portugal",
+      "userQuestion": "What does someone living in Portugal need to know about birth registration in portugal?",
+      "audience": "residents building a long-term life",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give residents building a long-term life a complete practical answer about Birth registration in Portugal.",
+      "requiredAnswers": [
+        "Explain Birth registration in Portugal in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://justica.gov.pt/Como-obter-nacionalidade-portuguesa",
+        "requiredAuthority": "Justiça/IRN",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Birth registration in Portugal",
+        "IRN",
+        "cidadania",
+        "nacionalidade",
+        "registo civil",
+        "Nascer Cidadão"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-citizenship_civil-05",
+      "subjectFamily": "citizenship_civil",
+      "topic": "Nascer Cidadão service",
+      "userQuestion": "What does someone living in Portugal need to know about nascer cidadão service?",
+      "audience": "residents building a long-term life",
+      "contentIntent": "checklist",
+      "purpose": "Give residents building a long-term life a complete practical answer about Nascer Cidadão service.",
+      "requiredAnswers": [
+        "Explain Nascer Cidadão service in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://justica.gov.pt/Como-obter-nacionalidade-portuguesa",
+        "requiredAuthority": "Justiça/IRN",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Nascer Cidadão service",
+        "IRN",
+        "cidadania",
+        "nacionalidade",
+        "registo civil",
+        "Nascer Cidadão"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-citizenship_civil-06",
+      "subjectFamily": "citizenship_civil",
+      "topic": "Marriage registration",
+      "userQuestion": "What does someone living in Portugal need to know about marriage registration?",
+      "audience": "residents building a long-term life",
+      "contentIntent": "common_mistake",
+      "purpose": "Give residents building a long-term life a complete practical answer about Marriage registration.",
+      "requiredAnswers": [
+        "Explain Marriage registration in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://justica.gov.pt/Como-obter-nacionalidade-portuguesa",
+        "requiredAuthority": "Justiça/IRN",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Marriage registration",
+        "IRN",
+        "cidadania",
+        "nacionalidade",
+        "registo civil",
+        "Nascer Cidadão"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-citizenship_civil-07",
+      "subjectFamily": "citizenship_civil",
+      "topic": "Requesting Portuguese civil certificates",
+      "userQuestion": "What does someone living in Portugal need to know about requesting portuguese civil certificates?",
+      "audience": "residents building a long-term life",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give residents building a long-term life a complete practical answer about Requesting Portuguese civil certificates.",
+      "requiredAnswers": [
+        "Explain Requesting Portuguese civil certificates in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://justica.gov.pt/Como-obter-nacionalidade-portuguesa",
+        "requiredAuthority": "Justiça/IRN",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Requesting Portuguese civil certificates",
+        "IRN",
+        "cidadania",
+        "nacionalidade",
+        "registo civil",
+        "Nascer Cidadão"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-freelance_business-01",
+      "subjectFamily": "freelance_business",
+      "topic": "Opening freelance activity in Portugal",
+      "userQuestion": "What does someone living in Portugal need to know about opening freelance activity in portugal?",
+      "audience": "freelancers and solo founders",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give freelancers and solo founders a complete practical answer about Opening freelance activity in Portugal.",
+      "requiredAnswers": [
+        "Explain Opening freelance activity in Portugal in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/abrir-atividade-nas-financas",
+        "requiredAuthority": "gov.pt / Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Opening freelance activity in Portugal",
+        "trabalhador independente",
+        "abrir atividade",
+        "recibos verdes",
+        "CAE",
+        "CIRS"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-freelance_business-02",
+      "subjectFamily": "freelance_business",
+      "topic": "Choosing a CAE or CIRS activity code",
+      "userQuestion": "What does someone living in Portugal need to know about choosing a cae or cirs activity code?",
+      "audience": "freelancers and solo founders",
+      "contentIntent": "checklist",
+      "purpose": "Give freelancers and solo founders a complete practical answer about Choosing a CAE or CIRS activity code.",
+      "requiredAnswers": [
+        "Explain Choosing a CAE or CIRS activity code in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/abrir-atividade-nas-financas",
+        "requiredAuthority": "gov.pt / Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Choosing a CAE or CIRS activity code",
+        "trabalhador independente",
+        "abrir atividade",
+        "recibos verdes",
+        "CAE",
+        "CIRS"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-freelance_business-03",
+      "subjectFamily": "freelance_business",
+      "topic": "Changing an activity code later",
+      "userQuestion": "What does someone living in Portugal need to know about changing an activity code later?",
+      "audience": "freelancers and solo founders",
+      "contentIntent": "common_mistake",
+      "purpose": "Give freelancers and solo founders a complete practical answer about Changing an activity code later.",
+      "requiredAnswers": [
+        "Explain Changing an activity code later in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/abrir-atividade-nas-financas",
+        "requiredAuthority": "gov.pt / Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Changing an activity code later",
+        "trabalhador independente",
+        "abrir atividade",
+        "recibos verdes",
+        "CAE",
+        "CIRS"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-freelance_business-04",
+      "subjectFamily": "freelance_business",
+      "topic": "Simplified accounting versus organised accounting",
+      "userQuestion": "What does someone living in Portugal need to know about simplified accounting versus organised accounting?",
+      "audience": "freelancers and solo founders",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give freelancers and solo founders a complete practical answer about Simplified accounting versus organised accounting.",
+      "requiredAnswers": [
+        "Explain Simplified accounting versus organised accounting in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/abrir-atividade-nas-financas",
+        "requiredAuthority": "gov.pt / Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Simplified accounting versus organised accounting",
+        "trabalhador independente",
+        "abrir atividade",
+        "recibos verdes",
+        "CAE",
+        "CIRS"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-freelance_business-05",
+      "subjectFamily": "freelance_business",
+      "topic": "What recibos verdes are",
+      "userQuestion": "What does someone living in Portugal need to know about what recibos verdes are?",
+      "audience": "freelancers and solo founders",
+      "contentIntent": "checklist",
+      "purpose": "Give freelancers and solo founders a complete practical answer about What recibos verdes are.",
+      "requiredAnswers": [
+        "Explain What recibos verdes are in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/abrir-atividade-nas-financas",
+        "requiredAuthority": "gov.pt / Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "What recibos verdes are",
+        "trabalhador independente",
+        "abrir atividade",
+        "recibos verdes",
+        "CAE",
+        "CIRS"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-freelance_business-06",
+      "subjectFamily": "freelance_business",
+      "topic": "Invoice, invoice-receipt and receipt differences",
+      "userQuestion": "What does someone living in Portugal need to know about invoice, invoice-receipt and receipt differences?",
+      "audience": "freelancers and solo founders",
+      "contentIntent": "common_mistake",
+      "purpose": "Give freelancers and solo founders a complete practical answer about Invoice, invoice-receipt and receipt differences.",
+      "requiredAnswers": [
+        "Explain Invoice, invoice-receipt and receipt differences in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/abrir-atividade-nas-financas",
+        "requiredAuthority": "gov.pt / Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Invoice, invoice-receipt and receipt differences",
+        "trabalhador independente",
+        "abrir atividade",
+        "recibos verdes",
+        "CAE",
+        "CIRS"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-freelance_business-07",
+      "subjectFamily": "freelance_business",
+      "topic": "Correcting a Portuguese invoice",
+      "userQuestion": "What does someone living in Portugal need to know about correcting a portuguese invoice?",
+      "audience": "freelancers and solo founders",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give freelancers and solo founders a complete practical answer about Correcting a Portuguese invoice.",
+      "requiredAnswers": [
+        "Explain Correcting a Portuguese invoice in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/abrir-atividade-nas-financas",
+        "requiredAuthority": "gov.pt / Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Correcting a Portuguese invoice",
+        "trabalhador independente",
+        "abrir atividade",
+        "recibos verdes",
+        "CAE",
+        "CIRS"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-iva-01",
+      "subjectFamily": "iva",
+      "topic": "What IVA is",
+      "userQuestion": "What does someone living in Portugal need to know about what iva is?",
+      "audience": "freelancers and small businesses",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give freelancers and small businesses a complete practical answer about What IVA is.",
+      "requiredAnswers": [
+        "Explain What IVA is in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/IVA/Pages/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "What IVA is",
+        "IVA",
+        "CIVA",
+        "artigo 53",
+        "declaração periódica",
+        "VIES"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-iva-02",
+      "subjectFamily": "iva",
+      "topic": "Article 53 IVA exemption",
+      "userQuestion": "What does someone living in Portugal need to know about article 53 iva exemption?",
+      "audience": "freelancers and small businesses",
+      "contentIntent": "checklist",
+      "purpose": "Give freelancers and small businesses a complete practical answer about Article 53 IVA exemption.",
+      "requiredAnswers": [
+        "Explain Article 53 IVA exemption in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/IVA/Pages/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Article 53 IVA exemption",
+        "IVA",
+        "CIVA",
+        "artigo 53",
+        "declaração periódica",
+        "VIES"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-iva-03",
+      "subjectFamily": "iva",
+      "topic": "Monitoring the IVA exemption threshold",
+      "userQuestion": "What does someone living in Portugal need to know about monitoring the iva exemption threshold?",
+      "audience": "freelancers and small businesses",
+      "contentIntent": "common_mistake",
+      "purpose": "Give freelancers and small businesses a complete practical answer about Monitoring the IVA exemption threshold.",
+      "requiredAnswers": [
+        "Explain Monitoring the IVA exemption threshold in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/IVA/Pages/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Monitoring the IVA exemption threshold",
+        "IVA",
+        "CIVA",
+        "artigo 53",
+        "declaração periódica",
+        "VIES"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-iva-04",
+      "subjectFamily": "iva",
+      "topic": "Entering the normal IVA regime",
+      "userQuestion": "What does someone living in Portugal need to know about entering the normal iva regime?",
+      "audience": "freelancers and small businesses",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give freelancers and small businesses a complete practical answer about Entering the normal IVA regime.",
+      "requiredAnswers": [
+        "Explain Entering the normal IVA regime in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/IVA/Pages/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Entering the normal IVA regime",
+        "IVA",
+        "CIVA",
+        "artigo 53",
+        "declaração periódica",
+        "VIES"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-iva-05",
+      "subjectFamily": "iva",
+      "topic": "Leaving the IVA exemption",
+      "userQuestion": "What does someone living in Portugal need to know about leaving the iva exemption?",
+      "audience": "freelancers and small businesses",
+      "contentIntent": "checklist",
+      "purpose": "Give freelancers and small businesses a complete practical answer about Leaving the IVA exemption.",
+      "requiredAnswers": [
+        "Explain Leaving the IVA exemption in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/IVA/Pages/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Leaving the IVA exemption",
+        "IVA",
+        "CIVA",
+        "artigo 53",
+        "declaração periódica",
+        "VIES"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-iva-06",
+      "subjectFamily": "iva",
+      "topic": "Monthly versus quarterly IVA",
+      "userQuestion": "What does someone living in Portugal need to know about monthly versus quarterly iva?",
+      "audience": "freelancers and small businesses",
+      "contentIntent": "common_mistake",
+      "purpose": "Give freelancers and small businesses a complete practical answer about Monthly versus quarterly IVA.",
+      "requiredAnswers": [
+        "Explain Monthly versus quarterly IVA in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/IVA/Pages/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Monthly versus quarterly IVA",
+        "IVA",
+        "CIVA",
+        "artigo 53",
+        "declaração periódica",
+        "VIES"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-iva-07",
+      "subjectFamily": "iva",
+      "topic": "Quarterly IVA declaration basics",
+      "userQuestion": "What does someone living in Portugal need to know about quarterly iva declaration basics?",
+      "audience": "freelancers and small businesses",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give freelancers and small businesses a complete practical answer about Quarterly IVA declaration basics.",
+      "requiredAnswers": [
+        "Explain Quarterly IVA declaration basics in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/IVA/Pages/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Quarterly IVA declaration basics",
+        "IVA",
+        "CIVA",
+        "artigo 53",
+        "declaração periódica",
+        "VIES"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-irs-01",
+      "subjectFamily": "irs",
+      "topic": "What Portuguese IRS is",
+      "userQuestion": "What does someone living in Portugal need to know about what portuguese irs is?",
+      "audience": "people filing personal income tax",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give people filing personal income tax a complete practical answer about What Portuguese IRS is.",
+      "requiredAnswers": [
+        "Explain What Portuguese IRS is in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/Paginas/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "What Portuguese IRS is",
+        "IRS",
+        "Modelo 3",
+        "e-Fatura",
+        "Anexo J",
+        "IRS Automático"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-irs-02",
+      "subjectFamily": "irs",
+      "topic": "Who normally files Modelo 3",
+      "userQuestion": "What does someone living in Portugal need to know about who normally files modelo 3?",
+      "audience": "people filing personal income tax",
+      "contentIntent": "checklist",
+      "purpose": "Give people filing personal income tax a complete practical answer about Who normally files Modelo 3.",
+      "requiredAnswers": [
+        "Explain Who normally files Modelo 3 in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/Paginas/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Who normally files Modelo 3",
+        "IRS",
+        "Modelo 3",
+        "e-Fatura",
+        "Anexo J",
+        "IRS Automático"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-irs-03",
+      "subjectFamily": "irs",
+      "topic": "Tax residence and IRS",
+      "userQuestion": "What does someone living in Portugal need to know about tax residence and irs?",
+      "audience": "people filing personal income tax",
+      "contentIntent": "common_mistake",
+      "purpose": "Give people filing personal income tax a complete practical answer about Tax residence and IRS.",
+      "requiredAnswers": [
+        "Explain Tax residence and IRS in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/Paginas/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Tax residence and IRS",
+        "IRS",
+        "Modelo 3",
+        "e-Fatura",
+        "Anexo J",
+        "IRS Automático"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-irs-04",
+      "subjectFamily": "irs",
+      "topic": "Preparing for IRS season",
+      "userQuestion": "What does someone living in Portugal need to know about preparing for irs season?",
+      "audience": "people filing personal income tax",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give people filing personal income tax a complete practical answer about Preparing for IRS season.",
+      "requiredAnswers": [
+        "Explain Preparing for IRS season in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/Paginas/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Preparing for IRS season",
+        "IRS",
+        "Modelo 3",
+        "e-Fatura",
+        "Anexo J",
+        "IRS Automático"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-irs-05",
+      "subjectFamily": "irs",
+      "topic": "Checking household information before IRS",
+      "userQuestion": "What does someone living in Portugal need to know about checking household information before irs?",
+      "audience": "people filing personal income tax",
+      "contentIntent": "checklist",
+      "purpose": "Give people filing personal income tax a complete practical answer about Checking household information before IRS.",
+      "requiredAnswers": [
+        "Explain Checking household information before IRS in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/Paginas/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Checking household information before IRS",
+        "IRS",
+        "Modelo 3",
+        "e-Fatura",
+        "Anexo J",
+        "IRS Automático"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-irs-06",
+      "subjectFamily": "irs",
+      "topic": "Validating e-Fatura expenses",
+      "userQuestion": "What does someone living in Portugal need to know about validating e-fatura expenses?",
+      "audience": "people filing personal income tax",
+      "contentIntent": "common_mistake",
+      "purpose": "Give people filing personal income tax a complete practical answer about Validating e-Fatura expenses.",
+      "requiredAnswers": [
+        "Explain Validating e-Fatura expenses in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/Paginas/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Validating e-Fatura expenses",
+        "IRS",
+        "Modelo 3",
+        "e-Fatura",
+        "Anexo J",
+        "IRS Automático"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-irs-07",
+      "subjectFamily": "irs",
+      "topic": "Reviewing automatic IRS",
+      "userQuestion": "What does someone living in Portugal need to know about reviewing automatic irs?",
+      "audience": "people filing personal income tax",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give people filing personal income tax a complete practical answer about Reviewing automatic IRS.",
+      "requiredAnswers": [
+        "Explain Reviewing automatic IRS in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/Paginas/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Reviewing automatic IRS",
+        "IRS",
+        "Modelo 3",
+        "e-Fatura",
+        "Anexo J",
+        "IRS Automático"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-social_security-01",
+      "subjectFamily": "social_security",
+      "topic": "What Portuguese Social Security covers",
+      "userQuestion": "What does someone living in Portugal need to know about what portuguese social security covers?",
+      "audience": "workers and freelancers",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give workers and freelancers a complete practical answer about What Portuguese Social Security covers.",
+      "requiredAnswers": [
+        "Explain What Portuguese Social Security covers in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.seg-social.pt/trabalhadores-independentes",
+        "requiredAuthority": "Segurança Social",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "What Portuguese Social Security covers",
+        "Segurança Social",
+        "declaração trimestral",
+        "contribuições",
+        "NISS",
+        "desemprego"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-social_security-02",
+      "subjectFamily": "social_security",
+      "topic": "Registering as a self-employed worker",
+      "userQuestion": "What does someone living in Portugal need to know about registering as a self-employed worker?",
+      "audience": "workers and freelancers",
+      "contentIntent": "checklist",
+      "purpose": "Give workers and freelancers a complete practical answer about Registering as a self-employed worker.",
+      "requiredAnswers": [
+        "Explain Registering as a self-employed worker in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.seg-social.pt/trabalhadores-independentes",
+        "requiredAuthority": "Segurança Social",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Registering as a self-employed worker",
+        "Segurança Social",
+        "declaração trimestral",
+        "contribuições",
+        "NISS",
+        "desemprego"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-social_security-03",
+      "subjectFamily": "social_security",
+      "topic": "First-year Social Security treatment",
+      "userQuestion": "What does someone living in Portugal need to know about first-year social security treatment?",
+      "audience": "workers and freelancers",
+      "contentIntent": "common_mistake",
+      "purpose": "Give workers and freelancers a complete practical answer about First-year Social Security treatment.",
+      "requiredAnswers": [
+        "Explain First-year Social Security treatment in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.seg-social.pt/trabalhadores-independentes",
+        "requiredAuthority": "Segurança Social",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "First-year Social Security treatment",
+        "Segurança Social",
+        "declaração trimestral",
+        "contribuições",
+        "NISS",
+        "desemprego"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-social_security-04",
+      "subjectFamily": "social_security",
+      "topic": "Quarterly Social Security declarations",
+      "userQuestion": "What does someone living in Portugal need to know about quarterly social security declarations?",
+      "audience": "workers and freelancers",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give workers and freelancers a complete practical answer about Quarterly Social Security declarations.",
+      "requiredAnswers": [
+        "Explain Quarterly Social Security declarations in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.seg-social.pt/trabalhadores-independentes",
+        "requiredAuthority": "Segurança Social",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Quarterly Social Security declarations",
+        "Segurança Social",
+        "declaração trimestral",
+        "contribuições",
+        "NISS",
+        "desemprego"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-social_security-05",
+      "subjectFamily": "social_security",
+      "topic": "Income included in a quarterly declaration",
+      "userQuestion": "What does someone living in Portugal need to know about income included in a quarterly declaration?",
+      "audience": "workers and freelancers",
+      "contentIntent": "checklist",
+      "purpose": "Give workers and freelancers a complete practical answer about Income included in a quarterly declaration.",
+      "requiredAnswers": [
+        "Explain Income included in a quarterly declaration in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.seg-social.pt/trabalhadores-independentes",
+        "requiredAuthority": "Segurança Social",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Income included in a quarterly declaration",
+        "Segurança Social",
+        "declaração trimestral",
+        "contribuições",
+        "NISS",
+        "desemprego"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-social_security-06",
+      "subjectFamily": "social_security",
+      "topic": "Correcting a quarterly declaration",
+      "userQuestion": "What does someone living in Portugal need to know about correcting a quarterly declaration?",
+      "audience": "workers and freelancers",
+      "contentIntent": "common_mistake",
+      "purpose": "Give workers and freelancers a complete practical answer about Correcting a quarterly declaration.",
+      "requiredAnswers": [
+        "Explain Correcting a quarterly declaration in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.seg-social.pt/trabalhadores-independentes",
+        "requiredAuthority": "Segurança Social",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Correcting a quarterly declaration",
+        "Segurança Social",
+        "declaração trimestral",
+        "contribuições",
+        "NISS",
+        "desemprego"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-social_security-07",
+      "subjectFamily": "social_security",
+      "topic": "Keeping proof of a quarterly declaration",
+      "userQuestion": "What does someone living in Portugal need to know about keeping proof of a quarterly declaration?",
+      "audience": "workers and freelancers",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give workers and freelancers a complete practical answer about Keeping proof of a quarterly declaration.",
+      "requiredAnswers": [
+        "Explain Keeping proof of a quarterly declaration in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.seg-social.pt/trabalhadores-independentes",
+        "requiredAuthority": "Segurança Social",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Keeping proof of a quarterly declaration",
+        "Segurança Social",
+        "declaração trimestral",
+        "contribuições",
+        "NISS",
+        "desemprego"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-housing_property-01",
+      "subjectFamily": "housing_property",
+      "topic": "Reading a Portuguese rental contract",
+      "userQuestion": "What does someone living in Portugal need to know about reading a portuguese rental contract?",
+      "audience": "renters and property owners",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give renters and property owners a complete practical answer about Reading a Portuguese rental contract.",
+      "requiredAnswers": [
+        "Explain Reading a Portuguese rental contract in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Paginas/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Reading a Portuguese rental contract",
+        "arrendamento",
+        "IMI",
+        "AIMI",
+        "IMT",
+        "imóvel"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-housing_property-02",
+      "subjectFamily": "housing_property",
+      "topic": "Registering a rental contract",
+      "userQuestion": "What does someone living in Portugal need to know about registering a rental contract?",
+      "audience": "renters and property owners",
+      "contentIntent": "checklist",
+      "purpose": "Give renters and property owners a complete practical answer about Registering a rental contract.",
+      "requiredAnswers": [
+        "Explain Registering a rental contract in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Paginas/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Registering a rental contract",
+        "arrendamento",
+        "IMI",
+        "AIMI",
+        "IMT",
+        "imóvel"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-housing_property-03",
+      "subjectFamily": "housing_property",
+      "topic": "Rental receipts",
+      "userQuestion": "What does someone living in Portugal need to know about rental receipts?",
+      "audience": "renters and property owners",
+      "contentIntent": "common_mistake",
+      "purpose": "Give renters and property owners a complete practical answer about Rental receipts.",
+      "requiredAnswers": [
+        "Explain Rental receipts in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Paginas/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Rental receipts",
+        "arrendamento",
+        "IMI",
+        "AIMI",
+        "IMT",
+        "imóvel"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-housing_property-04",
+      "subjectFamily": "housing_property",
+      "topic": "Security deposits and records",
+      "userQuestion": "What does someone living in Portugal need to know about security deposits and records?",
+      "audience": "renters and property owners",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give renters and property owners a complete practical answer about Security deposits and records.",
+      "requiredAnswers": [
+        "Explain Security deposits and records in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Paginas/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Security deposits and records",
+        "arrendamento",
+        "IMI",
+        "AIMI",
+        "IMT",
+        "imóvel"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-housing_property-05",
+      "subjectFamily": "housing_property",
+      "topic": "Proof of address for renters",
+      "userQuestion": "What does someone living in Portugal need to know about proof of address for renters?",
+      "audience": "renters and property owners",
+      "contentIntent": "checklist",
+      "purpose": "Give renters and property owners a complete practical answer about Proof of address for renters.",
+      "requiredAnswers": [
+        "Explain Proof of address for renters in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Paginas/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Proof of address for renters",
+        "arrendamento",
+        "IMI",
+        "AIMI",
+        "IMT",
+        "imóvel"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-housing_property-06",
+      "subjectFamily": "housing_property",
+      "topic": "Changing utilities after moving",
+      "userQuestion": "What does someone living in Portugal need to know about changing utilities after moving?",
+      "audience": "renters and property owners",
+      "contentIntent": "common_mistake",
+      "purpose": "Give renters and property owners a complete practical answer about Changing utilities after moving.",
+      "requiredAnswers": [
+        "Explain Changing utilities after moving in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Paginas/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "Changing utilities after moving",
+        "arrendamento",
+        "IMI",
+        "AIMI",
+        "IMT",
+        "imóvel"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-housing_property-07",
+      "subjectFamily": "housing_property",
+      "topic": "What IMI is",
+      "userQuestion": "What does someone living in Portugal need to know about what imi is?",
+      "audience": "renters and property owners",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give renters and property owners a complete practical answer about What IMI is.",
+      "requiredAnswers": [
+        "Explain What IMI is in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Paginas/default.aspx",
+        "requiredAuthority": "Autoridade Tributária",
+        "officialRequired": true,
+        "freshnessDays": 7
+      },
+      "evidenceTerms": [
+        "What IMI is",
+        "arrendamento",
+        "IMI",
+        "AIMI",
+        "IMT",
+        "imóvel"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-banking_money-01",
+      "subjectFamily": "banking_money",
+      "topic": "Opening a Portuguese bank account",
+      "userQuestion": "What does someone living in Portugal need to know about opening a portuguese bank account?",
+      "audience": "people managing money in Portugal",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give people managing money in Portugal a complete practical answer about Opening a Portuguese bank account.",
+      "requiredAnswers": [
+        "Explain Opening a Portuguese bank account in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/pt-pt",
+        "requiredAuthority": "Banco de Portugal",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Opening a Portuguese bank account",
+        "Banco de Portugal",
+        "SEPA",
+        "conta bancária",
+        "IBAN",
+        "crédito"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-banking_money-02",
+      "subjectFamily": "banking_money",
+      "topic": "Resident versus non-resident bank accounts",
+      "userQuestion": "What does someone living in Portugal need to know about resident versus non-resident bank accounts?",
+      "audience": "people managing money in Portugal",
+      "contentIntent": "checklist",
+      "purpose": "Give people managing money in Portugal a complete practical answer about Resident versus non-resident bank accounts.",
+      "requiredAnswers": [
+        "Explain Resident versus non-resident bank accounts in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/pt-pt",
+        "requiredAuthority": "Banco de Portugal",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Resident versus non-resident bank accounts",
+        "Banco de Portugal",
+        "SEPA",
+        "conta bancária",
+        "IBAN",
+        "crédito"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-banking_money-03",
+      "subjectFamily": "banking_money",
+      "topic": "Documents banks request",
+      "userQuestion": "What does someone living in Portugal need to know about documents banks request?",
+      "audience": "people managing money in Portugal",
+      "contentIntent": "common_mistake",
+      "purpose": "Give people managing money in Portugal a complete practical answer about Documents banks request.",
+      "requiredAnswers": [
+        "Explain Documents banks request in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/pt-pt",
+        "requiredAuthority": "Banco de Portugal",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Documents banks request",
+        "Banco de Portugal",
+        "SEPA",
+        "conta bancária",
+        "IBAN",
+        "crédito"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-banking_money-04",
+      "subjectFamily": "banking_money",
+      "topic": "Understanding Portuguese IBANs",
+      "userQuestion": "What does someone living in Portugal need to know about understanding portuguese ibans?",
+      "audience": "people managing money in Portugal",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give people managing money in Portugal a complete practical answer about Understanding Portuguese IBANs.",
+      "requiredAnswers": [
+        "Explain Understanding Portuguese IBANs in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/pt-pt",
+        "requiredAuthority": "Banco de Portugal",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Understanding Portuguese IBANs",
+        "Banco de Portugal",
+        "SEPA",
+        "conta bancária",
+        "IBAN",
+        "crédito"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-banking_money-05",
+      "subjectFamily": "banking_money",
+      "topic": "SEPA transfers",
+      "userQuestion": "What does someone living in Portugal need to know about sepa transfers?",
+      "audience": "people managing money in Portugal",
+      "contentIntent": "checklist",
+      "purpose": "Give people managing money in Portugal a complete practical answer about SEPA transfers.",
+      "requiredAnswers": [
+        "Explain SEPA transfers in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/pt-pt",
+        "requiredAuthority": "Banco de Portugal",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "SEPA transfers",
+        "Banco de Portugal",
+        "SEPA",
+        "conta bancária",
+        "IBAN",
+        "crédito"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-banking_money-06",
+      "subjectFamily": "banking_money",
+      "topic": "Direct debits",
+      "userQuestion": "What does someone living in Portugal need to know about direct debits?",
+      "audience": "people managing money in Portugal",
+      "contentIntent": "common_mistake",
+      "purpose": "Give people managing money in Portugal a complete practical answer about Direct debits.",
+      "requiredAnswers": [
+        "Explain Direct debits in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/pt-pt",
+        "requiredAuthority": "Banco de Portugal",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Direct debits",
+        "Banco de Portugal",
+        "SEPA",
+        "conta bancária",
+        "IBAN",
+        "crédito"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-banking_money-07",
+      "subjectFamily": "banking_money",
+      "topic": "Multibanco payments",
+      "userQuestion": "What does someone living in Portugal need to know about multibanco payments?",
+      "audience": "people managing money in Portugal",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give people managing money in Portugal a complete practical answer about Multibanco payments.",
+      "requiredAnswers": [
+        "Explain Multibanco payments in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/pt-pt",
+        "requiredAuthority": "Banco de Portugal",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Multibanco payments",
+        "Banco de Portugal",
+        "SEPA",
+        "conta bancária",
+        "IBAN",
+        "crédito"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-employment-01",
+      "subjectFamily": "employment",
+      "topic": "Reading a Portuguese employment contract",
+      "userQuestion": "What does someone living in Portugal need to know about reading a portuguese employment contract?",
+      "audience": "employees and job seekers",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give employees and job seekers a complete practical answer about Reading a Portuguese employment contract.",
+      "requiredAnswers": [
+        "Explain Reading a Portuguese employment contract in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://portal.act.gov.pt/Pages/Home.aspx",
+        "requiredAuthority": "ACT",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Reading a Portuguese employment contract",
+        "contrato de trabalho",
+        "emprego",
+        "salário",
+        "férias",
+        "desemprego"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-employment-02",
+      "subjectFamily": "employment",
+      "topic": "Gross salary versus take-home pay",
+      "userQuestion": "What does someone living in Portugal need to know about gross salary versus take-home pay?",
+      "audience": "employees and job seekers",
+      "contentIntent": "checklist",
+      "purpose": "Give employees and job seekers a complete practical answer about Gross salary versus take-home pay.",
+      "requiredAnswers": [
+        "Explain Gross salary versus take-home pay in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://portal.act.gov.pt/Pages/Home.aspx",
+        "requiredAuthority": "ACT",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Gross salary versus take-home pay",
+        "contrato de trabalho",
+        "emprego",
+        "salário",
+        "férias",
+        "desemprego"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-employment-03",
+      "subjectFamily": "employment",
+      "topic": "Meal allowance",
+      "userQuestion": "What does someone living in Portugal need to know about meal allowance?",
+      "audience": "employees and job seekers",
+      "contentIntent": "common_mistake",
+      "purpose": "Give employees and job seekers a complete practical answer about Meal allowance.",
+      "requiredAnswers": [
+        "Explain Meal allowance in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://portal.act.gov.pt/Pages/Home.aspx",
+        "requiredAuthority": "ACT",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Meal allowance",
+        "contrato de trabalho",
+        "emprego",
+        "salário",
+        "férias",
+        "desemprego"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-employment-04",
+      "subjectFamily": "employment",
+      "topic": "Holiday and Christmas allowances",
+      "userQuestion": "What does someone living in Portugal need to know about holiday and christmas allowances?",
+      "audience": "employees and job seekers",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give employees and job seekers a complete practical answer about Holiday and Christmas allowances.",
+      "requiredAnswers": [
+        "Explain Holiday and Christmas allowances in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://portal.act.gov.pt/Pages/Home.aspx",
+        "requiredAuthority": "ACT",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Holiday and Christmas allowances",
+        "contrato de trabalho",
+        "emprego",
+        "salário",
+        "férias",
+        "desemprego"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-employment-05",
+      "subjectFamily": "employment",
+      "topic": "Payslip basics",
+      "userQuestion": "What does someone living in Portugal need to know about payslip basics?",
+      "audience": "employees and job seekers",
+      "contentIntent": "checklist",
+      "purpose": "Give employees and job seekers a complete practical answer about Payslip basics.",
+      "requiredAnswers": [
+        "Explain Payslip basics in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://portal.act.gov.pt/Pages/Home.aspx",
+        "requiredAuthority": "ACT",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Payslip basics",
+        "contrato de trabalho",
+        "emprego",
+        "salário",
+        "férias",
+        "desemprego"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-employment-06",
+      "subjectFamily": "employment",
+      "topic": "Probation periods",
+      "userQuestion": "What does someone living in Portugal need to know about probation periods?",
+      "audience": "employees and job seekers",
+      "contentIntent": "common_mistake",
+      "purpose": "Give employees and job seekers a complete practical answer about Probation periods.",
+      "requiredAnswers": [
+        "Explain Probation periods in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://portal.act.gov.pt/Pages/Home.aspx",
+        "requiredAuthority": "ACT",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Probation periods",
+        "contrato de trabalho",
+        "emprego",
+        "salário",
+        "férias",
+        "desemprego"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-employment-07",
+      "subjectFamily": "employment",
+      "topic": "Fixed-term versus permanent contracts",
+      "userQuestion": "What does someone living in Portugal need to know about fixed-term versus permanent contracts?",
+      "audience": "employees and job seekers",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give employees and job seekers a complete practical answer about Fixed-term versus permanent contracts.",
+      "requiredAnswers": [
+        "Explain Fixed-term versus permanent contracts in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://portal.act.gov.pt/Pages/Home.aspx",
+        "requiredAuthority": "ACT",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Fixed-term versus permanent contracts",
+        "contrato de trabalho",
+        "emprego",
+        "salário",
+        "férias",
+        "desemprego"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-health_family-01",
+      "subjectFamily": "health_family",
+      "topic": "Registering with the SNS",
+      "userQuestion": "What does someone living in Portugal need to know about registering with the sns?",
+      "audience": "individuals and families",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give individuals and families a complete practical answer about Registering with the SNS.",
+      "requiredAnswers": [
+        "Explain Registering with the SNS in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.sns24.gov.pt/",
+        "requiredAuthority": "SNS 24",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Registering with the SNS",
+        "SNS",
+        "centro de saúde",
+        "médico de família",
+        "nascimento",
+        "família"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-health_family-02",
+      "subjectFamily": "health_family",
+      "topic": "Getting an SNS user number",
+      "userQuestion": "What does someone living in Portugal need to know about getting an sns user number?",
+      "audience": "individuals and families",
+      "contentIntent": "checklist",
+      "purpose": "Give individuals and families a complete practical answer about Getting an SNS user number.",
+      "requiredAnswers": [
+        "Explain Getting an SNS user number in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.sns24.gov.pt/",
+        "requiredAuthority": "SNS 24",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Getting an SNS user number",
+        "SNS",
+        "centro de saúde",
+        "médico de família",
+        "nascimento",
+        "família"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-health_family-03",
+      "subjectFamily": "health_family",
+      "topic": "Registering at a health centre",
+      "userQuestion": "What does someone living in Portugal need to know about registering at a health centre?",
+      "audience": "individuals and families",
+      "contentIntent": "common_mistake",
+      "purpose": "Give individuals and families a complete practical answer about Registering at a health centre.",
+      "requiredAnswers": [
+        "Explain Registering at a health centre in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.sns24.gov.pt/",
+        "requiredAuthority": "SNS 24",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Registering at a health centre",
+        "SNS",
+        "centro de saúde",
+        "médico de família",
+        "nascimento",
+        "família"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-health_family-04",
+      "subjectFamily": "health_family",
+      "topic": "Requesting or changing a family doctor",
+      "userQuestion": "What does someone living in Portugal need to know about requesting or changing a family doctor?",
+      "audience": "individuals and families",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give individuals and families a complete practical answer about Requesting or changing a family doctor.",
+      "requiredAnswers": [
+        "Explain Requesting or changing a family doctor in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.sns24.gov.pt/",
+        "requiredAuthority": "SNS 24",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Requesting or changing a family doctor",
+        "SNS",
+        "centro de saúde",
+        "médico de família",
+        "nascimento",
+        "família"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-health_family-05",
+      "subjectFamily": "health_family",
+      "topic": "Using SNS 24",
+      "userQuestion": "What does someone living in Portugal need to know about using sns 24?",
+      "audience": "individuals and families",
+      "contentIntent": "checklist",
+      "purpose": "Give individuals and families a complete practical answer about Using SNS 24.",
+      "requiredAnswers": [
+        "Explain Using SNS 24 in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.sns24.gov.pt/",
+        "requiredAuthority": "SNS 24",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Using SNS 24",
+        "SNS",
+        "centro de saúde",
+        "médico de família",
+        "nascimento",
+        "família"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-health_family-06",
+      "subjectFamily": "health_family",
+      "topic": "Electronic prescriptions",
+      "userQuestion": "What does someone living in Portugal need to know about electronic prescriptions?",
+      "audience": "individuals and families",
+      "contentIntent": "common_mistake",
+      "purpose": "Give individuals and families a complete practical answer about Electronic prescriptions.",
+      "requiredAnswers": [
+        "Explain Electronic prescriptions in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.sns24.gov.pt/",
+        "requiredAuthority": "SNS 24",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Electronic prescriptions",
+        "SNS",
+        "centro de saúde",
+        "médico de família",
+        "nascimento",
+        "família"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-health_family-07",
+      "subjectFamily": "health_family",
+      "topic": "European Health Insurance Card",
+      "userQuestion": "What does someone living in Portugal need to know about european health insurance card?",
+      "audience": "individuals and families",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give individuals and families a complete practical answer about European Health Insurance Card.",
+      "requiredAnswers": [
+        "Explain European Health Insurance Card in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.sns24.gov.pt/",
+        "requiredAuthority": "SNS 24",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "European Health Insurance Card",
+        "SNS",
+        "centro de saúde",
+        "médico de família",
+        "nascimento",
+        "família"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-driving_transport-01",
+      "subjectFamily": "driving_transport",
+      "topic": "Using a foreign driving licence in Portugal",
+      "userQuestion": "What does someone living in Portugal need to know about using a foreign driving licence in portugal?",
+      "audience": "drivers and commuters",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give drivers and commuters a complete practical answer about Using a foreign driving licence in Portugal.",
+      "requiredAnswers": [
+        "Explain Using a foreign driving licence in Portugal in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.imt-ip.pt/sites/IMTT/Portugues/Condutores/CartaConducao/Paginas/Carta-de-Conducao.aspx",
+        "requiredAuthority": "IMT",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Using a foreign driving licence in Portugal",
+        "IMT",
+        "carta de condução",
+        "IUC",
+        "veículo",
+        "Via Verde"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-driving_transport-02",
+      "subjectFamily": "driving_transport",
+      "topic": "Exchanging an EU driving licence",
+      "userQuestion": "What does someone living in Portugal need to know about exchanging an eu driving licence?",
+      "audience": "drivers and commuters",
+      "contentIntent": "checklist",
+      "purpose": "Give drivers and commuters a complete practical answer about Exchanging an EU driving licence.",
+      "requiredAnswers": [
+        "Explain Exchanging an EU driving licence in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.imt-ip.pt/sites/IMTT/Portugues/Condutores/CartaConducao/Paginas/Carta-de-Conducao.aspx",
+        "requiredAuthority": "IMT",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Exchanging an EU driving licence",
+        "IMT",
+        "carta de condução",
+        "IUC",
+        "veículo",
+        "Via Verde"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-driving_transport-03",
+      "subjectFamily": "driving_transport",
+      "topic": "Exchanging a non-EU driving licence",
+      "userQuestion": "What does someone living in Portugal need to know about exchanging a non-eu driving licence?",
+      "audience": "drivers and commuters",
+      "contentIntent": "common_mistake",
+      "purpose": "Give drivers and commuters a complete practical answer about Exchanging a non-EU driving licence.",
+      "requiredAnswers": [
+        "Explain Exchanging a non-EU driving licence in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.imt-ip.pt/sites/IMTT/Portugues/Condutores/CartaConducao/Paginas/Carta-de-Conducao.aspx",
+        "requiredAuthority": "IMT",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Exchanging a non-EU driving licence",
+        "IMT",
+        "carta de condução",
+        "IUC",
+        "veículo",
+        "Via Verde"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-driving_transport-04",
+      "subjectFamily": "driving_transport",
+      "topic": "Driving-licence exchange documents",
+      "userQuestion": "What does someone living in Portugal need to know about driving-licence exchange documents?",
+      "audience": "drivers and commuters",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give drivers and commuters a complete practical answer about Driving-licence exchange documents.",
+      "requiredAnswers": [
+        "Explain Driving-licence exchange documents in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.imt-ip.pt/sites/IMTT/Portugues/Condutores/CartaConducao/Paginas/Carta-de-Conducao.aspx",
+        "requiredAuthority": "IMT",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Driving-licence exchange documents",
+        "IMT",
+        "carta de condução",
+        "IUC",
+        "veículo",
+        "Via Verde"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-driving_transport-05",
+      "subjectFamily": "driving_transport",
+      "topic": "What happens when a foreign licence expires",
+      "userQuestion": "What does someone living in Portugal need to know about what happens when a foreign licence expires?",
+      "audience": "drivers and commuters",
+      "contentIntent": "checklist",
+      "purpose": "Give drivers and commuters a complete practical answer about What happens when a foreign licence expires.",
+      "requiredAnswers": [
+        "Explain What happens when a foreign licence expires in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.imt-ip.pt/sites/IMTT/Portugues/Condutores/CartaConducao/Paginas/Carta-de-Conducao.aspx",
+        "requiredAuthority": "IMT",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "What happens when a foreign licence expires",
+        "IMT",
+        "carta de condução",
+        "IUC",
+        "veículo",
+        "Via Verde"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-driving_transport-06",
+      "subjectFamily": "driving_transport",
+      "topic": "Buying a used car",
+      "userQuestion": "What does someone living in Portugal need to know about buying a used car?",
+      "audience": "drivers and commuters",
+      "contentIntent": "common_mistake",
+      "purpose": "Give drivers and commuters a complete practical answer about Buying a used car.",
+      "requiredAnswers": [
+        "Explain Buying a used car in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.imt-ip.pt/sites/IMTT/Portugues/Condutores/CartaConducao/Paginas/Carta-de-Conducao.aspx",
+        "requiredAuthority": "IMT",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Buying a used car",
+        "IMT",
+        "carta de condução",
+        "IUC",
+        "veículo",
+        "Via Verde"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-driving_transport-07",
+      "subjectFamily": "driving_transport",
+      "topic": "Checking vehicle documents",
+      "userQuestion": "What does someone living in Portugal need to know about checking vehicle documents?",
+      "audience": "drivers and commuters",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give drivers and commuters a complete practical answer about Checking vehicle documents.",
+      "requiredAnswers": [
+        "Explain Checking vehicle documents in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.imt-ip.pt/sites/IMTT/Portugues/Condutores/CartaConducao/Paginas/Carta-de-Conducao.aspx",
+        "requiredAuthority": "IMT",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Checking vehicle documents",
+        "IMT",
+        "carta de condução",
+        "IUC",
+        "veículo",
+        "Via Verde"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-education_children-01",
+      "subjectFamily": "education_children",
+      "topic": "Enrolling a child in a Portuguese school",
+      "userQuestion": "What does someone living in Portugal need to know about enrolling a child in a portuguese school?",
+      "audience": "families and students",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give families and students a complete practical answer about Enrolling a child in a Portuguese school.",
+      "requiredAnswers": [
+        "Explain Enrolling a child in a Portuguese school in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.dgeste.mec.pt/",
+        "requiredAuthority": "DGEstE",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Enrolling a child in a Portuguese school",
+        "matrícula escolar",
+        "educação",
+        "equivalência",
+        "reconhecimento",
+        "MEGA"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-education_children-02",
+      "subjectFamily": "education_children",
+      "topic": "School-enrolment documents",
+      "userQuestion": "What does someone living in Portugal need to know about school-enrolment documents?",
+      "audience": "families and students",
+      "contentIntent": "checklist",
+      "purpose": "Give families and students a complete practical answer about School-enrolment documents.",
+      "requiredAnswers": [
+        "Explain School-enrolment documents in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.dgeste.mec.pt/",
+        "requiredAuthority": "DGEstE",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "School-enrolment documents",
+        "matrícula escolar",
+        "educação",
+        "equivalência",
+        "reconhecimento",
+        "MEGA"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-education_children-03",
+      "subjectFamily": "education_children",
+      "topic": "School catchment areas",
+      "userQuestion": "What does someone living in Portugal need to know about school catchment areas?",
+      "audience": "families and students",
+      "contentIntent": "common_mistake",
+      "purpose": "Give families and students a complete practical answer about School catchment areas.",
+      "requiredAnswers": [
+        "Explain School catchment areas in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.dgeste.mec.pt/",
+        "requiredAuthority": "DGEstE",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "School catchment areas",
+        "matrícula escolar",
+        "educação",
+        "equivalência",
+        "reconhecimento",
+        "MEGA"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-education_children-04",
+      "subjectFamily": "education_children",
+      "topic": "Renewing school enrolment",
+      "userQuestion": "What does someone living in Portugal need to know about renewing school enrolment?",
+      "audience": "families and students",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give families and students a complete practical answer about Renewing school enrolment.",
+      "requiredAnswers": [
+        "Explain Renewing school enrolment in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.dgeste.mec.pt/",
+        "requiredAuthority": "DGEstE",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Renewing school enrolment",
+        "matrícula escolar",
+        "educação",
+        "equivalência",
+        "reconhecimento",
+        "MEGA"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-education_children-05",
+      "subjectFamily": "education_children",
+      "topic": "Portuguese-language support for students",
+      "userQuestion": "What does someone living in Portugal need to know about portuguese-language support for students?",
+      "audience": "families and students",
+      "contentIntent": "checklist",
+      "purpose": "Give families and students a complete practical answer about Portuguese-language support for students.",
+      "requiredAnswers": [
+        "Explain Portuguese-language support for students in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.dgeste.mec.pt/",
+        "requiredAuthority": "DGEstE",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Portuguese-language support for students",
+        "matrícula escolar",
+        "educação",
+        "equivalência",
+        "reconhecimento",
+        "MEGA"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-education_children-06",
+      "subjectFamily": "education_children",
+      "topic": "Recognising foreign school records",
+      "userQuestion": "What does someone living in Portugal need to know about recognising foreign school records?",
+      "audience": "families and students",
+      "contentIntent": "common_mistake",
+      "purpose": "Give families and students a complete practical answer about Recognising foreign school records.",
+      "requiredAnswers": [
+        "Explain Recognising foreign school records in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.dgeste.mec.pt/",
+        "requiredAuthority": "DGEstE",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Recognising foreign school records",
+        "matrícula escolar",
+        "educação",
+        "equivalência",
+        "reconhecimento",
+        "MEGA"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-education_children-07",
+      "subjectFamily": "education_children",
+      "topic": "School-meal and support applications",
+      "userQuestion": "What does someone living in Portugal need to know about school-meal and support applications?",
+      "audience": "families and students",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give families and students a complete practical answer about School-meal and support applications.",
+      "requiredAnswers": [
+        "Explain School-meal and support applications in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.dgeste.mec.pt/",
+        "requiredAuthority": "DGEstE",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "School-meal and support applications",
+        "matrícula escolar",
+        "educação",
+        "equivalência",
+        "reconhecimento",
+        "MEGA"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-daily_life_consumer-01",
+      "subjectFamily": "daily_life_consumer",
+      "topic": "Using ePortugal to find public services",
+      "userQuestion": "What does someone living in Portugal need to know about using eportugal to find public services?",
+      "audience": "everyone living in Portugal",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give everyone living in Portugal a complete practical answer about Using ePortugal to find public services.",
+      "requiredAnswers": [
+        "Explain Using ePortugal to find public services in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/usar-o-livro-de-reclamacoes",
+        "requiredAuthority": "gov.pt / Direção-Geral do Consumidor",
+        "officialRequired": true,
+        "freshnessDays": 90
+      },
+      "evidenceTerms": [
+        "Using ePortugal to find public services",
+        "ePortugal",
+        "Livro de Reclamações",
+        "ANACOM",
+        "energia",
+        "telecomunicações"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-daily_life_consumer-02",
+      "subjectFamily": "daily_life_consumer",
+      "topic": "Getting an atestado de residência",
+      "userQuestion": "What does someone living in Portugal need to know about getting an atestado de residência?",
+      "audience": "everyone living in Portugal",
+      "contentIntent": "checklist",
+      "purpose": "Give everyone living in Portugal a complete practical answer about Getting an atestado de residência.",
+      "requiredAnswers": [
+        "Explain Getting an atestado de residência in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/usar-o-livro-de-reclamacoes",
+        "requiredAuthority": "gov.pt / Direção-Geral do Consumidor",
+        "officialRequired": true,
+        "freshnessDays": 90
+      },
+      "evidenceTerms": [
+        "Getting an atestado de residência",
+        "ePortugal",
+        "Livro de Reclamações",
+        "ANACOM",
+        "energia",
+        "telecomunicações"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-daily_life_consumer-03",
+      "subjectFamily": "daily_life_consumer",
+      "topic": "Finding the correct municipal office",
+      "userQuestion": "What does someone living in Portugal need to know about finding the correct municipal office?",
+      "audience": "everyone living in Portugal",
+      "contentIntent": "common_mistake",
+      "purpose": "Give everyone living in Portugal a complete practical answer about Finding the correct municipal office.",
+      "requiredAnswers": [
+        "Explain Finding the correct municipal office in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/usar-o-livro-de-reclamacoes",
+        "requiredAuthority": "gov.pt / Direção-Geral do Consumidor",
+        "officialRequired": true,
+        "freshnessDays": 90
+      },
+      "evidenceTerms": [
+        "Finding the correct municipal office",
+        "ePortugal",
+        "Livro de Reclamações",
+        "ANACOM",
+        "energia",
+        "telecomunicações"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-daily_life_consumer-04",
+      "subjectFamily": "daily_life_consumer",
+      "topic": "Booking public-service appointments",
+      "userQuestion": "What does someone living in Portugal need to know about booking public-service appointments?",
+      "audience": "everyone living in Portugal",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give everyone living in Portugal a complete practical answer about Booking public-service appointments.",
+      "requiredAnswers": [
+        "Explain Booking public-service appointments in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/usar-o-livro-de-reclamacoes",
+        "requiredAuthority": "gov.pt / Direção-Geral do Consumidor",
+        "officialRequired": true,
+        "freshnessDays": 90
+      },
+      "evidenceTerms": [
+        "Booking public-service appointments",
+        "ePortugal",
+        "Livro de Reclamações",
+        "ANACOM",
+        "energia",
+        "telecomunicações"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-daily_life_consumer-05",
+      "subjectFamily": "daily_life_consumer",
+      "topic": "Using the electronic complaints book",
+      "userQuestion": "What does someone living in Portugal need to know about using the electronic complaints book?",
+      "audience": "everyone living in Portugal",
+      "contentIntent": "checklist",
+      "purpose": "Give everyone living in Portugal a complete practical answer about Using the electronic complaints book.",
+      "requiredAnswers": [
+        "Explain Using the electronic complaints book in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/usar-o-livro-de-reclamacoes",
+        "requiredAuthority": "gov.pt / Direção-Geral do Consumidor",
+        "officialRequired": true,
+        "freshnessDays": 90
+      },
+      "evidenceTerms": [
+        "Using the electronic complaints book",
+        "ePortugal",
+        "Livro de Reclamações",
+        "ANACOM",
+        "energia",
+        "telecomunicações"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-daily_life_consumer-06",
+      "subjectFamily": "daily_life_consumer",
+      "topic": "Changing electricity supplier",
+      "userQuestion": "What does someone living in Portugal need to know about changing electricity supplier?",
+      "audience": "everyone living in Portugal",
+      "contentIntent": "common_mistake",
+      "purpose": "Give everyone living in Portugal a complete practical answer about Changing electricity supplier.",
+      "requiredAnswers": [
+        "Explain Changing electricity supplier in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/usar-o-livro-de-reclamacoes",
+        "requiredAuthority": "gov.pt / Direção-Geral do Consumidor",
+        "officialRequired": true,
+        "freshnessDays": 90
+      },
+      "evidenceTerms": [
+        "Changing electricity supplier",
+        "ePortugal",
+        "Livro de Reclamações",
+        "ANACOM",
+        "energia",
+        "telecomunicações"
+      ],
+      "status": "available_when_live_evidence_matches"
+    },
+    {
+      "id": "reserve-daily_life_consumer-07",
+      "subjectFamily": "daily_life_consumer",
+      "topic": "Reading an electricity bill",
+      "userQuestion": "What does someone living in Portugal need to know about reading an electricity bill?",
+      "audience": "everyone living in Portugal",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "Give everyone living in Portugal a complete practical answer about Reading an electricity bill.",
+      "requiredAnswers": [
+        "Explain Reading an electricity bill in plain English.",
+        "State the practical action or decision involved.",
+        "Clarify the main limitation, exception, or proof to retain."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/usar-o-livro-de-reclamacoes",
+        "requiredAuthority": "gov.pt / Direção-Geral do Consumidor",
+        "officialRequired": true,
+        "freshnessDays": 90
+      },
+      "evidenceTerms": [
+        "Reading an electricity bill",
+        "ePortugal",
+        "Livro de Reclamações",
+        "ANACOM",
+        "energia",
+        "telecomunicações"
+      ],
+      "status": "available_when_live_evidence_matches"
+    }
+  ]
+}
