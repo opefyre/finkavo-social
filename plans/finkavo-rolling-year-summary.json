@@ -4,25 +4,25 @@
     "end": "2027-08-12"
   },
   "totalSlots": 1825,
-  "dateLocked": 28,
-  "newsReserve": 340,
-  "evergreen": 1457,
+  "dateLocked": 44,
+  "newsReserve": 325,
+  "evergreen": 1456,
   "pillars": {
     "identity_access": 152,
-    "immigration_residency": 126,
+    "immigration_residency": 125,
     "citizenship_civil": 78,
     "freelance_business": 75,
-    "iva": 130,
+    "iva": 129,
     "irs": 128,
-    "social_security": 83,
+    "social_security": 84,
     "housing_property": 84,
-    "banking_money": 158,
+    "banking_money": 154,
     "employment": 155,
     "health_family": 156,
-    "driving_transport": 154,
-    "education_children": 185,
-    "daily_life_consumer": 161
+    "driving_transport": 149,
+    "education_children": 189,
+    "daily_life_consumer": 167
   },
-  "duplicateExactTitles": 635,
+  "duplicateExactTitles": 630,
   "curated90DayBriefs": 450
 }

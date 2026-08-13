@@ -31,9 +31,9 @@ This is the authoritative completion tracker. A box is checked only after the im
 
 ## 5. Source and news reliability
 
-- [ ] Monitor canonical official authority pages directly; keep news/RSS as discovery only.
-- [ ] Resolve discovery links to original sources and reject aggregators as evidence.
-- [ ] Detect material page changes using canonical URL and content hash.
+- [x] Monitor canonical official authority pages directly; keep news/RSS as discovery only.
+- [x] Resolve discovery links to original sources and reject aggregators as evidence.
+- [x] Detect material page changes using canonical URL and content hash.
 - [ ] Implement verified-news replacement for the flexible slot, with an automatic named evergreen fallback at cutoff.
 - [ ] Validate an official change can replace a flexible slot without bypassing evidence or approval.
 
@@ -71,3 +71,5 @@ This is the authoritative completion tracker. A box is checked only after the im
 | 2026-08-13 | Official-calendar foundation | 18 scoped events; 14 current/rule-confirmed; 3 explicitly held for reverification; official-domain validator | Pass |
 | 2026-08-13 | Calendar-to-plan integration | Calendar generates 25 campaign stages; all stages inside the curated window appear once with matching event, stage, date, status, and canonical source | Pass |
 | 2026-08-13 | Evidence holds and canonical fixed-date sources | Live API automatically holds `must_reverify`; fixed-date research is restricted to the calendar's exact canonical URL; deployed service running; five-slot campaign-day API check passed | Pass |
+| 2026-08-13 | Canonical official monitoring | Six directly fetchable authority pages; canonical URL + normalized visible-text hash snapshots; repeat hash unchanged; n8n workflow replaced in place and published | Pass |
+| 2026-08-13 | Calendar expansion | 34 scoped events, 44 campaign stages, full mainland 2026–27 school cycle, remaining in-period national holidays, plus explicit AIMA/ACT continuous monitoring rules | Pass |
