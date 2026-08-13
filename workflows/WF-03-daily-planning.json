@@ -3,6 +3,44 @@
   "nodes": [
     {
       "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:4320/v1/verification/triage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={}",
+        "options": {"timeout": 30000}
+      },
+      "id": "news-triage",
+      "name": "Verify official change candidates",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [260, -100],
+      "credentials": {"httpBearerAuth":{"id":"socialApiBearer01","name":"Finkavo Social API"}}
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:4320/v1/news/decide-flex-slot",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({date: new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Lisbon'}).format(new Date()), cutoffReached:true}) }}",
+        "options": {"timeout": 30000}
+      },
+      "id": "flex-decision",
+      "name": "Choose verified news or named reserve",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [500, -100],
+      "credentials": {"httpBearerAuth":{"id":"socialApiBearer01","name":"Finkavo Social API"}}
+    },
+    {
+      "parameters": {
         "rule": {
           "interval": [
             {
@@ -97,10 +135,7 @@
       "name": "Build verified multi-source evidence bundles",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [
-        300,
-        0
-      ],
+      "position": [740,0],
       "credentials": {
         "httpBearerAuth": {
           "id": "socialApiBearer01",
@@ -136,13 +171,15 @@
       "main": [
         [
           {
-            "node": "Build verified multi-source evidence bundles",
+            "node": "Verify official change candidates",
             "type": "main",
             "index": 0
           }
         ]
       ]
-    }
+    },
+    "Verify official change candidates": {"main":[[{"node":"Choose verified news or named reserve","type":"main","index":0}]]},
+    "Choose verified news or named reserve": {"main":[[{"node":"Build verified multi-source evidence bundles","type":"main","index":0}]]}
   },
   "settings": {
     "executionOrder": "v1",
