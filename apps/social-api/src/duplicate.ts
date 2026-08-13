@@ -1,7 +1,8 @@
 const stopWords = new Set([
-  "about", "after", "before", "checklist", "explained", "explanation", "getting", "guide",
-  "moving", "new", "plain", "portugal", "portuguese", "practical", "residents", "simple",
-  "things", "understand", "what", "when", "where", "which", "with", "your",
+  "about", "after", "before", "checklist", "edge", "edges", "exception", "exceptions", "explained",
+  "explanation", "getting", "golden", "guide", "mistake", "mistakes", "moving", "new", "plain",
+  "portugal", "portuguese", "practical", "residents", "simple", "step", "things", "tip", "understand",
+  "verify", "what", "when", "where", "which", "with", "your",
 ]);
 
 const recurringIntents = new Set(["deadline_reminder", "occasion", "regulatory_change", "timely_news"]);

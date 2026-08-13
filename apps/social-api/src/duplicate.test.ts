@@ -22,4 +22,11 @@ describe("duplicateReason", () => {
       { topic: "What a Portuguese NIF is", post_intent: "evergreen_explainer" },
     )).toBeNull();
   });
+
+  it("does not treat shared editorial angle wording as the subject", () => {
+    expect(duplicateReason(
+      { topic: "Requesting a NISS: mistakes, exceptions and edge cases", postIntent: "common_mistake" },
+      { topic: "Keeping foreign medical records usable: mistakes, exceptions and edge cases", post_intent: "common_mistake" },
+    )).toBeNull();
+  });
 });
