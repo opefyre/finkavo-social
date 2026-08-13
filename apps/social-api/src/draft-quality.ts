@@ -20,7 +20,9 @@ export function validateSocialDraft(draft: Draft) {
   if (draft.callToAction.length > 65 || endsIncomplete(draft.callToAction)) throw new Error("The call to action is incomplete or too long");
   if (new Set(draft.searchKeywords.map((item) => item.toLowerCase())).size !== draft.searchKeywords.length) throw new Error("Search phrases must be unique");
   for (const slide of draft.slides) {
-    if (["cover","content","summary"].includes(slide.type) && (!slide.body.trim() || !completeSentence(slide.body) || hasPresentationArtifacts(slide.body))) throw new Error(`${slide.type} slide body must be a clean, complete sentence`);
+    if (["cover","content","summary"].includes(slide.type) && !slide.body.trim()) throw new Error(`${slide.type} slide body must not be empty`);
+    if (["cover","content","summary"].includes(slide.type) && !completeSentence(slide.body)) throw new Error(`${slide.type} slide body must end as a complete sentence and not trail off after a connector`);
+    if (["cover","content","summary"].includes(slide.type) && hasPresentationArtifacts(slide.body)) throw new Error(`${slide.type} slide body must remove Markdown, list prefixes, corpus labels, or unapproved all-caps words`);
     if (["bullets","steps"].includes(slide.type) && (slide.items.length < 2 || slide.items.some((item) => !completeSentence(item) || hasPresentationArtifacts(item)))) throw new Error(`${slide.type} slide items must be clean, complete sentences`);
     if (/photo|photograph|illustration|crossed[- ]out|person standing|people standing/i.test(slide.altText)) throw new Error("Alt text describes artwork that the deterministic template does not render");
   }
