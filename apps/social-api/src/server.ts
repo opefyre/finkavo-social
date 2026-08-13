@@ -186,7 +186,7 @@ function reviewPage(post: Record<string, unknown>, revision: Record<string, unkn
 const GenerateSchema = z.object({ conceptId: z.string().uuid() });
 const PlanningSchema = z.object({ date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), capacity: z.number().int().min(1).max(5).default(2) });
 const ResearchSchema = z.object({ date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional() });
-const ReviewRequestSchema = z.object({ expiresInMinutes: z.number().int().min(5).max(1440).default(60) });
+const ReviewRequestSchema = z.object({ expiresInMinutes: z.number().int().min(5).max(1440).default(60), dryRun: z.boolean().default(false) });
 const RenderRequestSchema = z.object({ idempotencyKey: z.string().min(8).max(200) });
 const RenderFileSchema = z.object({ index: z.number().int().min(1).max(10), sha256: z.string().regex(/^[a-f0-9]{64}$/), bytes: z.number().int().positive().max(15_000_000), width: z.literal(1080), height: z.literal(1350), mimeType: z.literal("image/png") });
 const UploadRequestSchema = z.object({ files: z.array(RenderFileSchema).min(3).max(7) });
@@ -706,7 +706,7 @@ const server = http.createServer(async (req, res) => {
 
     const reviewRequest = url.pathname.match(/^\/v1\/posts\/([0-9a-f-]+)\/request-review$/i);
     if (req.method === "POST" && reviewRequest) {
-      const { expiresInMinutes } = ReviewRequestSchema.parse(await readJson(req));
+      const { expiresInMinutes, dryRun } = ReviewRequestSchema.parse(await readJson(req));
       const [previewSource] = await sql`
         SELECT p.*, r.id AS revision_id, r.slides AS revision_slides, r.call_to_action AS revision_cta,
                r.hook AS revision_hook, r.caption AS revision_caption, r.hashtags AS revision_hashtags,
@@ -716,9 +716,9 @@ const server = http.createServer(async (req, res) => {
       `;
       if (!previewSource) return send(res, 409, { error: "Only a current draft revision can be sent for review" });
       const quality=editorialScore({topic:String(previewSource.topic),hook:String(previewSource.revision_hook),caption:String(previewSource.revision_caption),callToAction:String(previewSource.revision_cta),hashtags:previewSource.revision_hashtags as string[],slides:previewSource.revision_slides as Array<{title?:string;body?:string;items?:string[];sourceLabel?:string}>,sources:previewSource.revision_sources as Array<{url?:string;tier?:string}>,riskLevel:String(previewSource.risk_level),subjectFamily:String(previewSource.subject_family||""),userQuestion:String(previewSource.user_question||""),contentIntent:String(previewSource.content_intent||"")});
-      if(!quality.passed){await sql.begin(async tx=>{await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${previewSource.id}`;await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${previewSource.id},'quality.editorial_score_blocked',${tx.json({stage:'pre_discord',score:quality.score,failures:quality.failures})})`;});return send(res,422,{error:"Post failed the pre-Discord editorial gate",...quality});}
+      if(!quality.passed){if(!dryRun)await sql.begin(async tx=>{await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${previewSource.id}`;await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${previewSource.id},'quality.editorial_score_blocked',${tx.json({stage:'pre_discord',score:quality.score,failures:quality.failures})})`;});return send(res,422,{error:"Post failed the pre-Discord editorial gate",dryRun,...quality});}
       const duplicate = await findRecentDuplicate(previewSource as DuplicateCandidate, String(previewSource.id));
-      if (duplicate) {
+      if (duplicate && !dryRun) {
         await sql.begin(async tx => {
           await tx`UPDATE social_review_token SET used_at=now() WHERE post_id=${previewSource.id} AND used_at IS NULL`;
           await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${previewSource.id} AND status='draft'`;
@@ -726,11 +726,13 @@ const server = http.createServer(async (req, res) => {
         });
         return send(res, 409, { error: "Duplicate topic blocked", duplicateOf: duplicate.post.id, reason: duplicate.reason });
       }
+      if(duplicate&&dryRun)return send(res,409,{error:"Duplicate topic blocked",dryRun:true,duplicateOf:duplicate.post.id,reason:duplicate.reason});
       const previewFiles = await renderReviewPreview(createRenderManifest(previewSource as Record<string, unknown>, {
         id: previewSource.revision_id,
         slides: previewSource.revision_slides,
         call_to_action: previewSource.revision_cta,
       }));
+      if(dryRun)return send(res,200,{dryRun:true,postId:String(previewSource.id),revisionId:String(previewSource.revision_id),quality,previewFiles});
       const rawToken = randomBytes(32).toString("base64url");
       const [created] = await sql.begin(async (tx) => {
         const [post] = await tx`
