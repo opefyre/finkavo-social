@@ -1,5 +1,6 @@
 {
-  "name": "WF-09 Daily Health Report",
+  "id": "t6mU8evkXUIepa05",
+  "name": "WF-09 Daily Content and Health Report",
   "nodes": [
     {
       "parameters": {
@@ -7,13 +8,13 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "0 8 * * *"
+              "expression": "25 8 * * *"
             }
           ]
         }
       },
       "id": "027277ae-3894-4453-913e-3cb3c0e32877",
-      "name": "Daily at 08:00",
+      "name": "Daily at 08:25 Lisbon",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
@@ -23,15 +24,20 @@
     },
     {
       "parameters": {
-        "url": "http://127.0.0.1:4320/v1/health-report",
+        "method": "POST",
+        "url": "http://127.0.0.1:4320/v1/reports/daily",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={}",
         "options": {
           "timeout": 30000
         }
       },
       "id": "33352513-3f22-4ed3-a4c8-e924b18561a1",
-      "name": "Get pipeline health",
+      "name": "Send content operations report",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
@@ -47,11 +53,11 @@
     }
   ],
   "connections": {
-    "Daily at 08:00": {
+    "Daily at 08:25 Lisbon": {
       "main": [
         [
           {
-            "node": "Get pipeline health",
+            "node": "Send content operations report",
             "type": "main",
             "index": 0
           }

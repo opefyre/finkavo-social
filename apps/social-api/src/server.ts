@@ -201,6 +201,7 @@ const DiscoverySchema = z.object({
 const DiscoveryBatchSchema = z.object({ items: z.array(DiscoverySchema).min(1).max(100), sourceKind: z.enum(["rss", "news_discovery", "official_notice"]).default("news_discovery") });
 const OfficialSnapshotSchema=z.object({url:z.string().url(),httpStatus:z.number().int().min(100).max(599),body:z.string().max(900_000),fetchedAt:z.string().datetime().optional()});
 const NewsDecisionSchema=z.object({date:z.string().regex(/^\d{4}-\d{2}-\d{2}$/),cutoffReached:z.boolean().default(false),dryRun:z.boolean().default(false)});
+const ReportSchema=z.object({date:z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional()});
 const evidenceWindows=(text:string,terms:string[])=>{const normalized=text.replace(/\s+/g," ").trim();const windows:string[]=[];for(const term of terms){const at=normalized.toLocaleLowerCase("pt").indexOf(term.toLocaleLowerCase("pt"));if(at>=0)windows.push(normalized.slice(Math.max(0,at-350),Math.min(normalized.length,at+1650)));}if(!windows.length)windows.push(normalized.slice(0,2000));return [...new Set(windows)].slice(0,6);};
 
 function createRenderManifest(post: Record<string, unknown>, revision: Record<string, unknown>) {
@@ -1000,6 +1001,18 @@ const server = http.createServer(async (req, res) => {
       `;
       const [planning] = await sql`SELECT count(*) FILTER (WHERE status='blocked') AS blocked_concepts, count(*) FILTER (WHERE status IN ('eligible','planned')) AS ready_concepts FROM social_post_concept`;
       return send(res, 200, { counts, planning, upcomingDeadlines, renderer, oldestQueuedRender: oldest?.oldest_job || null, healthy: renderer ? Date.now() - new Date(renderer.last_seen_at as string).getTime() < 5 * 60_000 : false });
+    }
+
+    if(req.method==="POST"&&url.pathname==="/v1/reports/daily"){
+      const {date}=ReportSchema.parse(await readJson(req));const day=date||lisbonDate(new Date());
+      const slots=await sql`SELECT s.slot_number,s.publish_time,s.topic,s.status,s.reserve_kind,s.campaign_stage,b.verification_state,b.expires_at FROM social_editorial_plan_slot s LEFT JOIN LATERAL (SELECT verification_state,expires_at FROM social_topic_evidence_bundle WHERE plan_slot_id=s.id ORDER BY verified_at DESC LIMIT 1) b ON true WHERE s.publish_date=${day} ORDER BY s.slot_number`;
+      const approvals=await sql`SELECT p.topic,p.status,p.scheduled_at FROM social_post p WHERE (p.created_at AT TIME ZONE 'Europe/Lisbon')::DATE=${day} OR (p.scheduled_at AT TIME ZONE 'Europe/Lisbon')::DATE=${day} ORDER BY p.scheduled_at NULLS LAST,p.created_at`;
+      const [news]=await sql`SELECT count(*) AS count FROM social_post_concept WHERE status='eligible' AND timeliness='official_change'`;
+      const held=slots.filter(row=>row.status==='held').map(row=>`${row.slot_number}. ${row.topic} (${row.campaign_stage||row.reserve_kind||'evidence unavailable'})`);
+      const topicLines=slots.map(row=>`${row.slot_number}. ${row.publish_time} — ${row.topic} [${row.status}; evidence ${row.verification_state||'missing'}]`);
+      const approvalLines=approvals.map(row=>`${row.status}${row.scheduled_at?` at ${new Date(String(row.scheduled_at)).toISOString()}`:''} — ${row.topic}`);
+      const sent=await notifyDiscord('system',`Finkavo daily content report — ${day}`,{plannedTopics:topicLines.join('\n')||'No plan found',newsCandidates:String(news.count),held:held.join('\n')||'None',approvalsAndSchedule:approvalLines.join('\n')||'No drafts or approvals yet'});
+      return send(res,200,{date:day,planned:slots.length,verified:slots.filter(row=>row.verification_state==='verified'&&new Date(String(row.expires_at))>new Date()).length,held:held.length,newsCandidates:Number(news.count),approvalStates:approvals.length,discordSent:sent,topics:topicLines});
     }
 
     const approve = url.pathname.match(/^\/v1\/posts\/([0-9a-f-]+)\/approve$/i);
