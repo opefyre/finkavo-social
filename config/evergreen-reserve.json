@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generatedAt": "2026-08-13T19:00:25.183Z",
+  "generatedAt": "2026-08-13T19:03:16.898Z",
   "minimum": 90,
   "cards": [
     {
@@ -1298,116 +1298,114 @@
     {
       "id": "reserve-banking_money-01",
       "subjectFamily": "banking_money",
-      "topic": "Channels for ordering a bank transfer",
-      "userQuestion": "Where can a standard or instant transfer be ordered?",
+      "topic": "What an IBAN identifies",
+      "userQuestion": "What does an IBAN identify in a payment?",
       "audience": "people managing money in Portugal",
       "contentIntent": "evergreen_explainer",
-      "purpose": "Give people managing money in Portugal one source-backed practical answer to: Where can a standard or instant transfer be ordered?",
+      "purpose": "Give people managing money in Portugal one source-backed practical answer to: What does an IBAN identify in a payment?",
       "requiredAnswers": [
-        "List the branch and digital channels in the official guide."
+        "Explain the account identifier described by Banco de Portugal."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://clientebancario.bportugal.pt/en/how-order-transfers",
+        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
       },
       "evidenceTerms": [
-        "branches",
-        "homebanking",
-        "smartphone app"
+        "IBAN",
+        "conta"
       ],
       "status": "available_when_exact_source_answers_brief"
     },
     {
       "id": "reserve-banking_money-02",
       "subjectFamily": "banking_money",
-      "topic": "Payer details needed for a transfer",
-      "userQuestion": "Which payer details can a payment provider request?",
+      "topic": "The country code in a Portuguese IBAN",
+      "userQuestion": "How does a Portuguese IBAN begin?",
       "audience": "people managing money in Portugal",
       "contentIntent": "checklist",
-      "purpose": "Give people managing money in Portugal one source-backed practical answer to: Which payer details can a payment provider request?",
+      "purpose": "Give people managing money in Portugal one source-backed practical answer to: How does a Portuguese IBAN begin?",
       "requiredAnswers": [
-        "Explain the payer name and account IBAN fields."
+        "Explain the Portuguese country-code component."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://clientebancario.bportugal.pt/en/how-order-transfers",
+        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
       },
       "evidenceTerms": [
-        "Their data",
-        "IBAN of their payment account"
+        "PT",
+        "IBAN"
       ],
       "status": "available_when_exact_source_answers_brief"
     },
     {
       "id": "reserve-banking_money-03",
       "subjectFamily": "banking_money",
-      "topic": "The amount field in a bank transfer",
-      "userQuestion": "Which transaction amount must the payer provide?",
+      "topic": "The check digits in an IBAN",
+      "userQuestion": "Why does an IBAN contain check digits?",
       "audience": "people managing money in Portugal",
       "contentIntent": "common_mistake",
-      "purpose": "Give people managing money in Portugal one source-backed practical answer to: Which transaction amount must the payer provide?",
+      "purpose": "Give people managing money in Portugal one source-backed practical answer to: Why does an IBAN contain check digits?",
       "requiredAnswers": [
-        "Identify the amount of the credit transfer as required data."
+        "Explain the validation role described in the source."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://clientebancario.bportugal.pt/en/how-order-transfers",
+        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
       },
       "evidenceTerms": [
-        "amount of the credit transfer"
+        "dígitos de controlo",
+        "IBAN"
       ],
       "status": "available_when_exact_source_answers_brief"
     },
     {
       "id": "reserve-banking_money-04",
       "subjectFamily": "banking_money",
-      "topic": "Ways to identify a transfer beneficiary",
-      "userQuestion": "Which identifiers can be used for the payee?",
+      "topic": "The bank identifier inside a Portuguese IBAN",
+      "userQuestion": "Which part identifies the institution?",
       "audience": "people managing money in Portugal",
       "contentIntent": "evergreen_explainer",
-      "purpose": "Give people managing money in Portugal one source-backed practical answer to: Which identifiers can be used for the payee?",
+      "purpose": "Give people managing money in Portugal one source-backed practical answer to: Which part identifies the institution?",
       "requiredAnswers": [
-        "Explain the IBAN and SPIN identifier alternatives."
+        "Describe the institution-identification component."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://clientebancario.bportugal.pt/en/how-order-transfers",
+        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
       },
       "evidenceTerms": [
-        "payee’s payment account",
-        "mobile phone number",
-        "tax identification number"
+        "identificação da instituição",
+        "IBAN"
       ],
       "status": "available_when_exact_source_answers_brief"
     },
     {
       "id": "reserve-banking_money-05",
       "subjectFamily": "banking_money",
-      "topic": "Linking an identifier to SPIN",
-      "userQuestion": "What must a recipient link before receiving transfers through SPIN?",
+      "topic": "The account component inside a Portuguese IBAN",
+      "userQuestion": "Which part represents the account number?",
       "audience": "people managing money in Portugal",
       "contentIntent": "checklist",
-      "purpose": "Give people managing money in Portugal one source-backed practical answer to: What must a recipient link before receiving transfers through SPIN?",
+      "purpose": "Give people managing money in Portugal one source-backed practical answer to: Which part represents the account number?",
       "requiredAnswers": [
-        "Explain the identifier-to-IBAN link."
+        "Describe the account component in the official structure."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://clientebancario.bportugal.pt/en/how-order-transfers",
+        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
       },
       "evidenceTerms": [
-        "link their mobile phone number",
-        "NIF",
+        "número de conta",
         "IBAN"
       ],
       "status": "available_when_exact_source_answers_brief"
@@ -1415,46 +1413,48 @@
     {
       "id": "reserve-banking_money-06",
       "subjectFamily": "banking_money",
-      "topic": "The structure of a Portuguese IBAN",
-      "userQuestion": "How many characters does a Portuguese IBAN have and how does it begin?",
+      "topic": "Checking an IBAN before a transfer",
+      "userQuestion": "Which IBAN elements should be checked before sending money?",
       "audience": "people managing money in Portugal",
       "contentIntent": "common_mistake",
-      "purpose": "Give people managing money in Portugal one source-backed practical answer to: How many characters does a Portuguese IBAN have and how does it begin?",
+      "purpose": "Give people managing money in Portugal one source-backed practical answer to: Which IBAN elements should be checked before sending money?",
       "requiredAnswers": [
-        "State the 25-character and PT50 structure."
+        "Turn the official structure into a verification checklist."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://clientebancario.bportugal.pt/en/how-order-transfers",
+        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
       },
       "evidenceTerms": [
-        "25 characters",
-        "begins with PT50"
+        "IBAN",
+        "estrutura",
+        "dígitos"
       ],
       "status": "available_when_exact_source_answers_brief"
     },
     {
       "id": "reserve-banking_money-07",
       "subjectFamily": "banking_money",
-      "topic": "Confirming the payee before a transfer",
-      "userQuestion": "What confirmation appears after entering a payee identifier?",
+      "topic": "IBAN versus a bank-account number",
+      "userQuestion": "Why is an IBAN more than the domestic account number?",
       "audience": "people managing money in Portugal",
       "contentIntent": "evergreen_explainer",
-      "purpose": "Give people managing money in Portugal one source-backed practical answer to: What confirmation appears after entering a payee identifier?",
+      "purpose": "Give people managing money in Portugal one source-backed practical answer to: Why is an IBAN more than the domestic account number?",
       "requiredAnswers": [
-        "Explain the account-holder name confirmation."
+        "Explain the additional country, institution and check components."
       ],
       "sourcePolicy": {
-        "canonicalUrl": "https://clientebancario.bportugal.pt/en/how-order-transfers",
+        "canonicalUrl": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf",
         "requiredAuthority": "Banco de Portugal",
         "officialRequired": true,
         "freshnessDays": 30
       },
       "evidenceTerms": [
-        "name of the first account holder",
-        "payee confirmation"
+        "International Bank Account Number",
+        "conta",
+        "instituição"
       ],
       "status": "available_when_exact_source_answers_brief"
     },

@@ -80,14 +80,14 @@ const profiles={
     f("Finding IMI information","Where can owners verify the current annual IMI rules?","Point to the annual-tax area without inventing dates or rates.",["Imposto anual","IMI"]),
     f("Finding AIMI information","Where can owners verify current AIMI information?","Point to the annual-tax area without inventing thresholds.",["AIMI","Imposto anual"]),
   ]},
-  banking_money:{source:source("https://clientebancario.bportugal.pt/en/how-order-transfers","Banco de Portugal"),facts:[
-    f("Channels for ordering a bank transfer","Where can a standard or instant transfer be ordered?","List the branch and digital channels in the official guide.",["branches","homebanking","smartphone app"]),
-    f("Payer details needed for a transfer","Which payer details can a payment provider request?","Explain the payer name and account IBAN fields.",["Their data","IBAN of their payment account"]),
-    f("The amount field in a bank transfer","Which transaction amount must the payer provide?","Identify the amount of the credit transfer as required data.",["amount of the credit transfer"]),
-    f("Ways to identify a transfer beneficiary","Which identifiers can be used for the payee?","Explain the IBAN and SPIN identifier alternatives.",["payee’s payment account","mobile phone number","tax identification number"]),
-    f("Linking an identifier to SPIN","What must a recipient link before receiving transfers through SPIN?","Explain the identifier-to-IBAN link.",["link their mobile phone number","NIF","IBAN"]),
-    f("The structure of a Portuguese IBAN","How many characters does a Portuguese IBAN have and how does it begin?","State the 25-character and PT50 structure.",["25 characters","begins with PT50"]),
-    f("Confirming the payee before a transfer","What confirmation appears after entering a payee identifier?","Explain the account-holder name confirmation.",["name of the first account holder","payee confirmation"]),
+  banking_money:{source:source("https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf","Banco de Portugal"),facts:[
+    f("What an IBAN identifies","What does an IBAN identify in a payment?","Explain the account identifier described by Banco de Portugal.",["IBAN","conta"]),
+    f("The country code in a Portuguese IBAN","How does a Portuguese IBAN begin?","Explain the Portuguese country-code component.",["PT","IBAN"]),
+    f("The check digits in an IBAN","Why does an IBAN contain check digits?","Explain the validation role described in the source.",["dígitos de controlo","IBAN"]),
+    f("The bank identifier inside a Portuguese IBAN","Which part identifies the institution?","Describe the institution-identification component.",["identificação da instituição","IBAN"]),
+    f("The account component inside a Portuguese IBAN","Which part represents the account number?","Describe the account component in the official structure.",["número de conta","IBAN"]),
+    f("Checking an IBAN before a transfer","Which IBAN elements should be checked before sending money?","Turn the official structure into a verification checklist.",["IBAN","estrutura","dígitos"]),
+    f("IBAN versus a bank-account number","Why is an IBAN more than the domestic account number?","Explain the additional country, institution and check components.",["International Bank Account Number","conta","instituição"]),
   ]},
   employment:{source:source("https://www.gov.pt/guias/trabalhar-em-portugal","gov.pt / ACT"),facts:[
     f("What an employment contract should establish","What core employment relationship details should a worker identify?","Summarise the contract details present in the guide.",["contrato de trabalho","trabalhador","empregador"]),
