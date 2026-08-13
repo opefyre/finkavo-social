@@ -8,7 +8,7 @@ const sources={
   freelance_business:["https://www2.gov.pt/servicos/abrir-atividade-nas-financas","gov.pt / Autoridade Tributária"],
   iva:["https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00924.aspx","Autoridade Tributária"],
   irs:["https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/Paginas/default.aspx","Autoridade Tributária"],
-  social_security:["https://www.seg-social.pt/ptss/pssd/menu/trabalho/relacoes-trabalho/trabalhadores/trabalhadores-independentes","Segurança Social"],
+  social_security:["https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes","gov.pt / Segurança Social"],
   housing_property:["https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Paginas/default.aspx","Autoridade Tributária"],
   banking_money:["https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/international_bank_account_number_pt.pdf","Banco de Portugal"],
   employment:["https://www.gov.pt/guias/trabalhar-em-portugal","gov.pt / ACT"],
