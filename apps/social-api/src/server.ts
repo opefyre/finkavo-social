@@ -393,7 +393,7 @@ const server = http.createServer(async (req, res) => {
         const minimumRelevance = slot.risk_level === 'high' || slot.timing_class !== 'evergreen' ? 6 : slot.risk_level === 'medium' ? 4 : 2;
         const valid = factCard ? sources.length >= 1 : sources.length >= 1 && sources[0].relevance_score>=minimumRelevance && (!needsOfficial || sources.some(s=>s.source_tier==='official'));
         if (!valid) { await sql`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${slot.id}`; results.push({slotId:slot.id,topic:slot.topic,state:'held',sources:sources.length}); continue; }
-        const normalized=sources.map((s,index)=>({documentId:s.id,url:index===0&&factCard?factCard.sourceUrl:s.source_url,title:index===0&&factCard?factCard.sourceTitle:s.title,publisher:index===0&&factCard?factCard.authority:s.source_authority,tier:s.source_tier,locale:s.original_lang,retrievedAt:s.last_verified_at||s.fetched_at,contentHash:index===0&&factCard?hash(factCard):s.content_hash,relevanceScore:factCard&&index===0?100:s.relevance_score,matchedTerms:factCard&&index===0?factCard.match:s.matched_terms,excerpts:index===0&&factCard?factCard.facts:(s.excerpts as string[]).slice(0,6)}));
+        const normalized=sources.map((s,index)=>({documentId:s.id,url:index===0&&factCard?factCard.sourceUrl:s.source_url,title:index===0&&factCard?factCard.sourceTitle:s.title,publisher:index===0&&factCard?factCard.authority:s.source_authority,tier:s.source_tier,locale:s.original_lang,retrievedAt:s.last_verified_at||s.fetched_at,contentHash:index===0&&factCard?hash(factCard):s.content_hash,relevanceScore:factCard&&index===0?100:s.relevance_score,matchedTerms:factCard&&index===0?factCard.match:s.matched_terms,excerpts:index===0&&factCard?factCard.facts:(s.excerpts as string[]).slice(0,6),deterministicFactCard:Boolean(factCard&&index===0)}));
         const bundleHash=hash(normalized); const freshnessDays=slot.risk_level==='high'?7:slot.risk_level==='medium'?30:90;
         const [bundle]=await sql`INSERT INTO social_topic_evidence_bundle (plan_slot_id,bundle_hash,sources,verification_state,verified_at,expires_at) VALUES (${slot.id},${bundleHash},${sql.json(normalized)},'verified',now(),now()+(${freshnessDays}::STRING||' days')::INTERVAL) ON CONFLICT (plan_slot_id,bundle_hash) DO UPDATE SET verification_state='verified',verified_at=now(),expires_at=excluded.expires_at RETURNING *`;
         const primary=normalized.find(s=>s.tier==='official')||normalized[0]; const fingerprint=`plan:${slot.plan_version}:${planningDate}:${slot.slot_number}`;
@@ -545,7 +545,7 @@ const server = http.createServer(async (req, res) => {
       let checked: z.infer<typeof DraftSchema> | null = null;
       let model = "";
       let lastGenerationError = "";
-      if (evidenceSources.some(source=>Number(source.relevanceScore)===100)) {
+      if (evidenceSources.some(source=>source.deterministicFactCard===true)) {
         checked=simpleDraft(String(selectedConcept.topic),evidenceSources.flatMap(source=>source.excerpts as string[]));
         model="deterministic-fact-card-v1";
       }
