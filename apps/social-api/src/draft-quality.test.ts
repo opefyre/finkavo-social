@@ -27,4 +27,9 @@ describe("social draft quality", () => {
     candidate.slides[1]!.items=["Check the IBAN and NIB before a SWIFT transfer.","Use SPIN only through your payment provider."];
     expect(()=>validateSocialDraft(candidate)).not.toThrow();
   });
+  it("rejects an all-caps emphasis phrase", () => {
+    const candidate=structuredClone(good);
+    candidate.slides[0]!.body="SAVE THIS IMPORTANT POST.";
+    expect(()=>validateSocialDraft(candidate)).toThrow(/all-caps/);
+  });
 });
