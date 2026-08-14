@@ -91,11 +91,17 @@ This is the authoritative completion tracker. A box is checked only after the im
 
 ## 9. Delivery reliability hardening
 
-- [ ] Store the exact Discord preview as the immutable approved production media.
-- [ ] Recover the five approved 14 August posts from their reviewed files without rerendering.
-- [ ] Keep the durable schedule locally and hand posts to Buffer only inside a rolling 24-hour window.
-- [ ] Preserve two Buffer queue positions with an eight-post soft cap.
-- [ ] Retry transient provider failures with rate-limit-aware backoff and automatically move missed local jobs to the next slot.
-- [ ] Requeue confirmed Buffer delivery errors and retain ambiguous outcomes for reconciliation.
-- [ ] Correct daily-batch alerts to use the intended plan date and monitor stranded/blocked jobs.
-- [ ] Run tests, deploy, exercise the live recovery path, verify queue state, and update GitHub.
+- [x] Store the exact Discord preview as the immutable approved production media.
+- [x] Recover the five approved 14 August posts from their reviewed files without rerendering.
+- [x] Keep the durable schedule locally and hand posts to Buffer only inside a rolling 24-hour window.
+- [x] Preserve two Buffer queue positions with an eight-post soft cap.
+- [x] Retry transient provider failures with rate-limit-aware backoff and automatically move missed local jobs to the next slot.
+- [x] Requeue confirmed Buffer delivery errors and retain ambiguous outcomes for reconciliation.
+- [x] Correct daily-batch alerts to use the intended plan date and monitor stranded/blocked jobs.
+- [x] Run tests, deploy, exercise the live recovery path, verify queue state, and update GitHub.
+
+Validation completed 2026-08-14:
+
+- Five approved failed renders recovered from their exact five-slide Discord preview sets; R2 byte/hash/dimension verification passed; no rerender or reapproval.
+- Live delivery state: three recovered posts handed to Buffer inside 24 hours, two retained locally; Buffer-facing queue 5/8, local pending 2; all five have future slots.
+- API 32/32 tests, renderer 3/3 tests, both type checks/builds; API/renderer agent healthy; corrected live operations check returned zero alerts.
