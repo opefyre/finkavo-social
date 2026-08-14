@@ -700,8 +700,10 @@ const server = http.createServer(async (req, res) => {
         ? await sql`SELECT * FROM social_post WHERE status=${status} AND planned_for=${plannedDate} ORDER BY created_at DESC LIMIT 5`
         : status && createdDate
         ? await sql`SELECT * FROM social_post WHERE status=${status} AND (created_at AT TIME ZONE 'Europe/Lisbon')::DATE=${createdDate} ORDER BY created_at DESC LIMIT 5`
-        : status
+          : status
           ? await sql`SELECT * FROM social_post WHERE status=${status} ORDER BY created_at DESC LIMIT 50`
+          : plannedDate
+            ? await sql`SELECT * FROM social_post WHERE planned_for=${plannedDate} ORDER BY created_at DESC LIMIT 50`
           : createdDate
             ? await sql`SELECT * FROM social_post WHERE (created_at AT TIME ZONE 'Europe/Lisbon')::DATE=${createdDate} ORDER BY created_at DESC LIMIT 50`
             : await sql`SELECT * FROM social_post ORDER BY created_at DESC LIMIT 50`;
@@ -1135,7 +1137,8 @@ const server = http.createServer(async (req, res) => {
         WHERE o.due_date BETWEEN current_date AND current_date + 45 ORDER BY o.due_date LIMIT 12
       `;
       const [planning] = await sql`SELECT count(*) FILTER (WHERE status='blocked') AS blocked_concepts, count(*) FILTER (WHERE status IN ('eligible','planned')) AS ready_concepts FROM social_post_concept`;
-      return send(res, 200, { counts, planning, upcomingDeadlines, renderer, oldestQueuedRender: oldest?.oldest_job || null, healthy: renderer ? Date.now() - new Date(renderer.last_seen_at as string).getTime() < 5 * 60_000 : false });
+      const publishQueue = await sql`SELECT status,count(*) AS count FROM social_publish_job GROUP BY status ORDER BY status`;
+      return send(res, 200, { counts, planning, upcomingDeadlines, renderer, oldestQueuedRender: oldest?.oldest_job || null, publishQueue, bufferHandoffHours, bufferQueueSoftLimit, healthy: renderer ? Date.now() - new Date(renderer.last_seen_at as string).getTime() < 5 * 60_000 : false });
     }
 
     if(req.method==="POST"&&url.pathname==="/v1/reports/daily"){
@@ -1177,6 +1180,7 @@ const server = http.createServer(async (req, res) => {
       const [stranded]=await sql`SELECT count(*) AS count FROM social_post p WHERE p.status='rendered' AND p.rendered_at<now()-INTERVAL '15 minutes' AND NOT EXISTS(SELECT 1 FROM social_publish_job j WHERE j.post_id=p.id AND j.revision_id=p.approved_revision_id)`;if(Number(stranded.count)>0)alerts.push(`${stranded.count} rendered post(s) are missing an internal publish job`);
       const [localOverdue]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status IN ('pending','retrying') AND scheduled_at<now()`;if(Number(localOverdue.count)>0)alerts.push(`${localOverdue.count} internal queued post(s) need rescheduling`);
       const [blockedPublish]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='blocked'`;if(Number(blockedPublish.count)>0)alerts.push(`${blockedPublish.count} ambiguous Buffer result(s) need reconciliation`);
+      const [bufferQueued]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='scheduled' AND scheduled_at>now()`;if(Number(bufferQueued.count)>=bufferQueueSoftLimit)alerts.push(`Buffer handoff soft cap reached: ${bufferQueued.count}/${bufferQueueSoftLimit}`);
       const [overdue]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='scheduled' AND scheduled_at<now()-INTERVAL '20 minutes'`;if(Number(overdue.count)>0)alerts.push(`${overdue.count} publication confirmation(s) are overdue`);
       if(lisbonTime>='08:35'){const [batch]=await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${today}`;if(Number(batch.count)<5)alerts.push(`Approval batch is incomplete: ${batch.count}/5 posts`);}
       const signature=hash({today,alerts});let sent=false;if(alerts.length){const [existing]=await sql`SELECT id FROM social_event WHERE event_type='operations.alert_sent' AND payload->>'signature'=${signature} LIMIT 1`;if(!existing){sent=await notifyDiscord('errors','Finkavo pipeline alert',{date:today,problems:alerts.join('\n')});await sql`INSERT INTO social_event(event_type,payload) VALUES('operations.alert_sent',${sql.json({signature,alerts})})`;}}
