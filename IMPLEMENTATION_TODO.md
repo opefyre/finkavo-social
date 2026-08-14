@@ -88,3 +88,14 @@ This is the authoritative completion tracker. A box is checked only after the im
 | 2026-08-13 | Daily queue isolation | API migration `0012` stores intended plan date; generation returns exactly five concepts for the requested Lisbon date; WF-05 accepts only drafts assigned to today's plan. Tomorrow's queue contains exactly the five validated drafts and no prior test/backlog draft. | Pass |
 | 2026-08-13 | n8n housekeeping | Recoverable SQLite backup created; six confirmed inactive duplicate imports archived; one visible and active canonical copy remains for WF-03, WF-04, and WF-05; n8n restarted and returned HTTP 200. | Pass |
 | 2026-08-13 | Final production audit | 32 API tests plus renderer tests, type checks, builds, 450-brief plan validation, official-calendar validation, and 98-card reserve validation passed. API, renderer, renderer agent, and n8n are live; renderer heartbeat is current; mobile approval is Cloudflare Access protected; Buffer scheduling/publishing and Discord review/published channels have prior live evidence. Only the declared transient Buffer provider-rate window can delay provider calls. | Pass |
+
+## 9. Delivery reliability hardening
+
+- [ ] Store the exact Discord preview as the immutable approved production media.
+- [ ] Recover the five approved 14 August posts from their reviewed files without rerendering.
+- [ ] Keep the durable schedule locally and hand posts to Buffer only inside a rolling 24-hour window.
+- [ ] Preserve two Buffer queue positions with an eight-post soft cap.
+- [ ] Retry transient provider failures with rate-limit-aware backoff and automatically move missed local jobs to the next slot.
+- [ ] Requeue confirmed Buffer delivery errors and retain ambiguous outcomes for reconciliation.
+- [ ] Correct daily-batch alerts to use the intended plan date and monitor stranded/blocked jobs.
+- [ ] Run tests, deploy, exercise the live recovery path, verify queue state, and update GitHub.

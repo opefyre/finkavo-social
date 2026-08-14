@@ -52,7 +52,8 @@ async function processOne() {
     return true;
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown render failure";
-    await api(`/v1/render-jobs/${job.id}/fail`, { method: "POST", body: JSON.stringify({ code: "RENDER_FAILED", message, retryable: true }) });
+    const deterministic = /overflows the canvas|invalid .*canvas|approved brand fonts|schema|parse|does not match its manifest/i.test(message);
+    await api(`/v1/render-jobs/${job.id}/fail`, { method: "POST", body: JSON.stringify({ code: deterministic ? "RENDER_CONTRACT_FAILED" : "RENDER_FAILED", message, retryable: !deterministic }) });
     return true;
   }
 }

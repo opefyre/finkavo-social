@@ -46,6 +46,16 @@ export async function verifyUploadedObject(file: RenderFileInput) {
   return bytes.length === file.bytes && result.ContentType === file.mimeType && createHash("sha256").update(bytes).digest("hex") === file.sha256 && width === file.width && height === file.height;
 }
 
+export async function uploadRenderedObject(file: RenderFileInput & { key: string }, bytes: Uint8Array) {
+  await r2().send(new PutObjectCommand({
+    Bucket: bucket,
+    Key: file.key,
+    Body: bytes,
+    ContentType: file.mimeType,
+  }));
+  return verifyUploadedObject(file);
+}
+
 export async function createBufferMediaUrl(key: string) {
   if (!publicBaseUrl) throw new Error("R2_PUBLIC_BASE_URL is required for Buffer media");
   return `${publicBaseUrl}/${key.split("/").map(encodeURIComponent).join("/")}`;

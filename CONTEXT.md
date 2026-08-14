@@ -4,6 +4,8 @@
 **Last reviewed:** 2026-08-13
 **Scope:** Instagram educational carousel workflow for Finkavo. This document defines the system; it does not contain credentials or production configuration.
 
+**Reliability rule:** The images shown in Discord are the production artifact. A real review request renders once, validates and uploads those exact PNG bytes, and records their hashes before approval. Approval reuses that completed render; it never creates a second render of the same revision. Publishing remains in the durable local database and is handed to Buffer only inside a rolling 24-hour window, subject to an eight-item soft cap so the free ten-item channel queue retains spare capacity. Transient failures remain queued with backoff; missed local slots move forward automatically; ambiguous provider results stop for reconciliation to prevent duplicate publishing.
+
 ## 1. Outcome
 
 Build a recoverable, source-backed workflow that turns a predetermined annual editorial plan, Finkavo corpus evidence, and fresh official notices into English, deterministic Instagram carousels. The plan chooses the subject; corpus passages only prove claims. n8n coordinates the work, but it does not own state. Finkavo's existing database and corpus remain the source of truth, the spare MacBook hosts n8n and renders, R2 stores generated media, Buffer schedules and publishes, and Discord reports or requests approval.

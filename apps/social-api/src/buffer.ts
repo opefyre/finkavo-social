@@ -1,8 +1,16 @@
 type GraphQlResponse<T> = { data?: T; errors?: Array<{ message: string; extensions?: { code?: string } }> };
 
 export class BufferError extends Error {
-  constructor(message: string, public code: string, public retryable: boolean, public ambiguous = false) { super(message); }
+  constructor(message: string, public code: string, public retryable: boolean, public ambiguous = false, public retryAfterMinutes = 0) { super(message); }
 }
+
+const retryAfterMinutes = (value: string | null) => {
+  if (!value) return 60;
+  const seconds = Number(value);
+  if (Number.isFinite(seconds)) return Math.max(1, Math.ceil(seconds / 60));
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) ? Math.max(1, Math.ceil((timestamp - Date.now()) / 60_000)) : 60;
+};
 
 async function request<T>(query: string, variables: Record<string, unknown>): Promise<T> {
   const apiKey = process.env.BUFFER_API_KEY;
@@ -17,11 +25,13 @@ async function request<T>(query: string, variables: Record<string, unknown>): Pr
     throw new BufferError(error instanceof Error ? error.message : "Buffer network failure", "UNKNOWN_PROVIDER_RESULT", false, true);
   }
   const body = await response.json() as GraphQlResponse<T>;
-  if (response.status === 429) throw new BufferError("Buffer rate limit exceeded", "RATE_LIMIT_EXCEEDED", true);
+  if (response.status === 429) throw new BufferError("Buffer rate limit exceeded", "RATE_LIMIT_EXCEEDED", true, false, retryAfterMinutes(response.headers.get("retry-after")));
   if (!response.ok) throw new BufferError(`Buffer HTTP ${response.status}`, `HTTP_${response.status}`, response.status >= 500);
   if (body.errors?.length) {
     const code = body.errors[0].extensions?.code || "GRAPHQL_ERROR";
-    throw new BufferError(body.errors.map((item) => item.message).join("; "), code, ["UNEXPECTED", "RATE_LIMIT_EXCEEDED"].includes(code));
+    const message = body.errors.map((item) => item.message).join("; ");
+    const queueFull = /queue|scheduled posts?|posting limit|maximum posts?/i.test(message);
+    throw new BufferError(message, queueFull ? "BUFFER_QUEUE_FULL" : code, queueFull || ["UNEXPECTED", "RATE_LIMIT_EXCEEDED"].includes(code), false, queueFull ? 60 : code === "RATE_LIMIT_EXCEEDED" ? 60 : 0);
   }
   if (!body.data) throw new BufferError("Buffer returned no data", "EMPTY_RESPONSE", false, true);
   return body.data;
@@ -37,7 +47,11 @@ export async function createScheduledPost(input: { channelId: string; text: stri
       }
     }
   `, { input: { text: input.text, channelId: input.channelId, schedulingType: "automatic", mode: input.mode || "customScheduled", ...(input.dueAt ? { dueAt: input.dueAt } : {}), aiAssisted: true, metadata: { instagram: { type: "post", shouldShareToFeed: true, isAiGenerated: true } }, assets: input.mediaUrls.map((url) => ({ image: { url } })) } });
-  if (!data.createPost.post) throw new BufferError(data.createPost.message || `Buffer mutation failed (${data.createPost.__typename})`, data.createPost.__typename, false);
+  if (!data.createPost.post) {
+    const message = data.createPost.message || `Buffer mutation failed (${data.createPost.__typename})`;
+    const queueFull = /queue|scheduled posts?|posting limit|maximum posts?/i.test(message);
+    throw new BufferError(message, queueFull ? "BUFFER_QUEUE_FULL" : data.createPost.__typename, queueFull, false, queueFull ? 60 : 0);
+  }
   return data.createPost.post;
 }
 

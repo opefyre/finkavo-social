@@ -1,10 +1,12 @@
 import http from "node:http";
 import { createHash, randomBytes } from "node:crypto";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import postgres from "postgres";
 import { z } from "zod";
 import { DraftSchema } from "./contracts.js";
 import { generateDraft } from "./openai.js";
-import { createBufferMediaUrl, createUploadUrl, verifyUploadedObject, type RenderFileInput } from "./storage.js";
+import { createBufferMediaUrl, createUploadUrl, uploadRenderedObject, verifyUploadedObject, type RenderFileInput } from "./storage.js";
 import { BufferError, createScheduledPost, getPost as getBufferPost } from "./buffer.js";
 import { notifyDiscord, notifyDiscordReview } from "./discord.js";
 import { renderReviewPreview } from "./preview.js";
@@ -29,6 +31,9 @@ const port = Number(process.env.SOCIAL_API_PORT || 4320);
 const reviewBaseUrl = process.env.REVIEW_BASE_URL;
 const reviewPathPrefix = (process.env.REVIEW_PATH_PREFIX || "").replace(/\/$/, "");
 const dailyPublishSlots = [[8, 30], [11, 30], [14, 30], [18, 0], [21, 0]] as const;
+const bufferHandoffHours = Math.min(48, Math.max(1, Number(process.env.BUFFER_HANDOFF_HOURS || 24)));
+const bufferQueueSoftLimit = Math.min(9, Math.max(1, Number(process.env.BUFFER_QUEUE_SOFT_LIMIT || 8)));
+const publishAvailableAt = (scheduledAt: Date, now = new Date()) => new Date(Math.max(now.getTime(), scheduledAt.getTime() - bufferHandoffHours * 60 * 60_000));
 
 const hash = (value: unknown) => createHash("sha256").update(typeof value === "string" ? value : JSON.stringify(value)).digest("hex");
 const lisbonDate = (date: Date) => new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Lisbon", year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
@@ -226,6 +231,56 @@ function createRenderManifest(post: Record<string, unknown>, revision: Record<st
           ? "cream_guide"
           : "petrol_editorial";
   return { schemaVersion: 1, postId: String(post.id), revisionId: String(revision.id), locale: "en", templateVersion: "finkavo-v3", visualStyle, slides };
+}
+
+type StoredRenderFile = RenderFileInput & { index: number };
+async function persistReviewedRender(post: Record<string, unknown>, revision: Record<string, unknown>, paths: string[]) {
+  const postId = String(post.id);
+  const revisionId = String(revision.id);
+  const manifest = createRenderManifest(post, revision);
+  const manifestHash = hash(manifest);
+  if (paths.length !== manifest.slides.length) throw new Error("Reviewed render file count does not match its manifest");
+  const now = new Date();
+  const prefix = `social/carousels/${now.getUTCFullYear()}/${String(now.getUTCMonth() + 1).padStart(2, "0")}/${String(now.getUTCDate()).padStart(2, "0")}/${postId}/${revisionId}`;
+  const files: StoredRenderFile[] = [];
+  for (const [index, path] of paths.entries()) {
+    const bytes = await readFile(path);
+    const png = bytes.length >= 24 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47;
+    const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    const width = png ? view.getUint32(16) : 0;
+    const height = png ? view.getUint32(20) : 0;
+    if (!png || width !== 1080 || height !== 1350) throw new Error(`Reviewed slide ${index + 1} is not a valid 1080 × 1350 PNG`);
+    const file: StoredRenderFile = {
+      index: index + 1,
+      sha256: createHash("sha256").update(bytes).digest("hex"),
+      bytes: bytes.length,
+      width: 1080,
+      height: 1350,
+      mimeType: "image/png",
+      key: `${prefix}/${String(index + 1).padStart(2, "0")}.png`,
+    };
+    if (!(await uploadRenderedObject(file, bytes))) throw new Error(`Reviewed slide ${index + 1} failed R2 verification`);
+    files.push(file);
+  }
+  const [saved] = await sql.begin(async (tx) => {
+    const [currentPost] = await tx`SELECT id,status,current_revision_id,approved_revision_id FROM social_post WHERE id=${postId} FOR UPDATE`;
+    if (!currentPost || currentPost.current_revision_id !== revisionId) return [];
+    const [existing] = await tx`SELECT * FROM social_render_job WHERE post_id=${postId} AND revision_id=${revisionId} ORDER BY created_at DESC LIMIT 1 FOR UPDATE`;
+    let job;
+    if (existing) {
+      if (existing.status !== "completed" && existing.status !== "failed") return [];
+      [job] = await tx`UPDATE social_render_job SET status='completed',manifest=${tx.json(manifest)},manifest_hash=${manifestHash},output_files=${tx.json(files)},lease_owner=NULL,lease_expires_at=NULL,error_code=NULL,error_message=NULL,updated_at=now() WHERE id=${existing.id} RETURNING *`;
+    } else {
+      [job] = await tx`INSERT INTO social_render_job(post_id,revision_id,idempotency_key,status,manifest,manifest_hash,attempt_count,output_files) VALUES(${postId},${revisionId},${`render:${postId}:${revisionId}`},'completed',${tx.json(manifest)},${manifestHash},1,${tx.json(files)}) RETURNING *`;
+      await tx`INSERT INTO social_render_attempt(job_id,attempt_number,worker_id,finished_at,outcome) VALUES(${job.id},1,'review-renderer',now(),'completed')`;
+    }
+    const approved = currentPost.approved_revision_id === revisionId;
+    if (approved) await tx`UPDATE social_post SET status='rendered',rendered_at=now(),render_files=${tx.json(files)},updated_at=now() WHERE id=${postId}`;
+    await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${postId},${approved ? "render.recovered_reviewed" : "render.reviewed_ready"},${tx.json({jobId:String(job.id),revisionId,manifestHash,files:files.map(file=>({key:file.key,sha256:file.sha256,bytes:file.bytes}))})})`;
+    return [job];
+  });
+  if (!saved) throw new Error("Reviewed render could not be attached to the current revision");
+  return { job: saved, files };
 }
 
 const server = http.createServer(async (req, res) => {
@@ -672,7 +727,12 @@ const server = http.createServer(async (req, res) => {
             continue;
           }
           const idempotencyKey = `render:${row.id}:${row.revision_id}`;
-          const [existing] = await tx`SELECT id FROM social_render_job WHERE idempotency_key=${idempotencyKey}`;
+          const [existing] = await tx`SELECT * FROM social_render_job WHERE idempotency_key=${idempotencyKey} FOR UPDATE`;
+          if (existing?.status === "completed" && Array.isArray(existing.output_files) && existing.output_files.length) {
+            await tx`UPDATE social_post SET status='rendered',rendered_at=COALESCE(rendered_at,now()),render_files=${tx.json(existing.output_files)},updated_at=now() WHERE id=${row.id}`;
+            await tx`INSERT INTO social_event (post_id,event_type,payload) VALUES (${row.id},'render.approved_reused',${tx.json({jobId:existing.id,revisionId:row.revision_id})})`;
+            continue;
+          }
           if (existing) continue;
           const manifest = createRenderManifest(row as Record<string, unknown>, { id: row.revision_id, slides: row.revision_slides, call_to_action: row.revision_cta });
           const [job] = await tx`INSERT INTO social_render_job (post_id,revision_id,idempotency_key,manifest,manifest_hash) VALUES (${row.id},${row.revision_id},${idempotencyKey},${tx.json(manifest)},${hash(manifest)}) RETURNING id`;
@@ -688,6 +748,21 @@ const server = http.createServer(async (req, res) => {
         for (let dayOffset = 0; dayOffset < 8; dayOffset++) for (const [hour, minute] of dailyPublishSlots) {
           const slot = lisbonSlotUtc(addLisbonDays(today, dayOffset), hour, minute);
           if (slot.getTime() >= minimum && !occupied.has(slot.toISOString())) candidates.push(slot);
+        }
+        const overdue = await tx`
+          SELECT * FROM social_publish_job
+          WHERE status IN ('pending','retrying') AND scheduled_at < ${new Date(minimum).toISOString()}
+          ORDER BY scheduled_at FOR UPDATE
+        `;
+        const rescheduled: Array<{ postId: string; scheduledAt: string }> = [];
+        for (const job of overdue) {
+          const slot = candidates.shift();
+          if (!slot) break;
+          const availableAt = publishAvailableAt(slot, now);
+          await tx`UPDATE social_publish_job SET scheduled_at=${slot.toISOString()},available_at=${availableAt.toISOString()},attempt_count=0,error_code=NULL,error_message=NULL,updated_at=now() WHERE id=${job.id}`;
+          await tx`UPDATE social_post SET scheduled_at=${slot.toISOString()},updated_at=now() WHERE id=${job.post_id}`;
+          await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'publish.rescheduled_local',${tx.json({jobId:job.id,previousScheduledAt:job.scheduled_at,scheduledAt:slot.toISOString()})})`;
+          rescheduled.push({postId:String(job.post_id),scheduledAt:slot.toISOString()});
         }
         const rendered = await tx`
           SELECT p.*, r.id AS revision_id, j.id AS render_job_id
@@ -708,13 +783,14 @@ const server = http.createServer(async (req, res) => {
           const idempotencyKey = `buffer:${post.id}:${post.revision_id}:${slot.toISOString()}`;
           const [existing] = await tx`SELECT id FROM social_publish_job WHERE post_id=${post.id} AND revision_id=${post.revision_id}`;
           if (existing) continue;
-          const [job] = await tx`INSERT INTO social_publish_job (post_id,revision_id,render_job_id,idempotency_key,scheduled_at) VALUES (${post.id},${post.revision_id},${post.render_job_id},${idempotencyKey},${slot.toISOString()}) RETURNING id`;
+          const availableAt = publishAvailableAt(slot, now);
+          const [job] = await tx`INSERT INTO social_publish_job (post_id,revision_id,render_job_id,idempotency_key,scheduled_at,available_at) VALUES (${post.id},${post.revision_id},${post.render_job_id},${idempotencyKey},${slot.toISOString()},${availableAt.toISOString()}) RETURNING id`;
           await tx`UPDATE social_post SET scheduled_at=${slot.toISOString()},updated_at=now() WHERE id=${post.id}`;
           await tx`INSERT INTO social_event (post_id,event_type,payload) VALUES (${post.id},'publish.queued',${tx.json({ jobId: job.id, scheduledAt: slot.toISOString(), automated: true })})`;
           scheduled.push({ postId: String(post.id), scheduledAt: slot.toISOString() });
           occupied.add(slot.toISOString());
         }
-        return { renders, scheduled };
+        return { renders, scheduled, rescheduled };
       });
       return send(res, 200, result);
     }
@@ -749,6 +825,11 @@ const server = http.createServer(async (req, res) => {
         call_to_action: previewSource.revision_cta,
       }));
       if(dryRun)return send(res,200,{dryRun:true,postId:String(previewSource.id),revisionId:String(previewSource.revision_id),quality,previewFiles});
+      await persistReviewedRender(previewSource as Record<string, unknown>, {
+        id: previewSource.revision_id,
+        slides: previewSource.revision_slides,
+        call_to_action: previewSource.revision_cta,
+      }, previewFiles);
       const rawToken = randomBytes(32).toString("base64url");
       const [created] = await sql.begin(async (tx) => {
         const [post] = await tx`
@@ -779,6 +860,22 @@ const server = http.createServer(async (req, res) => {
       });
       await notifyDiscordReview({ title: "Instagram carousel ready for review", postId: reviewRequest[1], expiresAt: created.expires_at, actionUrl: reviewUrl, caption: finalCaption, files: previewFiles });
       return send(res, 201, { reviewUrl, expiresAt: created.expires_at });
+    }
+
+    const recoverReviewed = url.pathname.match(/^\/v1\/posts\/([0-9a-f-]+)\/recover-reviewed-render$/i);
+    if (req.method === "POST" && recoverReviewed) {
+      const [source] = await sql`
+        SELECT p.*,r.id AS revision_id,r.slides AS revision_slides,r.call_to_action AS revision_cta
+        FROM social_post p JOIN social_post_revision r ON r.id=p.approved_revision_id
+        WHERE p.id=${recoverReviewed[1]} AND p.current_revision_id=p.approved_revision_id
+          AND p.status IN ('approved','render_queued','rendering','failed')
+      `;
+      if (!source) return send(res, 409, { error: "Only the current approved revision can be recovered" });
+      const slideCount = (source.revision_slides as unknown[]).length;
+      const renderRoot = path.resolve(process.env.RENDER_OUTPUT_DIR || "./data/renders");
+      const files = Array.from({ length: slideCount }, (_, index) => path.join(renderRoot, String(source.id), String(source.revision_id), `${String(index + 1).padStart(2, "0")}.png`));
+      const recovered = await persistReviewedRender(source as Record<string, unknown>, { id: source.revision_id, slides: source.revision_slides, call_to_action: source.revision_cta }, files);
+      return send(res, 200, { postId: source.id, job: recovered.job, files: recovered.files });
     }
 
     const renderRequest = url.pathname.match(/^\/v1\/posts\/([0-9a-f-]+)\/request-render$/i);
@@ -933,7 +1030,8 @@ const server = http.createServer(async (req, res) => {
         `;
         if (!post || !(post.render_files as unknown[])?.length || !(post.caption as string)?.trim()) return null;
         assertPublishableCopy(post as Record<string, unknown>);
-        const [created] = await tx`INSERT INTO social_publish_job (post_id, revision_id, render_job_id, idempotency_key, scheduled_at) VALUES (${post.id}, ${post.revision_id}, ${post.render_job_id}, ${idempotencyKey}, ${scheduledAt}) RETURNING *`;
+        const availableAt = publishAvailableAt(new Date(scheduledAt));
+        const [created] = await tx`INSERT INTO social_publish_job (post_id, revision_id, render_job_id, idempotency_key, scheduled_at, available_at) VALUES (${post.id}, ${post.revision_id}, ${post.render_job_id}, ${idempotencyKey}, ${scheduledAt}, ${availableAt.toISOString()}) RETURNING *`;
         await tx`UPDATE social_post SET scheduled_at = ${scheduledAt}, updated_at = now() WHERE id = ${post.id}`;
         await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'publish.queued', ${tx.json({ jobId: created.id, scheduledAt })})`;
         return created;
@@ -945,7 +1043,10 @@ const server = http.createServer(async (req, res) => {
       const workerId = z.string().min(3).max(120).parse(req.headers["x-publisher-id"] || "n8n-publisher");
       const job: any = await sql.begin(async (tx) => {
         await tx`UPDATE social_publish_job SET status = 'retrying', lease_owner = NULL, lease_expires_at = NULL, available_at = now(), updated_at = now() WHERE status = 'processing' AND lease_expires_at < now()`;
-        const [candidate] = await tx`SELECT * FROM social_publish_job WHERE status IN ('pending','retrying') AND available_at <= now() ORDER BY created_at LIMIT 1 FOR UPDATE SKIP LOCKED`;
+        const [queued] = await tx`SELECT count(*) AS count FROM social_publish_job WHERE status='scheduled' AND scheduled_at>now()`;
+        if (Number(queued.count) >= bufferQueueSoftLimit) return null;
+        const handoffCutoff = new Date(Date.now() + bufferHandoffHours * 60 * 60_000);
+        const [candidate] = await tx`SELECT * FROM social_publish_job WHERE status IN ('pending','retrying') AND available_at <= now() AND scheduled_at <= ${handoffCutoff.toISOString()} ORDER BY scheduled_at LIMIT 1 FOR UPDATE SKIP LOCKED`;
         if (!candidate) return null;
         const attempt = Number(candidate.attempt_count) + 1;
         const [claimed] = await tx`UPDATE social_publish_job SET status = 'processing', attempt_count = ${attempt}, lease_owner = ${workerId}, lease_expires_at = now() + INTERVAL '5 minutes', updated_at = now() WHERE id = ${candidate.id} RETURNING *`;
@@ -974,7 +1075,7 @@ const server = http.createServer(async (req, res) => {
         return send(res, 200, { job: saved });
       } catch (error) {
         const failure = error instanceof BufferError ? error : new BufferError(error instanceof Error ? error.message : "Publish failure", "PUBLISH_FAILED", false, true);
-        const { retry, blocked, delayMinutes } = retryDecision(Number(job.attempt_count), failure.retryable, failure.ambiguous);
+        const { retry, blocked, delayMinutes } = retryDecision(Number(job.attempt_count), failure.retryable, failure.ambiguous, failure.retryAfterMinutes);
         const [failed] = await sql.begin(async (tx) => {
           const [updated] = retry
             ? await tx`UPDATE social_publish_job SET status = 'retrying', available_at = now() + (${delayMinutes!}::STRING || ' minutes')::INTERVAL, lease_owner = NULL, lease_expires_at = NULL, error_code = ${failure.code}, error_message = ${failure.message}, updated_at = now() WHERE id = ${job.id} RETURNING *`
@@ -1007,12 +1108,17 @@ const server = http.createServer(async (req, res) => {
             });
             await notifyDiscord("published", "Instagram post published", { post: job.post_id, slides: (await sql`SELECT jsonb_array_length(render_files) AS count FROM social_post WHERE id = ${job.post_id}`)[0]?.count || "unknown" });
           } else if (providerPost.status === "error") {
-            await sql`UPDATE social_publish_job SET status = 'failed', provider_status = 'error', error_code = 'BUFFER_POST_ERROR', error_message = 'Buffer reported post error', updated_at = now() WHERE id = ${job.id}`;
-            await notifyDiscord("errors", "Buffer reported publish failure", { post: job.post_id, bufferPost: job.provider_post_id });
+            await sql.begin(async tx => {
+              await tx`UPDATE social_publish_job SET status='retrying',provider_post_id=NULL,provider_status='error',available_at=now()+INTERVAL '30 minutes',error_code='BUFFER_POST_ERROR',error_message='Buffer reported post error; queued for a new slot',updated_at=now() WHERE id=${job.id}`;
+              await tx`UPDATE social_post SET status='rendered',buffer_post_id=NULL,updated_at=now() WHERE id=${job.post_id}`;
+              await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'publish.provider_error_requeued',${tx.json({jobId:job.id,bufferPostId:job.provider_post_id})})`;
+            });
+            await notifyDiscord("errors", "Buffer publish failed; retained for automatic rescheduling", { post: job.post_id, bufferPost: job.provider_post_id });
           } else await sql`UPDATE social_publish_job SET provider_status = ${providerPost.status}, updated_at = now() WHERE id = ${job.id}`;
           results.push({ id: String(job.id), status: providerPost.status });
         } catch (error) {
           results.push({ id: String(job.id), status: `monitor_error:${error instanceof Error ? error.message : "unknown"}` });
+          await sql`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'publish.monitor_error',${sql.json({jobId:job.id,code:error instanceof BufferError?error.code:'MONITOR_ERROR'})})`;
           if (error instanceof BufferError && error.code === "RATE_LIMIT_EXCEEDED") break;
         }
       }
@@ -1067,8 +1173,12 @@ const server = http.createServer(async (req, res) => {
       ReportSchema.parse(await readJson(req));const now=new Date();const today=lisbonDate(now);const lisbonTime=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Lisbon',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(now);const alerts:string[]=[];
       const [renderer]=await sql`SELECT last_seen_at FROM social_renderer_heartbeat ORDER BY last_seen_at DESC LIMIT 1`;if(!renderer||now.getTime()-new Date(String(renderer.last_seen_at)).getTime()>5*60_000)alerts.push('Renderer heartbeat is stale');
       const [failed]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='failed' AND updated_at>now()-INTERVAL '24 hours'`;if(Number(failed.count)>0)alerts.push(`${failed.count} publish schedule(s) failed in the last 24 hours`);
+      const [renderFailed]=await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${today} AND status='failed'`;if(Number(renderFailed.count)>0)alerts.push(`${renderFailed.count} planned post(s) failed rendering`);
+      const [stranded]=await sql`SELECT count(*) AS count FROM social_post p WHERE p.status='rendered' AND p.rendered_at<now()-INTERVAL '15 minutes' AND NOT EXISTS(SELECT 1 FROM social_publish_job j WHERE j.post_id=p.id AND j.revision_id=p.approved_revision_id)`;if(Number(stranded.count)>0)alerts.push(`${stranded.count} rendered post(s) are missing an internal publish job`);
+      const [localOverdue]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status IN ('pending','retrying') AND scheduled_at<now()`;if(Number(localOverdue.count)>0)alerts.push(`${localOverdue.count} internal queued post(s) need rescheduling`);
+      const [blockedPublish]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='blocked'`;if(Number(blockedPublish.count)>0)alerts.push(`${blockedPublish.count} ambiguous Buffer result(s) need reconciliation`);
       const [overdue]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='scheduled' AND scheduled_at<now()-INTERVAL '20 minutes'`;if(Number(overdue.count)>0)alerts.push(`${overdue.count} publication confirmation(s) are overdue`);
-      if(lisbonTime>='08:35'){const [batch]=await sql`SELECT count(*) AS count FROM social_post WHERE (created_at AT TIME ZONE 'Europe/Lisbon')::DATE=${today} AND status IN ('draft','ready_for_review','approved','render_queued','rendering','rendered','scheduled','published')`;if(Number(batch.count)<5)alerts.push(`Approval batch is incomplete: ${batch.count}/5 posts`);}
+      if(lisbonTime>='08:35'){const [batch]=await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${today}`;if(Number(batch.count)<5)alerts.push(`Approval batch is incomplete: ${batch.count}/5 posts`);}
       const signature=hash({today,alerts});let sent=false;if(alerts.length){const [existing]=await sql`SELECT id FROM social_event WHERE event_type='operations.alert_sent' AND payload->>'signature'=${signature} LIMIT 1`;if(!existing){sent=await notifyDiscord('errors','Finkavo pipeline alert',{date:today,problems:alerts.join('\n')});await sql`INSERT INTO social_event(event_type,payload) VALUES('operations.alert_sent',${sql.json({signature,alerts})})`;}}
       return send(res,200,{date:today,alerts,sent});
     }
