@@ -1314,7 +1314,8 @@ const server = http.createServer(async (req, res) => {
         const handoffCutoff = new Date(Date.now() + bufferHandoffHours * 60 * 60_000);
         const [candidate] = await tx`SELECT * FROM social_publish_job WHERE status IN ('pending','retrying') AND available_at <= now() AND scheduled_at <= ${handoffCutoff.toISOString()} ORDER BY scheduled_at LIMIT 1 FOR UPDATE SKIP LOCKED`;
         if (!candidate) return null;
-        const attempt = Number(candidate.attempt_count) + 1;
+        const [attemptRow] = await tx`SELECT COALESCE(max(attempt_number),0)+1 AS next_attempt FROM social_publish_attempt WHERE job_id=${candidate.id}`;
+        const attempt = Number(attemptRow.next_attempt);
         const [claimed] = await tx`UPDATE social_publish_job SET status = 'processing', attempt_count = ${attempt}, lease_owner = ${workerId}, lease_expires_at = now() + INTERVAL '5 minutes', updated_at = now() WHERE id = ${candidate.id} RETURNING *`;
         const [post] = await tx`SELECT topic, hook, caption, call_to_action, hashtags, slides, render_files FROM social_post WHERE id = ${candidate.post_id}`;
         const requestFingerprint = hash({ postId: candidate.post_id, revisionId: candidate.revision_id, scheduledAt: candidate.scheduled_at, files: post.render_files });
