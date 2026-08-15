@@ -1312,7 +1312,15 @@ const server = http.createServer(async (req, res) => {
           await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${job.post_id}, ${retry ? "publish.retrying" : blocked ? "publish.blocked" : "publish.failed"}, ${tx.json({ jobId: job.id, attempt: job.attempt_count, code: failure.code, delayMinutes: retry ? delayMinutes : null })})`;
           return [updated];
         });
-        if (!retry) await notifyDiscord("errors", blocked ? "Publish result needs reconciliation" : "Publish failed", { post: job.post_id, code: failure.code, attempt: job.attempt_count });
+        if (!retry) {
+          const boardUrl = `${(reviewBaseUrl || "https://approve.finkavo.com").replace(/\/$/, "")}/board?post=${job.post_id}`;
+          await notifyDiscord("errors", blocked ? "Publish result needs reconciliation" : "Publish failed", {
+            topic: job.post.topic, postId: job.post_id, publishJobId: job.id,
+            intendedTime: new Date(job.scheduled_at as string).toISOString(), attempt: job.attempt_count,
+            code: failure.code, error: failure.message,
+            requiredAction: blocked ? "Check Buffer for this topic, then use the guarded retry or archive action on the board." : "Open the board to inspect and retry.",
+          }, boardUrl);
+        }
         return send(res, retry ? 202 : 422, { job: failed, error: failure.message });
       }
     }
@@ -1405,7 +1413,7 @@ const server = http.createServer(async (req, res) => {
       const [renderFailed]=await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${today} AND status='failed'`;if(Number(renderFailed.count)>0)alerts.push(`${renderFailed.count} planned post(s) failed rendering`);
       const [stranded]=await sql`SELECT count(*) AS count FROM social_post p WHERE p.status='rendered' AND p.rendered_at<now()-INTERVAL '15 minutes' AND NOT EXISTS(SELECT 1 FROM social_publish_job j WHERE j.post_id=p.id AND j.revision_id=p.approved_revision_id)`;if(Number(stranded.count)>0)alerts.push(`${stranded.count} rendered post(s) are missing an internal publish job`);
       const [localOverdue]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status IN ('pending','retrying') AND scheduled_at<now()`;if(Number(localOverdue.count)>0)alerts.push(`${localOverdue.count} internal queued post(s) need rescheduling`);
-      const [blockedPublish]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='blocked'`;if(Number(blockedPublish.count)>0)alerts.push(`${blockedPublish.count} ambiguous Buffer result(s) need reconciliation`);
+      const blockedPublish=await sql`SELECT j.id,p.id AS post_id,p.topic,j.scheduled_at,j.error_code FROM social_publish_job j JOIN social_post p ON p.id=j.post_id WHERE j.status='blocked' ORDER BY j.scheduled_at LIMIT 10`;if(blockedPublish.length>0)alerts.push(`${blockedPublish.length} ambiguous Buffer result(s) need reconciliation:\n${blockedPublish.map(row=>`${row.topic} — post ${row.post_id}, job ${row.id}, ${row.error_code||'unknown error'}`).join('\n')}`);
       const [bufferQueued]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='scheduled' AND scheduled_at>now()`;if(Number(bufferQueued.count)>=bufferQueueSoftLimit)alerts.push(`Buffer handoff soft cap reached: ${bufferQueued.count}/${bufferQueueSoftLimit}`);
       const [overdue]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='scheduled' AND scheduled_at<now()-INTERVAL '20 minutes'`;if(Number(overdue.count)>0)alerts.push(`${overdue.count} publication confirmation(s) are overdue`);
       if(lisbonTime>='09:00'){const [batch]=await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${today} AND status NOT IN ('blocked','failed','rejected')`;if(Number(batch.count)<5){const failures=await sql`SELECT s.topic,e.payload->>'error' AS error FROM social_editorial_plan_slot s LEFT JOIN LATERAL (SELECT payload FROM social_event WHERE event_type='generation.failed' AND payload->>'planSlotId'=s.id::STRING ORDER BY created_at DESC LIMIT 1) e ON true WHERE s.publish_date=${today} AND s.status='held' ORDER BY s.slot_number`;alerts.push(`Approval batch is incomplete after recovery: ${batch.count}/5 posts${failures.length?`\n${failures.map(row=>`${row.topic}: ${row.error||'no verified replacement available'}`).join('\n')}`:''}`);}}

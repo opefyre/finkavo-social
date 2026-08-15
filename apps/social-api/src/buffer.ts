@@ -24,8 +24,16 @@ async function request<T>(query: string, variables: Record<string, unknown>): Pr
   } catch (error) {
     throw new BufferError(error instanceof Error ? error.message : "Buffer network failure", "UNKNOWN_PROVIDER_RESULT", false, true);
   }
-  const body = await response.json() as GraphQlResponse<T>;
   if (response.status === 429) throw new BufferError("Buffer rate limit exceeded", "RATE_LIMIT_EXCEEDED", true, false, retryAfterMinutes(response.headers.get("retry-after")));
+  const contentType = response.headers.get("content-type") || "unknown content type";
+  const raw = await response.text();
+  let body: GraphQlResponse<T>;
+  try { body = JSON.parse(raw) as GraphQlResponse<T>; }
+  catch {
+    const message = `Buffer returned non-JSON (HTTP ${response.status}; ${contentType.split(";")[0]})`;
+    const ambiguous = response.ok || response.status >= 500;
+    throw new BufferError(message, `NON_JSON_HTTP_${response.status}`, false, ambiguous);
+  }
   if (!response.ok) throw new BufferError(`Buffer HTTP ${response.status}`, `HTTP_${response.status}`, response.status >= 500);
   if (body.errors?.length) {
     const code = body.errors[0].extensions?.code || "GRAPHQL_ERROR";
