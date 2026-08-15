@@ -1001,7 +1001,7 @@ const server = http.createServer(async (req, res) => {
           const slot = candidates.shift();
           if (!slot) break;
           const availableAt = publishAvailableAt(slot, now);
-          await tx`UPDATE social_publish_job SET scheduled_at=${slot.toISOString()},available_at=${availableAt.toISOString()},attempt_count=0,error_code=NULL,error_message=NULL,updated_at=now() WHERE id=${job.id}`;
+          await tx`UPDATE social_publish_job SET scheduled_at=${slot.toISOString()},available_at=${availableAt.toISOString()},error_code=NULL,error_message=NULL,updated_at=now() WHERE id=${job.id}`;
           await tx`UPDATE social_post SET scheduled_at=${slot.toISOString()},updated_at=now() WHERE id=${job.post_id}`;
           await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'publish.rescheduled_local',${tx.json({jobId:job.id,previousScheduledAt:job.scheduled_at,scheduledAt:slot.toISOString()})})`;
           rescheduled.push({postId:String(job.post_id),scheduledAt:slot.toISOString()});
