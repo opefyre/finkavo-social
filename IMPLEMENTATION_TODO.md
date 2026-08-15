@@ -117,3 +117,14 @@ Validation completed 2026-08-14:
 - [x] Deploy the workflows in place, recover the missing 15 August slots, and verify a clean 5/5 batch.
 
 Validation completed 2026-08-15: the initial batch stopped at 3/5. The recovery loop cycled through verified replacements, exposed and corrected a false-positive language gate, then generated two valid replacements and sent both to Discord. Final batch 5/5; live alert check returned zero problems; WF-04, WF-05, and WF-09 remained active with no new workflow duplicates.
+
+## 11. Private post-operations board
+
+- [x] Add an owner-only Kanban view for every retained post and lifecycle state.
+- [x] Reuse Cloudflare Access and independently verify the signed owner identity in the API.
+- [x] Add search plus category, risk, and plan-date filters.
+- [x] Add interactive details with carousel media, final caption, sources, approvals, schedule, publishing, errors, IDs, and activity.
+- [x] Keep the board read-only, non-cacheable, credential-free, and protected by a restrictive CSP.
+- [x] Validate unauthenticated rejection, authenticated full-history data, desktop interaction, and mobile layout.
+
+Validation completed 2026-08-15: unauthenticated page and data calls returned 403; authenticated data returned all 30 retained posts; desktop and 390×844 tests rendered six columns and 30 cards, opened the full detail dialog, loaded real media, and reported zero browser errors. Client-script syntax and identity escaping are covered by automated regression tests. Production URL: `https://approve.finkavo.com/board`.
