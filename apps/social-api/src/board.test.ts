@@ -9,5 +9,9 @@ describe("private board page", () => {
     expect(() => new Function(script!)).not.toThrow();
     expect(html).not.toContain(`owner<script>`);
     expect(html).toContain("owner&lt;script&gt;");
+    expect(html).toContain("Approve exact revision");
+    expect(html).toContain("Retry publishing");
+    expect(html).toContain("Archive after checking Buffer");
+    expect(html).toContain("action_token");
   });
 });
