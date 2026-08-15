@@ -1397,7 +1397,13 @@ const server = http.createServer(async (req, res) => {
               await tx`UPDATE social_post SET status='rendered',buffer_post_id=NULL,updated_at=now() WHERE id=${job.post_id}`;
               await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'publish.provider_error_requeued',${tx.json({jobId:job.id,bufferPostId:job.provider_post_id})})`;
             });
-            await notifyDiscord("errors", "Buffer publish failed; retained for automatic rescheduling", { post: job.post_id, bufferPost: job.provider_post_id });
+            const [failedPost] = await sql`SELECT topic FROM social_post WHERE id=${job.post_id}`;
+            const boardUrl = `${(reviewBaseUrl || "https://approve.finkavo.com").replace(/\/$/, "")}/board?post=${job.post_id}`;
+            await notifyDiscord("errors", "Buffer/Instagram delivery failed; post retained", {
+              topic: failedPost?.topic || "Unknown topic", postId: job.post_id, publishJobId: job.id,
+              bufferPostId: job.provider_post_id, failedScheduledTime: new Date(job.scheduled_at as string).toISOString(),
+              providerStatus: "error", recovery: "Returned to the durable local queue for automatic assignment to the next available slot.",
+            }, boardUrl);
           } else await sql`UPDATE social_publish_job SET provider_status = ${providerPost.status}, updated_at = now() WHERE id = ${job.id}`;
           results.push({ id: String(job.id), status: providerPost.status });
         } catch (error) {
