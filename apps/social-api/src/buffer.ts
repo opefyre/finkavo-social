@@ -69,3 +69,22 @@ export async function getPost(postId: string) {
   `, { input: { id: postId } });
   return data.post;
 }
+
+export async function findMatchingScheduledPost(input: { channelId: string; text: string; dueAt: string }) {
+  const account = await request<{ account: { organizations: Array<{ id: string }> } }>(`query ReconcileAccount { account { organizations { id } } }`, {});
+  const organizationId = account.account.organizations[0]?.id;
+  if (!organizationId) throw new BufferError("Buffer account has no organization", "ORGANIZATION_NOT_FOUND", false);
+  const organization = JSON.stringify(organizationId);
+  const channel = JSON.stringify(input.channelId);
+  const data = await request<{ posts: { edges: Array<{ node: { id: string; text?: string; dueAt?: string; status?: string; channelId?: string } }> } }>(`
+    query ReconcilePosts {
+      posts(first: 100, input: { organizationId: ${organization}, filter: { channelIds: [${channel}] }, sort: [{ field: dueAt, direction: desc }, { field: createdAt, direction: desc }] }) {
+        edges { node { id text dueAt status channelId } }
+      }
+    }
+  `, {});
+  const due = new Date(input.dueAt).getTime();
+  return data.posts.edges.map(edge => edge.node).find(post =>
+    post.channelId === input.channelId && post.text === input.text && post.dueAt && Math.abs(new Date(post.dueAt).getTime() - due) < 60_000
+  ) || null;
+}

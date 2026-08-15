@@ -7,7 +7,7 @@ import { z } from "zod";
 import { DraftSchema } from "./contracts.js";
 import { generateDraft } from "./openai.js";
 import { createBufferMediaUrl, createUploadUrl, uploadRenderedObject, verifyUploadedObject, type RenderFileInput } from "./storage.js";
-import { BufferError, createScheduledPost, getPost as getBufferPost } from "./buffer.js";
+import { BufferError, createScheduledPost, findMatchingScheduledPost, getPost as getBufferPost } from "./buffer.js";
 import { notifyDiscord, notifyDiscordReview } from "./discord.js";
 import { renderReviewPreview } from "./preview.js";
 import { retryDecision } from "./retry-policy.js";
@@ -162,6 +162,20 @@ async function internalApi(method: "GET" | "POST", pathname: string, body?: unkn
   });
   const result = await response.json() as Record<string, unknown>;
   return { ok: response.ok, status: response.status, result };
+}
+
+async function reconcileBufferPublish(job: Record<string, any>) {
+  const channelId = process.env.BUFFER_CHANNEL_ID;
+  if (!channelId) throw new BufferError("BUFFER_CHANNEL_ID is not configured", "CHANNEL_NOT_CONFIGURED", false);
+  const text = composeInstagramCaption({ hook: String(job.post.hook), body: String(job.post.caption), callToAction: String(job.post.call_to_action), hashtags: job.post.hashtags as string[] });
+  const match = await findMatchingScheduledPost({ channelId, text, dueAt: new Date(job.scheduled_at as string).toISOString() });
+  if (!match) return null;
+  await sql.begin(async tx => {
+    await tx`UPDATE social_publish_job SET status='scheduled',provider_post_id=${match.id},provider_status=${match.status||'scheduled'},lease_owner=NULL,lease_expires_at=NULL,error_code=NULL,error_message=NULL,updated_at=now() WHERE id=${job.id} AND status IN ('processing','blocked')`;
+    await tx`UPDATE social_post SET status='scheduled',buffer_post_id=${match.id},updated_at=now() WHERE id=${job.post_id}`;
+    await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'publish.reconciled_buffer',${tx.json({jobId:job.id,bufferPostId:match.id,scheduledAt:job.scheduled_at})})`;
+  });
+  return match;
 }
 
 const sendHtml = (res: http.ServerResponse, status: number, body: string) => {
@@ -1267,6 +1281,30 @@ const server = http.createServer(async (req, res) => {
       return job ? send(res, 201, { job }) : send(res, 409, { error: "Only an approved, completed render of the current revision can be scheduled" });
     }
 
+    if (req.method === "POST" && url.pathname === "/v1/publish-jobs/reconcile-blocked") {
+      const jobs = await sql`
+        SELECT j.*,jsonb_build_object('hook',p.hook,'caption',p.caption,'call_to_action',p.call_to_action,'hashtags',p.hashtags) AS post
+        FROM social_publish_job j JOIN social_post p ON p.id=j.post_id
+        WHERE j.status='blocked' ORDER BY j.updated_at LIMIT 20
+      `;
+      const results: Array<Record<string, unknown>> = [];
+      for (const job of jobs) {
+        try {
+          const match = await reconcileBufferPublish(job as Record<string, any>);
+          if (match) results.push({ jobId: job.id, postId: job.post_id, result: "found_in_buffer", bufferPostId: match.id });
+          else {
+            await sql.begin(async tx => {
+              await tx`UPDATE social_publish_job SET status='retrying',available_at=now(),attempt_count=0,provider_post_id=NULL,provider_status=NULL,error_code=NULL,error_message=NULL,updated_at=now() WHERE id=${job.id} AND status='blocked'`;
+              await tx`UPDATE social_post SET status='rendered',buffer_post_id=NULL,updated_at=now() WHERE id=${job.post_id}`;
+              await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'publish.reconciliation_absent_requeued',${tx.json({jobId:job.id,scheduledAt:job.scheduled_at})})`;
+            });
+            results.push({ jobId: job.id, postId: job.post_id, result: "confirmed_absent_requeued" });
+          }
+        } catch (error) { results.push({ jobId: job.id, postId: job.post_id, result: "reconciliation_failed", error: error instanceof Error ? error.message : "unknown" }); }
+      }
+      return send(res, 200, { results });
+    }
+
     if (req.method === "POST" && url.pathname === "/v1/publish-jobs/process") {
       const workerId = z.string().min(3).max(120).parse(req.headers["x-publisher-id"] || "n8n-publisher");
       const job: any = await sql.begin(async (tx) => {
@@ -1302,7 +1340,16 @@ const server = http.createServer(async (req, res) => {
         });
         return send(res, 200, { job: saved });
       } catch (error) {
-        const failure = error instanceof BufferError ? error : new BufferError(error instanceof Error ? error.message : "Publish failure", "PUBLISH_FAILED", false, true);
+        let failure = error instanceof BufferError ? error : new BufferError(error instanceof Error ? error.message : "Publish failure", "PUBLISH_FAILED", false, true);
+        if (failure.ambiguous) {
+          try {
+            const match = await reconcileBufferPublish(job as Record<string, any>);
+            if (match) return send(res, 200, { job: { ...job, status: "scheduled", provider_post_id: match.id }, reconciled: true });
+            failure = new BufferError(`Buffer create response was ambiguous, but an exact scheduled-post lookup confirmed absence (${failure.code})`, "AMBIGUOUS_CONFIRMED_ABSENT", true, false);
+          } catch (reconcileError) {
+            await sql`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'publish.reconciliation_failed',${sql.json({jobId:job.id,createError:failure.code,reconcileError:reconcileError instanceof Error?reconcileError.message:'unknown'})})`;
+          }
+        }
         const { retry, blocked, delayMinutes } = retryDecision(Number(job.attempt_count), failure.retryable, failure.ambiguous, failure.retryAfterMinutes);
         const [failed] = await sql.begin(async (tx) => {
           const [updated] = retry
