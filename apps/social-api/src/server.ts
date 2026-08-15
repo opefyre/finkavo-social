@@ -241,8 +241,13 @@ const NewsDecisionSchema=z.object({date:z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 const ReportSchema=z.object({date:z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional()});
 const BoardActionSchema = z.object({
   postId: z.string().uuid(), revisionId: z.string().uuid().nullable(),
-  action: z.enum(["approve", "reject", "reopen_review", "retry_render", "retry_publish", "archive", "restore"]),
+  action: z.enum(["approve", "reject", "reopen_review", "retry_render", "retry_publish", "force_retry_publish", "edit_revision", "send_review", "archive", "restore"]),
   token: z.string().min(20), comment: z.string().max(500).optional().default(""),
+  acknowledged: z.boolean().optional().default(false),
+  edit: z.object({
+    hook: z.string().min(10).max(300), caption: z.string().min(20).max(2200), callToAction: z.string().min(5).max(300),
+    slides: z.array(z.object({ title: z.string().min(2).max(82), body: z.string().max(320) })).min(3).max(7),
+  }).optional(),
 });
 const evidenceWindows=(text:string,terms:string[])=>{const normalized=text.replace(/\s+/g," ").trim();const windows:string[]=[];for(const term of terms){const at=normalized.toLocaleLowerCase("pt").indexOf(term.toLocaleLowerCase("pt"));if(at>=0)windows.push(normalized.slice(Math.max(0,at-350),Math.min(normalized.length,at+1650)));}if(!windows.length)windows.push(normalized.slice(0,2000));return [...new Set(windows)].slice(0,6);};
 
@@ -348,8 +353,8 @@ const server = http.createServer(async (req, res) => {
         FROM social_post p
         LEFT JOIN social_post_revision r ON r.id=p.current_revision_id
         LEFT JOIN LATERAL (SELECT * FROM social_approval WHERE post_id=p.id ORDER BY decided_at DESC LIMIT 1) a ON true
-        LEFT JOIN LATERAL (SELECT * FROM social_render_job WHERE post_id=p.id ORDER BY created_at DESC LIMIT 1) rj ON true
-        LEFT JOIN LATERAL (SELECT * FROM social_publish_job WHERE post_id=p.id ORDER BY created_at DESC LIMIT 1) pj ON true
+        LEFT JOIN LATERAL (SELECT * FROM social_render_job WHERE post_id=p.id AND revision_id=p.current_revision_id ORDER BY created_at DESC LIMIT 1) rj ON true
+        LEFT JOIN LATERAL (SELECT * FROM social_publish_job WHERE post_id=p.id AND revision_id=p.current_revision_id ORDER BY created_at DESC LIMIT 1) pj ON true
         ORDER BY COALESCE(p.planned_for,p.created_at::DATE) DESC,p.created_at DESC
         LIMIT 500
       `;
@@ -387,6 +392,10 @@ const server = http.createServer(async (req, res) => {
       if (!reviewer) return send(res, 403, { error: "Action requires the authenticated owner identity" });
       const input = BoardActionSchema.parse(await readJson(req));
       if (!verifyBoardActionToken(input.token, input.postId, input.revisionId, reviewer)) return send(res, 403, { error: "Action expired. Refresh the board and try again." });
+      if (input.action === "send_review") {
+        const reviewed = await internalApi("POST", `/v1/posts/${input.postId}/request-review`, { expiresInMinutes: 240, dryRun: false });
+        return send(res, reviewed.status, reviewed.ok ? { message: "Post sent to Review and Discord." } : { error: String(reviewed.result.error || "The post could not be sent to review") });
+      }
       const result = await sql.begin(async tx => {
         const [post] = await tx`SELECT * FROM social_post WHERE id=${input.postId} FOR UPDATE`;
         if (!post || String(post.current_revision_id || "") !== String(input.revisionId || "")) return { status: 409, error: "The post revision changed. Refresh before acting." };
@@ -412,6 +421,25 @@ const server = http.createServer(async (req, res) => {
           return { status: 200, message: "Post returned to Review." };
         }
 
+        if (input.action === "edit_revision") {
+          if (!input.edit || !input.revisionId || !["rejected", "blocked", "failed"].includes(String(post.status))) return { status: 409, error: "Only an Attention item with a current revision can be edited." };
+          const [revision] = await tx`SELECT * FROM social_post_revision WHERE id=${input.revisionId} AND post_id=${post.id}`;
+          if (!revision) return { status: 409, error: "The current revision is unavailable." };
+          const originalSlides = revision.slides as Array<Record<string, unknown>>;
+          if (input.edit.slides.length !== originalSlides.length) return { status: 409, error: "The slide count changed. Refresh before editing." };
+          const slides = originalSlides.map((slide, index) => ({ ...slide, title: input.edit!.slides[index].title.trim(), body: input.edit!.slides[index].body.trim() }));
+          const edited = { topic: post.topic, hook: input.edit.hook.trim(), caption: input.edit.caption.trim(), call_to_action: input.edit.callToAction.trim(), slides };
+          assertPublishableCopy(edited);
+          const contentHash = hash({ hook: edited.hook, caption: edited.caption, callToAction: edited.call_to_action, hashtags: revision.hashtags, slides });
+          if (contentHash === revision.content_hash) return { status: 409, error: "Nothing changed." };
+          const [number] = await tx`SELECT COALESCE(max(revision_number),0)+1 AS value FROM social_post_revision WHERE post_id=${post.id}`;
+          const [created] = await tx`INSERT INTO social_post_revision(post_id,revision_number,locale,template_version,hook,caption,call_to_action,hashtags,slides,alt_texts,source_bundle,evidence_hash,content_hash,model,prompt_version) VALUES(${post.id},${number.value},${revision.locale},${revision.template_version},${edited.hook},${edited.caption},${edited.call_to_action},${revision.hashtags},${tx.json(slides)},${revision.alt_texts},${revision.source_bundle},${revision.evidence_hash},${contentHash},'owner_board_edit',${revision.prompt_version}) RETURNING id`;
+          await tx`UPDATE social_review_token SET used_at=now() WHERE post_id=${post.id} AND used_at IS NULL`;
+          await tx`UPDATE social_post SET status='draft',current_revision_id=${created.id},approved_revision_id=NULL,approved_at=NULL,approved_by=NULL,rendered_at=NULL,render_files=NULL,scheduled_at=NULL,buffer_post_id=NULL,hook=${edited.hook},caption=${edited.caption},call_to_action=${edited.call_to_action},slides=${tx.json(slides)},updated_at=now() WHERE id=${post.id}`;
+          await audit("revision.owner_edited", { previousRevisionId: input.revisionId, revisionId: created.id, contentHash });
+          return { status: 200, message: "New draft revision saved. Open it in Drafts and send it to Review." };
+        }
+
         if (input.action === "retry_render") {
           const [job] = await tx`SELECT * FROM social_render_job WHERE post_id=${post.id} AND revision_id=${post.approved_revision_id} AND status='failed' ORDER BY created_at DESC LIMIT 1 FOR UPDATE`;
           if (!job || post.current_revision_id !== post.approved_revision_id) return { status: 409, error: "No failed render exists for the current approved revision." };
@@ -421,14 +449,16 @@ const server = http.createServer(async (req, res) => {
           return { status: 200, message: "Render queued for retry." };
         }
 
-        if (input.action === "retry_publish") {
-          const [job] = await tx`SELECT * FROM social_publish_job WHERE post_id=${post.id} AND revision_id=${post.approved_revision_id} AND status='failed' ORDER BY created_at DESC LIMIT 1 FOR UPDATE`;
+        if (input.action === "retry_publish" || input.action === "force_retry_publish") {
+          if (input.action === "force_retry_publish" && !input.acknowledged) return { status: 400, error: "Confirm that Buffer contains no matching post before retrying." };
+          const allowedStatus = input.action === "force_retry_publish" ? "blocked" : "failed";
+          const [job] = await tx`SELECT * FROM social_publish_job WHERE post_id=${post.id} AND revision_id=${post.approved_revision_id} AND status=${allowedStatus} ORDER BY created_at DESC LIMIT 1 FOR UPDATE`;
           if (!job || post.current_revision_id !== post.approved_revision_id) return { status: 409, error: "No safely retryable publish failure exists for the current approved revision." };
           let scheduledAt = new Date(String(job.scheduled_at));
           if (scheduledAt.getTime() < Date.now() + 15 * 60_000) scheduledAt = new Date(Math.ceil((Date.now() + 30 * 60_000) / (30 * 60_000)) * 30 * 60_000);
           await tx`UPDATE social_publish_job SET status='retrying',scheduled_at=${scheduledAt.toISOString()},available_at=now(),attempt_count=0,provider_post_id=NULL,provider_status=NULL,lease_owner=NULL,lease_expires_at=NULL,error_code=NULL,error_message=NULL,updated_at=now() WHERE id=${job.id}`;
           await tx`UPDATE social_post SET status='rendered',scheduled_at=${scheduledAt.toISOString()},buffer_post_id=NULL,updated_at=now() WHERE id=${post.id}`;
-          await audit("publish.requeued_manual", { jobId: job.id, scheduledAt: scheduledAt.toISOString() });
+          await audit("publish.requeued_manual", { jobId: job.id, scheduledAt: scheduledAt.toISOString(), ambiguityAcknowledged: input.action === "force_retry_publish" });
           return { status: 200, message: `Publish retry queued for ${scheduledAt.toISOString()}.` };
         }
 

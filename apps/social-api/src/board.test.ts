@@ -11,7 +11,9 @@ describe("private board page", () => {
     expect(html).toContain("owner&lt;script&gt;");
     expect(html).toContain("Approve exact revision");
     expect(html).toContain("Retry publishing");
-    expect(html).toContain("Archive after checking Buffer");
+    expect(html).toContain("I checked Buffer — retry");
+    expect(html).toContain("Edit and revisit");
+    expect(html).toContain("Send to Review");
     expect(html).toContain("action_token");
   });
 });
