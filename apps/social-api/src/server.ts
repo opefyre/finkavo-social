@@ -22,6 +22,7 @@ import { editorialIdentity } from "./editorial-identity.js";
 import { eligibleReserveCards, loadEvergreenReserve } from "./evergreen-reserve.js";
 import { sourceSupportsNewsTopic } from "./news-evidence.js";
 import { editorialScore } from "./editorial-score.js";
+import { boardPage } from "./board.js";
 
 const databaseUrl = process.env.DATABASE_URL;
 const apiToken = process.env.SOCIAL_API_TOKEN;
@@ -152,6 +153,15 @@ const sendHtml = (res: http.ServerResponse, status: number, body: string) => {
     "content-type": "text/html; charset=utf-8", "cache-control": "no-store",
     "content-security-policy": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
     "x-content-type-options": "nosniff", "referrer-policy": "no-referrer",
+  });
+  res.end(body);
+};
+
+const sendBoardHtml = (res: http.ServerResponse, body: string, nonce: string) => {
+  res.writeHead(200, {
+    "content-type": "text/html; charset=utf-8", "cache-control": "no-store",
+    "content-security-policy": `default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-${nonce}'; img-src https: data:; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'`,
+    "x-content-type-options": "nosniff", "referrer-policy": "no-referrer", "permissions-policy": "camera=(), microphone=(), geolocation=()",
   });
   res.end(body);
 };
@@ -295,6 +305,55 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET" && url.pathname === "/healthz") {
       await sql`SELECT 1`;
       return send(res, 200, { ok: true, service: "social-api" });
+    }
+
+    if (req.method === "GET" && url.pathname === "/board") {
+      const reviewer = await authenticatedReviewer(req.headers);
+      if (!reviewer) return sendHtml(res, 403, "<h1>Dashboard access requires the authenticated owner identity</h1>");
+      const nonce = randomBytes(18).toString("base64url");
+      return sendBoardHtml(res, boardPage(reviewer, nonce), nonce);
+    }
+
+    if (req.method === "GET" && url.pathname === "/board/data") {
+      const reviewer = await authenticatedReviewer(req.headers);
+      if (!reviewer) return send(res, 403, { error: "Dashboard access requires the authenticated owner identity" });
+      const rows = await sql`
+        SELECT p.*,r.id AS revision_id,r.hook AS revision_hook,r.caption AS revision_caption,
+          r.call_to_action AS revision_cta,r.hashtags AS revision_hashtags,r.slides AS revision_slides,
+          r.source_bundle,r.evidence_hash,r.content_hash,
+          a.decision AS approval_decision,a.reviewer,a.comment AS approval_comment,a.decided_at,
+          rj.status AS render_job_status,rj.error_code AS render_error_code,rj.error_message AS render_error,rj.output_files AS render_output_files,
+          pj.status AS publish_job_status,pj.provider_status,pj.error_code AS publish_error_code,pj.error_message AS publish_error
+        FROM social_post p
+        LEFT JOIN social_post_revision r ON r.id=p.current_revision_id
+        LEFT JOIN LATERAL (SELECT * FROM social_approval WHERE post_id=p.id ORDER BY decided_at DESC LIMIT 1) a ON true
+        LEFT JOIN LATERAL (SELECT * FROM social_render_job WHERE post_id=p.id ORDER BY created_at DESC LIMIT 1) rj ON true
+        LEFT JOIN LATERAL (SELECT * FROM social_publish_job WHERE post_id=p.id ORDER BY created_at DESC LIMIT 1) pj ON true
+        ORDER BY COALESCE(p.planned_for,p.created_at::DATE) DESC,p.created_at DESC
+        LIMIT 500
+      `;
+      const ids = rows.map(row => String(row.id));
+      const events = ids.length ? await sql`SELECT post_id,event_type,created_at FROM social_event WHERE post_id IN ${sql(ids)} ORDER BY created_at DESC LIMIT 5000` : [];
+      const eventsByPost = new Map<string, Array<Record<string, unknown>>>();
+      for (const event of events) {
+        const key = String(event.post_id); const list = eventsByPost.get(key) || [];
+        if (list.length < 20) list.push(event as Record<string, unknown>);
+        eventsByPost.set(key, list);
+      }
+      const posts = await Promise.all(rows.map(async row => {
+        const files = ((row.render_files || row.render_output_files || []) as Array<{ key?: string }>).filter(file => file.key);
+        const media = await Promise.all(files.map(async file => ({ key: file.key, url: await createBufferMediaUrl(String(file.key)) })));
+        return {
+          id:String(row.id),status:String(row.status),topic:String(row.topic),category:String(row.category),risk_level:String(row.risk_level),
+          planned_for:row.planned_for,created_at:row.created_at,approved_at:row.approved_at,scheduled_at:row.scheduled_at,published_at:row.published_at,
+          hook:row.revision_hook||row.hook,caption:row.revision_caption||row.caption,call_to_action:row.revision_cta||row.call_to_action,
+          hashtags:row.revision_hashtags||row.hashtags,slides:row.revision_slides||row.slides,sources:row.source_bundle||[],revision_id:row.revision_id,
+          approval_decision:row.approval_decision,reviewer:row.reviewer,approval_comment:row.approval_comment,decided_at:row.decided_at,
+          render_job_status:row.render_job_status,render_error:row.render_error,publish_job_status:row.publish_job_status,publish_error:row.publish_error,
+          buffer_post_id:row.buffer_post_id,instagram_id:row.instagram_id,media,events:eventsByPost.get(String(row.id))||[],
+        };
+      }));
+      return send(res, 200, { generatedAt: new Date().toISOString(), reviewer, posts });
     }
 
     const reviewMatch = url.pathname.match(/^\/review\/([A-Za-z0-9_-]{32,})$/);
