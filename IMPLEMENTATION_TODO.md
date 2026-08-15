@@ -105,3 +105,15 @@ Validation completed 2026-08-14:
 - Five approved failed renders recovered from their exact five-slide Discord preview sets; R2 byte/hash/dimension verification passed; no rerender or reapproval.
 - Live delivery state: three recovered posts handed to Buffer inside 24 hours, two retained locally; Buffer-facing queue 5/8, local pending 2; all five have future slots.
 - API 32/32 tests, renderer 3/3 tests, both type checks/builds; API/renderer agent healthy; corrected live operations check returned zero alerts.
+
+## 10. Automatic daily-batch recovery
+
+- [x] Retry each generated topic with exact validation feedback before replacement.
+- [x] Replace persistent failures only with current, verified, non-duplicate reserve briefs.
+- [x] Continue with a bounded recovery loop until five valid same-day posts exist.
+- [x] Send recovered drafts directly to Discord, with scheduled review polling as a safety net.
+- [x] Move the final report and incomplete alert to 09:00 and show generation failures separately from evidence status.
+- [x] Correct false Portuguese detection caused by ambiguous English words and preserve the genuine Portuguese-copy test.
+- [x] Deploy the workflows in place, recover the missing 15 August slots, and verify a clean 5/5 batch.
+
+Validation completed 2026-08-15: the initial batch stopped at 3/5. The recovery loop cycled through verified replacements, exposed and corrected a false-positive language gate, then generated two valid replacements and sent both to Discord. Final batch 5/5; live alert check returned zero problems; WF-04, WF-05, and WF-09 remained active with no new workflow duplicates.

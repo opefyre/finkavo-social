@@ -720,8 +720,17 @@ const server = http.createServer(async (req, res) => {
       }
       const posts = await sql`SELECT id,topic,status FROM social_post WHERE planned_for=${day} AND status NOT IN ('blocked','failed','rejected') ORDER BY created_at`;
       const complete = posts.length >= input.target;
-      await sql`INSERT INTO social_event(event_type,payload) VALUES('generation.day_recovery_completed',${sql.json({day,target:input.target,complete,validPosts:posts.length,replacements,attempts})})`;
-      return send(res, complete ? 200 : 422, { date: day, target: input.target, complete, validPosts: posts.length, replacements, posts, attempts });
+      const reviews: Array<{ postId: string; ok: boolean; status: number; error: string | null }> = [];
+      if (complete) {
+        const drafts = await sql`SELECT id FROM social_post WHERE planned_for=${day} AND status='draft' ORDER BY created_at`;
+        for (const draft of drafts) {
+          const reviewed = await internalApi("POST", `/v1/posts/${draft.id}/request-review`, { expiresInMinutes: 180 });
+          reviews.push({ postId: String(draft.id), ok: reviewed.ok, status: reviewed.status, error: reviewed.ok ? null : String(reviewed.result.error || "review request failed") });
+        }
+      }
+      const ready = complete && reviews.every(review => review.ok);
+      await sql`INSERT INTO social_event(event_type,payload) VALUES('generation.day_recovery_completed',${sql.json({day,target:input.target,complete,ready,validPosts:posts.length,replacements,attempts,reviews})})`;
+      return send(res, ready ? 200 : 422, { date: day, target: input.target, complete, ready, validPosts: posts.length, replacements, posts, attempts, reviews });
     }
 
     if (req.method === "GET" && url.pathname === "/v1/posts") {
