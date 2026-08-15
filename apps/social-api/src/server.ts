@@ -141,6 +141,17 @@ const send = (res: http.ServerResponse, status: number, body: unknown) => {
   res.end(JSON.stringify(body));
 };
 
+async function internalApi(method: "GET" | "POST", pathname: string, body?: unknown) {
+  const response = await fetch(`http://127.0.0.1:${port}${pathname}`, {
+    method,
+    headers: { authorization: `Bearer ${apiToken}`, "content-type": "application/json" },
+    ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+    signal: AbortSignal.timeout(360_000),
+  });
+  const result = await response.json() as Record<string, unknown>;
+  return { ok: response.ok, status: response.status, result };
+}
+
 const sendHtml = (res: http.ServerResponse, status: number, body: string) => {
   res.writeHead(status, {
     "content-type": "text/html; charset=utf-8", "cache-control": "no-store",
@@ -688,6 +699,37 @@ const server = http.createServer(async (req, res) => {
       return send(res, 201, { post: inserted });
     }
 
+    if (req.method === "POST" && url.pathname === "/v1/generation/recover-day") {
+      const input = z.object({ date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), target: z.number().int().min(1).max(5).default(5), maxRounds: z.number().int().min(1).max(8).default(6) }).parse(await readJson(req));
+      const day = input.date || lisbonDate(new Date());
+      const attempts: Array<{ round: number; stage: string; ok: boolean; replacements?: number; conceptId?: string; topic?: string | null; status?: number; error?: string | null }> = [];
+      let replacements = 0;
+      for (let round = 1; round <= input.maxRounds; round++) {
+        const [count] = await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${day} AND status NOT IN ('blocked','failed','rejected')`;
+        if (Number(count.count) >= input.target) break;
+        let queue = await internalApi("GET", `/v1/planning/queue?date=${encodeURIComponent(day)}`);
+        let concepts = (queue.result.concepts || []) as Array<{ id: string; topic?: string }>;
+        if (!concepts.length) {
+          const replaced = await internalApi("POST", "/v1/reserve/replace-held", { date: day });
+          const replacementRows = (replaced.result.replacements || []) as unknown[];
+          replacements += replacementRows.length;
+          attempts.push({ round, stage: "replacement", ok: replaced.ok, replacements: replacementRows.length });
+          if (!replaced.ok || !replacementRows.length) break;
+          queue = await internalApi("GET", `/v1/planning/queue?date=${encodeURIComponent(day)}`);
+          concepts = (queue.result.concepts || []) as Array<{ id: string; topic?: string }>;
+        }
+        if (!concepts.length) break;
+        for (const concept of concepts.slice(0, input.target)) {
+          const generated = await internalApi("POST", "/v1/generate", { conceptId: concept.id });
+          attempts.push({ round, stage: "generation", conceptId: concept.id, topic: concept.topic || null, ok: generated.ok, status: generated.status, error: generated.ok ? null : String(generated.result.detail || generated.result.error || "generation failed") });
+        }
+      }
+      const posts = await sql`SELECT id,topic,status FROM social_post WHERE planned_for=${day} AND status NOT IN ('blocked','failed','rejected') ORDER BY created_at`;
+      const complete = posts.length >= input.target;
+      await sql`INSERT INTO social_event(event_type,payload) VALUES('generation.day_recovery_completed',${sql.json({day,target:input.target,complete,validPosts:posts.length,replacements,attempts})})`;
+      return send(res, complete ? 200 : 422, { date: day, target: input.target, complete, validPosts: posts.length, replacements, posts, attempts });
+    }
+
     if (req.method === "GET" && url.pathname === "/v1/posts") {
       const status = url.searchParams.get("status");
       const createdOn = url.searchParams.get("createdOn");
@@ -1143,11 +1185,11 @@ const server = http.createServer(async (req, res) => {
 
     if(req.method==="POST"&&url.pathname==="/v1/reports/daily"){
       const {date}=ReportSchema.parse(await readJson(req));const day=date||lisbonDate(new Date());
-      const slots=await sql`SELECT s.slot_number,s.publish_time,s.topic,s.status,s.reserve_kind,s.campaign_stage,b.verification_state,b.expires_at FROM social_editorial_plan_slot s LEFT JOIN LATERAL (SELECT verification_state,expires_at FROM social_topic_evidence_bundle WHERE plan_slot_id=s.id ORDER BY verified_at DESC LIMIT 1) b ON true WHERE s.publish_date=${day} AND s.plan_version=(SELECT max(plan_version) FROM social_editorial_plan_slot WHERE publish_date=${day}) ORDER BY s.slot_number`;
+      const slots=await sql`SELECT s.slot_number,s.publish_time,s.topic,s.status,s.reserve_kind,s.campaign_stage,b.verification_state,b.expires_at,g.generation_error FROM social_editorial_plan_slot s LEFT JOIN LATERAL (SELECT verification_state,expires_at FROM social_topic_evidence_bundle WHERE plan_slot_id=s.id ORDER BY verified_at DESC LIMIT 1) b ON true LEFT JOIN LATERAL (SELECT payload->>'error' AS generation_error FROM social_event WHERE event_type='generation.failed' AND payload->>'planSlotId'=s.id::STRING ORDER BY created_at DESC LIMIT 1) g ON true WHERE s.publish_date=${day} AND s.plan_version=(SELECT max(plan_version) FROM social_editorial_plan_slot WHERE publish_date=${day}) ORDER BY s.slot_number`;
       const approvals=await sql`SELECT p.topic,p.status,p.scheduled_at FROM social_post p WHERE (p.created_at AT TIME ZONE 'Europe/Lisbon')::DATE=${day} OR (p.scheduled_at AT TIME ZONE 'Europe/Lisbon')::DATE=${day} ORDER BY p.scheduled_at NULLS LAST,p.created_at`;
       const [news]=await sql`SELECT count(*) AS count FROM social_post_concept WHERE status='eligible' AND timeliness='official_change'`;
-      const held=slots.filter(row=>row.status==='held').map(row=>`${row.slot_number}. ${row.topic} (${row.campaign_stage||row.reserve_kind||'evidence unavailable'})`);
-      const topicLines=slots.map(row=>`${row.slot_number}. ${row.publish_time} — ${row.topic} [${row.status}; evidence ${row.verification_state||'missing'}]`);
+      const held=slots.filter(row=>row.status==='held').map(row=>`${row.slot_number}. ${row.topic} (source ${row.verification_state||'missing'}; generation failed: ${row.generation_error||'replacement unavailable'})`);
+      const topicLines=slots.map(row=>`${row.slot_number}. ${row.publish_time} — ${row.topic} [${row.status==='held'?'source verified, generation failed':row.status}; evidence ${row.verification_state||'missing'}]`);
       const approvalLines=approvals.map(row=>`${row.status}${row.scheduled_at?` at ${new Date(String(row.scheduled_at)).toISOString()}`:''} — ${row.topic}`);
       const sent=await notifyDiscord('system',`Finkavo daily content report — ${day}`,{plannedTopics:topicLines.join('\n')||'No plan found',newsCandidates:String(news.count),held:held.join('\n')||'None',approvalsAndSchedule:approvalLines.join('\n')||'No drafts or approvals yet'});
       return send(res,200,{date:day,planned:slots.length,verified:slots.filter(row=>row.verification_state==='verified'&&new Date(String(row.expires_at))>new Date()).length,held:held.length,newsCandidates:Number(news.count),approvalStates:approvals.length,discordSent:sent,topics:topicLines});
@@ -1182,7 +1224,7 @@ const server = http.createServer(async (req, res) => {
       const [blockedPublish]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='blocked'`;if(Number(blockedPublish.count)>0)alerts.push(`${blockedPublish.count} ambiguous Buffer result(s) need reconciliation`);
       const [bufferQueued]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='scheduled' AND scheduled_at>now()`;if(Number(bufferQueued.count)>=bufferQueueSoftLimit)alerts.push(`Buffer handoff soft cap reached: ${bufferQueued.count}/${bufferQueueSoftLimit}`);
       const [overdue]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='scheduled' AND scheduled_at<now()-INTERVAL '20 minutes'`;if(Number(overdue.count)>0)alerts.push(`${overdue.count} publication confirmation(s) are overdue`);
-      if(lisbonTime>='08:35'){const [batch]=await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${today}`;if(Number(batch.count)<5)alerts.push(`Approval batch is incomplete: ${batch.count}/5 posts`);}
+      if(lisbonTime>='09:00'){const [batch]=await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${today} AND status NOT IN ('blocked','failed','rejected')`;if(Number(batch.count)<5){const failures=await sql`SELECT s.topic,e.payload->>'error' AS error FROM social_editorial_plan_slot s LEFT JOIN LATERAL (SELECT payload FROM social_event WHERE event_type='generation.failed' AND payload->>'planSlotId'=s.id::STRING ORDER BY created_at DESC LIMIT 1) e ON true WHERE s.publish_date=${today} AND s.status='held' ORDER BY s.slot_number`;alerts.push(`Approval batch is incomplete after recovery: ${batch.count}/5 posts${failures.length?`\n${failures.map(row=>`${row.topic}: ${row.error||'no verified replacement available'}`).join('\n')}`:''}`);}}
       const signature=hash({today,alerts});let sent=false;if(alerts.length){const [existing]=await sql`SELECT id FROM social_event WHERE event_type='operations.alert_sent' AND payload->>'signature'=${signature} LIMIT 1`;if(!existing){sent=await notifyDiscord('errors','Finkavo pipeline alert',{date:today,problems:alerts.join('\n')});await sql`INSERT INTO social_event(event_type,payload) VALUES('operations.alert_sent',${sql.json({signature,alerts})})`;}}
       return send(res,200,{date:today,alerts,sent});
     }

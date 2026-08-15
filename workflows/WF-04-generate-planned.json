@@ -1,134 +1,44 @@
 {
-  "name": "WF-04 Generate Planned Social Post",
+  "name": "WF-04 Generate and Recover Daily Batch",
   "nodes": [
     {
       "parameters": {
-        "rule": {
-          "interval": [
-            {
-              "field": "cronExpression",
-              "expression": "2 8 * * *"
-            }
-          ]
-        }
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "2 8 * * *" }] }
       },
-      "id": "generate-manual",
+      "id": "generate-recover-trigger",
       "name": "Daily at 08:02 Lisbon",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [
-        -500,
-        0
-      ]
-    },
-    {
-      "parameters": {
-        "url": "http://127.0.0.1:4320/v1/planning/queue",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpBearerAuth",
-        "options": {
-          "timeout": 30000
-        }
-      },
-      "id": "get-plan",
-      "name": "Get highest-priority plan",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        -260,
-        0
-      ],
-      "credentials": {
-        "httpBearerAuth": {
-          "id": "socialApiBearer01",
-          "name": "Finkavo Social API"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "const concepts=($json.concepts||[]).filter(c=>c.status==='planned').slice(0,5);if(!concepts.length)throw new Error('No verified planned concept is ready');return concepts.map(concept=>({json:{conceptId:concept.id}}));"
-      },
-      "id": "require-plan",
-      "name": "Require verified concept",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -20,
-        0
-      ]
+      "position": [-300, 0]
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "http://127.0.0.1:4320/v1/generate",
+        "url": "http://127.0.0.1:4320/v1/generation/recover-day",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpBearerAuth",
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
-        "body": "={{ JSON.stringify($json) }}",
-        "options": {
-          "timeout": 360000
-        }
+        "body": "={}",
+        "options": { "timeout": 900000 }
       },
-      "id": "generate-post",
-      "name": "Generate social-first draft",
+      "id": "generate-recover-batch",
+      "name": "Generate and recover five-post batch",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "onError": "continueRegularOutput",
-      "position": [
-        220,
-        0
-      ],
+      "position": [0, 0],
       "credentials": {
-        "httpBearerAuth": {
-          "id": "socialApiBearer01",
-          "name": "Finkavo Social API"
-        }
+        "httpBearerAuth": { "id": "socialApiBearer01", "name": "Finkavo Social API" }
       }
     }
   ],
   "connections": {
     "Daily at 08:02 Lisbon": {
-      "main": [
-        [
-          {
-            "node": "Get highest-priority plan",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get highest-priority plan": {
-      "main": [
-        [
-          {
-            "node": "Require verified concept",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Require verified concept": {
-      "main": [
-        [
-          {
-            "node": "Generate social-first draft",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "Generate and recover five-post batch", "type": "main", "index": 0 }]]
     }
   },
-  "settings": {
-    "executionOrder": "v1",
-    "saveManualExecutions": true,
-    "timezone": "Europe/Lisbon"
-  },
+  "settings": { "executionOrder": "v1", "saveManualExecutions": true, "timezone": "Europe/Lisbon" },
   "active": false,
   "tags": []
 }

@@ -7,13 +7,13 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "10-30/5 8 * * *"
+              "expression": "10-55/5 8 * * *"
             }
           ]
         }
       },
       "id": "94f53367-e98b-45d9-a16d-c47478ddcbb9",
-      "name": "Every 5 minutes from 08:10 to 08:30",
+      "name": "Every 5 minutes from 08:10 to 08:55",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
@@ -89,7 +89,7 @@
     }
   ],
   "connections": {
-    "Every 5 minutes from 08:10 to 08:30": {
+    "Every 5 minutes from 08:10 to 08:55": {
       "main": [
         [
           {

@@ -8,13 +8,13 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "25 8 * * *"
+              "expression": "0 9 * * *"
             }
           ]
         }
       },
       "id": "027277ae-3894-4453-913e-3cb3c0e32877",
-      "name": "Daily at 08:25 Lisbon",
+      "name": "Daily at 09:00 Lisbon",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
@@ -53,7 +53,7 @@
     }
   ],
   "connections": {
-    "Daily at 08:25 Lisbon": {
+    "Daily at 09:00 Lisbon": {
       "main": [
         [
           {
