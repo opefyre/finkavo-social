@@ -20,6 +20,7 @@ describe("social draft quality", () => {
   it("rejects Portuguese and mixed Portuguese-English public copy", () => {
     expect(() => assertEnglishUserCopy(["How your contribution is calculated: 21,4% sobre a base mensal calculada a partir da declaração trimestral.", "Regra geral de contribuição para trabalhadores independentes. O pagamento é mensal."])).toThrow(/English/);
     expect(() => assertEnglishUserCopy(["A Portuguese NIF is a tax identification number. Keep your Número de Identificação Fiscal available."])).not.toThrow();
+    expect(() => assertEnglishUserCopy(["Use Portal das Finanças as a starting point. A filing exemption is not the same as an automatic exemption from every tax obligation."])).not.toThrow();
   });
   it("accepts legitimate official and payment acronyms", () => {
     const candidate=structuredClone(good);

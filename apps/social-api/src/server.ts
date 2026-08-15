@@ -68,11 +68,6 @@ const fit = (value: unknown, max: number) => {
   return text;
 };
 const escapeHtml = (value: unknown) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]!);
-const appearsPortuguese = (draft: z.infer<typeof DraftSchema>) => {
-  const text = [draft.topic, draft.hook, draft.caption, draft.callToAction, ...draft.slides.flatMap((slide) => [slide.eyebrow, slide.title, slide.body, slide.altText])].join(" ").toLocaleLowerCase("pt");
-  const markers = text.match(/\b(?:para|com|uma|não|dos|das|que|até|rendimento|contribuição|declaração|trimestre|mensal|passo|prazo|pagamento|isenção|ajuste)\b/gu)?.length ?? 0;
-  return markers >= 5;
-};
 const classifyTopic = (value: unknown) => {
   const text = String(value || "").toLocaleLowerCase("pt");
   if (/aima|resid.n|visto|visa|migr|estrangeir/.test(text)) return "immigration";
@@ -638,7 +633,6 @@ const server = http.createServer(async (req, res) => {
           const publicCopy=[candidate.hook,candidate.caption,...candidate.slides.flatMap(slide=>[slide.title,slide.body,...slide.items])].join(" ");
           if (/\b(?:sources?|excerpts?|documents?)\b.{0,60}\b(?:do not|does not|don't|cannot|fail(?:s|ed)? to|not enough)\b/i.test(publicCopy)) throw new Error("Draft discusses missing evidence instead of delivering the predetermined topic");
           validateSocialDraft(candidate);
-          if (appearsPortuguese(candidate)) throw new Error("User-facing draft copy must be English; evidence quotes may remain Portuguese");
           const corpusText = evidenceSources.flatMap(s=>s.excerpts as string[]).join("\n").replace(/\s+/g, " ");
           const unsupported = candidate.claims.find((claim) => !corpusText.includes(claim.evidenceQuote.replace(/\s+/g, " ")));
           if (unsupported) throw new Error("A claim evidence quote was not found verbatim in the supplied corpus excerpts");

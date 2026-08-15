@@ -4,7 +4,11 @@ import { validateCaptionParts } from "./caption.js";
 const endsIncomplete = (value: string) => /(?:\b(?:and|or|to|the|a|an|of|in|on|for|with|from|by|as)|[,;:—-])$/i.test(value.trim().replace(/[.!?)]$/, "").trim());
 const completeSentence = (value: string) => /[.!?)]$/.test(value.trim()) && !endsIncomplete(value);
 const hasPresentationArtifacts = (value: string) => /\bnoneof\b/i.test(value) || /\*\*|^\s*[-*]\s|^[A-Za-z0-9]+,\s*[A-Z]\d+:|\b[A-ZÁÉÍÓÚÇ]{4,}(?:\s+[A-ZÁÉÍÓÚÇ]{4,})+\b/.test(value);
-const portugueseMarkers = /\b(?:a|ao|aos|as|com|como|da|das|de|declaração|do|dos|e|em|é|isenção|mensal|não|o|os|pagamento|para|passo|pela|pelo|por|prazo|regime|rendimento|sobre|trimestral|uma|valor)\b/giu;
+// Exclude tokens such as "a", "as", "com", "regime", and "valor" that are
+// common in English copy, URLs, or official Portuguese proper names. The gate
+// should detect Portuguese sentences, not punish valid English posts for
+// mentioning Portal das Finanças or similar source names.
+const portugueseMarkers = /\b(?:ao|aos|como|da|das|de|declaração|do|dos|em|é|isenção|mensal|não|pagamento|para|passo|pela|pelo|por|prazo|rendimento|sobre|trimestral|uma)\b/giu;
 
 export function assertEnglishUserCopy(values: unknown[]) {
   const text = values.flat(Infinity).map(value => String(value || "")).join(" ").toLocaleLowerCase("pt");
