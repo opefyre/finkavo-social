@@ -13,6 +13,7 @@
 **Operational error messages:** Discord publishing alerts must identify the topic, post ID, publish-job ID, intended publish time, attempt, provider error classification, required operator action, and a deep link to the exact board card. Buffer non-JSON responses retain their HTTP status and content type. Ambiguous create-post responses remain blocked until reconciled; permission failures are definite failures, while rate limits retain their retry-after handling.
 An ambiguous publish result sends one immediate detailed incident alert. Health monitoring does not repeat it during the first 24 hours; unresolved incidents older than 24 hours receive at most one consolidated reminder per day.
 Before blocking an ambiguous create-post response, the publisher queries Buffer by the exact channel, composed caption, and due time. An exact match is adopted and its Buffer ID stored; a successful lookup proving absence converts the incident into a normal retry. The same reconciliation is available for already-blocked jobs.
+Publish retries preserve the cumulative attempt counter and append the next unique attempt record; retrying never resets or overwrites attempt history.
 
 ## 1. Outcome
 

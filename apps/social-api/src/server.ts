@@ -470,7 +470,7 @@ const server = http.createServer(async (req, res) => {
           if (!job || post.current_revision_id !== post.approved_revision_id) return { status: 409, error: "No safely retryable publish failure exists for the current approved revision." };
           let scheduledAt = new Date(String(job.scheduled_at));
           if (scheduledAt.getTime() < Date.now() + 15 * 60_000) scheduledAt = new Date(Math.ceil((Date.now() + 30 * 60_000) / (30 * 60_000)) * 30 * 60_000);
-          await tx`UPDATE social_publish_job SET status='retrying',scheduled_at=${scheduledAt.toISOString()},available_at=now(),attempt_count=0,provider_post_id=NULL,provider_status=NULL,lease_owner=NULL,lease_expires_at=NULL,error_code=NULL,error_message=NULL,updated_at=now() WHERE id=${job.id}`;
+          await tx`UPDATE social_publish_job SET status='retrying',scheduled_at=${scheduledAt.toISOString()},available_at=now(),provider_post_id=NULL,provider_status=NULL,lease_owner=NULL,lease_expires_at=NULL,error_code=NULL,error_message=NULL,updated_at=now() WHERE id=${job.id}`;
           await tx`UPDATE social_post SET status='rendered',scheduled_at=${scheduledAt.toISOString()},buffer_post_id=NULL,updated_at=now() WHERE id=${post.id}`;
           await audit("publish.requeued_manual", { jobId: job.id, scheduledAt: scheduledAt.toISOString(), ambiguityAcknowledged: input.action === "force_retry_publish" });
           return { status: 200, message: `Publish retry queued for ${scheduledAt.toISOString()}.` };
@@ -1294,7 +1294,7 @@ const server = http.createServer(async (req, res) => {
           if (match) results.push({ jobId: job.id, postId: job.post_id, result: "found_in_buffer", bufferPostId: match.id });
           else {
             await sql.begin(async tx => {
-              await tx`UPDATE social_publish_job SET status='retrying',available_at=now(),attempt_count=0,provider_post_id=NULL,provider_status=NULL,error_code=NULL,error_message=NULL,updated_at=now() WHERE id=${job.id} AND status='blocked'`;
+              await tx`UPDATE social_publish_job SET status='retrying',available_at=now(),provider_post_id=NULL,provider_status=NULL,error_code=NULL,error_message=NULL,updated_at=now() WHERE id=${job.id} AND status='blocked'`;
               await tx`UPDATE social_post SET status='rendered',buffer_post_id=NULL,updated_at=now() WHERE id=${job.post_id}`;
               await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'publish.reconciliation_absent_requeued',${tx.json({jobId:job.id,scheduledAt:job.scheduled_at})})`;
             });
