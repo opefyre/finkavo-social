@@ -70,6 +70,20 @@ export async function getPost(postId: string) {
   return data.post;
 }
 
+export async function deletePost(postId: string) {
+  const data = await request<{ deletePost: { __typename: string; id?: string; message?: string } }>(`
+    mutation DeletePost($input: DeletePostInput!) {
+      deletePost(input: $input) {
+        __typename
+        ... on DeletePostSuccess { id }
+        ... on VoidMutationError { message }
+      }
+    }
+  `, { input: { id: postId } });
+  if (!data.deletePost.id) throw new BufferError(data.deletePost.message || `Buffer delete failed (${data.deletePost.__typename})`, data.deletePost.__typename, false);
+  return data.deletePost.id;
+}
+
 export async function findMatchingScheduledPost(input: { channelId: string; text: string; dueAt: string }) {
   const account = await request<{ account: { organizations: Array<{ id: string }> } }>(`query ReconcileAccount { account { organizations { id } } }`, {});
   const organizationId = account.account.organizations[0]?.id;

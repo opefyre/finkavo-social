@@ -7,7 +7,7 @@ import { z } from "zod";
 import { DraftSchema } from "./contracts.js";
 import { generateDraft } from "./openai.js";
 import { createBufferMediaUrl, createUploadUrl, uploadRenderedObject, verifyUploadedObject, type RenderFileInput } from "./storage.js";
-import { BufferError, createScheduledPost, findMatchingScheduledPost, getPost as getBufferPost } from "./buffer.js";
+import { BufferError, createScheduledPost, deletePost as deleteBufferPost, findMatchingScheduledPost, getPost as getBufferPost } from "./buffer.js";
 import { notifyDiscord, notifyDiscordReview } from "./discord.js";
 import { renderReviewPreview } from "./preview.js";
 import { retryDecision } from "./retry-policy.js";
@@ -1480,7 +1480,11 @@ const server = http.createServer(async (req, res) => {
         const assessment=await assessStoredRevision(String(row.id),String(row.current_revision_id),true);
         checked.push({postId:row.id,topic:row.topic,status:row.status,...assessment});
         if(assessment.passed)continue;
-        if(row.job_status==='scheduled'&&row.provider_post_id){external.push({postId:row.id,topic:row.topic,bufferPostId:row.provider_post_id,failures:assessment.failures});continue;}
+        if(row.job_status==='scheduled'&&row.provider_post_id){
+          const item={postId:row.id,topic:row.topic,bufferPostId:row.provider_post_id,failures:assessment.failures};external.push(item);
+          if(!input.dryRun){try{await deleteBufferPost(String(row.provider_post_id));await sql.begin(async tx=>{await tx`UPDATE social_publish_job SET status='blocked',provider_status='deleted_for_evidence_review',error_code='EVIDENCE_REVALIDATION_FAILED',error_message=${assessment.failures.join("; ")},updated_at=now() WHERE id=${row.job_id}`;await tx`UPDATE social_post SET status='blocked',buffer_post_id=NULL,updated_at=now() WHERE id=${row.id}`;await tx`INSERT INTO social_event(post_id,event_type,payload)VALUES(${row.id},'evidence.buffer_post_deleted',${tx.json({bufferPostId:row.provider_post_id,...assessment})})`;});}catch(error){(item as Record<string,unknown>).deleteError=error instanceof Error?error.message:'Buffer deletion failed';}}
+          continue;
+        }
         if(!input.dryRun){await sql.begin(async tx=>{if(row.job_id)await tx`UPDATE social_publish_job SET status='blocked',error_code='EVIDENCE_REVALIDATION_FAILED',error_message=${assessment.failures.join("; ")},updated_at=now() WHERE id=${row.job_id} AND status IN('pending','processing','retrying')`;await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${row.id}`;await tx`INSERT INTO social_event(post_id,event_type,payload)VALUES(${row.id},'evidence.queue_audit_blocked',${tx.json(assessment)})`;});}
         blocked.push({postId:row.id,topic:row.topic,failures:assessment.failures});
       }
