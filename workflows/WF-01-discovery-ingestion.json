@@ -71,7 +71,8 @@
       "position": [
         200,
         0
-      ]
+      ],
+      "credentials": {"httpBearerAuth":{"id":"socialApiBearer01","name":"Finkavo Social API"}}
     }
   ],
   "connections": {

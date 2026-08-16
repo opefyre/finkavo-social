@@ -23,6 +23,7 @@ import { eligibleReserveCards, loadEvergreenReserve } from "./evergreen-reserve.
 import { sourceSupportsNewsTopic } from "./news-evidence.js";
 import { editorialScore } from "./editorial-score.js";
 import { boardPage } from "./board.js";
+import { selectVisualStyle } from "./visual-style.js";
 
 const databaseUrl = process.env.DATABASE_URL;
 const apiToken = process.env.SOCIAL_API_TOKEN;
@@ -276,16 +277,7 @@ function createRenderManifest(post: Record<string, unknown>, revision: Record<st
     if (type === "bullets" || type === "steps") return { ...base, type, icon, items: (slide.items as unknown[]).map((item) => fit(item, 130)).slice(0, 5) };
     return { ...base, type: "content", icon, body: fit(slide.body, 420), ...(slide.highlight ? { highlight: fit(slide.highlight, 80) } : {}) };
   });
-  const intent = String(post.post_intent || "evergreen_explainer");
-  const visualStyle = intent === "deadline_reminder" || intent === "occasion"
-    ? "peach_deadline"
-    : intent === "regulatory_change" || intent === "timely_news"
-      ? "ink_alert"
-      : intent === "checklist" || intent === "common_mistake"
-        ? "mint_checklist"
-        : intent === "evergreen_explainer"
-          ? "cream_guide"
-          : "petrol_editorial";
+  const visualStyle = selectVisualStyle(post);
   return { schemaVersion: 1, postId: String(post.id), revisionId: String(revision.id), locale: "en", templateVersion: "finkavo-v3", visualStyle, slides };
 }
 

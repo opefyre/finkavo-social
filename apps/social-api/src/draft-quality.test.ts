@@ -22,6 +22,16 @@ describe("social draft quality", () => {
     expect(() => assertEnglishUserCopy(["A Portuguese NIF is a tax identification number. Keep your Número de Identificação Fiscal available."])).not.toThrow();
     expect(() => assertEnglishUserCopy(["Use Portal das Finanças as a starting point. A filing exemption is not the same as an automatic exemption from every tax obligation."])).not.toThrow();
   });
+  it("rejects non-Latin text accidentally mixed into English copy", () => {
+    expect(() => assertEnglishUserCopy(["Save this post if你想 keep it handy."])).toThrow(/English Latin script/);
+  });
+  it("rejects source-page trivia without a reader outcome", () => {
+    const candidate=structuredClone(good);
+    candidate.topic="Which law and regulation does the Justice page flag?";
+    candidate.hook="See which law and regulation the official page flags.";
+    candidate.callToAction="Keep these official law names handy.";
+    expect(()=>validateSocialDraft(candidate)).toThrow(/source-page trivia/);
+  });
   it("accepts legitimate official and payment acronyms", () => {
     const candidate=structuredClone(good);
     candidate.slides[0]!.body="Use ASAE for the official complaints route.";

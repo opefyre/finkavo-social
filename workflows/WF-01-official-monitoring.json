@@ -19,7 +19,8 @@
     },
     {
       "parameters": {"method":"POST","url":"http://127.0.0.1:4320/v1/official-sources/snapshot","authentication":"genericCredentialType","genericAuthType":"httpBearerAuth","sendBody":true,"contentType":"raw","rawContentType":"application/json","body":"={{ JSON.stringify($json) }}","options":{"timeout":120000}},
-      "id": "official-store", "name": "Compare and store snapshot", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [240,0]
+      "id": "official-store", "name": "Compare and store snapshot", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [240,0],
+      "credentials": {"httpBearerAuth":{"id":"socialApiBearer01","name":"Finkavo Social API"}}
     }
   ],
   "connections": {
