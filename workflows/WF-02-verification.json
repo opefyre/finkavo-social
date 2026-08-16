@@ -1,1 +1,74 @@
-{"name":"WF-02 Official Evidence Verification","nodes":[{"parameters":{"rule":{"interval":[{"field":"cronExpression","expression":"30 */2 * * *"}]}},"id":"verify-schedule","name":"Every 2 hours","type":"n8n-nodes-base.scheduleTrigger","typeVersion":1.2,"position":[-300,0]},{"parameters":{"method":"POST","url":"http://127.0.0.1:4320/v1/verification/triage","authentication":"genericCredentialType","genericAuthType":"httpBearerAuth","sendBody":true,"contentType":"raw","rawContentType":"application/json","body":"={}","options":{"timeout":30000}},"id":"verify-call","name":"Promote exact official evidence only","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[0,0],"credentials":{"httpBearerAuth":{"id":"socialApiBearer01","name":"Finkavo Social API"}}}],"connections":{"Every 2 hours":{"main":[[{"node":"Promote exact official evidence only","type":"main","index":0}]]}},"settings":{"executionOrder":"v1","timezone":"Europe/Lisbon"},"active":false,"tags":[]}
+{
+  "name": "WF-02 Official Evidence Verification",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 */2 * * *"
+            }
+          ]
+        }
+      },
+      "id": "verify-schedule",
+      "name": "Every 2 hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -300,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:4320/v1/verification/triage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "verify-call",
+      "name": "Promote exact official evidence only",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "socialApiBearer01",
+          "name": "Finkavo Social API"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Every 2 hours": {
+      "main": [
+        [
+          {
+            "node": "Promote exact official evidence only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Lisbon"
+  },
+  "active": false,
+  "tags": [],
+  "id": "AFCY75PcXYblEODZ"
+}
