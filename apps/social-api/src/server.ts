@@ -97,6 +97,10 @@ const classifyTopic = (value: unknown) => {
   if (/nif|finan.as/.test(text)) return "nif";
   return "general";
 };
+const newsRelevant = (title: unknown, category: unknown) => {
+  if (String(category || "general") !== "general") return true;
+  return /\b(?:alert|bank|citizen|civil protection|consumer|countrywide|education|emergency|energy|evacuation|fire|flood|fraud|government|health|hospital|housing|immigrant|immigration|national|outage|payment|pension|public service|resident|school|scam|storm|strike|tax|transport|weather)\b/i.test(String(title || ""));
+};
 const officialDomains = ["aima.gov.pt", "diariodarepublica.pt", "dre.pt", "gov.pt", "portaldasfinancas.gov.pt", "seg-social.pt", "irn.justica.gov.pt", "bportugal.pt", "sns24.gov.pt", "ine.pt", "dgeste.mec.pt", "act.gov.pt"];
 const isOfficialUrl = (value:string) => { try { const hostname=new URL(value).hostname.replace(/^www\./,""); return officialDomains.some(domain=>hostname===domain||hostname.endsWith(`.${domain}`)); } catch { return false; } };
 const exactTermMatch = (text: string, term: string) => {
@@ -753,6 +757,37 @@ const server = http.createServer(async (req, res) => {
       }
       await sql`INSERT INTO social_event (event_type, payload) VALUES ('verification.triaged', ${sql.json({ reviewed: discoveries.length, promoted, held })})`;
       return send(res, 200, { reviewed: discoveries.length, promoted, held, rule: "Only exact official URLs already present in the fresh canonical corpus are promoted" });
+    }
+
+    if (req.method === "POST" && url.pathname === "/v1/news/dispatch-recent") {
+      const candidates = await sql`
+        SELECT c.id,c.topic,c.category,c.discovery_id,d.content_hash,COALESCE(d.published_at,d.created_at) AS discovered_at
+        FROM social_post_concept c
+        JOIN social_discovery d ON d.id=c.discovery_id
+        WHERE c.status='eligible' AND c.timeliness='official_change'
+          AND COALESCE(d.published_at,d.created_at)>=now()-INTERVAL '4 hours'
+        ORDER BY COALESCE(d.published_at,d.created_at),c.created_at
+        LIMIT 20
+      `;
+      const results: any[] = [];
+      for (const candidate of candidates) {
+        if (!newsRelevant(candidate.topic,candidate.category)) {
+          await sql`UPDATE social_post_concept SET status='blocked',reason='News item is outside Finkavo relevance policy',updated_at=now() WHERE id=${candidate.id} AND status='eligible'`;
+          results.push({conceptId:candidate.id,topic:candidate.topic,state:'irrelevant'});
+          continue;
+        }
+        const identity={subjectFamily:String(candidate.category||'general'),userQuestion:`What changed in ${String(candidate.topic)} and who needs to act?`,contentIntent:'timely_news',occurrenceKey:`official-change:${String(candidate.content_hash)}`};
+        const claimed=await sql`UPDATE social_post_concept SET status='planned',planned_for=${lisbonDate(new Date())},subject_family=${identity.subjectFamily},user_question=${identity.userQuestion},content_intent=${identity.contentIntent},occurrence_key=${identity.occurrenceKey},updated_at=now() WHERE id=${candidate.id} AND status='eligible' RETURNING id`;
+        if(!claimed.length)continue;
+        const generated=await internalApi("POST","/v1/generate",{conceptId:String(candidate.id)});
+        if(!generated.ok){results.push({conceptId:candidate.id,topic:candidate.topic,state:'generation_failed',status:generated.status,error:generated.result.detail||generated.result.error});continue;}
+        const post=(generated.result.post||{}) as {id?:string};
+        if(!post.id){results.push({conceptId:candidate.id,topic:candidate.topic,state:'generation_failed',error:'Generator returned no post'});continue;}
+        const reviewed=await internalApi("POST",`/v1/posts/${post.id}/request-review`,{expiresInMinutes:180});
+        results.push({conceptId:candidate.id,postId:post.id,topic:candidate.topic,state:reviewed.ok?'sent_for_immediate_review':'review_failed',reviewStatus:reviewed.status,error:reviewed.ok?null:reviewed.result.error});
+      }
+      await sql`INSERT INTO social_event(event_type,payload) VALUES('news.fast_lane_dispatched',${sql.json({windowHours:4,candidates:candidates.length,results})})`;
+      return send(res,200,{windowHours:4,candidates:candidates.length,results});
     }
 
     if (req.method === "GET" && url.pathname === "/v1/candidates") {

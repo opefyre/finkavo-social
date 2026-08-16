@@ -14,7 +14,7 @@
         }
       },
       "id": "b778214b-9812-4689-a84c-8f0c1f02d2d6",
-      "name": "Every 2 hours",
+      "name": "Every 3 hours",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
@@ -24,7 +24,17 @@
     },
     {
       "parameters": {
-        "url": "https://news.google.com/rss/search?q=Portugal%20tax%20immigration%20housing%20government&hl=en&gl=PT&ceid=PT:en"
+        "jsCode": "const feeds=[\n'https://news.google.com/rss/search?q=%28AIMA%20OR%20%22Portal%20das%20Finan%C3%A7as%22%20OR%20%22Seguran%C3%A7a%20Social%22%20OR%20gov.pt%29%20Portugal%20when%3A4h&hl=pt-PT&gl=PT&ceid=PT%3Apt-150',\n'https://news.google.com/rss/search?q=Portugal%20%28immigration%20OR%20tax%20OR%20housing%20OR%20employment%20OR%20public%20services%20OR%20scam%29%20when%3A4h&hl=en&gl=PT&ceid=PT%3Aen',\n'https://news.google.com/rss/search?q=Portugal%20%28national%20emergency%20OR%20major%20disruption%20OR%20strike%20OR%20wildfire%20OR%20flood%29%20when%3A4h&hl=en&gl=PT&ceid=PT%3Aen',\n'https://www.rtp.pt/noticias/rss/pais',\n'https://www.rtp.pt/noticias/rss/economia'\n];return feeds.map(feedUrl=>({json:{feedUrl}}));"
+      },
+      "id": "curated-news-feeds",
+      "name": "Curated Portuguese and targeted feeds",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-400,0]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.feedUrl }}"
       },
       "id": "205ead30-6dce-45df-9e83-4ae3d0a65740",
       "name": "Fetch free discovery feed",
@@ -33,21 +43,21 @@
       "retryOnFail": true,
       "maxTries": 3,
       "waitBetweenTries": 30000,
-      "position": [
-        -280,
+        "position": [
+        -180,
         0
       ]
     },
     {
       "parameters": {
-        "jsCode": "const items=$input.all().map(({json:a})=>({url:a.link,title:a.title,publisher:a.creator||a.author||null,locale:'en',publishedAt:a.isoDate||a.pubDate||null,category:'general',riskLevel:'medium'})).filter(a=>a.url&&a.title).slice(0,100); return items.length?[{json:{items,sourceKind:'news_discovery'}}]:[];"
+        "jsCode": "const cutoff=Date.now()-4*60*60*1000;const seen=new Set();const items=$input.all().map(({json:a})=>({url:a.link,title:a.title,publisher:a.creator||a.author||a.source||null,locale:'pt',publishedAt:a.isoDate||a.pubDate||null,category:'general',riskLevel:'medium'})).filter(a=>{const published=Date.parse(a.publishedAt||'');const key=String(a.url||'').replace(/[#?].*$/,'');if(!a.url||!a.title||!Number.isFinite(published)||published<cutoff||seen.has(key))return false;seen.add(key);return true;}).slice(0,100);return items.length?[{json:{items,sourceKind:'news_discovery'}}]:[];"
       },
       "id": "19cf5f54-ddd5-4618-b4e4-a95a65f2dfef",
       "name": "Normalize discovery only",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -40,
+        40,
         0
       ]
     },
@@ -70,24 +80,35 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        200,
+        260,
         0
       ],
       "credentials": {"httpBearerAuth":{"id":"socialApiBearer01","name":"Finkavo Social API"}}
+    },
+    {
+      "parameters":{"method":"POST","url":"http://127.0.0.1:4320/v1/verification/triage","authentication":"genericCredentialType","genericAuthType":"httpBearerAuth","sendBody":true,"contentType":"raw","rawContentType":"application/json","body":"={}","options":{"timeout":30000}},
+      "id":"news-immediate-verify","name":"Verify every recent official item","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[500,0],
+      "credentials":{"httpBearerAuth":{"id":"socialApiBearer01","name":"Finkavo Social API"}}
+    },
+    {
+      "parameters":{"method":"POST","url":"http://127.0.0.1:4320/v1/news/dispatch-recent","authentication":"genericCredentialType","genericAuthType":"httpBearerAuth","sendBody":true,"contentType":"raw","rawContentType":"application/json","body":"={}","options":{"timeout":900000}},
+      "id":"news-immediate-dispatch","name":"Generate and send all verified news for review","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[740,0],
+      "credentials":{"httpBearerAuth":{"id":"socialApiBearer01","name":"Finkavo Social API"}}
     }
   ],
   "connections": {
-    "Every 2 hours": {
+    "Every 3 hours": {
       "main": [
         [
           {
-            "node": "Fetch free discovery feed",
+            "node": "Curated Portuguese and targeted feeds",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
+    "Curated Portuguese and targeted feeds":{"main":[[{"node":"Fetch free discovery feed","type":"main","index":0}]]},
     "Fetch free discovery feed": {
       "main": [
         [
@@ -109,7 +130,9 @@
           }
         ]
       ]
-    }
+    },
+    "Store deduplicated discoveries":{"main":[[{"node":"Verify every recent official item","type":"main","index":0}]]},
+    "Verify every recent official item":{"main":[[{"node":"Generate and send all verified news for review","type":"main","index":0}]]}
   },
   "settings": {
     "executionOrder": "v1",
