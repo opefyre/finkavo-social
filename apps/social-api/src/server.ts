@@ -841,7 +841,8 @@ const server = http.createServer(async (req, res) => {
       const duplicate = await findRecentDuplicate({ topic: checked.topic, category: checked.category, audience: "English-speaking people in Portugal", postIntent: checked.postIntent, content_hash: contentHash, subject_family: selectedConcept.subject_family, user_question: selectedConcept.user_question, content_intent: selectedConcept.content_intent, occurrence_key: selectedConcept.occurrence_key });
       if (duplicate) {
         await sql.begin(async tx => {
-          await tx`UPDATE social_post_concept SET status='used',updated_at=now() WHERE id=${selectedConcept.id}`;
+          await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE id=${selectedConcept.id}`;
+          if(selectedConcept.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${selectedConcept.plan_slot_id}`;
           await tx`INSERT INTO social_event(event_type,payload) VALUES('quality.duplicate_blocked',${tx.json({ conceptId: String(selectedConcept.id), duplicateOf: String(duplicate.post.id), reason: duplicate.reason, stage: 'generation' })})`;
         });
         return send(res, 409, { error: "Duplicate topic blocked", duplicateOf: duplicate.post.id, reason: duplicate.reason });
@@ -886,7 +887,7 @@ const server = http.createServer(async (req, res) => {
       const attempts: Array<{ round: number; stage: string; ok: boolean; replacements?: number; conceptId?: string; topic?: string | null; status?: number; error?: string | null }> = [];
       let replacements = 0;
       for (let round = 1; round <= input.maxRounds; round++) {
-        const [count] = await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${day} AND status NOT IN ('blocked','failed','rejected')`;
+        const [count] = await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${day} AND archived_at IS NULL AND status NOT IN ('blocked','failed','rejected')`;
         if (Number(count.count) >= input.target) break;
         let queue = await internalApi("GET", `/v1/planning/queue?date=${encodeURIComponent(day)}`);
         let concepts = (queue.result.concepts || []) as Array<{ id: string; topic?: string }>;
@@ -905,7 +906,7 @@ const server = http.createServer(async (req, res) => {
           attempts.push({ round, stage: "generation", conceptId: concept.id, topic: concept.topic || null, ok: generated.ok, status: generated.status, error: generated.ok ? null : String(generated.result.detail || generated.result.error || "generation failed") });
         }
       }
-      const posts = await sql`SELECT id,topic,status FROM social_post WHERE planned_for=${day} AND status NOT IN ('blocked','failed','rejected') ORDER BY created_at`;
+      const posts = await sql`SELECT id,topic,status FROM social_post WHERE planned_for=${day} AND archived_at IS NULL AND status NOT IN ('blocked','failed','rejected') ORDER BY created_at`;
       const complete = posts.length >= input.target;
       const reviews: Array<{ postId: string; ok: boolean; status: number; error: string | null }> = [];
       if (complete) {
