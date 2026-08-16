@@ -695,7 +695,7 @@ const server = http.createServer(async (req, res) => {
 
     if(req.method==="POST"&&url.pathname==="/v1/news/decide-flex-slot"){
       const {date,cutoffReached,dryRun}=NewsDecisionSchema.parse(await readJson(req));const [slot]=await sql`SELECT * FROM social_editorial_plan_slot WHERE publish_date=${date} AND plan_version=(SELECT max(plan_version) FROM social_editorial_plan_slot WHERE publish_date=${date}) AND timing_class='news_flex' AND status IN ('planned','held') ORDER BY slot_number LIMIT 1`;
-      if(!slot)return send(res,409,{error:"No undecided flexible slot exists for this date"});
+      if(!slot)return send(res,200,{date,decision:"already_decided",message:"No undecided flexible slot exists for this date"});
       const existing=await recentActivePosts();
       const newsRows=await sql`SELECT c.*,d.source_url,d.source_authority,d.title AS source_title,d.original_lang,d.content_hash,COALESCE(d.last_verified_at,d.fetched_at) AS retrieved_at,array_agg(ch.text ORDER BY ch.chunk_index) FILTER (WHERE ch.id IS NOT NULL) AS excerpts FROM social_post_concept c JOIN document d ON d.id=c.document_id AND d.source_tier='official' AND d.verified_still_available=true AND d.freshness_confidence='fresh' LEFT JOIN chunk ch ON ch.document_id=d.id AND ch.vault_doc_id IS NULL WHERE c.status='eligible' AND c.timeliness='official_change' GROUP BY c.id,d.id ORDER BY c.created_at DESC LIMIT 20`;
       const news=newsRows.find(row=>(row.excerpts as string[]|null)?.length&&sourceSupportsNewsTopic(String(row.topic),String(row.source_title),(row.excerpts as string[]))&&!findDuplicate({topic:row.topic,subject_family:row.category,user_question:row.topic,content_intent:'timely_news',postIntent:'timely_news'},existing as DuplicateCandidate[]));
@@ -917,7 +917,7 @@ const server = http.createServer(async (req, res) => {
       }
       const ready = complete && reviews.every(review => review.ok);
       await sql`INSERT INTO social_event(event_type,payload) VALUES('generation.day_recovery_completed',${sql.json({day,target:input.target,complete,ready,validPosts:posts.length,replacements,attempts,reviews})})`;
-      return send(res, ready ? 200 : 422, { date: day, target: input.target, complete, ready, validPosts: posts.length, replacements, posts, attempts, reviews });
+      return send(res, 200, { date: day, target: input.target, complete, ready, alertRequired: !ready, validPosts: posts.length, replacements, posts, attempts, reviews });
     }
 
     if (req.method === "GET" && url.pathname === "/v1/posts") {
@@ -1361,7 +1361,7 @@ const server = http.createServer(async (req, res) => {
             requiredAction: blocked ? "Check Buffer for this topic, then use the guarded retry or archive action on the board." : "Open the board to inspect and retry.",
           }, boardUrl);
         }
-        return send(res, retry ? 202 : 422, { job: failed, error: failure.message });
+        return send(res, 200, { job: failed, accepted: false, recoveryState: retry ? "automatic_retry" : blocked ? "manual_reconciliation" : "attention", error: failure.message });
       }
     }
 
