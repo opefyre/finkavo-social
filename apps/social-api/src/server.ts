@@ -943,6 +943,7 @@ const server = http.createServer(async (req, res) => {
       const input = z.object({ date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), target: z.number().int().min(1).max(5).default(5), maxRounds: z.number().int().min(1).max(8).default(6) }).parse(await readJson(req));
       const day = input.date || lisbonDate(new Date());
       const attempts: Array<{ round: number; stage: string; ok: boolean; replacements?: number; conceptId?: string; topic?: string | null; status?: number; error?: string | null }> = [];
+      const reviews: Array<{ postId: string; ok: boolean; status: number; error: string | null }> = [];
       let replacements = 0;
       for (let round = 1; round <= input.maxRounds; round++) {
         const [count] = await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${day} AND archived_at IS NULL AND status NOT IN ('blocked','failed','rejected')`;
@@ -962,17 +963,17 @@ const server = http.createServer(async (req, res) => {
         for (const concept of concepts.slice(0, input.target)) {
           const generated = await internalApi("POST", "/v1/generate", { conceptId: concept.id });
           attempts.push({ round, stage: "generation", conceptId: concept.id, topic: concept.topic || null, ok: generated.ok, status: generated.status, error: generated.ok ? null : String(generated.result.detail || generated.result.error || "generation failed") });
+          const postId=generated.ok&&generated.result.post&&typeof generated.result.post==='object'?String((generated.result.post as Record<string,unknown>).id||''):'';
+          if(postId){const reviewed=await internalApi("POST",`/v1/posts/${postId}/request-review`,{expiresInMinutes:180});reviews.push({postId,ok:reviewed.ok,status:reviewed.status,error:reviewed.ok?null:String(reviewed.result.error||"review request failed")});}
         }
       }
       const posts = await sql`SELECT id,topic,status FROM social_post WHERE planned_for=${day} AND archived_at IS NULL AND status NOT IN ('blocked','failed','rejected') ORDER BY created_at`;
       const complete = posts.length >= input.target;
-      const reviews: Array<{ postId: string; ok: boolean; status: number; error: string | null }> = [];
-      if (complete) {
-        const drafts = await sql`SELECT id FROM social_post WHERE planned_for=${day} AND status='draft' ORDER BY created_at`;
-        for (const draft of drafts) {
-          const reviewed = await internalApi("POST", `/v1/posts/${draft.id}/request-review`, { expiresInMinutes: 180 });
-          reviews.push({ postId: String(draft.id), ok: reviewed.ok, status: reviewed.status, error: reviewed.ok ? null : String(reviewed.result.error || "review request failed") });
-        }
+      const drafts = await sql`SELECT id FROM social_post WHERE planned_for=${day} AND status='draft' ORDER BY created_at`;
+      for (const draft of drafts) {
+        if(reviews.some(review=>review.postId===String(draft.id)))continue;
+        const reviewed = await internalApi("POST", `/v1/posts/${draft.id}/request-review`, { expiresInMinutes: 180 });
+        reviews.push({ postId: String(draft.id), ok: reviewed.ok, status: reviewed.status, error: reviewed.ok ? null : String(reviewed.result.error || "review request failed") });
       }
       const ready = complete && reviews.every(review => review.ok);
       await sql`INSERT INTO social_event(event_type,payload) VALUES('generation.day_recovery_completed',${sql.json({day,target:input.target,complete,ready,validPosts:posts.length,replacements,attempts,reviews})})`;
