@@ -1474,7 +1474,7 @@ const server = http.createServer(async (req, res) => {
 
     if(req.method==="POST"&&url.pathname==="/v1/reliability/audit-queue"){
       const input=z.object({dryRun:z.boolean().default(true)}).parse(await readJson(req));
-      const rows=await sql`SELECT p.id,p.topic,p.status,p.current_revision_id,j.id AS job_id,j.status AS job_status,j.provider_post_id FROM social_post p LEFT JOIN LATERAL(SELECT * FROM social_publish_job WHERE post_id=p.id ORDER BY created_at DESC LIMIT 1)j ON true WHERE p.status NOT IN('published','rejected','failed') AND p.archived_at IS NULL AND p.current_revision_id IS NOT NULL`;
+      const rows=await sql`SELECT p.id,p.topic,p.status,p.current_revision_id,j.id AS job_id,j.status AS job_status,j.provider_post_id FROM social_post p LEFT JOIN LATERAL(SELECT * FROM social_publish_job WHERE post_id=p.id ORDER BY created_at DESC LIMIT 1)j ON true WHERE p.status NOT IN('published','rejected','failed','blocked') AND p.archived_at IS NULL AND p.current_revision_id IS NOT NULL`;
       const checked=[];const blocked=[];const external=[];
       for(const row of rows){
         const assessment=await assessStoredRevision(String(row.id),String(row.current_revision_id),true);
