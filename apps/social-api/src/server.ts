@@ -24,6 +24,7 @@ import { sourceSupportsNewsTopic } from "./news-evidence.js";
 import { editorialScore } from "./editorial-score.js";
 import { boardPage } from "./board.js";
 import { selectVisualStyle } from "./visual-style.js";
+import { assessEvidenceReliability, isSensitiveClaim } from "./evidence-reliability.js";
 
 const databaseUrl = process.env.DATABASE_URL;
 const apiToken = process.env.SOCIAL_API_TOKEN;
@@ -234,9 +235,22 @@ function reviewPage(post: Record<string, unknown>, revision: Record<string, unkn
     hashtags: revision.hashtags as string[],
   });
   const slideCards = slides.map((slide, index) => `<article><small>Slide ${index + 1}</small><h3>${escapeHtml(slide.title)}</h3><p>${escapeHtml(slide.body)}</p><p class="meta"><strong>Alt text:</strong> ${escapeHtml(altTexts[index])}</p></article>`).join("");
-  const sourceItems = sources.map((source) => `<li><a href="${escapeHtml(source.url)}" rel="noreferrer">${escapeHtml(source.title)}</a> — ${escapeHtml(source.publisher)}</li>`).join("");
+  const sourceItems = sources.map((source) => `<li><a href="${escapeHtml(source.url)}" rel="noreferrer">${escapeHtml(source.title)}</a> — ${escapeHtml(source.publisher)}<br><small>Retrieved ${escapeHtml(source.retrievedAt)}</small>${Array.isArray(source.excerpts)?`<blockquote>${(source.excerpts as unknown[]).slice(0,3).map(escapeHtml).join("<br><br>")}</blockquote>`:""}</li>`).join("");
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Review · ${escapeHtml(post.topic)}</title><style>
   :root{font-family:Inter,ui-sans-serif,system-ui;color:#143735;background:#f6f2ea}body{margin:0}.wrap{max-width:1080px;margin:auto;padding:32px 20px 64px}header{display:flex;justify-content:space-between;gap:20px;align-items:start}.pill{background:#f0aa70;padding:6px 10px;border-radius:99px;font-weight:700;text-transform:uppercase;font-size:12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:24px 0}article,.panel{background:white;border:1px solid #d7ddd8;border-radius:14px;padding:20px;box-shadow:0 5px 18px #1437350d}article small,.meta{color:#5c706c;font-size:13px}h1{font-size:clamp(30px,5vw,52px);margin:.35em 0}h3{font-size:22px}.caption{white-space:pre-wrap;line-height:1.6}a{color:#175e58}form{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin-top:20px}label{display:grid;gap:6px;flex:1;min-width:240px}textarea{min-height:70px;padding:10px;border:1px solid #aebbb7;border-radius:8px}button{border:0;border-radius:9px;padding:12px 20px;font-weight:800;cursor:pointer}.approve{background:#175e58;color:white}.reject{background:#9d3535;color:white}.warning{border-left:5px solid #f0aa70}.identity{font-size:13px;color:#5c706c}</style></head><body><main class="wrap"><header><div><span class="pill">${escapeHtml(post.risk_level)} risk · ${escapeHtml(post.category)}</span><h1>${escapeHtml(post.topic)}</h1><p>${escapeHtml(revision.hook)}</p></div><p class="identity">Reviewer: ${escapeHtml(reviewer)}</p></header><section class="panel warning"><strong>Approval is revision-bound.</strong> Any change to copy, slides, or evidence invalidates this decision.</section><section class="grid">${slideCards}</section><section class="panel"><h2>Final Instagram caption</h2><p class="caption">${escapeHtml(finalCaption)}</p><h2>Sources</h2><ul>${sourceItems}</ul><p class="meta">Evidence hash: ${escapeHtml(String(revision.evidence_hash).slice(0, 16))}…</p><form method="post" action="${escapeHtml(reviewPathPrefix)}/review/${escapeHtml(token)}/decision"><label>Optional review comment<textarea name="comment" maxlength="500"></textarea></label><button class="approve" name="decision" value="approved">Approve exact revision</button><button class="reject" name="decision" value="rejected">Reject</button></form></section></main></body></html>`;
+}
+
+async function assessStoredRevision(postId: string, revisionId: string, requireRecent = false) {
+  const [row]=await sql`SELECT p.topic,p.category,r.source_bundle,r.created_at FROM social_post p JOIN social_post_revision r ON r.id=${revisionId} AND r.post_id=p.id WHERE p.id=${postId}`;
+  if(!row)return {passed:false,sensitive:false,failures:["Post revision is unavailable"],checkedAt:new Date().toISOString(),requiredAuthority:null,sourceCount:0,officialHostCount:0};
+  const claims=await sql`SELECT claim_text AS claim,evidence_quote AS "evidenceQuote" FROM social_claim WHERE post_id=${postId} AND revision_id=${revisionId}`;
+  const sources=(row.source_bundle||[]) as Array<Record<string,unknown>>;
+  const assessment=assessEvidenceReliability({topic:String(row.topic),category:String(row.category),claims:claims.map(claim=>({claim:String(claim.claim),evidenceQuote:String(claim.evidenceQuote)})),sources:sources.map(source=>({url:String(source.url),title:String(source.title||""),publisher:source.publisher?String(source.publisher):null,tier:String(source.tier||""),retrievedAt:String(source.retrievedAt||""),excerpts:Array.isArray(source.excerpts)?source.excerpts.map(String):[]}))});
+  if(requireRecent&&assessment.sensitive){
+    const oldest=sources.reduce((age,source)=>Math.max(age,Date.now()-new Date(String(source.retrievedAt||0)).getTime()),0);
+    if(!Number.isFinite(oldest)||oldest>24*60*60_000)return {...assessment,passed:false,failures:[...assessment.failures,"Sensitive evidence is older than 24 hours and must be researched again"]};
+  }
+  return assessment;
 }
 
 const GenerateSchema = z.object({ conceptId: z.string().uuid() });
@@ -402,6 +416,7 @@ const server = http.createServer(async (req, res) => {
       if (!reviewer) return send(res, 403, { error: "Action requires the authenticated owner identity" });
       const input = BoardActionSchema.parse(await readJson(req));
       if (!verifyBoardActionToken(input.token, input.postId, input.revisionId, reviewer)) return send(res, 403, { error: "Action expired. Refresh the board and try again." });
+      if(input.action==="approve"&&input.revisionId){const reliability=await assessStoredRevision(input.postId,input.revisionId);if(!reliability.passed)return send(res,422,{error:`Approval blocked: ${reliability.failures.join("; ")}`});}
       if (input.action === "send_review") {
         const reviewed = await internalApi("POST", `/v1/posts/${input.postId}/request-review`, { expiresInMinutes: 240, dryRun: false });
         return send(res, reviewed.status, reviewed.ok ? { message: "Post sent to Review and Discord." } : { error: String(reviewed.result.error || "The post could not be sent to review") });
@@ -520,6 +535,10 @@ const server = http.createServer(async (req, res) => {
       const decision = z.enum(["approved", "rejected"]).parse(form.get("decision"));
       const comment = z.string().max(500).parse(form.get("comment") || "");
       const tokenHash = hash(decisionMatch[1]);
+      if(decision==="approved"){
+        const [candidate]=await sql`SELECT post_id,revision_id FROM social_review_token WHERE token_hash=${tokenHash} AND used_at IS NULL AND expires_at>now()`;
+        if(candidate){const reliability=await assessStoredRevision(String(candidate.post_id),String(candidate.revision_id));if(!reliability.passed)return sendHtml(res,422,`<h1>Approval blocked</h1><p>${escapeHtml(reliability.failures.join("; "))}</p>`);}
+      }
       const result = await sql.begin(async (tx) => {
         const [token] = await tx`
           SELECT * FROM social_review_token
@@ -638,12 +657,13 @@ const server = http.createServer(async (req, res) => {
         const normalizedTerms=terms.map(v=>v.toLocaleLowerCase("pt"));
         const genericAuthorityTerms=new Set(["sns","aima","irs","iva"]); const substantiveTerms=normalizedTerms.filter(term=>!genericAuthorityTerms.has(term));
         const canonicalSource=/^https:\/\//.test(String(slot.required_authority))?String(slot.required_authority).replace(/\/$/,""):null;
-        const scored: any[]=(candidates as any[]).map(source=>{const title=String(source.title).toLocaleLowerCase("pt");const body=(source.excerpts as string[]).join(" ").toLocaleLowerCase("pt");const matched=normalizedTerms.filter(term=>exactTermMatch(title,term)||exactTermMatch(body,term));const substantiveMatched=matched.filter(term=>substantiveTerms.includes(term));const score=matched.reduce((sum,term)=>sum+(exactTermMatch(title,term)?6:2),0);return {...source,relevance_score:score,matched_terms:matched,substantive_matched:substantiveMatched};}).filter(source=>source.relevance_score>=2&&source.substantive_matched.length>0&&sourceDomainAllowed(normalizedTerms,source.source_url)&&sourceScopeAllowed(slot.topic,source.title)&&(!canonicalSource||String(source.source_url).replace(/\/$/,"")===canonicalSource)).sort((a,b)=>b.relevance_score-a.relevance_score||String(b.last_verified_at||b.fetched_at).localeCompare(String(a.last_verified_at||a.fetched_at)));
-        const sources: any[] = []; const seenAuthorities=new Set<string>();
-        for(const source of scored){const authority=String(source.source_authority||new URL(String(source.source_url)).hostname);if(seenAuthorities.has(authority)&&sources.length>=1)continue;sources.push(source);seenAuthorities.add(authority);if(sources.length>=2)break;}
+        const scored: any[]=(candidates as any[]).map(source=>{const title=String(source.title).toLocaleLowerCase("pt");const body=(source.excerpts as string[]).join(" ").toLocaleLowerCase("pt");const matched=normalizedTerms.filter(term=>exactTermMatch(title,term)||exactTermMatch(body,term));const substantiveMatched=matched.filter(term=>substantiveTerms.includes(term));const score=matched.reduce((sum,term)=>sum+(exactTermMatch(title,term)?6:2),0);return {...source,relevance_score:score,matched_terms:matched,substantive_matched:substantiveMatched};}).filter(source=>source.relevance_score>=2&&source.substantive_matched.length>0&&sourceDomainAllowed(normalizedTerms,source.source_url)&&sourceScopeAllowed(slot.topic,source.title)).sort((a,b)=>Number(Boolean(canonicalSource&&String(b.source_url).replace(/\/$/,"")===canonicalSource))-Number(Boolean(canonicalSource&&String(a.source_url).replace(/\/$/,"")===canonicalSource))||b.relevance_score-a.relevance_score||String(b.last_verified_at||b.fetched_at).localeCompare(String(a.last_verified_at||a.fetched_at)));
+        const sources: any[] = []; const seenHosts=new Set<string>();
+        for(const source of scored){const host=new URL(String(source.source_url)).hostname.replace(/^www\d?\./,"");if(seenHosts.has(host))continue;sources.push(source);seenHosts.add(host);if(sources.length>=3)break;}
         const needsOfficial = slot.risk_level === 'high' || slot.timing_class !== 'evergreen';
         const minimumRelevance = slot.risk_level === 'high' || slot.timing_class !== 'evergreen' ? 6 : slot.risk_level === 'medium' ? 4 : 2;
-        const valid = factCard ? sources.length >= 1 : sources.length >= 1 && sources[0].relevance_score>=minimumRelevance && (!needsOfficial || sources.some(s=>s.source_tier==='official'));
+        const includesCanonical=!canonicalSource||sources.some(source=>String(source.source_url).replace(/\/$/,"")===canonicalSource);
+        const valid = (factCard ? sources.length >= 1 : sources.length >= 1 && sources[0].relevance_score>=minimumRelevance) && includesCanonical && (!needsOfficial || sources.some(s=>s.source_tier==='official'));
         if (!valid) { await sql`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${slot.id}`; results.push({slotId:slot.id,topic:slot.topic,state:'held',sources:sources.length}); continue; }
         const normalized=sources.map((s,index)=>({documentId:s.id,url:index===0&&factCard?factCard.sourceUrl:s.source_url,title:index===0&&factCard?factCard.sourceTitle:s.title,publisher:index===0&&factCard?factCard.authority:s.source_authority,tier:s.source_tier,locale:s.original_lang,retrievedAt:s.last_verified_at||s.fetched_at,contentHash:index===0&&factCard?hash(factCard):s.content_hash,relevanceScore:factCard&&index===0?100:s.relevance_score,matchedTerms:factCard&&index===0?factCard.match:s.matched_terms,excerpts:index===0&&factCard?factCard.facts:(s.excerpts as string[]).slice(0,6),deterministicFactCard:Boolean(factCard&&index===0)}));
         const bundleHash=hash(normalized); const freshnessDays=slot.risk_level==='high'?7:slot.risk_level==='medium'?30:90;
@@ -859,6 +879,8 @@ const server = http.createServer(async (req, res) => {
           const unsupported = candidate.claims.find((claim) => !corpusText.includes(claim.evidenceQuote.replace(/\s+/g, " ")));
           if (unsupported) throw new Error("A claim evidence quote was not found verbatim in the supplied corpus excerpts");
           if (candidate.riskLevel === "high" && !evidenceSources.some(s=>s.tier === "official")) throw new Error("High-risk content requires an official primary source");
+          const reliability=assessEvidenceReliability({topic:candidate.topic,category:candidate.category,claims:candidate.claims,sources:evidenceSources.map(s=>({url:String(s.url),title:String(s.title),publisher:s.publisher?String(s.publisher):null,tier:String(s.tier),retrievedAt:String(s.retrievedAt),excerpts:(s.excerpts as string[])||[]}))});
+          if(!reliability.passed)throw new Error(`Evidence reliability gate failed: ${reliability.failures.join("; ")}`);
           checked = candidate;
           model = generated.model;
           break;
@@ -870,7 +892,8 @@ const server = http.createServer(async (req, res) => {
         await sql.begin(async tx=>{await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE id=${selectedConcept.id}`;if(selectedConcept.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${selectedConcept.plan_slot_id}`;await tx`INSERT INTO social_event (event_type, payload) VALUES ('generation.failed', ${tx.json({ documentId,conceptId:selectedConcept.id,planSlotId:selectedConcept.plan_slot_id,error: lastGenerationError })})`;});
         return send(res, 422, { error: "Structured generation failed after the initial attempt and two targeted repairs", detail: lastGenerationError });
       }
-      const sourceBundle = evidenceSources.map(s=>({documentId:String(s.documentId),url:String(s.url),title:String(s.title),publisher:s.publisher?String(s.publisher):null,locale:String(s.locale),retrievedAt:String(s.retrievedAt),contentHash:String(s.contentHash),tier:String(s.tier)}));
+      const reliability=assessEvidenceReliability({topic:checked.topic,category:checked.category,claims:checked.claims,sources:evidenceSources.map(s=>({url:String(s.url),title:String(s.title),publisher:s.publisher?String(s.publisher):null,tier:String(s.tier),retrievedAt:String(s.retrievedAt),excerpts:(s.excerpts as string[])||[]}))});
+      const sourceBundle = evidenceSources.map(s=>({documentId:String(s.documentId),url:String(s.url),title:String(s.title),publisher:s.publisher?String(s.publisher):null,locale:String(s.locale),retrievedAt:String(s.retrievedAt),contentHash:String(s.contentHash),tier:String(s.tier),excerpts:(s.excerpts as string[])||[],reliability}));
       const evidenceHash = hash({ sourceBundle, claims: checked.claims });
       const contentHash = hash({ hook: checked.hook, caption: checked.caption, callToAction: checked.callToAction, hashtags: checked.hashtags, searchKeywords: checked.searchKeywords, postIntent: checked.postIntent, slides: checked.slides });
       const duplicate = await findRecentDuplicate({ topic: checked.topic, category: checked.category, audience: "English-speaking people in Portugal", postIntent: checked.postIntent, content_hash: contentHash, subject_family: selectedConcept.subject_family, user_question: selectedConcept.user_question, content_intent: selectedConcept.content_intent, occurrence_key: selectedConcept.occurrence_key });
@@ -1079,6 +1102,8 @@ const server = http.createServer(async (req, res) => {
       const scoredSlides=(previewSource.revision_slides as Array<{title?:string;body?:string;items?:string[];sourceLabel?:string}>).map(slide=>({...slide,sourceLabel:slide.sourceLabel||String(previewSource.source_authority||"Official source")}));
       const quality=editorialScore({topic:String(previewSource.topic),hook:String(previewSource.revision_hook),caption:String(previewSource.revision_caption),callToAction:String(previewSource.revision_cta),hashtags:previewSource.revision_hashtags as string[],slides:scoredSlides,sources:previewSource.revision_sources as Array<{url?:string;tier?:string}>,riskLevel:String(previewSource.risk_level),subjectFamily:String(previewSource.subject_family||""),userQuestion:String(previewSource.user_question||""),contentIntent:String(previewSource.content_intent||"")});
       if(!quality.passed){if(!dryRun)await sql.begin(async tx=>{await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${previewSource.id}`;await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${previewSource.id},'quality.editorial_score_blocked',${tx.json({stage:'pre_discord',score:quality.score,failures:quality.failures})})`;});return send(res,422,{error:"Post failed the pre-Discord editorial gate",dryRun,...quality});}
+      const reliability=await assessStoredRevision(String(previewSource.id),String(previewSource.revision_id));
+      if(!reliability.passed){if(!dryRun)await sql.begin(async tx=>{await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${previewSource.id}`;await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${previewSource.id},'evidence.reliability_blocked',${tx.json({stage:'pre_review',...reliability})})`;});return send(res,422,{error:"Post failed the evidence reliability gate",dryRun,...reliability});}
       const duplicate = await findRecentDuplicate(previewSource as DuplicateCandidate, String(previewSource.id));
       if (duplicate && !dryRun) {
         await sql.begin(async tx => {
@@ -1287,6 +1312,8 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && scheduleMatch) {
       const { scheduledAt, idempotencyKey } = ScheduleSchema.parse(await readJson(req));
       if (new Date(scheduledAt).getTime() < Date.now() + 10 * 60_000) return send(res, 400, { error: "Schedule must be at least 10 minutes in the future" });
+      const [approved]=await sql`SELECT approved_revision_id FROM social_post WHERE id=${scheduleMatch[1]}`;
+      if(approved?.approved_revision_id){const reliability=await assessStoredRevision(scheduleMatch[1],String(approved.approved_revision_id),true);if(!reliability.passed)return send(res,422,{error:"Scheduling blocked by final evidence validation",...reliability});}
       const job = await sql.begin(async (tx) => {
         const [existing] = await tx`SELECT * FROM social_publish_job WHERE idempotency_key = ${idempotencyKey}`;
         if (existing) return existing;
@@ -1352,6 +1379,8 @@ const server = http.createServer(async (req, res) => {
       });
       if (!job) return send(res, 200, { job: null });
       try {
+        const reliability=await assessStoredRevision(String(job.post_id),String(job.revision_id),true);
+        if(!reliability.passed){await sql.begin(async tx=>{await tx`UPDATE social_publish_job SET status='blocked',lease_owner=NULL,lease_expires_at=NULL,error_code='EVIDENCE_REVALIDATION_FAILED',error_message=${reliability.failures.join("; ")},updated_at=now() WHERE id=${job.id}`;await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${job.post_id}`;await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'evidence.reliability_blocked',${tx.json({stage:'pre_publish',jobId:job.id,...reliability})})`;});await notifyDiscord("errors","Publication blocked by evidence validation",{post:job.post_id,job:job.id,problems:reliability.failures.join("\n")});return send(res,422,{error:"Publication blocked by evidence validation",...reliability});}
         assertPublishableCopy(job.post as Record<string, unknown>);
         const channelId = process.env.BUFFER_CHANNEL_ID;
         if (!channelId) throw new BufferError("BUFFER_CHANNEL_ID is not configured", "CHANNEL_NOT_CONFIGURED", false);
@@ -1441,6 +1470,22 @@ const server = http.createServer(async (req, res) => {
         }
       }
       return send(res, 200, { results });
+    }
+
+    if(req.method==="POST"&&url.pathname==="/v1/reliability/audit-queue"){
+      const input=z.object({dryRun:z.boolean().default(true)}).parse(await readJson(req));
+      const rows=await sql`SELECT p.id,p.topic,p.status,p.current_revision_id,j.id AS job_id,j.status AS job_status,j.provider_post_id FROM social_post p LEFT JOIN LATERAL(SELECT * FROM social_publish_job WHERE post_id=p.id ORDER BY created_at DESC LIMIT 1)j ON true WHERE p.status NOT IN('published','rejected','failed') AND p.archived_at IS NULL AND p.current_revision_id IS NOT NULL`;
+      const checked=[];const blocked=[];const external=[];
+      for(const row of rows){
+        const assessment=await assessStoredRevision(String(row.id),String(row.current_revision_id),true);
+        checked.push({postId:row.id,topic:row.topic,status:row.status,...assessment});
+        if(assessment.passed)continue;
+        if(row.job_status==='scheduled'&&row.provider_post_id){external.push({postId:row.id,topic:row.topic,bufferPostId:row.provider_post_id,failures:assessment.failures});continue;}
+        if(!input.dryRun){await sql.begin(async tx=>{if(row.job_id)await tx`UPDATE social_publish_job SET status='blocked',error_code='EVIDENCE_REVALIDATION_FAILED',error_message=${assessment.failures.join("; ")},updated_at=now() WHERE id=${row.job_id} AND status IN('pending','processing','retrying')`;await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${row.id}`;await tx`INSERT INTO social_event(post_id,event_type,payload)VALUES(${row.id},'evidence.queue_audit_blocked',${tx.json(assessment)})`;});}
+        blocked.push({postId:row.id,topic:row.topic,failures:assessment.failures});
+      }
+      if(external.length&&!input.dryRun)await notifyDiscord('errors','Buffer posts require evidence review before publication',{posts:external.map(item=>`${item.topic} — post ${item.postId}, Buffer ${item.bufferPostId}`).join('\n')});
+      return send(res,200,{dryRun:input.dryRun,checked:checked.length,passed:checked.filter(item=>item.passed).length,blocked,external});
     }
 
     if (req.method === "GET" && url.pathname === "/v1/health-report") {
