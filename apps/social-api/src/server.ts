@@ -256,8 +256,10 @@ async function assessStoredRevision(postId: string, revisionId: string, requireR
 async function assessStoredEditorial(postId:string,revisionId:string){
   const [row]=await sql`SELECT p.topic,p.risk_level,p.subject_family,p.user_question,p.content_intent,r.hook,r.caption,r.call_to_action,r.hashtags,r.slides,r.source_bundle FROM social_post p JOIN social_post_revision r ON r.id=${revisionId} AND r.post_id=p.id WHERE p.id=${postId}`;
   if(!row)return {score:0,failures:["post revision unavailable"],passed:false};
-  const slides=row.slides as Array<{title?:string;body?:string;items?:string[];sourceLabel?:string}>;
-  return editorialScore({topic:String(row.topic),hook:String(row.hook),caption:String(row.caption),callToAction:String(row.call_to_action),hashtags:row.hashtags as string[],slides,riskLevel:String(row.risk_level),subjectFamily:String(row.subject_family||""),userQuestion:String(row.user_question||""),contentIntent:String(row.content_intent||""),sources:row.source_bundle as Array<{url?:string;tier?:string}>});
+  const sources=row.source_bundle as Array<{url?:string;tier?:string;publisher?:string;title?:string}>;
+  const sourceLabel=String(sources.find(source=>source.publisher)?.publisher||sources[0]?.title||"Official source").slice(0,80);
+  const slides=(row.slides as Array<{title?:string;body?:string;items?:string[];sourceLabel?:string}>).map(slide=>({...slide,sourceLabel:slide.sourceLabel?.trim()||sourceLabel}));
+  return editorialScore({topic:String(row.topic),hook:String(row.hook),caption:String(row.caption),callToAction:String(row.call_to_action),hashtags:row.hashtags as string[],slides,riskLevel:String(row.risk_level),subjectFamily:String(row.subject_family||""),userQuestion:String(row.user_question||""),contentIntent:String(row.content_intent||""),sources});
 }
 
 const GenerateSchema = z.object({ conceptId: z.string().uuid() });
@@ -876,6 +878,15 @@ const server = http.createServer(async (req, res) => {
             ...(selectedConcept ? { editorialContext: { topic: String(selectedConcept.topic), reason: selectedConcept.reason ? String(selectedConcept.reason) : null, campaignStage: selectedConcept.campaign_stage ? String(selectedConcept.campaign_stage) : null, plannedFor: selectedConcept.planned_for ? String(selectedConcept.planned_for) : null, expiresAt: selectedConcept.expires_at ? String(selectedConcept.expires_at) : null, purpose:selectedConcept.brief?.purpose?String(selectedConcept.brief.purpose):undefined,userQuestion:selectedConcept.brief?.userQuestion?String(selectedConcept.brief.userQuestion):undefined,requiredAnswers:Array.isArray(selectedConcept.brief?.requiredAnswers)?selectedConcept.brief.requiredAnswers.map(String):undefined } } : {}),
           });
           const candidate = DraftSchema.parse(generated.draft);
+          const sourceLabel = String(
+            evidenceSources.find((item) => item.publisher)?.publisher ||
+            evidenceSources[0]?.title ||
+            "Official source",
+          ).slice(0, 80);
+          candidate.slides = candidate.slides.map((slide) => ({
+            ...slide,
+            sourceLabel: slide.sourceLabel?.trim() || sourceLabel,
+          }));
           candidate.slides= candidate.slides.map(slide=>({...slide,body:slide.body?finishSentence(slide.body):slide.body,items:slide.items.map(finishSentence)}));
           candidate.claims=candidate.claims.map(claim=>({...claim,claim:finishSentence(claim.claim)}));
           if (!topicMatchesPlan(candidate.topic,String(selectedConcept.topic))) throw new Error("Draft drifted away from the predetermined editorial topic");
