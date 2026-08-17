@@ -15,7 +15,7 @@
       "id": "official-fetch", "name": "Fetch canonical page", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "retryOnFail": true, "maxTries": 3, "waitBetweenTries": 30000, "position": [-240,0]
     },
     {
-      "parameters": {"jsCode":"const inputs=$input.all();const urls=$('Canonical URLs').all();return inputs.map((item,index)=>({json:{url:urls[index].json.url,httpStatus:Number(item.json.statusCode||200),body:String(item.json.body||'').slice(0,750000),fetchedAt:new Date().toISOString()}}));"},
+      "parameters": {"jsCode":"const inputs=$input.all();const urls=$('Canonical URLs').all();return inputs.map((item,index)=>{const response=item.json||{};const body=response.data??response.body??'';return {json:{url:urls[index].json.url,httpStatus:Number(response.statusCode||200),body:String(body).slice(0,750000),fetchedAt:new Date().toISOString()}};});"},
       "id": "official-normalize", "name": "Build snapshots", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [0,0]
     },
     {

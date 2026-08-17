@@ -48,7 +48,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const posts=($json.posts||[]).slice(0,5); return posts.map(post=>({json:{postId:post.id,expiresInMinutes:180}}));"
+        "jsCode": "const posts=($json.posts||[]).slice(0,5); if(!posts.length)return [{json:{hasDraft:false,message:'No draft is awaiting review.'}}]; return posts.map(post=>({json:{hasDraft:true,postId:post.id,expiresInMinutes:180}}));"
       },
       "id": "1a1ca4ce-ebef-4dcc-a42e-69ed0ccca0b9",
       "name": "Require draft",
@@ -56,6 +56,40 @@
       "typeVersion": 2,
       "position": [
         -20,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c81742ea-d5f1-4e72-a379-f3003fd04a41",
+              "leftValue": "={{ $json.hasDraft }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ff3dd955-d729-47ea-92d8-215974967af3",
+      "name": "Draft available?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        200,
         0
       ]
     },
@@ -78,8 +112,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        220,
-        0
+        440,
+        -100
       ],
       "credentials": {
         "httpBearerAuth": {
@@ -87,6 +121,17 @@
           "name": "Finkavo Social API"
         }
       }
+    },
+    {
+      "parameters": {},
+      "id": "dd85a5f9-139b-4293-aac9-5ec7619f5df3",
+      "name": "No draft awaiting review",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        440,
+        120
+      ]
     }
   ],
   "connections": {
@@ -116,7 +161,25 @@
       "main": [
         [
           {
+            "node": "Draft available?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft available?": {
+      "main": [
+        [
+          {
             "node": "Create secure review link",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No draft awaiting review",
             "type": "main",
             "index": 0
           }
