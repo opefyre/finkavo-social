@@ -441,7 +441,7 @@ const server = http.createServer(async (req, res) => {
           await tx`UPDATE social_review_token SET used_at=now() WHERE post_id=${post.id} AND revision_id=${input.revisionId} AND used_at IS NULL`;
           await tx`INSERT INTO social_approval(post_id,revision_id,evidence_hash,decision,reviewer,comment) VALUES(${post.id},${input.revisionId},${revision.evidence_hash},${decision},${reviewer},${input.comment || null})`;
           if (decision === "approved") await tx`UPDATE social_post SET status='approved',approved_revision_id=${input.revisionId},approved_at=now(),approved_by=${reviewer},updated_at=now() WHERE id=${post.id}`;
-          else await tx`UPDATE social_post SET status='rejected',approved_revision_id=NULL,approved_at=NULL,approved_by=NULL,updated_at=now() WHERE id=${post.id}`;
+          else {await tx`UPDATE social_post SET status='rejected',approved_revision_id=NULL,approved_at=NULL,approved_by=NULL,updated_at=now() WHERE id=${post.id}`;const concepts=await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE topic=${post.topic} AND planned_for=${post.planned_for} RETURNING plan_slot_id`;for(const concept of concepts)if(concept.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${concept.plan_slot_id}`;}
           await audit(`post.${decision}`, { revisionId: input.revisionId, comment: input.comment || null });
           return { status: 200, message: decision === "approved" ? "Exact revision approved." : "Post rejected." };
         }
@@ -553,13 +553,13 @@ const server = http.createServer(async (req, res) => {
           FOR UPDATE
         `;
         if (!token) return null;
-        const [post] = await tx`SELECT current_revision_id FROM social_post WHERE id = ${token.post_id} FOR UPDATE`;
+        const [post] = await tx`SELECT current_revision_id,topic,planned_for FROM social_post WHERE id = ${token.post_id} FOR UPDATE`;
         const [revision] = await tx`SELECT evidence_hash FROM social_post_revision WHERE id = ${token.revision_id}`;
         if (!post || !revision || post.current_revision_id !== token.revision_id || revision.evidence_hash !== token.evidence_hash) return "changed";
         await tx`UPDATE social_review_token SET used_at = now() WHERE id = ${token.id}`;
         await tx`INSERT INTO social_approval (post_id, revision_id, evidence_hash, decision, reviewer, comment) VALUES (${token.post_id}, ${token.revision_id}, ${token.evidence_hash}, ${decision}, ${String(reviewer)}, ${comment || null})`;
         if (decision === "approved") await tx`UPDATE social_post SET status = 'approved', approved_revision_id = ${token.revision_id}, approved_at = now(), approved_by = ${String(reviewer)}, updated_at = now() WHERE id = ${token.post_id}`;
-        else await tx`UPDATE social_post SET status = 'rejected', approved_revision_id = NULL, approved_at = NULL, approved_by = NULL, updated_at = now() WHERE id = ${token.post_id}`;
+        else {await tx`UPDATE social_post SET status = 'rejected', approved_revision_id = NULL, approved_at = NULL, approved_by = NULL, updated_at = now() WHERE id = ${token.post_id}`;const concepts=await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE topic=${post.topic} AND planned_for=${post.planned_for} RETURNING plan_slot_id`;for(const concept of concepts)if(concept.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${concept.plan_slot_id}`;}
         await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${token.post_id}, ${`post.${decision}`}, ${tx.json({ revisionId: token.revision_id, reviewer: String(reviewer) })})`;
         return decision;
       });
