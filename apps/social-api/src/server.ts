@@ -958,7 +958,12 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === "POST" && url.pathname === "/v1/generation/recover-day") {
-      const input = z.object({ date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), target: z.number().int().min(1).max(5).default(5), maxRounds: z.number().int().min(1).max(8).default(6) }).parse(await readJson(req));
+      const input = z.object({
+        date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+        target: z.number().int().min(1).max(5).default(5),
+        maxRounds: z.number().int().min(1).max(8).default(6),
+        maxConcepts: z.number().int().min(1).max(5).default(5),
+      }).parse(await readJson(req));
       const day = input.date || lisbonDate(new Date());
       const attempts: Array<{ round: number; stage: string; ok: boolean; replacements?: number; conceptId?: string; topic?: string | null; status?: number; error?: string | null }> = [];
       const reviews: Array<{ postId: string; ok: boolean; status: number; error: string | null }> = [];
@@ -978,7 +983,8 @@ const server = http.createServer(async (req, res) => {
           concepts = (queue.result.concepts || []) as Array<{ id: string; topic?: string }>;
         }
         if (!concepts.length) break;
-        for (const concept of concepts.slice(0, input.target)) {
+        const missing = Math.max(0, input.target - Number(count.count));
+        for (const concept of concepts.slice(0, Math.min(missing, input.maxConcepts))) {
           const generated = await internalApi("POST", "/v1/generate", { conceptId: concept.id });
           attempts.push({ round, stage: "generation", conceptId: concept.id, topic: concept.topic || null, ok: generated.ok, status: generated.status, error: generated.ok ? null : String(generated.result.detail || generated.result.error || "generation failed") });
           const postId=generated.ok&&generated.result.post&&typeof generated.result.post==='object'?String((generated.result.post as Record<string,unknown>).id||''):'';

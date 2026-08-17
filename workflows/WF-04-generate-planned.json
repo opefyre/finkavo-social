@@ -4,10 +4,10 @@
   "nodes": [
     {
       "parameters": {
-        "rule": { "interval": [{ "field": "cronExpression", "expression": "2 8 * * *" }] }
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "2-27/5 8 * * *" }] }
       },
       "id": "generate-recover-trigger",
-      "name": "Daily at 08:02 Lisbon",
+      "name": "Every 5 minutes from 08:02 to 08:27 Lisbon",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [-300, 0]
@@ -21,8 +21,8 @@
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
-        "body": "={}",
-        "options": { "timeout": 900000 }
+        "body": "={{ JSON.stringify({target:5,maxRounds:1,maxConcepts:1}) }}",
+        "options": { "timeout": 300000 }
       },
       "id": "generate-recover-batch",
       "name": "Generate and recover five-post batch",
@@ -35,7 +35,7 @@
     }
   ],
   "connections": {
-    "Daily at 08:02 Lisbon": {
+    "Every 5 minutes from 08:02 to 08:27 Lisbon": {
       "main": [[{ "node": "Generate and recover five-post batch", "type": "main", "index": 0 }]]
     }
   },
