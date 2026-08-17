@@ -32,12 +32,14 @@ describe("social draft quality", () => {
     candidate.callToAction="Keep these official law names handy.";
     expect(()=>validateSocialDraft(candidate)).toThrow(/source-page trivia/);
   });
-  it("accepts legitimate official and payment acronyms", () => {
+  it("rejects a cover that merely reports what an official guide lists",()=>{const candidate=structuredClone(good);candidate.topic="Adult education routes for migrants";candidate.hook="See which adult learning routes the gov guide lists.";candidate.slides[0]!.title="Adult education routes for migrants";candidate.slides[0]!.body="Find the adult learning routes named in the official guide.";expect(()=>validateSocialDraft(candidate)).toThrow(/source|standalone/i);});
+  it("rejects unexplained official and payment acronyms", () => {
     const candidate=structuredClone(good);
     candidate.slides[0]!.body="Use ASAE for the official complaints route.";
     candidate.slides[1]!.items=["Check the IBAN and NIB before a SWIFT transfer.","Use SPIN only through your payment provider."];
-    expect(()=>validateSocialDraft(candidate)).not.toThrow();
+    expect(()=>validateSocialDraft(candidate)).toThrow(/defined/);
   });
+  it("accepts an acronym when the term is explained",()=>{const candidate=structuredClone(good);candidate.slides[0]!.body="A Portuguese tax identification number (NIF) identifies a taxpayer.";candidate.topic="Portuguese tax identification number";candidate.slides[0]!.title="Your Portuguese tax number";expect(()=>validateSocialDraft(candidate)).not.toThrow();});
   it("rejects an all-caps emphasis phrase", () => {
     const candidate=structuredClone(good);
     candidate.slides[0]!.body="SAVE THIS IMPORTANT POST.";

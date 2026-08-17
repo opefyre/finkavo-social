@@ -253,6 +253,13 @@ async function assessStoredRevision(postId: string, revisionId: string, requireR
   return assessment;
 }
 
+async function assessStoredEditorial(postId:string,revisionId:string){
+  const [row]=await sql`SELECT p.topic,p.risk_level,p.subject_family,p.user_question,p.content_intent,r.hook,r.caption,r.call_to_action,r.hashtags,r.slides,r.source_bundle FROM social_post p JOIN social_post_revision r ON r.id=${revisionId} AND r.post_id=p.id WHERE p.id=${postId}`;
+  if(!row)return {score:0,failures:["post revision unavailable"],passed:false};
+  const slides=row.slides as Array<{title?:string;body?:string;items?:string[];sourceLabel?:string}>;
+  return editorialScore({topic:String(row.topic),hook:String(row.hook),caption:String(row.caption),callToAction:String(row.call_to_action),hashtags:row.hashtags as string[],slides,riskLevel:String(row.risk_level),subjectFamily:String(row.subject_family||""),userQuestion:String(row.user_question||""),contentIntent:String(row.content_intent||""),sources:row.source_bundle as Array<{url?:string;tier?:string}>});
+}
+
 const GenerateSchema = z.object({ conceptId: z.string().uuid() });
 const PlanningSchema = z.object({ date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), capacity: z.number().int().min(1).max(5).default(2) });
 const ResearchSchema = z.object({ date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional() });
@@ -416,7 +423,7 @@ const server = http.createServer(async (req, res) => {
       if (!reviewer) return send(res, 403, { error: "Action requires the authenticated owner identity" });
       const input = BoardActionSchema.parse(await readJson(req));
       if (!verifyBoardActionToken(input.token, input.postId, input.revisionId, reviewer)) return send(res, 403, { error: "Action expired. Refresh the board and try again." });
-      if(input.action==="approve"&&input.revisionId){const reliability=await assessStoredRevision(input.postId,input.revisionId);if(!reliability.passed)return send(res,422,{error:`Approval blocked: ${reliability.failures.join("; ")}`});}
+      if(input.action==="approve"&&input.revisionId){const [reliability,editorial]=await Promise.all([assessStoredRevision(input.postId,input.revisionId),assessStoredEditorial(input.postId,input.revisionId)]);if(!reliability.passed)return send(res,422,{error:`Approval blocked: ${reliability.failures.join("; ")}`});if(!editorial.passed)return send(res,422,{error:`Approval blocked: ${editorial.failures.join("; ")}`});}
       if (input.action === "send_review") {
         const reviewed = await internalApi("POST", `/v1/posts/${input.postId}/request-review`, { expiresInMinutes: 240, dryRun: false });
         return send(res, reviewed.status, reviewed.ok ? { message: "Post sent to Review and Discord." } : { error: String(reviewed.result.error || "The post could not be sent to review") });
@@ -537,7 +544,7 @@ const server = http.createServer(async (req, res) => {
       const tokenHash = hash(decisionMatch[1]);
       if(decision==="approved"){
         const [candidate]=await sql`SELECT post_id,revision_id FROM social_review_token WHERE token_hash=${tokenHash} AND used_at IS NULL AND expires_at>now()`;
-        if(candidate){const reliability=await assessStoredRevision(String(candidate.post_id),String(candidate.revision_id));if(!reliability.passed)return sendHtml(res,422,`<h1>Approval blocked</h1><p>${escapeHtml(reliability.failures.join("; "))}</p>`);}
+        if(candidate){const [reliability,editorial]=await Promise.all([assessStoredRevision(String(candidate.post_id),String(candidate.revision_id)),assessStoredEditorial(String(candidate.post_id),String(candidate.revision_id))]);if(!reliability.passed)return sendHtml(res,422,`<h1>Approval blocked</h1><p>${escapeHtml(reliability.failures.join("; "))}</p>`);if(!editorial.passed)return sendHtml(res,422,`<h1>Approval blocked</h1><p>${escapeHtml(editorial.failures.join("; "))}</p>`);}
       }
       const result = await sql.begin(async (tx) => {
         const [token] = await tx`
@@ -1491,6 +1498,14 @@ const server = http.createServer(async (req, res) => {
       }
       if(external.length&&!input.dryRun)await notifyDiscord('errors','Buffer posts require evidence review before publication',{posts:external.map(item=>`${item.topic} — post ${item.postId}, Buffer ${item.bufferPostId}`).join('\n')});
       return send(res,200,{dryRun:input.dryRun,checked:checked.length,passed:checked.filter(item=>item.passed).length,blocked,external});
+    }
+
+    if(req.method==="POST"&&url.pathname==="/v1/editorial/audit-review"){
+      const input=z.object({dryRun:z.boolean().default(true)}).parse(await readJson(req));
+      const rows=await sql`SELECT id,topic,status,current_revision_id FROM social_post WHERE status IN('draft','ready_for_review') AND archived_at IS NULL AND current_revision_id IS NOT NULL ORDER BY created_at`;
+      const blocked=[];
+      for(const row of rows){const result=await assessStoredEditorial(String(row.id),String(row.current_revision_id));if(result.passed)continue;blocked.push({postId:row.id,topic:row.topic,status:row.status,failures:result.failures});if(!input.dryRun)await sql.begin(async tx=>{await tx`UPDATE social_review_token SET used_at=now() WHERE post_id=${row.id} AND used_at IS NULL`;await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${row.id}`;await tx`INSERT INTO social_event(post_id,event_type,payload)VALUES(${row.id},'quality.standalone_value_blocked',${tx.json({stage:'review_audit',score:result.score,failures:result.failures})})`;});}
+      return send(res,200,{dryRun:input.dryRun,checked:rows.length,passed:rows.length-blocked.length,blocked});
     }
 
     if (req.method === "GET" && url.pathname === "/v1/health-report") {

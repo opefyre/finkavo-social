@@ -1,4 +1,4 @@
-import { assertEnglishUserCopy } from "./draft-quality.js";
+import { assertEnglishUserCopy, validateStandaloneValue } from "./draft-quality.js";
 import { validateCaptionParts } from "./caption.js";
 
 type ReviewCandidate = {
@@ -20,5 +20,6 @@ export function editorialScore(candidate: ReviewCandidate) {
   if (candidate.slides.length < 3 || candidate.slides.length > 7 || candidate.slides.some(slide=>!slide.title?.trim() || (!slide.body?.trim() && !(slide.items?.length)))) failures.push("complete slide content");
   if (candidate.slides.some(slide=>!slide.sourceLabel?.trim())) failures.push("slide source labels");
   if (/^(did you know|important update|here'?s what you need to know)[.!?]?$/i.test(candidate.hook.trim())) failures.push("specific hook");
+  try { validateStandaloneValue(candidate); } catch { failures.push("standalone reader value"); }
   return { score: Math.max(0,100-failures.length*15), failures, passed: failures.length === 0 };
 }
