@@ -21,6 +21,7 @@ try {
     { name: "0011_retryable_plan_slots.sql", sentinel: "" },
     { name: "0012_post_plan_date.sql", sentinel: "" },
     { name: "0013_board_actions.sql", sentinel: "" },
+    { name: "0014_local_corpus_chunks.sql", sentinel: "chunk" },
   ];
   for (const { name, sentinel } of migrations) {
     const [applied] = await sql`SELECT version FROM social_schema_migration WHERE version = ${name}`;
