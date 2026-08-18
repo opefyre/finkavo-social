@@ -132,6 +132,26 @@ const topicMatchesPlan = (draftTopic: string, plannedTopic: string) => {
   const planned=new Set(tokens(plannedTopic)); return tokens(draftTopic).some(token=>planned.has(token));
 };
 const finishSentence = (value:string) => value.trim() && !/[.!?)]$/.test(value.trim()) ? `${value.trim()}.` : value.trim();
+const ensureKnownAcronymsAreDefined = <T extends z.infer<typeof DraftSchema>>(candidate:T) => {
+  const definitions:Record<string,{test:RegExp;sentence:string}>={
+    AIMA:{test:/agency for integration,? migration and asylum/i,sentence:"AIMA is Portugal’s Agency for Integration, Migration and Asylum."},
+    AT:{test:/tax authority/i,sentence:"AT is Portugal’s Tax Authority."},
+    IMT:{test:/institute for mobility and transport/i,sentence:"IMT is Portugal’s Institute for Mobility and Transport."},
+    IRS:{test:/personal income tax/i,sentence:"IRS is Portugal’s personal income tax."},
+    IVA:{test:/value[- ]added tax/i,sentence:"IVA is Portugal’s value-added tax."},
+    NIF:{test:/tax identification number/i,sentence:"NIF means tax identification number in Portugal."},
+    NISS:{test:/social security identification number/i,sentence:"NISS means Social Security identification number in Portugal."},
+    PLNM:{test:/portuguese as a non[- ]native language/i,sentence:"PLNM means Portuguese as a non-native language."},
+    SNS:{test:/national health service/i,sentence:"SNS is Portugal’s National Health Service."},
+  };
+  let publicCopy=[candidate.hook,candidate.caption,...candidate.slides.flatMap(slide=>[slide.title,slide.body,...slide.items])].join(" ");
+  const missing:string[]=[];
+  for(const [acronym,definition] of Object.entries(definitions)){
+    if(new RegExp(`\\b${acronym}\\b`).test(publicCopy)&&!definition.test.test(publicCopy)){missing.push(definition.sentence);publicCopy+=` ${definition.sentence}`;}
+  }
+  if(missing.length)candidate.caption=`${missing.join(" ")}\n\n${candidate.caption}`;
+  return candidate;
+};
 const assertPublishableCopy = (post: Record<string, unknown>) => {
   const slides = (post.slides || []) as Array<Record<string, unknown>>;
   assertEnglishUserCopy([post.topic, post.hook, post.caption, post.call_to_action, slides.flatMap(slide => [slide.eyebrow, slide.title, slide.body, slide.items, slide.altText])]);
@@ -877,7 +897,7 @@ const server = http.createServer(async (req, res) => {
             ...(lastGenerationError ? { repairFeedback: lastGenerationError } : {}),
             ...(selectedConcept ? { editorialContext: { topic: String(selectedConcept.topic), reason: selectedConcept.reason ? String(selectedConcept.reason) : null, campaignStage: selectedConcept.campaign_stage ? String(selectedConcept.campaign_stage) : null, plannedFor: selectedConcept.planned_for ? String(selectedConcept.planned_for) : null, expiresAt: selectedConcept.expires_at ? String(selectedConcept.expires_at) : null, purpose:selectedConcept.brief?.purpose?String(selectedConcept.brief.purpose):undefined,userQuestion:selectedConcept.brief?.userQuestion?String(selectedConcept.brief.userQuestion):undefined,requiredAnswers:Array.isArray(selectedConcept.brief?.requiredAnswers)?selectedConcept.brief.requiredAnswers.map(String):undefined } } : {}),
           });
-          const candidate = DraftSchema.parse(generated.draft);
+          const candidate = ensureKnownAcronymsAreDefined(DraftSchema.parse(generated.draft));
           const sourceLabel = String(
             evidenceSources.find((item) => item.publisher)?.publisher ||
             evidenceSources[0]?.title ||
