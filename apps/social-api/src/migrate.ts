@@ -7,6 +7,7 @@ const sql = postgres(databaseUrl, { max: 1, connect_timeout: 15 });
 try {
   await sql`CREATE TABLE IF NOT EXISTS social_schema_migration (version STRING PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now())`;
   const migrations = [
+    { name: "0000_corpus_dependency.sql", sentinel: "document" },
     { name: "0001_social_state.sql", sentinel: "social_post" },
     { name: "0002_production_pipeline.sql", sentinel: "social_review_token" },
     { name: "0003_publish_leases.sql", sentinel: "" },
