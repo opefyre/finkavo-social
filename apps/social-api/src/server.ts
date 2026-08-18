@@ -997,7 +997,7 @@ const server = http.createServer(async (req, res) => {
       let attemptsUsed = Number(attemptCount.count);
       let budgetExhausted = attemptsUsed >= input.dailyAttemptBudget;
       for (let round = 1; round <= input.maxRounds; round++) {
-        const [count] = await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${day} AND archived_at IS NULL AND status NOT IN ('blocked','failed','rejected')`;
+        const [count] = await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${day} AND archived_at IS NULL AND status IN ('ready_for_review','approved','render_queued','rendered','scheduled','published')`;
         if (Number(count.count) >= input.target) break;
         let queue = await internalApi("GET", `/v1/planning/queue?date=${encodeURIComponent(day)}`);
         let concepts = (queue.result.concepts || []) as Array<{ id: string; topic?: string }>;
@@ -1019,17 +1019,18 @@ const server = http.createServer(async (req, res) => {
           const generated = await internalApi("POST", "/v1/generate", { conceptId: concept.id });
           attempts.push({ round, stage: "generation", conceptId: concept.id, topic: concept.topic || null, ok: generated.ok, status: generated.status, error: generated.ok ? null : String(generated.result.detail || generated.result.error || "generation failed") });
           const postId=generated.ok&&generated.result.post&&typeof generated.result.post==='object'?String((generated.result.post as Record<string,unknown>).id||''):'';
-          if(postId){const reviewed=await internalApi("POST",`/v1/posts/${postId}/request-review`,{expiresInMinutes:180});reviews.push({postId,ok:reviewed.ok,status:reviewed.status,error:reviewed.ok?null:String(reviewed.result.error||"review request failed")});}
+          if(postId){const reviewed=await internalApi("POST",`/v1/posts/${postId}/request-review`,{expiresInMinutes:180});reviews.push({postId,ok:reviewed.ok,status:reviewed.status,error:reviewed.ok?null:String(reviewed.result.error||"review request failed")});if(!reviewed.ok)await sql.begin(async tx=>{await tx`UPDATE social_post SET status='failed',updated_at=now() WHERE id=${postId} AND status='draft'`;const concepts=await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE topic=${String(concept.topic||"")} AND planned_for=${day} RETURNING plan_slot_id`;for(const row of concepts)if(row.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${row.plan_slot_id}`;await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${postId},'review.handoff_failed',${tx.json({conceptId:concept.id,error:String(reviewed.result.error||"review request failed")})})`;});}
         }
         if (budgetExhausted) break;
       }
-      const posts = await sql`SELECT id,topic,status FROM social_post WHERE planned_for=${day} AND archived_at IS NULL AND status NOT IN ('blocked','failed','rejected') ORDER BY created_at`;
+      const posts = await sql`SELECT id,topic,status FROM social_post WHERE planned_for=${day} AND archived_at IS NULL AND status IN ('ready_for_review','approved','render_queued','rendered','scheduled','published') ORDER BY created_at`;
       const complete = posts.length >= input.target;
       const drafts = await sql`SELECT id FROM social_post WHERE planned_for=${day} AND status='draft' ORDER BY created_at`;
       for (const draft of drafts) {
         if(reviews.some(review=>review.postId===String(draft.id)))continue;
         const reviewed = await internalApi("POST", `/v1/posts/${draft.id}/request-review`, { expiresInMinutes: 180 });
         reviews.push({ postId: String(draft.id), ok: reviewed.ok, status: reviewed.status, error: reviewed.ok ? null : String(reviewed.result.error || "review request failed") });
+        if(!reviewed.ok)await sql.begin(async tx=>{const [post]=await tx`UPDATE social_post SET status='failed',updated_at=now() WHERE id=${draft.id} AND status='draft' RETURNING topic,planned_for`;if(post){const concepts=await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE topic=${post.topic} AND planned_for=${post.planned_for} RETURNING plan_slot_id`;for(const row of concepts)if(row.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${row.plan_slot_id}`;await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${draft.id},'review.handoff_failed',${tx.json({error:String(reviewed.result.error||"review request failed")})})`;}});
       }
       const ready = complete && reviews.every(review => review.ok);
       budgetExhausted = !complete && attemptsUsed >= input.dailyAttemptBudget;
