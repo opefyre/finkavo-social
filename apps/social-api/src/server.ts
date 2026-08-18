@@ -983,11 +983,15 @@ const server = http.createServer(async (req, res) => {
         target: z.number().int().min(1).max(5).default(5),
         maxRounds: z.number().int().min(1).max(8).default(6),
         maxConcepts: z.number().int().min(1).max(5).default(5),
+        dailyAttemptBudget: z.number().int().min(5).max(20).default(12),
       }).parse(await readJson(req));
       const day = input.date || lisbonDate(new Date());
       const attempts: Array<{ round: number; stage: string; ok: boolean; replacements?: number; conceptId?: string; topic?: string | null; status?: number; error?: string | null }> = [];
       const reviews: Array<{ postId: string; ok: boolean; status: number; error: string | null }> = [];
       let replacements = 0;
+      const [attemptCount] = await sql`SELECT count(*) AS count FROM social_event WHERE event_type='generation.candidate_attempted' AND payload->>'day'=${day}`;
+      let attemptsUsed = Number(attemptCount.count);
+      let budgetExhausted = attemptsUsed >= input.dailyAttemptBudget;
       for (let round = 1; round <= input.maxRounds; round++) {
         const [count] = await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${day} AND archived_at IS NULL AND status NOT IN ('blocked','failed','rejected')`;
         if (Number(count.count) >= input.target) break;
@@ -1005,11 +1009,15 @@ const server = http.createServer(async (req, res) => {
         if (!concepts.length) break;
         const missing = Math.max(0, input.target - Number(count.count));
         for (const concept of concepts.slice(0, Math.min(missing, input.maxConcepts))) {
+          if (attemptsUsed >= input.dailyAttemptBudget) { budgetExhausted = true; break; }
+          await sql`INSERT INTO social_event(event_type,payload) VALUES('generation.candidate_attempted',${sql.json({day,conceptId:concept.id,topic:concept.topic||null,attemptNumber:attemptsUsed+1,attemptBudget:input.dailyAttemptBudget})})`;
+          attemptsUsed++;
           const generated = await internalApi("POST", "/v1/generate", { conceptId: concept.id });
           attempts.push({ round, stage: "generation", conceptId: concept.id, topic: concept.topic || null, ok: generated.ok, status: generated.status, error: generated.ok ? null : String(generated.result.detail || generated.result.error || "generation failed") });
           const postId=generated.ok&&generated.result.post&&typeof generated.result.post==='object'?String((generated.result.post as Record<string,unknown>).id||''):'';
           if(postId){const reviewed=await internalApi("POST",`/v1/posts/${postId}/request-review`,{expiresInMinutes:180});reviews.push({postId,ok:reviewed.ok,status:reviewed.status,error:reviewed.ok?null:String(reviewed.result.error||"review request failed")});}
         }
+        if (budgetExhausted) break;
       }
       const posts = await sql`SELECT id,topic,status FROM social_post WHERE planned_for=${day} AND archived_at IS NULL AND status NOT IN ('blocked','failed','rejected') ORDER BY created_at`;
       const complete = posts.length >= input.target;
@@ -1020,8 +1028,9 @@ const server = http.createServer(async (req, res) => {
         reviews.push({ postId: String(draft.id), ok: reviewed.ok, status: reviewed.status, error: reviewed.ok ? null : String(reviewed.result.error || "review request failed") });
       }
       const ready = complete && reviews.every(review => review.ok);
-      await sql`INSERT INTO social_event(event_type,payload) VALUES('generation.day_recovery_completed',${sql.json({day,target:input.target,complete,ready,validPosts:posts.length,replacements,attempts,reviews})})`;
-      return send(res, 200, { date: day, target: input.target, complete, ready, alertRequired: !ready, validPosts: posts.length, replacements, posts, attempts, reviews });
+      budgetExhausted = !complete && attemptsUsed >= input.dailyAttemptBudget;
+      await sql`INSERT INTO social_event(event_type,payload) VALUES('generation.day_recovery_completed',${sql.json({day,target:input.target,complete,ready,validPosts:posts.length,replacements,attempts,reviews,attemptsUsed,attemptBudget:input.dailyAttemptBudget,budgetExhausted})})`;
+      return send(res, 200, { date: day, target: input.target, complete, ready, alertRequired: budgetExhausted, validPosts: posts.length, replacements, posts, attempts, reviews, attemptsUsed, attemptBudget: input.dailyAttemptBudget, budgetExhausted });
     }
 
     if (req.method === "GET" && url.pathname === "/v1/posts") {
@@ -1600,7 +1609,7 @@ const server = http.createServer(async (req, res) => {
       const blockedPublish=await sql`SELECT j.id,p.id AS post_id,p.topic,j.scheduled_at,j.error_code FROM social_publish_job j JOIN social_post p ON p.id=j.post_id WHERE j.status='blocked' AND j.updated_at<now()-INTERVAL '24 hours' ORDER BY j.scheduled_at LIMIT 10`;if(blockedPublish.length>0)alerts.push(`${blockedPublish.length} ambiguous Buffer result(s) have remained unresolved for more than 24 hours:\n${blockedPublish.map(row=>`${row.topic} — post ${row.post_id}, job ${row.id}, ${row.error_code||'unknown error'}`).join('\n')}`);
       const [bufferQueued]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='scheduled' AND scheduled_at>now()`;if(Number(bufferQueued.count)>=bufferQueueSoftLimit)alerts.push(`Buffer handoff soft cap reached: ${bufferQueued.count}/${bufferQueueSoftLimit}`);
       const [overdue]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='scheduled' AND scheduled_at<now()-INTERVAL '20 minutes'`;if(Number(overdue.count)>0)alerts.push(`${overdue.count} publication confirmation(s) are overdue`);
-      if(lisbonTime>='09:00'){const [batch]=await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${today} AND status NOT IN ('blocked','failed','rejected')`;if(Number(batch.count)<5){const failures=await sql`SELECT s.topic,e.payload->>'error' AS error FROM social_editorial_plan_slot s LEFT JOIN LATERAL (SELECT payload FROM social_event WHERE event_type='generation.failed' AND payload->>'planSlotId'=s.id::STRING ORDER BY created_at DESC LIMIT 1) e ON true WHERE s.publish_date=${today} AND s.status='held' ORDER BY s.slot_number`;alerts.push(`Approval batch is incomplete after recovery: ${batch.count}/5 posts${failures.length?`\n${failures.map(row=>`${row.topic}: ${row.error||'no verified replacement available'}`).join('\n')}`:''}`);}}
+      if(lisbonTime>='09:00'){const [batch]=await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${today} AND status NOT IN ('blocked','failed','rejected')`;if(Number(batch.count)<5){const [recovery]=await sql`SELECT payload FROM social_event WHERE event_type='generation.day_recovery_completed' AND payload->>'day'=${today} ORDER BY created_at DESC LIMIT 1`;if(recovery?.payload?.budgetExhausted===true){const failures=await sql`SELECT s.topic,e.payload->>'error' AS error FROM social_editorial_plan_slot s LEFT JOIN LATERAL (SELECT payload FROM social_event WHERE event_type='generation.failed' AND payload->>'planSlotId'=s.id::STRING ORDER BY created_at DESC LIMIT 1) e ON true WHERE s.publish_date=${today} AND s.status='held' ORDER BY s.slot_number`;alerts.push(`Daily recovery budget exhausted: ${batch.count}/5 posts ready after ${recovery.payload.attemptsUsed}/${recovery.payload.attemptBudget} candidate attempts${failures.length?`\n${failures.map(row=>`${row.topic}: ${row.error||'no verified replacement available'}`).join('\n')}`:''}`);}}}
       const signature=hash({today,alerts});let sent=false;if(alerts.length){const [existing]=await sql`SELECT id FROM social_event WHERE event_type='operations.alert_sent' AND payload->>'signature'=${signature} LIMIT 1`;if(!existing){sent=await notifyDiscord('errors','Finkavo pipeline alert',{date:today,problems:alerts.join('\n')});await sql`INSERT INTO social_event(event_type,payload) VALUES('operations.alert_sent',${sql.json({signature,alerts})})`;}}
       return send(res,200,{date:today,alerts,sent});
     }
