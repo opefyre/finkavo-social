@@ -37,6 +37,7 @@ const dailyPublishSlots = [[8, 30], [11, 30], [14, 30], [18, 0], [21, 0]] as con
 const bufferHandoffHours = Math.min(48, Math.max(1, Number(process.env.BUFFER_HANDOFF_HOURS || 24)));
 const bufferQueueSoftLimit = Math.min(9, Math.max(1, Number(process.env.BUFFER_QUEUE_SOFT_LIMIT || 8)));
 const publishAvailableAt = (scheduledAt: Date, now = new Date()) => new Date(Math.max(now.getTime(), scheduledAt.getTime() - bufferHandoffHours * 60 * 60_000));
+const recoveryDaysInProgress = new Set<string>();
 
 const hash = (value: unknown) => createHash("sha256").update(typeof value === "string" ? value : JSON.stringify(value)).digest("hex");
 const boardActionToken = (postId: string, revisionId: string | null, reviewer: string, expiresAt = Date.now() + 15 * 60_000) => {
@@ -986,6 +987,9 @@ const server = http.createServer(async (req, res) => {
         dailyAttemptBudget: z.number().int().min(5).max(20).default(12),
       }).parse(await readJson(req));
       const day = input.date || lisbonDate(new Date());
+      if (recoveryDaysInProgress.has(day)) return send(res, 409, { error: "Recovery is already running for this date; the next scheduled cycle will retry." });
+      recoveryDaysInProgress.add(day);
+      try {
       const attempts: Array<{ round: number; stage: string; ok: boolean; replacements?: number; conceptId?: string; topic?: string | null; status?: number; error?: string | null }> = [];
       const reviews: Array<{ postId: string; ok: boolean; status: number; error: string | null }> = [];
       let replacements = 0;
@@ -1031,6 +1035,9 @@ const server = http.createServer(async (req, res) => {
       budgetExhausted = !complete && attemptsUsed >= input.dailyAttemptBudget;
       await sql`INSERT INTO social_event(event_type,payload) VALUES('generation.day_recovery_completed',${sql.json({day,target:input.target,complete,ready,validPosts:posts.length,replacements,attempts,reviews,attemptsUsed,attemptBudget:input.dailyAttemptBudget,budgetExhausted})})`;
       return send(res, 200, { date: day, target: input.target, complete, ready, alertRequired: budgetExhausted, validPosts: posts.length, replacements, posts, attempts, reviews, attemptsUsed, attemptBudget: input.dailyAttemptBudget, budgetExhausted });
+      } finally {
+        recoveryDaysInProgress.delete(day);
+      }
     }
 
     if (req.method === "GET" && url.pathname === "/v1/posts") {
