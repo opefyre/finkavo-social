@@ -598,15 +598,15 @@
       "audience": "holders of a temporary residence permit",
       "risk": "high",
       "volatility": "volatile",
-      "promise": "The advance window for requesting renewal, that automatic extensions have ended, and the tax and contribution status checked before it is granted.",
+      "promise": "The ninety-day window renewal opens in, the thirty-day point it must be filed by, and the six-month grace that still allows a counter renewal.",
       "anchorFact": {
-        "claim": "Renewal of a temporary autorização de residência must be requested up to 30 days before its validity expires, applicants must have their contributory and tax situation regularised, and the previous automatic extensions of expired permits have ended.",
+        "claim": "Renewal of a temporary autorização de residência must be requested up to 30 days before its validity expires and may be requested from 90 days before that date; applicants must have their contributory and tax situation regularised, holders of a valid permit or one expired less than 6 months ago can renew at Registos counters, and the previous automatic extensions of expired permits have ended.",
         "kind": "deadline",
         "verifyAt": "https://www2.gov.pt/servicos/renovar-a-autorizacao-de-residencia",
         "volatility": "volatile",
         "namedThing": "autorização de residência"
       },
-      "notObvious": "Years of blanket automatic extensions trained people to wait. The end of that regime is the single most consequential change for existing residents.",
+      "notObvious": "There are three dates, not one: renewal opens at ninety days, closes at thirty, and a permit already expired is not automatically hopeless for the first six months.",
       "journeyStage": "renewing_status",
       "source": {
         "canonicalUrl": "https://www2.gov.pt/servicos/renovar-a-autorizacao-de-residencia",
@@ -5917,6 +5917,56 @@
       "source": {
         "canonicalUrl": "https://www.erse.pt/consumidores-de-energia/eletricidade/o-que-devo-saber-sobre-o-corte-do-fornecimento/",
         "authority": "ERSE"
+      }
+    },
+    {
+      "id": "employment-admission-must-be-declared-before-you-start",
+      "pillar": "employment",
+      "valueClass": "deadline_action",
+      "title": "The twenty-four hours before a job starts",
+      "userQuestion": "When is my employer supposed to register me with Segurança Social?",
+      "scenario": "A new hire starts work on a promise that the paperwork will follow, and has no contribution record for the months it takes.",
+      "audience": "people starting a new job",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "When the employer must declare the hire, how the penalty escalates with delay, and the point at which it stops being a fine.",
+      "anchorFact": {
+        "claim": "An employer must communicate a worker's admission to Segurança Social in the 24 hours preceding the start of the employment contract's effects; failing to do so is a light contraordenação where the duty is met within the 24 hours following the deadline and a serious contraordenação otherwise, and an employer who has not communicated the admission within 6 months of the legal deadline may be punished with imprisonment up to 3 years or a fine up to 360 days.",
+        "kind": "deadline",
+        "namedThing": "comunicação de admissão",
+        "verifyAt": "https://www.gov.pt/servicos/entidade-empregadora-comunicacao-de-admissao-de-trabalhador",
+        "volatility": "stable"
+      },
+      "notObvious": "The obligation runs before the first day, not after it, so a worker who has already started and is still unregistered is past the deadline rather than inside a grace period.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/entidade-empregadora-comunicacao-de-admissao-de-trabalhador",
+        "authority": "gov.pt / Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "social-security-workers-own-24-hour-declaration",
+      "pillar": "social_security",
+      "valueClass": "edge_case",
+      "title": "The declaration the worker owes, not just the employer",
+      "userQuestion": "Do I have to tell Segurança Social about a new job myself?",
+      "scenario": "A worker assumes registration is entirely the employer's job and never checks, so nothing is declared by either side.",
+      "audience": "workers starting with a new employer",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The worker's own twenty-four-hour obligation, and how the NISS is assigned when a foreign worker has none.",
+      "anchorFact": {
+        "claim": "A worker must declare to the social security institution for the area of the workplace the start of activity or the link to a new employer within 24 hours after the employment contract takes effect, and where a person has no NISS the employer must first establish the contract and communicate the employment relationship in Segurança Social Direta so the number can be assigned.",
+        "kind": "deadline",
+        "namedThing": "NISS",
+        "verifyAt": "https://www.gov.pt/servicos/entidade-empregadora-comunicacao-de-admissao-de-trabalhador",
+        "volatility": "stable"
+      },
+      "notObvious": "Both sides have a twenty-four-hour duty pointing in opposite directions: the employer's runs before the contract takes effect, the worker's after.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/entidade-empregadora-comunicacao-de-admissao-de-trabalhador",
+        "authority": "gov.pt / Instituto da Segurança Social"
       }
     }
   ]
