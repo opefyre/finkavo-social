@@ -3284,6 +3284,154 @@
         "canonicalUrl": "https://www2.gov.pt/migrantes-viver-e-trabalhar-em-portugal/migrantes-cuidados-de-saude-em-portugal",
         "authority": "gov.pt / SNS"
       }
+    },
+    {
+      "id": "housing-local-lodging-registration-silence",
+      "pillar": "housing_property",
+      "valueClass": "deadline_action",
+      "title": "How a local lodging registration is granted by the council saying nothing",
+      "userQuestion": "How long does the council take to approve a local lodging registration?",
+      "scenario": "An owner submits the prior communication and waits for an approval letter that is never going to arrive.",
+      "audience": "owners registering a local lodging property",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "The opposition window that must pass, the longer one in containment areas, and the insurance you must file afterwards.",
+      "anchorFact": {
+        "claim": "Alojamento local registration is made by prior communication with deadline through the Balcão Único Eletrónico, which assigns the registration number where the competent câmara municipal does not oppose within 60 days, or 90 days for properties in containment areas, and proof of AL civil liability insurance must be submitted after registering.",
+        "kind": "deadline",
+        "namedThing": "alojamento local",
+        "verifyAt": "https://www.gov.pt/servicos/alojamento-local-registo-da-atividade",
+        "volatility": "volatile"
+      },
+      "notObvious": "The number is granted by silence rather than approval, so owners wait for a decision that will never come while the clock is already running.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/alojamento-local-registo-da-atividade",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "housing-local-lodging-can-be-taxed-as-rent",
+      "pillar": "housing_property",
+      "valueClass": "decision",
+      "title": "Local lodging income can be taxed under the rental rules instead",
+      "userQuestion": "Must local lodging income be taxed as business income?",
+      "scenario": "An owner of a single flat on short-term rental assumes category B is compulsory and never compares it with the rental regime.",
+      "audience": "owners of a local lodging flat or house",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The annual option to be taxed under category F rules, what it does not change, and the coefficients that apply otherwise.",
+      "anchorFact": {
+        "claim": "Holders of income from alojamento local establishments in the form of a house or apartment may each year opt for taxation under the rules established for categoria F, while the income keeps its categoria B qualification; in the simplified regime the taxable income is otherwise determined by applying a coeficiente of 0.15 to sales of goods and 0.95 to the positive balance of capital gains and losses.",
+        "kind": "figure",
+        "verifyAt": "https://www.gov.pt/guias/alojamento-local",
+        "volatility": "annual"
+      },
+      "notObvious": "The option is annual and reversible, so it is a yearly comparison rather than a one-off structural decision, and almost nobody revisits it.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/alojamento-local",
+        "authority": "gov.pt / Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-capital-gains-reinvestment-window",
+      "pillar": "irs",
+      "valueClass": "deadline_action",
+      "title": "The reinvestment window that removes tax on selling your home",
+      "userQuestion": "Do I pay tax on the gain if I sell my home and buy another?",
+      "scenario": "A seller plans to buy again but does not know the deadline runs backwards as well as forwards, or that intent must be declared in the return.",
+      "audience": "people selling a permanent home",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The window either side of the sale, what must be deducted from the reinvested amount, and the declaration that preserves the relief.",
+      "anchorFact": {
+        "claim": "Gains on the sale of a permanent home are excluded from taxation where the realisation value, less repayment of any loan taken to acquire the property, is reinvested in another permanent home in Portugal, the EU or the EEA within 36 months after the sale or in the 24 months before it, and the taxpayer must declare the intended reinvestment in Anexo G of the Modelo 3 for the year of sale and evidence it in that and the following three returns.",
+        "kind": "deadline",
+        "namedThing": "mais-valias",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00566.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "A purchase made up to two years before the sale can count, and partial reinvestment gives proportional relief rather than none, which changes the arithmetic of moving.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00566.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "social-security-maintenance-guarantee-fund",
+      "pillar": "social_security",
+      "valueClass": "scenario",
+      "title": "When the State pays child maintenance the other parent will not",
+      "userQuestion": "The other parent stopped paying maintenance — is there anything besides chasing them?",
+      "scenario": "A parent left without court-ordered maintenance assumes the only route is enforcement against someone who has no assets.",
+      "audience": "parents owed unpaid child maintenance",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The court step that opens the fund, what happens to the debt, and the annual renewal that keeps payments running.",
+      "anchorFact": {
+        "claim": "Where a person judicially obliged to pay pensão de alimentos does not pay, the FGADM can be triggered by opening an incumprimento process at the court of the child's residence or where parental responsibilities were regulated; the Fund pays in the parent's place and that parent becomes debtor of everything paid, and proof that the economic situation persists must be renewed before the court within one year of the first payment, failing which the court gives 10 days' notice before payments cease.",
+        "kind": "artefact",
+        "namedThing": "FGADM",
+        "verifyAt": "https://www.seg-social.pt/fundo-de-garantia-de-alimentos-devidos-a-menores",
+        "volatility": "stable"
+      },
+      "notObvious": "The annual renewal is the step that quietly ends payments for families who assume the award is standing, and the ten-day notice is easy to miss.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/fundo-de-garantia-de-alimentos-devidos-a-menores",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "citizenship-mutual-consent-divorce-cost",
+      "pillar": "citizenship_civil",
+      "valueClass": "threshold",
+      "title": "What a mutual consent divorce costs, with and without dividing assets",
+      "userQuestion": "How much does an amicable divorce cost at the registry?",
+      "scenario": "A couple assumes divorce means lawyers and court, and budgets for something far larger than the registry process.",
+      "audience": "couples divorcing by mutual consent",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "The registry fee with and without asset division, the waiver for financial hardship, and the documents required.",
+      "anchorFact": {
+        "claim": "A divórcio by mutual consent at the conservatória costs 280 euros, rising to 625 euros where it includes partilha and registration of the couple's assets, and the process can be free where the couple prove economic hardship preventing payment.",
+        "kind": "figure",
+        "verifyAt": "https://www2.gov.pt/pt/servicos/pedir-o-divorcio-por-mutuo-consentimento",
+        "volatility": "annual"
+      },
+      "notObvious": "Doing the asset division at the same time roughly doubles the fee but avoids a separate later process, which is the trade-off nobody sets out.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/pt/servicos/pedir-o-divorcio-por-mutuo-consentimento",
+        "authority": "gov.pt / IRN"
+      }
+    },
+    {
+      "id": "citizenship-divorce-needs-agreements-not-just-consent",
+      "pillar": "citizenship_civil",
+      "valueClass": "edge_case",
+      "title": "Agreeing to divorce is not enough to file for one",
+      "userQuestion": "We both want to divorce — can we just go to the registry and do it?",
+      "scenario": "A couple arrives at the conservatória with consent but none of the written agreements, and the process cannot start.",
+      "audience": "couples preparing a mutual consent divorce",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The written agreements required before filing, and the extra step when there are minor children.",
+      "anchorFact": {
+        "claim": "A mutual consent divórcio requires a written request plus a written agreement or court judgment on parental responsibilities where there are minor children, a written agreement on the family home, an agreement on maintenance if the couple decide on one, and a list of the couple's assets with values where there is no partilha; where minor children are involved the conference also depends on a favourable Ministério Público opinion.",
+        "kind": "artefact",
+        "namedThing": "divórcio",
+        "verifyAt": "https://www2.gov.pt/pt/servicos/pedir-o-divorcio-por-mutuo-consentimento",
+        "volatility": "stable"
+      },
+      "notObvious": "The Ministério Público opinion on the parenting agreement is an independent gate, so a couple in full agreement can still be delayed by it.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/pt/servicos/pedir-o-divorcio-por-mutuo-consentimento",
+        "authority": "gov.pt / IRN"
+      }
     }
   ]
 }
