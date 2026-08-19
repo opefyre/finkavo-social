@@ -14,12 +14,12 @@ export const PILLAR_TERMS = {
   iva: ["IVA", "CIVA", "artigo 53", "declaração periódica", "VIES", "declaração de alterações"],
   irs: ["IRS", "Modelo 3", "e-Fatura", "Anexo J", "IRS Automático", "IRS Jovem", "IAS"],
   social_security: ["Segurança Social", "declaração trimestral", "contribuições", "NISS", "trabalhador independente"],
-  housing_property: ["arrendamento", "IMI", "AIMI", "IMT", "imóvel", "caderneta predial", "Imposto do Selo", "habitação própria permanente", "VPT"],
-  banking_money: ["Banco de Portugal", "SEPA", "conta bancária", "IBAN", "serviços mínimos bancários", "IAS", "MB WAY"],
-  employment: ["contrato de trabalho", "Código do Trabalho", "salário", "férias", "feriado", "período experimental", "aviso prévio"],
+  housing_property: ["arrendamento", "IMI", "AIMI", "IMT", "imóvel", "caderneta predial", "certidão permanente", "registo predial", "Imposto do Selo", "habitação própria permanente", "VPT"],
+  banking_money: ["Banco de Portugal", "SEPA", "conta bancária", "IBAN", "serviços mínimos bancários", "IAS", "MB WAY", "transferência a crédito", "débito direto"],
+  employment: ["contrato de trabalho", "Código do Trabalho", "salário", "férias", "feriado", "período experimental", "aviso prévio", "subsídio de desemprego", "prazo de garantia"],
   health_family: ["SNS", "centro de saúde", "médico de família", "número de utente", "taxas moderadoras", "insuficiência económica", "IAS"],
   driving_transport: ["IMT", "carta de condução", "IUC", "veículo", "troca de carta", "título de condução"],
-  education_children: ["matrícula escolar", "educação", "equivalência", "reconhecimento", "Direção-Geral da Educação"],
+  education_children: ["matrícula escolar", "educação", "equivalência", "reconhecimento", "Direção-Geral da Educação", "Portal das Matrículas", "ASE"],
   daily_life_consumer: ["ePortugal", "Livro de Reclamações", "ANACOM", "energia", "arbitragem de consumo", "fidelização", "ANACOM"],
 };
 

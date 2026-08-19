@@ -880,6 +880,349 @@
         "canonicalUrl": "https://www.gov.pt/servicos/pedir-isencao-imt-e-is",
         "authority": "gov.pt / Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "banking-sepa-transfer-execution-deadlines",
+      "pillar": "banking_money",
+      "valueClass": "deadline_action",
+      "title": "When a euro transfer must actually land in the other account",
+      "userQuestion": "My transfer has not arrived — how long is the bank allowed to take?",
+      "scenario": "Someone paying a deposit or a bill watches a transfer sit in limbo and cannot tell whether the delay is normal or a problem worth chasing.",
+      "audience": "people sending euro bank transfers in Portugal",
+      "risk": "low",
+      "volatility": "stable",
+      "promise": "The legal deadline for a transfer inside one bank versus between two banks, and the point at which a delay becomes a complaint.",
+      "anchorFact": {
+        "claim": "For a transferência a crédito in euros between accounts at the same provider the payee's account must be credited within the same business day, while between different providers the payee's provider must be credited by the end of the 1 business day following receipt of the order.",
+        "kind": "deadline",
+        "namedThing": "transferência a crédito",
+        "verifyAt": "https://clientebancario.bportugal.pt/pt-pt/node/3661",
+        "volatility": "stable"
+      },
+      "notObvious": "People assume transfers are best-effort. There is a hard legal deadline, and knowing it turns a vague wait into a specific complaint.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/pt-pt/node/3661",
+        "authority": "Banco de Portugal"
+      }
+    },
+    {
+      "id": "banking-transfer-fee-rules-and-complaint-route",
+      "pillar": "banking_money",
+      "valueClass": "insider",
+      "title": "Fees your bank is no longer allowed to charge on transfers",
+      "userQuestion": "Can my bank charge me for transfers made through a payment app?",
+      "scenario": "A customer notices per-transfer charges appearing on statements for app-based payments and assumes the bank sets its own prices freely.",
+      "audience": "customers charged for app-based transfers",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "Which transfer and credit-related fees are now limited or banned outright, and where to complain when one is charged anyway.",
+      "anchorFact": {
+        "claim": "Rules in force since 1 January limit or prohibit fees for services associated with credit contracts and for transfers made through payment applications operated by third parties, and customers may complain to Banco de Portugal directly or through the Livro de Reclamações.",
+        "kind": "deadline",
+        "verifyAt": "https://clientebancario.bportugal.pt/pt-pt/noticias/comissoes-bancarias-com-novas-regras-partir-de-1-de-janeiro",
+        "volatility": "annual"
+      },
+      "notObvious": "The prohibition is recent and banks do not proactively refund. Naming the escalation route is what turns knowing into getting the money back.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/pt-pt/noticias/comissoes-bancarias-com-novas-regras-partir-de-1-de-janeiro",
+        "authority": "Banco de Portugal"
+      }
+    },
+    {
+      "id": "iva-monthly-versus-quarterly-turnover-line",
+      "pillar": "iva",
+      "valueClass": "threshold",
+      "title": "The turnover figure that moves you from quarterly to monthly IVA",
+      "userQuestion": "Do I file IVA every quarter or every month?",
+      "scenario": "A growing business is unsure which filing rhythm applies as turnover rises, and risks discovering the change only after a missed monthly deadline.",
+      "audience": "businesses in the normal IVA regime",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The turnover line that decides monthly versus quarterly filing, and the exact day each declaration is due.",
+      "anchorFact": {
+        "claim": "A taxpayer in the normal IVA regime files the declaração periódica monthly, by the 10th of the second month after the operations, when previous-year turnover reached 650,000 euros, and quarterly, by the 15th of the second month after the quarter, when it was below that figure.",
+        "kind": "figure",
+        "verifyAt": "https://www.gov.pt/servicos/iva-declaracao-periodica",
+        "volatility": "annual"
+      },
+      "notObvious": "Both the threshold and the two different due days matter, and the switch happens on last year's turnover rather than the current one.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/iva-declaracao-periodica",
+        "authority": "gov.pt / Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "education-enrolment-renews-itself-in-most-years",
+      "pillar": "education_children",
+      "valueClass": "insider",
+      "title": "The school years where you do not need to enrol again",
+      "userQuestion": "Do I have to re-enrol my child every single school year?",
+      "scenario": "A parent sets aside time each spring to redo enrolment, not knowing most year transitions renew automatically unless something specific changed.",
+      "audience": "parents of children already in a Portuguese school",
+      "risk": "low",
+      "volatility": "stable",
+      "promise": "Which year transitions renew automatically, and the four changes that force you to submit a request anyway.",
+      "anchorFact": {
+        "claim": "Enrolment renewal is automatic into the 2nd, 3rd, 4th, 6th, 8th, 9th and 11th years and after a repeated year, unless there is a change of school, of encarregado de educação, of course, or a need to choose subjects.",
+        "kind": "figure",
+        "verifyAt": "https://www.gov.pt/servicos/fazer-pedidos-de-matricula-e-renovacao-de-matricula-nos-ensinos-pre-escolar-basico-e-secundario",
+        "volatility": "stable"
+      },
+      "notObvious": "Parents either redo work they did not need to, or assume automatic renewal in a year that actually requires action. The exception list is the useful part.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/fazer-pedidos-de-matricula-e-renovacao-de-matricula-nos-ensinos-pre-escolar-basico-e-secundario",
+        "authority": "gov.pt / Direção-Geral da Educação"
+      }
+    },
+    {
+      "id": "education-place-priority-order",
+      "pillar": "education_children",
+      "valueClass": "decision",
+      "title": "What decides who gets the place when a school is oversubscribed",
+      "userQuestion": "How are places allocated when more children apply than the school can take?",
+      "scenario": "A family choosing between schools wants to know whether they realistically stand a chance at a popular one before ranking their preferences.",
+      "audience": "families ranking school preferences",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "The priority order that fills places, and which factors you can still influence before applying.",
+      "anchorFact": {
+        "claim": "Places at each school are filled in a defined priority order that includes beneficiaries of Ação Social Escolar (ASE), residence in the school's area of influence, and previous attendance in the same agrupamento.",
+        "kind": "artefact",
+        "namedThing": "ASE",
+        "verifyAt": "https://www.gov.pt/servicos/fazer-pedidos-de-matricula-e-renovacao-de-matricula-nos-ensinos-pre-escolar-basico-e-secundario",
+        "volatility": "annual"
+      },
+      "notObvious": "Preference ranking is treated as a lottery by most parents. The criteria are published and partly actionable, which changes how you rank.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/fazer-pedidos-de-matricula-e-renovacao-de-matricula-nos-ensinos-pre-escolar-basico-e-secundario",
+        "authority": "gov.pt / Direção-Geral da Educação"
+      }
+    },
+    {
+      "id": "immigration-family-reunification-decision-window",
+      "pillar": "immigration_residency",
+      "valueClass": "deadline_action",
+      "title": "The legal decision period for a family reunification request",
+      "userQuestion": "How long can AIMA take to decide my family reunification request?",
+      "scenario": "An applicant has heard nothing for months and cannot tell whether the file is progressing, stalled, or already needs a response from them.",
+      "audience": "applicants awaiting a family reunification decision",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "The statutory decision period, what silence past it actually means, and the step that most often restarts the clock.",
+      "anchorFact": {
+        "claim": "The legal decision period for a reagrupamento familiar request is 90 days, after which an applicant who has not received the residence title may be notified for a prior hearing or to remedy deficiencies in the file.",
+        "kind": "deadline",
+        "namedThing": "reagrupamento familiar",
+        "verifyAt": "https://aima.gov.pt/pt/viver/reagrupamento-familiar-com-familiar-fora-de-territorio-nacional-art-98-o-n-o-1",
+        "volatility": "volatile"
+      },
+      "notObvious": "Silence after 90 days is widely read as rejection. It usually means the file needs something, and knowing that is what gets it moving.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://aima.gov.pt/pt/viver/reagrupamento-familiar-com-familiar-fora-de-territorio-nacional-art-98-o-n-o-1",
+        "authority": "AIMA"
+      }
+    },
+    {
+      "id": "immigration-reunification-who-counts-as-family",
+      "pillar": "immigration_residency",
+      "valueClass": "edge_case",
+      "title": "Who counts as family for reunification, including unmarried partners",
+      "userQuestion": "Can I bring an unmarried partner or a child over 16 through family reunification?",
+      "scenario": "A resident in a long-term unmarried relationship assumes reunification is only for spouses and does not apply.",
+      "audience": "residents with an unmarried partner or older children",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "Which relationships qualify, the proof a união de facto needs, and the document requirement that does not apply to younger children.",
+      "anchorFact": {
+        "claim": "Under artigo 98 of the Lei de Estrangeiros, reagrupamento familiar covers a partner in a duly proven união de facto and unmarried minor or incapacitated children, and the criminal record certificate from the family member's country of nationality is not required for those under 16.",
+        "kind": "instrument",
+        "verifyAt": "https://aima.gov.pt/pt/viver/reagrupamento-familiar-com-familiar-em-territorio-nacional-art-98-o-n-o-2",
+        "volatility": "volatile"
+      },
+      "notObvious": "The união de facto route and the under-16 document exemption are both buried in the requirements list, and each removes a blocker people assume is fatal.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://aima.gov.pt/pt/viver/reagrupamento-familiar-com-familiar-em-territorio-nacional-art-98-o-n-o-2",
+        "authority": "AIMA"
+      }
+    },
+    {
+      "id": "employment-unemployment-claim-90-day-clock",
+      "pillar": "employment",
+      "valueClass": "deadline_action",
+      "title": "The 90-day claim window that shortens your unemployment benefit",
+      "userQuestion": "What happens if I claim unemployment benefit late?",
+      "scenario": "Someone who has just lost a job is dealing with paperwork and assumes the claim can wait until things settle down.",
+      "audience": "people who have just become unemployed",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The 90-day claim window, and why filing late costs you benefit time rather than just delaying the first payment.",
+      "anchorFact": {
+        "claim": "Subsídio de desemprego must be claimed within 90 consecutive days of the date of unemployment; claiming after that reduces the benefit award period by the length of the delay.",
+        "kind": "deadline",
+        "verifyAt": "https://www.seg-social.pt/subsidio-de-desemprego",
+        "volatility": "stable"
+      },
+      "notObvious": "Late filing is assumed to only delay payment. It permanently shortens the entitlement, day for day, which is a real and irreversible loss.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/subsidio-de-desemprego",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "employment-unemployment-qualifying-period",
+      "pillar": "employment",
+      "valueClass": "threshold",
+      "title": "How many days of work qualify you for unemployment benefit",
+      "userQuestion": "Have I worked long enough to claim unemployment benefit?",
+      "scenario": "Someone on a short or fixed-term contract wants to know before it ends whether they will have any entitlement at all.",
+      "audience": "workers on short or fixed-term contracts",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The standard qualifying period, and the shorter one that applies when a fixed-term contract expires or probation is ended by the employer.",
+      "anchorFact": {
+        "claim": "The prazo de garantia for subsídio de desemprego is 360 days of employed work with registered earnings in the 24 months before the date of unemployment, reduced to 120 days in the 12 immediately preceding months where the contract expired at term or the employer ended it during the período experimental.",
+        "kind": "figure",
+        "verifyAt": "https://www.seg-social.pt/subsidio-de-desemprego",
+        "volatility": "stable"
+      },
+      "notObvious": "The 120-day exception covers exactly the people most likely to assume they do not qualify, and it is never mentioned alongside the headline 360 days.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/subsidio-de-desemprego",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "employment-unemployment-clock-suspends-in-illness",
+      "pillar": "employment",
+      "valueClass": "edge_case",
+      "title": "When the unemployment claim clock stops running",
+      "userQuestion": "I was ill after losing my job — did I miss the claim deadline?",
+      "scenario": "Someone who fell ill or was otherwise unable to act during the claim window fears the deadline has passed and the entitlement is gone.",
+      "audience": "claimants who could not file within the window",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The situations that suspend the 90-day clock, and the illness duration that triggers the suspension.",
+      "anchorFact": {
+        "claim": "The 90-day period to claim is suspended in defined situations including illness and imprisonment, and specifically while the beneficiary is receiving subsídio por doença where the incapacity lasts more than 30 days.",
+        "kind": "deadline",
+        "namedThing": "subsídio de desemprego",
+        "verifyAt": "https://www2.gov.pt/servicos/requerer-o-subsidio-de-desemprego",
+        "volatility": "stable"
+      },
+      "notObvious": "People write off the entitlement entirely. The suspension rules mean a missed window is often recoverable, which nobody tells them.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/requerer-o-subsidio-de-desemprego",
+        "authority": "gov.pt / Segurança Social"
+      }
+    },
+    {
+      "id": "housing-certidao-permanente-cost-and-validity",
+      "pillar": "housing_property",
+      "valueClass": "threshold",
+      "title": "What a permanent land-registry certificate costs and how long it lasts",
+      "userQuestion": "Do I need to pay for a new property certificate every time someone asks for one?",
+      "scenario": "A seller or landlord is asked for a certidão permanente repeatedly and keeps paying for fresh copies at a counter.",
+      "audience": "property owners asked for registry certificates",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "The online subscription price, how long one certificate stays valid, and the renewal window that keeps the same code alive.",
+      "anchorFact": {
+        "claim": "An online certidão permanente do registo predial subscription costs 15 euros, is valid for 6 months, and renewal must be requested during the final month of validity.",
+        "kind": "figure",
+        "verifyAt": "https://www2.gov.pt/servicos/pedir-uma-certidao-permanente-do-registo-predial",
+        "volatility": "annual"
+      },
+      "notObvious": "It is a subscription with a reusable code, not a one-off document. People buy the same certificate several times because nobody says so.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/pedir-uma-certidao-permanente-do-registo-predial",
+        "authority": "gov.pt / IRN"
+      }
+    },
+    {
+      "id": "housing-registry-certificate-issued-immediately-online",
+      "pillar": "housing_property",
+      "valueClass": "insider",
+      "title": "The registry certificate you no longer have to wait two days for",
+      "userQuestion": "How fast can I actually get a land-registry certificate?",
+      "scenario": "Someone needs a certificate for a deed or a bank and has been told to allow a couple of working days, which threatens the timing of a purchase.",
+      "audience": "buyers and sellers on a deadline",
+      "risk": "medium",
+      "volatility": "volatile",
+      "promise": "The route that returns the consultation code straight after payment, and when the slower two-day path still applies.",
+      "anchorFact": {
+        "claim": "Access to a certidão permanente subscribed over the internet can take up to 2 business days through the property registry office, while the IRN digital platform now returns the consultation code immediately after payment confirmation.",
+        "kind": "deadline",
+        "namedThing": "certidão permanente",
+        "verifyAt": "https://www2.gov.pt/servicos/pedir-uma-certidao-permanente-do-registo-predial",
+        "volatility": "volatile"
+      },
+      "notObvious": "The two-working-day figure is still quoted everywhere. Knowing the immediate route can save a completion date.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/pedir-uma-certidao-permanente-do-registo-predial",
+        "authority": "gov.pt / IRN"
+      }
+    },
+    {
+      "id": "identity-niss-is-free-and-online-for-foreigners",
+      "pillar": "identity_access",
+      "valueClass": "insider",
+      "title": "Getting a NISS as a foreign national costs nothing",
+      "userQuestion": "Do I need to pay an agency to get my Social Security number?",
+      "scenario": "A new arrival is quoted a fee by an intermediary to obtain a NISS and assumes the process is complicated enough to justify it.",
+      "audience": "foreign nationals who need a NISS",
+      "risk": "medium",
+      "volatility": "volatile",
+      "promise": "That the request is free, the online route now open to foreign nationals, and the three document types you must attach.",
+      "anchorFact": {
+        "claim": "The NISS request is free, foreign nationals can now request it online, and the form requires three types of document: identification, proof of work situation, and proof of residence authorisation.",
+        "kind": "artefact",
+        "namedThing": "NISS",
+        "verifyAt": "https://www2.gov.pt/migrantes-viver-e-trabalhar-em-portugal/migrantes-impostos-e-seguranca-social-em-portugal/como-pedir-o-nif-e-o-niss-para-cidadaos-estrangeiros-em-portugal",
+        "volatility": "volatile"
+      },
+      "notObvious": "Paid intermediaries are common precisely because people do not know it is free and no longer counter-only.",
+      "journeyStage": "first_30_days",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/migrantes-viver-e-trabalhar-em-portugal/migrantes-impostos-e-seguranca-social-em-portugal/como-pedir-o-nif-e-o-niss-para-cidadaos-estrangeiros-em-portugal",
+        "authority": "gov.pt / Segurança Social"
+      }
+    },
+    {
+      "id": "social-security-niss-has-no-assignment-deadline",
+      "pillar": "social_security",
+      "valueClass": "edge_case",
+      "title": "Why your NISS has no promised arrival date",
+      "userQuestion": "How long should I wait for my NISS before chasing it?",
+      "scenario": "Someone whose employer applied on their behalf is waiting to start work or claim benefits and has no idea what a normal wait looks like.",
+      "audience": "workers waiting for a NISS to be assigned",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "That no statutory assignment deadline exists, the employer step that must happen first, and where to check the request status yourself.",
+      "anchorFact": {
+        "claim": "There is no defined deadline for Segurança Social to assign a NISS; where the employer requests it they must first have a work contract and communicate the work link in Segurança Social Direta, and the requester can check status in Segurança Social Direta.",
+        "kind": "procedure",
+        "namedThing": "Segurança Social Direta",
+        "verifyAt": "https://www2.gov.pt/servicos/pedir-o-numero-de-identificacao-da-seguranca-social-niss-",
+        "volatility": "stable"
+      },
+      "notObvious": "People wait passively for a letter. Knowing there is no deadline, and that status is self-checkable, changes waiting into acting.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/pedir-o-numero-de-identificacao-da-seguranca-social-niss-",
+        "authority": "gov.pt / Segurança Social"
+      }
     }
   ]
 }
