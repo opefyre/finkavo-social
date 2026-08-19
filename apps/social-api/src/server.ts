@@ -265,6 +265,39 @@ setBufferCallObserver(({ kind, status, quota }) => {
 });
 
 
+// A rejection with notes is a request for a rewrite, not a verdict on the topic. It
+// keeps the concept alive, hands the reviewer's words to the next generation, and counts
+// the round so a topic cannot bounce between reviewer and model indefinitely. A
+// rejection with nothing written retires the topic, which is the older behaviour and
+// still the right reading of "no".
+const MAX_REVISION_ROUNDS = 2;
+
+async function applyRejection(tx: typeof sql, postId: string, topic: string, plannedFor: unknown, comment: string | null) {
+  const notes = (comment ?? "").trim();
+  const [concept] = await tx`
+    SELECT id, plan_slot_id, revision_round FROM social_post_concept
+    WHERE topic = ${topic} AND planned_for = ${plannedFor as string} ORDER BY updated_at DESC LIMIT 1
+  `;
+  const round = Number(concept?.revision_round ?? 0);
+  const rewrite = Boolean(notes) && Boolean(concept) && round < MAX_REVISION_ROUNDS;
+
+  if (!rewrite) {
+    const concepts = await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE topic=${topic} AND planned_for=${plannedFor as string} RETURNING plan_slot_id`;
+    for (const row of concepts) if (row.plan_slot_id) await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${row.plan_slot_id}`;
+    return { rewrite: false as const, round };
+  }
+
+  await tx`
+    UPDATE social_post_concept
+    SET status='planned', revision_feedback=${notes}, revision_round=${round + 1}, updated_at=now()
+    WHERE id=${concept.id as string}
+  `;
+  // The slot keeps its verified evidence, so generation can pick it straight back up.
+  if (concept.plan_slot_id) await tx`UPDATE social_editorial_plan_slot SET status='evidence_ready',updated_at=now() WHERE id=${concept.plan_slot_id}`;
+  await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${postId},'revision.requested_from_reviewer',${tx.json({ conceptId: concept.id, round: round + 1, notes })})`;
+  return { rewrite: true as const, round: round + 1 };
+}
+
 // Reads a page through the renderer's Chromium so client-rendered and bot-guarded
 // official sites remain usable as evidence.
 // Fetch an official page and store it as evidence, returning the document row or null
@@ -601,7 +634,14 @@ const server = http.createServer(async (req, res) => {
         const files = ((row.render_files || row.render_output_files || []) as Array<{ key?: string }>).filter(file => file.key);
         const media = await Promise.all(files.map(async file => ({ key: file.key, url: await createBufferMediaUrl(String(file.key)) })));
         const lifecycleStatus = String(row.status);
-        const status = row.archived_at ? "archived" : row.publish_job_status === "blocked" ? "blocked" : (row.render_job_status === "failed" || row.publish_job_status === "failed") ? "failed" : lifecycleStatus;
+        // A post is only marked published once the monitor has confirmed delivery with
+        // Buffer. While that polling is blocked — a rate-limit cooldown, an exhausted
+        // budget — a post can already be live on Instagram while this board still shows
+        // it as scheduled, which is what made the board look wrong rather than stale.
+        // Saying "awaiting confirmation" is honest about which of the two we know.
+        const awaitingConfirmation = row.publish_job_status === "scheduled"
+          && Boolean(row.scheduled_at) && new Date(String(row.scheduled_at)).getTime() < Date.now();
+        const status = row.archived_at ? "archived" : row.publish_job_status === "blocked" ? "blocked" : (row.render_job_status === "failed" || row.publish_job_status === "failed") ? "failed" : awaitingConfirmation ? "awaiting_confirmation" : lifecycleStatus;
         const revisionId = row.revision_id ? String(row.revision_id) : null;
         return {
           id:String(row.id),status,lifecycle_status:lifecycleStatus,topic:String(row.topic),category:String(row.category),risk_level:String(row.risk_level),
@@ -611,11 +651,12 @@ const server = http.createServer(async (req, res) => {
           approval_decision:row.approval_decision,reviewer:row.reviewer,approval_comment:row.approval_comment,decided_at:row.decided_at,
           render_job_id:row.render_job_id,render_job_status:row.render_job_status,render_error:row.render_error,
           publish_job_id:row.publish_job_id,publish_job_status:row.publish_job_status,publish_error:row.publish_error,
-          archived_at:row.archived_at,archive_note:row.archive_note,buffer_post_id:row.buffer_post_id,instagram_id:row.instagram_id,
+          archived_at:row.archived_at,archive_note:row.archive_note,buffer_post_id:row.buffer_post_id,instagram_id:row.instagram_id,awaiting_confirmation:awaitingConfirmation,
           action_token:boardActionToken(String(row.id),revisionId,reviewer),media,events:eventsByPost.get(String(row.id))||[],
         };
       }));
-      return send(res, 200, { generatedAt: new Date().toISOString(), reviewer, posts });
+      const cooldown = await providerCooldownUntil();
+      return send(res, 200, { generatedAt: new Date().toISOString(), reviewer, posts, providerCooldownUntil: cooldown ? cooldown.toISOString() : null });
     }
 
     if (req.method === "POST" && url.pathname === "/board/action") {
@@ -638,12 +679,18 @@ const server = http.createServer(async (req, res) => {
           const [revision] = await tx`SELECT evidence_hash FROM social_post_revision WHERE id=${input.revisionId} AND post_id=${post.id}`;
           if (!revision) return { status: 409, error: "The current revision is unavailable." };
           const decision = input.action === "approve" ? "approved" : "rejected";
+          let rejectionOutcome: { rewrite: boolean; round: number } | null = null;
           await tx`UPDATE social_review_token SET used_at=now() WHERE post_id=${post.id} AND revision_id=${input.revisionId} AND used_at IS NULL`;
           await tx`INSERT INTO social_approval(post_id,revision_id,evidence_hash,decision,reviewer,comment) VALUES(${post.id},${input.revisionId},${revision.evidence_hash},${decision},${reviewer},${input.comment || null})`;
           if (decision === "approved") await tx`UPDATE social_post SET status='approved',approved_revision_id=${input.revisionId},approved_at=now(),approved_by=${reviewer},updated_at=now() WHERE id=${post.id}`;
-          else {await tx`UPDATE social_post SET status='rejected',approved_revision_id=NULL,approved_at=NULL,approved_by=NULL,updated_at=now() WHERE id=${post.id}`;const concepts=await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE topic=${post.topic} AND planned_for=${post.planned_for} RETURNING plan_slot_id`;for(const concept of concepts)if(concept.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${concept.plan_slot_id}`;}
+          else {
+            await tx`UPDATE social_post SET status='rejected',approved_revision_id=NULL,approved_at=NULL,approved_by=NULL,updated_at=now() WHERE id=${post.id}`;
+            rejectionOutcome = await applyRejection(tx, String(post.id), String(post.topic), post.planned_for, input.comment || null);
+          }
           await audit(`post.${decision}`, { revisionId: input.revisionId, comment: input.comment || null });
-          return { status: 200, message: decision === "approved" ? "Exact revision approved." : "Post rejected." };
+          return { status: 200, message: decision === "approved" ? "Exact revision approved."
+            : rejectionOutcome?.rewrite ? `Rejected. Your notes were sent back for a rewrite (round ${rejectionOutcome.round} of ${MAX_REVISION_ROUNDS}).`
+            : "Post rejected. Without notes the topic is retired and its slot released." };
         }
 
         if (input.action === "reopen_review") {
@@ -759,7 +806,10 @@ const server = http.createServer(async (req, res) => {
         await tx`UPDATE social_review_token SET used_at = now() WHERE id = ${token.id}`;
         await tx`INSERT INTO social_approval (post_id, revision_id, evidence_hash, decision, reviewer, comment) VALUES (${token.post_id}, ${token.revision_id}, ${token.evidence_hash}, ${decision}, ${String(reviewer)}, ${comment || null})`;
         if (decision === "approved") await tx`UPDATE social_post SET status = 'approved', approved_revision_id = ${token.revision_id}, approved_at = now(), approved_by = ${String(reviewer)}, updated_at = now() WHERE id = ${token.post_id}`;
-        else {await tx`UPDATE social_post SET status = 'rejected', approved_revision_id = NULL, approved_at = NULL, approved_by = NULL, updated_at = now() WHERE id = ${token.post_id}`;const concepts=await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE topic=${post.topic} AND planned_for=${post.planned_for} RETURNING plan_slot_id`;for(const concept of concepts)if(concept.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${concept.plan_slot_id}`;}
+        else {
+          await tx`UPDATE social_post SET status = 'rejected', approved_revision_id = NULL, approved_at = NULL, approved_by = NULL, updated_at = now() WHERE id = ${token.post_id}`;
+          await applyRejection(tx, String(token.post_id), String(post.topic), post.planned_for, comment || null);
+        }
         await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${token.post_id}, ${`post.${decision}`}, ${tx.json({ revisionId: token.revision_id, reviewer: String(reviewer) })})`;
         return decision;
       });
@@ -1283,6 +1333,7 @@ const server = http.createServer(async (req, res) => {
       let checked: z.infer<typeof DraftSchema> | null = null;
       let model = "";
       let lastGenerationError = "";
+      const reviewerNotes = String(selectedConcept.revision_feedback ?? "").trim();
       // A fact-card source used to skip the model outright and ship simpleDraft(). That
       // guaranteed a blocked post: the mechanical draft never carries a real caption or
       // standalone value, so the pre-Discord gate rejected every one and the slot was
@@ -1296,7 +1347,11 @@ const server = http.createServer(async (req, res) => {
             authority: source.publisher ? String(source.publisher) : null,
             fetchedAt: String(source.retrievedAt), excerpts: evidenceSources.flatMap(s=>s.excerpts as string[]),
             sources: evidenceSources.map(s=>({title:String(s.title),sourceUrl:String(s.url),authority:s.publisher?String(s.publisher):null,fetchedAt:String(s.retrievedAt),excerpts:s.excerpts as string[]})),
-            ...(lastGenerationError ? { repairFeedback: lastGenerationError } : {}),
+            // The reviewer's notes outrank an automated repair hint and must survive all
+            // three attempts, so they are carried alongside rather than overwritten.
+            ...(reviewerNotes || lastGenerationError
+              ? { repairFeedback: [reviewerNotes ? `The reviewer rejected the previous draft with these notes, which this rewrite must address: ${reviewerNotes}` : "", lastGenerationError].filter(Boolean).join(" ") }
+              : {}),
             ...(selectedConcept ? { editorialContext: { topic: String(selectedConcept.topic), reason: selectedConcept.reason ? String(selectedConcept.reason) : null, campaignStage: selectedConcept.campaign_stage ? String(selectedConcept.campaign_stage) : null, plannedFor: selectedConcept.planned_for ? String(selectedConcept.planned_for) : null, expiresAt: selectedConcept.expires_at ? String(selectedConcept.expires_at) : null, purpose:selectedConcept.brief?.purpose?String(selectedConcept.brief.purpose):undefined,userQuestion:selectedConcept.brief?.userQuestion?String(selectedConcept.brief.userQuestion):undefined,requiredAnswers:Array.isArray(selectedConcept.brief?.requiredAnswers)?selectedConcept.brief.requiredAnswers.map(String):undefined } } : {}),
           });
           const candidate = ensureKnownAcronymsAreDefined(DraftSchema.parse(generated.draft));
@@ -1389,7 +1444,9 @@ const server = http.createServer(async (req, res) => {
             VALUES (${savedClaim.id}, ${String(claimSource.documentId)}, ${String(claimSource.url)}, ${String(claimSource.title)}, ${claimSource.publisher ? String(claimSource.publisher) : null}, ${String(claimSource.locale)}, ${String(claimSource.retrievedAt)}, ${String(claimSource.contentHash)}, ${claim.evidenceQuote})`;
         }
         await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'draft.created', ${tx.json({ model, revisionId: revision.id, evidenceHash, contentHash })})`;
-        if (selectedConcept?.id) await tx`UPDATE social_post_concept SET status='used', updated_at=now() WHERE id=${selectedConcept.id}`;
+        // Clearing the notes here matters: the rewrite they asked for now exists, and
+        // leaving them set would re-apply the same correction to every later draft.
+        if (selectedConcept?.id) await tx`UPDATE social_post_concept SET status='used', revision_feedback=NULL, updated_at=now() WHERE id=${selectedConcept.id}`;
         post.current_revision_id = revision.id;
         return post;
       });
