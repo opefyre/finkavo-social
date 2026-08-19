@@ -5968,6 +5968,56 @@
         "canonicalUrl": "https://www.gov.pt/servicos/entidade-empregadora-comunicacao-de-admissao-de-trabalhador",
         "authority": "gov.pt / Instituto da Segurança Social"
       }
+    },
+    {
+      "id": "immigration-reunification-decision-lapses-in-ninety-days",
+      "pillar": "immigration_residency",
+      "valueClass": "costly_mistake",
+      "title": "A reunification decision expires if the visa is not requested",
+      "userQuestion": "We were granted family reunification. Is there another deadline?",
+      "scenario": "A family celebrates the recognition, waits for documents to be legalised abroad, and lets the decision lapse before the visa is applied for.",
+      "audience": "families reuniting from outside Portugal",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The second deadline after the right is recognised, and what missing it does to the decision already granted.",
+      "anchorFact": {
+        "claim": "Where the family member is outside Portugal the residence visa for reagrupamento familiar must be applied for within 90 days, and failure to apply for the residence visa within that period causes the decision recognising the right to family reunification to lapse.",
+        "kind": "deadline",
+        "namedThing": "reagrupamento familiar",
+        "verifyAt": "https://aima.gov.pt/pt/viver/reagrupamento-familiar-com-familiar-fora-de-territorio-nacional-art-98-o-n-o-1",
+        "volatility": "stable"
+      },
+      "notObvious": "Winning the right is not the last step. It has its own expiry, and it runs while the family is still gathering documents abroad.",
+      "journeyStage": "settling_family",
+      "source": {
+        "canonicalUrl": "https://aima.gov.pt/pt/viver/reagrupamento-familiar-com-familiar-fora-de-territorio-nacional-art-98-o-n-o-1",
+        "authority": "AIMA"
+      }
+    },
+    {
+      "id": "identity-ten-days-to-cancel-a-lost-citizen-card",
+      "pillar": "identity_access",
+      "valueClass": "deadline_action",
+      "title": "Ten days to cancel a citizen card you cannot find",
+      "userQuestion": "I lost my Cartão de Cidadão. What do I have to do, and by when?",
+      "scenario": "Someone searches the house for a fortnight before reporting the loss, leaving the card usable and the deadline missed.",
+      "audience": "people who lost or had a citizen card stolen",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The deadline to cancel, the free 24-hour route to do it, the fact that cancelling is final, and what a replacement costs.",
+      "anchorFact": {
+        "claim": "A Cartão de Cidadão that is lost, destroyed or stolen must be cancelled within 10 days of learning what happened to it; cancellation is free and can be done online or by phone through the Linha Cartão de Cidadão on 210 990 111, which operates 24 hours a day 7 days a week; a cancelled card can never be reactivated, and an online replacement request for a card with validity up to 5 years costs 13.50 euros.",
+        "kind": "deadline",
+        "namedThing": "Cartão de Cidadão",
+        "verifyAt": "https://www.gov.pt/servicos/cancelar-o-cartao-de-cidadao",
+        "volatility": "stable"
+      },
+      "notObvious": "Cancellation is irreversible, which is why people delay it. The ten days run from when you realised, not from when you give up looking.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/cancelar-o-cartao-de-cidadao",
+        "authority": "gov.pt / Instituto dos Registos e do Notariado"
+      }
     }
   ]
 }
