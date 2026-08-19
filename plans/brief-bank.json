@@ -8293,6 +8293,56 @@
         "canonicalUrl": "https://www.cada.pt/perguntas-frequentes",
         "authority": "Comissão de Acesso aos Documentos Administrativos"
       }
+    },
+    {
+      "id": "citizenship-the-ombudsman-covers-more-than-the-state",
+      "pillar": "citizenship_civil",
+      "valueClass": "insider",
+      "title": "The free complaint route that also reaches utilities",
+      "userQuestion": "Who do I complain to about a public body that will not budge?",
+      "scenario": "Someone exhausted by a State service or a utility gives up, not knowing a free national ombudsman covers both.",
+      "audience": "people in dispute with a public service or utility",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "Which bodies the ombudsman covers, that the complaint is free and open at any time, and the two limits on what it can do.",
+      "anchorFact": {
+        "claim": "A complaint to the Provedor de Justiça may be made by any person at any time and is free; it covers acts or omissions of central, regional and local public administration services, the armed and security forces, public institutes and independent administrative entities, and public or publicly owned companies and concessionaires of public services such as TAP, EDP or CTT; the Provedor has no power to annul, revoke or modify acts and issues recommendations instead, and its intervention does not suspend the running of any deadlines including hierarchical and contentious appeals.",
+        "kind": "procedure",
+        "namedThing": "Provedor de Justiça",
+        "verifyAt": "https://www.provedor-jus.pt/en/who-we-are/faq/how-to-complain/",
+        "volatility": "stable"
+      },
+      "notObvious": "It reaches concessionaires like the electricity and postal companies, not just the State, and it does not stop your own appeal clocks while it works.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.provedor-jus.pt/en/who-we-are/faq/how-to-complain/",
+        "authority": "Provedoria de Justiça"
+      }
+    },
+    {
+      "id": "daily-life-one-month-to-answer-a-data-request",
+      "pillar": "daily_life_consumer",
+      "valueClass": "deadline_action",
+      "title": "One month to answer, two more only if it is complex",
+      "userQuestion": "A company is ignoring my request about my personal data. What can I do?",
+      "scenario": "Someone asks a company for their data or its deletion, hears nothing, and never escalates because no deadline was ever mentioned.",
+      "audience": "people exercising data protection rights",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The response deadline a controller has, how far it can be extended, and when the regulator can be brought in.",
+      "anchorFact": {
+        "claim": "A data subject must receive a response within 1 month of the controller receiving their request, extendable by a further 2 months where necessary, and may complain to the Comissão Nacional de Proteção de Dados whenever no response is obtained from the controller within the legal 30-day period, no action is taken on the request, or there is an unjustified refusal to guarantee the right.",
+        "kind": "deadline",
+        "namedThing": "CNPD",
+        "verifyAt": "https://www.cnpd.pt/cidadaos/direitos/",
+        "volatility": "stable"
+      },
+      "notObvious": "The extension has to be justified by complexity rather than taken as a default, so silence at one month is already a reason to escalate.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.cnpd.pt/cidadaos/direitos/",
+        "authority": "Comissão Nacional de Proteção de Dados"
+      }
     }
   ]
 }
