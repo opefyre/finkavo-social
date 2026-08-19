@@ -253,7 +253,12 @@ function completionBudget(request: { instructions: string; input: string; schema
   const schemaTokens = request.schema ? estimateTokens(JSON.stringify(request.schema)) : 0;
   const used = estimateTokens(request.instructions) + estimateTokens(request.input) + schemaTokens;
   const available = TOKENS_PER_MINUTE - used - SAFETY_MARGIN;
-  const ceiling = request.maxCompletionTokens ?? Number(process.env.LLM_MAX_TOKENS ?? 5_000);
+  // Groq admits a request on what it reserves, not what it ends up using, and the daily
+  // allowance is what runs out first. Reserving 5,000 against real drafts that complete
+  // in about 1,100 spent a third of the day's tokens on headroom nothing ever occupied:
+  // 6,890 a request instead of 4,490, which is 29 attempts in a day rather than 44. The
+  // floor below is still 2,600, so this leaves better than twice what a draft has needed.
+  const ceiling = request.maxCompletionTokens ?? Number(process.env.LLM_MAX_TOKENS ?? 2_600);
   return Math.max(MIN_COMPLETION_TOKENS, Math.min(ceiling, available));
 }
 
@@ -274,7 +279,7 @@ export type StructuredRequest = {
 export async function generateStructured(
   request: StructuredRequest,
   config: LlmConfig = resolveLlmConfig(),
-): Promise<{ text: string; model: string }> {
+): Promise<{ text: string; model: string; totalTokens: number | null }> {
   // The free tier's ceiling is per minute, so a burst — an initial generation plus two
   // repairs for the same topic — can exhaust it in seconds even though the daily volume
   // is tiny. The request is now paced before it is sent rather than after it is refused;
@@ -293,7 +298,7 @@ export async function generateStructured(
     try {
       const result = await callProvider(request, config);
       settle(result.totalTokens);
-      return { text: result.text, model: result.model };
+      return { text: result.text, model: result.model, totalTokens: result.totalTokens };
     } catch (error) {
       // A refused request still cost the provider nothing, so release the reservation.
       settle(0);
@@ -312,7 +317,7 @@ export async function generateStructured(
   for (const fallback of standbyAvailable() ? resolveFallbackConfigs() : []) {
     try {
       const result = await callProvider(request, fallback);
-      return { text: result.text, model: result.model };
+      return { text: result.text, model: result.model, totalTokens: result.totalTokens };
     } catch (error) {
       // A standby with its own limit reached, or one that cannot hold the schema, just
       // means the next one gets a turn. Anything else is a real fault and stops here.

@@ -35,8 +35,8 @@ function withinTokenBudget(candidate: Candidate): Candidate {
   };
 }
 
-export async function generateDraft(candidate: Candidate): Promise<{ draft: Draft; model: string }> {
-  const { text, model } = await generateStructured({
+export async function generateDraft(candidate: Candidate): Promise<{ draft: Draft; model: string; totalTokens: number | null }> {
+  const { text, model, totalTokens } = await generateStructured({
     schemaName: "finkavo_social_draft",
     schema: providerSchema(draftJsonSchema),
     input: JSON.stringify(withinTokenBudget(candidate)),
@@ -66,5 +66,5 @@ export async function generateDraft(candidate: Candidate): Promise<{ draft: Draf
       "If repairFeedback is supplied, fix exactly that problem while keeping the topic and evidence-bound meaning.",
     ].join(" "),
   });
-  return { draft: DraftSchema.parse(JSON.parse(text)), model };
+  return { draft: DraftSchema.parse(JSON.parse(text)), model, totalTokens };
 }

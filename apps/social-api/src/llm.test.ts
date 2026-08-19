@@ -72,10 +72,10 @@ describe("free-tier pacing", () => {
     const fetchMock = respondWith(4_000);
     globalThis.fetch = fetchMock as unknown as typeof fetch;
     const { generateStructured, llmDailyBudget, LlmRateLimitError } = await freshClient({
-      ...BASE_ENV, LLM_TOKENS_PER_MINUTE: "40000", LLM_TOKENS_PER_DAY: "11000",
+      ...BASE_ENV, LLM_TOKENS_PER_MINUTE: "40000", LLM_TOKENS_PER_DAY: "9000",
     });
 
-    // Each call reserves the completion ceiling it might need (~5050) before sending,
+    // Each call reserves the completion ceiling it might need (~2650) before sending,
     // then settles to the 4000 actually used, so the day is charged what was spent.
     await generateStructured(REQUEST);
     expect(llmDailyBudget().spent).toBe(4_000);
@@ -83,11 +83,11 @@ describe("free-tier pacing", () => {
     await generateStructured(REQUEST);
     expect(llmDailyBudget().spent).toBe(8_000);
 
-    // A third would have to reserve past 11000, so it never reaches the provider.
+    // A third would have to reserve past 9000, so it never reaches the provider.
     await expect(generateStructured(REQUEST)).rejects.toThrow(/token day is spent/);
     await expect(generateStructured(REQUEST)).rejects.toBeInstanceOf(LlmRateLimitError);
     expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(llmDailyBudget().remaining).toBe(3_000);
+    expect(llmDailyBudget().remaining).toBe(1_000);
   });
 
   it("backs every caller off when the provider returns a long retry-after", async () => {

@@ -1334,6 +1334,7 @@ const server = http.createServer(async (req, res) => {
       let checked: z.infer<typeof DraftSchema> | null = null;
       let model = "";
       let lastGenerationError = "";
+      let usedTokens: number | null = null;
       const reviewerNotes = String(selectedConcept.revision_feedback ?? "").trim();
       // Matching on the message text alone was fragile: local pacing says nothing a
       // rate-limit regex recognises, so a deferred request was read as an editorial
@@ -1383,6 +1384,7 @@ const server = http.createServer(async (req, res) => {
           if(!reliability.passed)throw new Error(`Evidence reliability gate failed: ${reliability.failures.join("; ")}`);
           checked = candidate;
           model = generated.model;
+          usedTokens = generated.totalTokens;
           break;
         } catch (error) {
           lastGenerationError = error instanceof Error ? error.message : "Generation validation failed";
@@ -1404,9 +1406,21 @@ const server = http.createServer(async (req, res) => {
           // it as a content failure and reaching for a replacement brief.
           return send(res, 503, { error: "Generation provider unavailable; the concept remains planned", detail: lastGenerationError, retryable: true });
         }
+        // The mechanical draft has produced six blocked posts and nothing published. It
+        // skips every check the model's output goes through, so its shortcomings are only
+        // found at the pre-Discord gate — after a post row, a render and its uploads have
+        // been spent on something that could never publish. It now has to pass the same
+        // validation as a model draft before it is allowed to become a post; when it
+        // cannot, the concept fails here as it would have anyway, minus the wasted work.
         if (evidenceSources.some(source=>source.deterministicFactCard===true)) {
-          checked=simpleDraft(String(selectedConcept.topic),evidenceSources.flatMap(source=>source.excerpts as string[]));
-          model="deterministic-fact-card-v1";
+          const mechanical = simpleDraft(String(selectedConcept.topic), evidenceSources.flatMap(source=>source.excerpts as string[]));
+          try {
+            validateSocialDraft(mechanical);
+            checked = mechanical;
+            model = "deterministic-fact-card-v1";
+          } catch (error) {
+            lastGenerationError = `mechanical fallback rejected: ${error instanceof Error ? error.message : "invalid"}`;
+          }
         }
       }
       if (!checked) {
@@ -1452,7 +1466,7 @@ const server = http.createServer(async (req, res) => {
           await tx`INSERT INTO social_claim_evidence (claim_id, document_id, source_url, source_title, publisher, locale, retrieved_at, content_hash, supporting_excerpt)
             VALUES (${savedClaim.id}, ${String(claimSource.documentId)}, ${String(claimSource.url)}, ${String(claimSource.title)}, ${claimSource.publisher ? String(claimSource.publisher) : null}, ${String(claimSource.locale)}, ${String(claimSource.retrievedAt)}, ${String(claimSource.contentHash)}, ${claim.evidenceQuote})`;
         }
-        await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'draft.created', ${tx.json({ model, revisionId: revision.id, evidenceHash, contentHash })})`;
+        await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'draft.created', ${tx.json({ tokens: usedTokens, model, revisionId: revision.id, evidenceHash, contentHash })})`;
         // Clearing the notes here matters: the rewrite they asked for now exists, and
         // leaving them set would re-apply the same correction to every later draft.
         if (selectedConcept?.id) await tx`UPDATE social_post_concept SET status='used', revision_feedback=NULL, updated_at=now() WHERE id=${selectedConcept.id}`;
