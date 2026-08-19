@@ -6193,6 +6193,56 @@
         "canonicalUrl": "https://www.autenticacao.gov.pt/outros-meios/autenticacao-europeia",
         "authority": "Autenticação.gov / AMA"
       }
+    },
+    {
+      "id": "education-free-textbooks-must-be-returned-in-good-order",
+      "pillar": "education_children",
+      "valueClass": "costly_mistake",
+      "title": "Free school books are lent, and damage is billed",
+      "userQuestion": "Do we keep the free textbooks at the end of the year?",
+      "scenario": "A family lets a child write in and dog-ear books that must be handed back, and is charged for them in July.",
+      "audience": "parents using free textbooks",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "When the books have to go back, how their condition is treated, and who pays when it is poor.",
+      "anchorFact": {
+        "claim": "Textbooks distributed free of charge must be returned at the end of each school year, or at the end of the study cycle for subjects with final exams; their condition is assessed on return and where a textbook is in poor condition the encarregado de educação must cover its cost.",
+        "kind": "procedure",
+        "namedThing": "manuais escolares",
+        "verifyAt": "https://www.gov.pt/servicos/receber-vouchers-para-manuais-escolares-gratuitos",
+        "volatility": "stable"
+      },
+      "notObvious": "Subjects with final exams keep their books to the end of the cycle while everything else goes back yearly, so the return date is not the same for every book in the bag.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/receber-vouchers-para-manuais-escolares-gratuitos",
+        "authority": "gov.pt / Ministério da Educação"
+      }
+    },
+    {
+      "id": "education-textbook-vouchers-only-the-guardian-can-claim",
+      "pillar": "education_children",
+      "valueClass": "insider",
+      "title": "Only the registered guardian can pull the textbook vouchers",
+      "userQuestion": "Who requests the free textbook vouchers, and where do they appear?",
+      "scenario": "A student or a grandparent tries to collect the books and finds the vouchers cannot be issued to them.",
+      "audience": "families of school-age children",
+      "risk": "medium",
+      "volatility": "volatile",
+      "promise": "Where the vouchers live, who is allowed to request them, and how release is staggered across year groups.",
+      "anchorFact": {
+        "claim": "Vouchers for free textbooks are issued in the name of students in compulsory education from the 1st to the 12th year at public schools and private schools with association contracts, but may only be requested by the encarregado de educação through the MEGA platform or the Edu Rede Escolar app, which also lists the bookshops where the books can be collected, and release is staggered by year group across late July and August.",
+        "kind": "artefact",
+        "namedThing": "MEGA",
+        "verifyAt": "https://www.gov.pt/servicos/receber-vouchers-para-manuais-escolares-gratuitos",
+        "volatility": "volatile"
+      },
+      "notObvious": "The voucher belongs to the child but only one registered adult can release it, which is what strands families where that adult is unavailable in August.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/receber-vouchers-para-manuais-escolares-gratuitos",
+        "authority": "gov.pt / Ministério da Educação"
+      }
     }
   ]
 }
