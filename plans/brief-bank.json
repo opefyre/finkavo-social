@@ -3136,6 +3136,154 @@
         "canonicalUrl": "https://www2.gov.pt/servicos/candidatar-se-ao-porta-65-jovem",
         "authority": "gov.pt / IHRU"
       }
+    },
+    {
+      "id": "social-security-sick-pay-rises-with-length",
+      "pillar": "social_security",
+      "valueClass": "threshold",
+      "title": "Sick pay is not one percentage — it rises the longer you are off",
+      "userQuestion": "How much of my pay do I get while on sick leave?",
+      "scenario": "Someone signed off work budgets on a single percentage they heard once, without knowing the rate changes at defined durations.",
+      "audience": "workers on certified sick leave",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The four rate bands by length of incapacity, and the maximum period the benefit can run.",
+      "anchorFact": {
+        "claim": "Subsídio de doença is 55% of reference remuneration for incapacity up to 30 days, 60% above 30 and under 90 days, 70% above 90 days and under 365 days, and 75% beyond that, with a maximum attribution period of 1095 days.",
+        "kind": "figure",
+        "verifyAt": "https://www.seg-social.pt/subsidio-de-doenca",
+        "volatility": "annual"
+      },
+      "notObvious": "A long absence is paid materially better per day than a short one, which is the opposite of what people expect and matters when planning a return.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/subsidio-de-doenca",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "social-security-sick-note-five-day-window",
+      "pillar": "social_security",
+      "valueClass": "deadline_action",
+      "title": "Five working days to deliver a sick note that did not go electronically",
+      "userQuestion": "My doctor gave me the sick note on paper — what do I do with it?",
+      "scenario": "A patient receives a paper certificate, assumes the doctor filed it, and only learns otherwise when the benefit does not arrive.",
+      "audience": "workers issued a paper sickness certificate",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The deadline for delivering a non-electronic certificate, and the waiting period that applies to voluntary scheme members.",
+      "anchorFact": {
+        "claim": "Where electronic submission is not possible, the CIT must be delivered to Segurança Social within 5 working days of the date the doctor issued it, and a 30-day waiting period applies for beneficiaries under the voluntary social insurance regime, with payment from the first day in defined cases such as hospitalisation.",
+        "kind": "deadline",
+        "namedThing": "CIT",
+        "verifyAt": "https://www2.gov.pt/servicos/obter-informacoes-sobre-o-subsidio-de-doenca",
+        "volatility": "stable"
+      },
+      "notObvious": "Most certificates travel electronically, so the paper exception is exactly the case nobody is briefed on, and the clock is short.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/obter-informacoes-sobre-o-subsidio-de-doenca",
+        "authority": "gov.pt / Segurança Social"
+      }
+    },
+    {
+      "id": "employment-harassment-protections-and-deadlines",
+      "pillar": "employment",
+      "valueClass": "deadline_action",
+      "title": "The deadlines and protections around a workplace harassment complaint",
+      "userQuestion": "What protects me if I report harassment at work?",
+      "scenario": "A worker documents harassment but hesitates to report it, fearing dismissal or that too much time has already passed.",
+      "audience": "workers considering a harassment complaint",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The presumption protecting you from dismissal after reporting, the disciplinary time limits, and the anonymous route to the regulator.",
+      "anchorFact": {
+        "claim": "Harassment gives the victim a right to compensation and is a very serious contraordenação, dismissals within one year of the complaint are presumed abusive, witnesses and the complainant cannot be disciplined for statements in the resulting proceedings absent bad faith, and disciplinary proceedings must be opened within 1 year of the infraction or 60 days after knowledge of it.",
+        "kind": "deadline",
+        "namedThing": "assédio",
+        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475-46758575",
+        "volatility": "stable"
+      },
+      "notObvious": "The one-year presumption of abusive dismissal is the practical protection, and the 60-day disciplinary clock is why delay weakens a case even when the conduct continues.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475-46758575",
+        "authority": "Diário da República"
+      }
+    },
+    {
+      "id": "employment-anonymous-complaint-to-the-regulator",
+      "pillar": "employment",
+      "valueClass": "insider",
+      "title": "You can report an employer without being the person affected",
+      "userQuestion": "Can I report unsafe or unlawful working conditions anonymously?",
+      "scenario": "A colleague witnesses conditions affecting someone else and assumes only the person directly harmed can complain.",
+      "audience": "workers and witnesses of unlawful conditions",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "Who may complain to the labour regulator, and the anonymity guarantee attached to it.",
+      "anchorFact": {
+        "claim": "A complaint can be made to the Autoridade para as Condições do Trabalho (ACT) where an employer is not respecting rights and working conditions, the complaint may be made by someone who is not the person directly affected, and anonymity is always guaranteed.",
+        "kind": "artefact",
+        "namedThing": "ACT",
+        "verifyAt": "https://www2.gov.pt/servicos/fazer-uma-queixa-a-autoridade-para-as-condicoes-do-trabalho-act-",
+        "volatility": "stable"
+      },
+      "notObvious": "Both facts remove the usual reasons for silence: you need not be the victim, and you need not be identified.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/fazer-uma-queixa-a-autoridade-para-as-condicoes-do-trabalho-act-",
+        "authority": "gov.pt / ACT"
+      }
+    },
+    {
+      "id": "education-three-kinds-of-degree-recognition",
+      "pillar": "education_children",
+      "valueClass": "decision",
+      "title": "Three ways a foreign degree is recognised, and how long each takes",
+      "userQuestion": "Which type of recognition do I need for my foreign degree?",
+      "scenario": "A graduate starts the wrong recognition process for their purpose and loses months, or waits for equivalence that no longer exists.",
+      "audience": "holders of a foreign higher education degree",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The three recognition types, the deadline attached to each, and why equivalence no longer exists.",
+      "anchorFact": {
+        "claim": "Under Decreto-Lei 66/2018 the equivalência process ceased and foreign degrees go through one of three Reconhecimento types, Automático, de Nível and Específico, all with the same legal validity; Reconhecimento Automático is issued within a maximum of 30 working days and is available only for certain degrees from certain countries, while Nível and Específico decisions take up to 90 working days.",
+        "kind": "instrument",
+        "verifyAt": "https://www.dges.gov.pt/pt/pagina/reconhecimento",
+        "volatility": "stable"
+      },
+      "notObvious": "All three carry equal legal validity but serve different purposes, so choosing by speed alone can produce a certificate that does not do what you needed.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://www.dges.gov.pt/pt/pagina/reconhecimento",
+        "authority": "DGES"
+      }
+    },
+    {
+      "id": "health-sns-number-without-residence",
+      "pillar": "health_family",
+      "valueClass": "scenario",
+      "title": "Getting an SNS number when you have no residence permit yet",
+      "userQuestion": "Can I get an SNS user number without a residence permit?",
+      "scenario": "Someone living in Portugal without a permit needs ongoing care and is told at the desk that they cannot register.",
+      "audience": "people in Portugal without a residence permit",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The route after ninety days using a parish certificate and NIF, the provisional route before that, and the limit of what the number gives you.",
+      "anchorFact": {
+        "claim": "A person without residence authorisation or work visa who has lived in Portugal more than 90 days can request an atestado de residência from the junta de freguesia and present it with their NIF at a centro de saúde to register and obtain a número de utente; under 90 days a provisional registration can be arranged through Linha SNS 24, and holding a user number alone does not guarantee that the SNS covers the cost of care.",
+        "kind": "procedure",
+        "namedThing": "número de utente",
+        "verifyAt": "https://www2.gov.pt/migrantes-viver-e-trabalhar-em-portugal/migrantes-cuidados-de-saude-em-portugal",
+        "volatility": "stable"
+      },
+      "notObvious": "The ninety-day mark changes the route entirely, and the honest caveat is that the number gets you registered, not necessarily treated free.",
+      "journeyStage": "first_30_days",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/migrantes-viver-e-trabalhar-em-portugal/migrantes-cuidados-de-saude-em-portugal",
+        "authority": "gov.pt / SNS"
+      }
     }
   ]
 }
