@@ -10718,6 +10718,31 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs78d.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "irs-the-maintenance-deduction-with-no-ceiling",
+      "pillar": "irs",
+      "valueClass": "insider",
+      "title": "The maintenance deduction that carries no ceiling",
+      "userQuestion": "Can I deduct the child maintenance I pay?",
+      "scenario": "A paying parent assumes maintenance is a private arrangement with no tax effect, or that it is capped like other deductions.",
+      "audience": "parents paying court-ordered maintenance",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The share of maintenance deductible from the tax itself, the absence of a ceiling, and the two conditions attached.",
+      "anchorFact": {
+        "claim": "Under artigo 83-A of the Código do IRS 20 per cent of the amounts demonstrably borne and not reimbursed as pensões de alimentos is deducted from the tax due, with no ceiling stated in the article, provided the taxpayer is obliged by a court judgment or an agreement homologated under civil law and the recipient is not part of the same fiscal household.",
+        "kind": "instrument",
+        "namedThing": "pensões de alimentos",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs83a.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Most IRS deductions are capped and this one is not, which makes the formal court or homologated agreement worth having rather than an informal arrangement.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs83a.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
