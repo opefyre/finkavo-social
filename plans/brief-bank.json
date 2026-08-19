@@ -3004,13 +3004,13 @@
         "claim": "Where both drivers agree on how the accident occurred they should complete and sign the declaração amigável and deliver it to their insurers, which activates the IDS direct indemnification system; the insurer must communicate its liability decision within a maximum of 30 business days for material damage only, reduced to 15 days with a declaração amigável, or 45 days where there are bodily injuries.",
         "kind": "deadline",
         "namedThing": "declaração amigável",
-        "verifyAt": "https://www.gov.pt/guias/cobertura-de-seguro-automovel-em-portugal",
+        "verifyAt": "https://www2.gov.pt/cidadaos-europeus-viajar-viver-e-fazer-negocios-em-portugal/veiculos-e-conduzir-em-portugal/cobertura-de-seguro-automovel-em-portugal",
         "volatility": "stable"
       },
       "notObvious": "The same accident resolves in half the time purely because a shared form was signed at the roadside.",
       "journeyStage": "resolving_a_problem",
       "source": {
-        "canonicalUrl": "https://www.gov.pt/guias/cobertura-de-seguro-automovel-em-portugal",
+        "canonicalUrl": "https://www2.gov.pt/cidadaos-europeus-viajar-viver-e-fazer-negocios-em-portugal/veiculos-e-conduzir-em-portugal/cobertura-de-seguro-automovel-em-portugal",
         "authority": "gov.pt / ASF"
       }
     },
@@ -3127,13 +3127,13 @@
         "claim": "Porta 65-Jovem is open to applicants aged 18 to 35, with one member of a couple allowed to be 36 while the other is at most 35, requires permanent residence and tax address at the rented property and no ownership of another home or other public housing support, runs four application periods a year of at least 15 days each in April, September and December, and applications are analysed within 45 days.",
         "kind": "deadline",
         "namedThing": "Porta 65",
-        "verifyAt": "https://www.gov.pt/servicos/candidatar-se-ao-porta-65-jovem",
+        "verifyAt": "https://www2.gov.pt/servicos/candidatar-se-ao-porta-65-jovem",
         "volatility": "annual"
       },
       "notObvious": "The tax address condition catches people who never moved their domicílio fiscal to the rented flat, which quietly disqualifies an otherwise valid application.",
       "journeyStage": "renting_buying_moving",
       "source": {
-        "canonicalUrl": "https://www.gov.pt/servicos/candidatar-se-ao-porta-65-jovem",
+        "canonicalUrl": "https://www2.gov.pt/servicos/candidatar-se-ao-porta-65-jovem",
         "authority": "gov.pt / IHRU"
       }
     }
