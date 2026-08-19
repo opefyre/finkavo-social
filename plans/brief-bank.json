@@ -10918,6 +10918,56 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/iva29.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "irs-someone-still-has-to-file-for-the-deceased",
+      "pillar": "irs",
+      "valueClass": "deadline_action",
+      "title": "Someone still has to file the year a person dies",
+      "userQuestion": "Does an IRS return have to be filed for someone who has died?",
+      "scenario": "A family grieving through the spring assumes the tax year closed with the death and files nothing.",
+      "audience": "administrators of an estate",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Who must file for a deceased person and for which period, and the co-owner who must report a shared business in full.",
+      "anchorFact": {
+        "claim": "Under artigo 57 of the Código do IRS, on the death of a taxpayer it falls to the administrator of the estate to submit the income declaration covering 1 January to the date of death, and where category B income arises from co-ownership it falls to the co-owner responsible for administering it to present in their own declaration the totality of the accounting elements and to identify the other co-owners and their respective shares.",
+        "kind": "instrument",
+        "namedThing": "administrador da herança",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs57.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The administrator files in their own name for someone else's part-year income, which is why nobody in the family recognises the duty as theirs.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs57.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-what-must-be-disclosed-from-a-low-tax-jurisdiction",
+      "pillar": "irs",
+      "valueClass": "edge_case",
+      "title": "What has to be disclosed from a low-tax jurisdiction",
+      "userQuestion": "Do I have to mention an account or asset held offshore?",
+      "scenario": "Someone declares the income from a foreign holding but not the holding itself, which is a separate obligation.",
+      "audience": "people holding assets in favourable tax jurisdictions",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The categories of asset that must be mentioned when held in a jurisdiction with a more favourable tax regime, including holdings through trusts.",
+      "anchorFact": {
+        "claim": "Under artigo 57 of the Código do IRS taxpayers must mention assets held in jurisdictions with a clearly more favourable tax regime, including rights over real property, registered vehicles, deposit and securities accounts, shares and quotas, investment units, bonds, loans to entities, insurance contracts, and assets held through partnerships or trust structures in such jurisdictions.",
+        "kind": "instrument",
+        "namedThing": "regime fiscal mais favorável",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs57.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The duty is to mention the asset itself, separately from any income it produced, so a dormant holding that earned nothing still has to be disclosed.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs57.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
