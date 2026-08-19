@@ -7743,6 +7743,56 @@
         "canonicalUrl": "https://www.seg-social.pt/rendimento-social-de-insercao",
         "authority": "Instituto da Segurança Social"
       }
+    },
+    {
+      "id": "employment-the-internship-that-cannot-be-a-job",
+      "pillar": "employment",
+      "valueClass": "edge_case",
+      "title": "The internship that is not allowed to be a job",
+      "userQuestion": "Is a subsidised internship just cheap labour for the employer?",
+      "scenario": "A company offers a subsidised internship to someone who already worked for them, or to fill an ordinary vacancy, and the placement does not qualify.",
+      "audience": "people offered a subsidised internship",
+      "risk": "medium",
+      "volatility": "volatile",
+      "promise": "What a subsidised internship must and must not be, its length, and the past relationship that disqualifies a candidate.",
+      "anchorFact": {
+        "claim": "A subsidised estágio is practical experience in a work context that may not consist of occupying a job position, lasts 9 months and is non-extendable, extending to 12 months for people with disabilities, single-parent families or spouses of unemployed people; interns receive a monthly grant plus meal and transport support, and the promoting entity or another in the same business group may not put forward a candidate with whom it had an employment relationship, service provision or internship of any nature in the 24 months before the application, except curricular or profession-mandatory internships.",
+        "kind": "figure",
+        "namedThing": "estágio",
+        "verifyAt": "https://iefponline.iefp.pt/IEFP/medida/estagioemprego/descEstagiosAtivarPT.jsp",
+        "volatility": "volatile"
+      },
+      "notObvious": "The twenty-four-month look-back stops a company recycling its own former workers through a subsidised placement, which is the abuse most candidates are actually inside.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://iefponline.iefp.pt/IEFP/medida/estagioemprego/descEstagiosAtivarPT.jsp",
+        "authority": "Instituto do Emprego e Formação Profissional"
+      }
+    },
+    {
+      "id": "employment-what-cancels-your-employment-centre-registration",
+      "pillar": "employment",
+      "valueClass": "costly_mistake",
+      "title": "What actually gets you removed from the employment register",
+      "userQuestion": "Can I turn down a job offer while claiming unemployment?",
+      "scenario": "Someone declines an unsuitable-seeming offer or misses an employer meeting without explaining, and the registration behind their benefit is cancelled.",
+      "audience": "people registered at an employment centre",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Where your registration sits, the duty to demonstrate a job search, and the refusals that end the registration.",
+      "anchorFact": {
+        "claim": "Registration as a job candidate is always assigned to the centro de emprego for the area of residence even if made at another centre; the registered person must actively seek employment by their own means and demonstrate that search to the centre; registrations are cancelled for candidates who without justification refused a job offer or did not appear before the employer entity, and a suitable job offer or adequate professional training takes priority over performing socially necessary work.",
+        "kind": "procedure",
+        "namedThing": "centro de emprego",
+        "verifyAt": "https://iefponline.iefp.pt/IEFP/direitosDeveres.do",
+        "volatility": "stable"
+      },
+      "notObvious": "Not turning up counts the same as refusing, so the risk sits in a missed appointment rather than in a considered no.",
+      "journeyStage": "leaving_a_job",
+      "source": {
+        "canonicalUrl": "https://iefponline.iefp.pt/IEFP/direitosDeveres.do",
+        "authority": "Instituto do Emprego e Formação Profissional"
+      }
     }
   ]
 }
