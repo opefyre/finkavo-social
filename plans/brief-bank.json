@@ -6068,6 +6068,56 @@
         "canonicalUrl": "https://info-aduaneiro.portaldasfinancas.gov.pt/pt/informacao_aduaneira/Veiculos/regularizacao/Pages/faq-isv-06.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "banking-persi-forces-a-proposal-within-thirty-days",
+      "pillar": "banking_money",
+      "valueClass": "insider",
+      "title": "The procedure your bank must open when you fall behind",
+      "userQuestion": "I have missed loan payments. Does the bank have to do anything before acting?",
+      "scenario": "A borrower in arrears waits for a demand letter, not knowing a formal procedure with its own deadline should already be running.",
+      "audience": "borrowers who have missed a loan payment",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The extrajudicial procedure that opens on default, the deadline for the bank's proposals, and the two things it may not charge you for.",
+      "anchorFact": {
+        "claim": "Under the general regime of the Decreto-Lei n.º 227/2012 the credit institution must present the customer with one or more proposals to regularise the default within 30 days of the start of PERSI, and it may not charge commissions or increase the interest rate of the credit contract as a result of renegotiating the contract conditions within PERSI.",
+        "kind": "instrument",
+        "namedThing": "PERSI",
+        "verifyAt": "https://clientebancario.bportugal.pt/en/arrears-management",
+        "volatility": "stable"
+      },
+      "notObvious": "Renegotiating inside the procedure is protected from repricing, which makes the moment the bank opens it worth knowing and asking about.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/en/arrears-management",
+        "authority": "Banco de Portugal"
+      }
+    },
+    {
+      "id": "banking-pari-acts-before-you-actually-default",
+      "pillar": "banking_money",
+      "valueClass": "insider",
+      "title": "The plan that starts before a payment is missed",
+      "userQuestion": "I am about to struggle with repayments. Is it too early to talk to the bank?",
+      "scenario": "A borrower whose income has dropped waits to actually default before contacting the bank, losing the stage designed to prevent it.",
+      "audience": "borrowers whose income has fallen",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The risk signals banks must monitor, the fifteen days they then have to propose something, and the repricing they are barred from.",
+      "anchorFact": {
+        "claim": "Under PARI institutions must regularly assess credit contracts for signs of deteriorating borrower financial capacity, with unemployment, loss of borrower income and working in a sector in difficulty counting as default risk indicators, and where the risk is confirmed and the customer has financial capacity the institution must present adequate proposals within 15 days of receiving the information and documents it requested; institutions are prohibited from increasing the contractually agreed interest rate in proposals presented under PARI or PERSI.",
+        "kind": "procedure",
+        "namedThing": "PARI",
+        "verifyAt": "https://clientebancario.bportugal.pt/en/arrears-prevention",
+        "volatility": "stable"
+      },
+      "notObvious": "Losing income is itself a listed trigger, so reporting it early puts the bank on a fifteen-day clock rather than putting you on a watchlist.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/en/arrears-prevention",
+        "authority": "Banco de Portugal"
+      }
     }
   ]
 }
