@@ -5793,6 +5793,81 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/prazos/Paginas/default.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "consumer-late-number-porting-pays-you-automatically",
+      "pillar": "daily_life_consumer",
+      "valueClass": "threshold",
+      "title": "Three euros a day when your number moves late",
+      "userQuestion": "My number did not transfer on the agreed day. Is the operator liable?",
+      "scenario": "A customer waits days for a number to move, complains, and is offered goodwill instead of the compensation the rules already require.",
+      "audience": "people switching telecom operator",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The legal porting deadline, the daily compensation for missing it, and the fact that you do not have to ask for it.",
+      "anchorFact": {
+        "claim": "Portabilidade and activation must happen on the date expressly agreed with the new company and within one business day of that date, and where the deadline is missed the new company must compensate the user 3 euros per number for each complete day of delay, credited without any prior request on the next invoice or by direct means within a maximum of 30 days.",
+        "kind": "figure",
+        "namedThing": "portabilidade",
+        "verifyAt": "https://www.anacom.pt/render.jsp?contentId=1058401",
+        "volatility": "stable"
+      },
+      "notObvious": "No claim is needed. The credit is owed automatically, which means an unpaid one is a billing error you can point at rather than a favour to negotiate.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.anacom.pt/render.jsp?contentId=1058401",
+        "authority": "ANACOM"
+      }
+    },
+    {
+      "id": "consumer-number-ported-without-consent-compensation",
+      "pillar": "daily_life_consumer",
+      "valueClass": "insider",
+      "title": "Twenty-three euros a day if your number is taken without consent",
+      "userQuestion": "Another operator ported my number without asking. What am I owed?",
+      "scenario": "Someone whose number was moved by a mis-sold or fraudulent request focuses on getting it back and never claims the compensation attached to every day it was gone.",
+      "audience": "people whose number was moved without authorisation",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The daily amount owed for an unauthorised port, and the ceiling that applies per request.",
+      "anchorFact": {
+        "claim": "Where a number is transferred to another company without the user's consent, the user has the right to compensation of 23 euros per number for each day the number remains improperly ported until the situation is corrected, up to a maximum of 5,750 euros per portability request.",
+        "kind": "figure",
+        "namedThing": "portabilidade",
+        "verifyAt": "https://www.anacom.pt/render.jsp?contentId=1058401",
+        "volatility": "stable"
+      },
+      "notObvious": "The amount is nearly eight times the ordinary late-porting rate, which is what makes documenting the exact days worth doing.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.anacom.pt/render.jsp?contentId=1058401",
+        "authority": "ANACOM"
+      }
+    },
+    {
+      "id": "consumer-unpaid-telecom-bill-timeline",
+      "pillar": "daily_life_consumer",
+      "valueClass": "deadline_action",
+      "title": "The thirty days between a missed bill and a dead contract",
+      "userQuestion": "How long before my operator cuts me off for an unpaid bill?",
+      "scenario": "A customer disputing a charge stops paying, hears nothing useful, and finds the contract terminated rather than paused.",
+      "audience": "customers behind on a telecom bill",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The written warning the operator owes you, the extra time it grants, the three ways to use that time, and when the contract ends by itself.",
+      "anchorFact": {
+        "claim": "An electronic communications company must send a written pré-aviso within 10 days of a bill's due date granting a further 30 days to pay before the service is suspended, during which the consumer may pay, agree a written payment plan or dispute the amounts in writing; on payment or a written agreement the service must be restored immediately or within 5 working days where that is not technically possible, and after 30 days of suspension without payment or agreement the contract is automatically terminated.",
+        "kind": "deadline",
+        "namedThing": "pré-aviso",
+        "verifyAt": "https://www.anacom.pt/render.jsp?contentId=1827940",
+        "volatility": "stable"
+      },
+      "notObvious": "Disputing the amount in writing counts as using the thirty days. Disputing it by phone does not, and the clock runs either way.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.anacom.pt/render.jsp?contentId=1827940",
+        "authority": "ANACOM"
+      }
     }
   ]
 }
