@@ -1813,6 +1813,104 @@
         "canonicalUrl": "https://aima.gov.pt/pt/trabalhar/autorizacao-de-residencia-para-exercicio-de-atividade-profissional-subordinada-com-visto-para-procura-de-trabalho-art-88-o-n-o7",
         "authority": "AIMA"
       }
+    },
+    {
+      "id": "health-parental-leave-length-changes-the-pay-rate",
+      "pillar": "health_family",
+      "valueClass": "threshold",
+      "title": "How the parental leave you choose changes what you are paid",
+      "userQuestion": "Should we take 120 or 150 days of parental leave?",
+      "scenario": "Expecting parents pick the longer leave assuming more time is simply better, without realising the percentage of pay changes with the option.",
+      "audience": "expecting parents choosing a leave option",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The pay percentage attached to each leave length, and the sharing combination that keeps you at the full rate for longer.",
+      "anchorFact": {
+        "claim": "Initial licença parental can be taken as 120 days paid at 100% or 150 days paid at 80% when not shared, while sharing 150 days as 120 plus 30 is paid at 100% of reference remuneration for the full period.",
+        "kind": "figure",
+        "verifyAt": "https://www.gov.pt/guias/ter-uma-crianca/licenca-parental",
+        "volatility": "annual"
+      },
+      "notObvious": "Choosing the longer leave without sharing quietly cuts the rate to 80%, while the shared 120+30 combination gives more time at the full rate. Same family, very different money.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/ter-uma-crianca/licenca-parental",
+        "authority": "gov.pt / Segurança Social"
+      }
+    },
+    {
+      "id": "health-parental-leave-90-percent-condition",
+      "pillar": "health_family",
+      "valueClass": "insider",
+      "title": "The father's leave pattern that lifts 180 days from 83% to 90%",
+      "userQuestion": "Can we get a better rate on the 180-day parental leave?",
+      "scenario": "A couple takes the longest leave at the standard rate, not knowing a specific pattern of the father's days changes the percentage.",
+      "audience": "parents planning 180 days of shared leave",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The exact pattern of days that lifts the rate, and how it can be split into two blocks rather than one.",
+      "anchorFact": {
+        "claim": "Shared initial licença parental of 180 days as 150 plus 30 is paid at 83% of reference remuneration, rising to 90% where the father takes 60 consecutive days, or two periods of 30 consecutive days, not counting his mandatory period.",
+        "kind": "figure",
+        "verifyAt": "https://www.gov.pt/guias/ter-uma-crianca/licenca-parental",
+        "volatility": "annual",
+        "namedThing": "licença parental"
+      },
+      "notObvious": "A seven-point pay difference turns on how the father's days are arranged, and the two-block option makes it workable for jobs that cannot spare two months at once.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/ter-uma-crianca/licenca-parental",
+        "authority": "gov.pt / Segurança Social"
+      }
+    },
+    {
+      "id": "social-security-parental-claim-and-notice-deadlines",
+      "pillar": "social_security",
+      "valueClass": "deadline_action",
+      "title": "Two parental leave deadlines that start at the birth",
+      "userQuestion": "When do we have to tell the employer and claim the parental benefit?",
+      "scenario": "New parents deal with the birth first and handle paperwork weeks later, unaware that one of the deadlines runs in days rather than months.",
+      "audience": "new parents sharing parental leave",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The seven-day employer notification when leave is shared, the joint declaration it requires, and the separate six-month claim window.",
+      "anchorFact": {
+        "claim": "Where initial parental leave is shared, both workers must tell their employers the start and end of each period within 7 days after the birth by delivering a joint declaration, and the subsídio parental itself must be requested within 6 months of the fact determining the protection.",
+        "kind": "deadline",
+        "namedThing": "subsídio parental",
+        "verifyAt": "https://seg-social.pt/subsidio-parental",
+        "volatility": "stable"
+      },
+      "notObvious": "The two clocks are wildly different lengths and only one is generous. The seven-day joint declaration is what people miss.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://seg-social.pt/subsidio-parental",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "housing-notice-to-end-a-lease-scales-with-its-length",
+      "pillar": "housing_property",
+      "valueClass": "edge_case",
+      "title": "Notice to stop a lease renewing depends on how long the lease ran",
+      "userQuestion": "How much notice must I give to stop my rental contract renewing?",
+      "scenario": "A tenant or landlord gives a month's notice assuming it is standard, and finds the contract renewed anyway for another full term.",
+      "audience": "tenants and landlords ending a fixed-term lease",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Why the notice period is not fixed, what it scales with, and the articles that set the minimum on each side.",
+      "anchorFact": {
+        "claim": "Oposição à renovação of an urban lease follows artigos 1097 and 1098 of the Código Civil, which set minimum notice periods that increase with the duration of the contract, and the landlord's minimum notice under artigo 1097 is a mandatory rule protecting the tenant.",
+        "kind": "instrument",
+        "verifyAt": "https://diariodarepublica.pt/dr/lexionario/termo/oposicao-a-renovacao-contrato",
+        "volatility": "stable"
+      },
+      "notObvious": "People assume one fixed notice period. It scales with contract length, and getting it wrong renews the contract for a whole further term.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/lexionario/termo/oposicao-a-renovacao-contrato",
+        "authority": "Diário da República"
+      }
     }
   ]
 }
