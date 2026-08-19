@@ -8193,6 +8193,31 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/atualidades/instrucoesadmin/Paginas/Oficio_circulado_20288_2026.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "health-dentist-voucher-windows-differ-by-group",
+      "pillar": "health_family",
+      "valueClass": "deadline_action",
+      "title": "How long a dentist voucher lasts depends who you are",
+      "userQuestion": "How long do I have to use a cheque-dentista?",
+      "scenario": "Someone holds a voucher for the right moment and finds the window closed, because the window is different for each group.",
+      "audience": "people issued a cheque-dentista",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The window for a pregnancy voucher, the window and count for a solidarity supplement voucher, and where each runs from.",
+      "anchorFact": {
+        "claim": "A cheque-dentista issued to a pregnant woman followed by the SNS can be used during pregnancy or up to 60 days after delivery, while a beneficiary of the Complemento Solidário para Idosos may be entitled to 2 cheques-dentista per year where the dentist considers several treatments necessary, valid for 12 months counted from the day the first cheque is issued.",
+        "kind": "deadline",
+        "namedThing": "cheque-dentista",
+        "verifyAt": "https://www.sns24.gov.pt/pt/tema/saude-oral/cheque-dentista-idosos/",
+        "volatility": "stable"
+      },
+      "notObvious": "The twelve months run from the first voucher rather than from the calendar year, so the second one expires on a date nobody is told.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www.sns24.gov.pt/servico/cheques-dentista/",
+        "authority": "SNS 24"
+      }
     }
   ]
 }
