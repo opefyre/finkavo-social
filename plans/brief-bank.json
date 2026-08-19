@@ -8093,6 +8093,56 @@
         "canonicalUrl": "https://www.gov.pt/servicos/usar-o-servico-casa-pronta",
         "authority": "gov.pt / Instituto dos Registos e do Notariado"
       }
+    },
+    {
+      "id": "freelance-how-a-quarterly-declaration-becomes-a-monthly-bill",
+      "pillar": "freelance_business",
+      "valueClass": "threshold",
+      "title": "How three months of invoices become one monthly contribution",
+      "userQuestion": "How is my Segurança Social contribution actually calculated?",
+      "scenario": "A freelancer budgets a percentage of everything invoiced and is repeatedly wrong, because two reductions apply before the rate does.",
+      "audience": "independent workers paying contributions",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The share of service income that counts, how the monthly base is derived from it, the rate applied, and how long each base lasts.",
+      "anchorFact": {
+        "claim": "For service provision the relevant income is 70 per cent of the total value of services provided; the monthly contribution base is one third of the relevant income calculated in each declarative period and applies to that month and the 2 following months, and the contribution rate applied to that base is 21.4 per cent, while for a spouse or partner of an independent worker the base is 70 per cent of the worker's relevant income.",
+        "kind": "figure",
+        "namedThing": "base de incidência contributiva",
+        "verifyAt": "https://www.seg-social.pt/trabalhadores-independentes",
+        "volatility": "annual"
+      },
+      "notObvious": "Two reductions happen before the rate is applied, so the headline percentage is charged on well under half of what you invoiced.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/trabalhadores-independentes",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "employment-the-tenth-of-the-month-your-record-depends-on",
+      "pillar": "employment",
+      "valueClass": "deadline_action",
+      "title": "The tenth of the month your contribution record depends on",
+      "userQuestion": "When does my employer report my pay to Segurança Social?",
+      "scenario": "A worker whose record shows a missing month cannot tell whether the employer filed late or not at all, and does not know when to expect it.",
+      "audience": "employees checking their contribution record",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The employer's monthly reporting deadline, what the declaration must contain, and the moment it counts as submitted.",
+      "anchorFact": {
+        "claim": "An employer must submit the declaração mensal de remunerações to Segurança Social by the 10th of the month following the one it covers, moving to the next working day where that falls on a Saturday, Sunday or holiday; it must state all remuneration forming the contribution base, the applicable contribution rate and the respective working times, a separate declaration is required for each contribution rate so workers on different rates cannot share one, and the declaration counts as submitted on the date the system validates it.",
+        "kind": "deadline",
+        "namedThing": "declaração mensal de remunerações",
+        "verifyAt": "https://www.gov.pt/servicos/entidade-empregadora-declaracao-mensal-de-remuneracoes-a-seguranca-social",
+        "volatility": "stable"
+      },
+      "notObvious": "Submission is dated by system validation rather than by upload, which is why an employer can believe they filed on time and the record still shows late.",
+      "journeyStage": "in_employment",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/entidade-empregadora-declaracao-mensal-de-remuneracoes-a-seguranca-social",
+        "authority": "gov.pt / Instituto da Segurança Social"
+      }
     }
   ]
 }
