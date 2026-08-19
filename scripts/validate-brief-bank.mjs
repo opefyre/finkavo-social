@@ -271,6 +271,41 @@ if (process.argv.includes("--check-sources")) {
   for (const r of dead) fail(r.id, `source returns ${r.status}: ${r.url}`);
 }
 
+// --- near-duplicate anchors ---------------------------------------------------
+// Unique titles are not enough. Two briefs can be worded differently and still open
+// on the same fact — the one-year waiting period on pre-existing conditions and the
+// three components of the inclusion benefit were each written twice before this
+// check existed. Overlap is measured on the distinctive words of the anchor claim,
+// so a shared subject with genuinely different substance stays below the line.
+const STOP = new Set("the a an and or of to in on for from by with at as is are be that this it its where which when who whom whose not no than then within under over into out up down per each any all both may must can cannot has have had was were been being do does did if so such other more most less least only also same after before during while about".split(" "));
+
+function distinctiveWords(claim) {
+  return new Set(
+    claim.toLowerCase().replace(/[^a-zà-ÿ0-9\s]/g, " ").split(/\s+/)
+      .filter(w => w.length > 3 && !STOP.has(w)),
+  );
+}
+
+// Jaccard rather than overlap-against-the-smaller-set: a deliberately short claim
+// shares most of its handful of words with any longer claim on the same subject, so
+// the smaller-set denominator flagged briefs that had just been made more distinct.
+const DUPLICATE_OVERLAP = 0.45;
+const fingerprints = briefs.map(brief => ({ brief, words: distinctiveWords(brief.anchorFact?.claim ?? "") }));
+
+for (let i = 0; i < fingerprints.length; i += 1) {
+  for (let j = i + 1; j < fingerprints.length; j += 1) {
+    const a = fingerprints[i];
+    const b = fingerprints[j];
+    if (Math.min(a.words.size, b.words.size) < 8) continue;
+    let shared = 0;
+    for (const word of a.words) if (b.words.has(word)) shared += 1;
+    const overlap = shared / (a.words.size + b.words.size - shared);
+    if (overlap >= DUPLICATE_OVERLAP) {
+      fail(a.brief.id, `anchor overlaps ${Math.round(overlap * 100)}% with '${b.brief.id}' — merge them or give one a different fact`);
+    }
+  }
+}
+
 // --- report -----------------------------------------------------------------
 const classCounts = {};
 for (const brief of briefs) classCounts[brief.valueClass] = (classCounts[brief.valueClass] ?? 0) + 1;

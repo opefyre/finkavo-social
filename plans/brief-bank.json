@@ -110,8 +110,8 @@
       "audience": "newly registered independent workers",
       "promise": "When the exemption window opens, exactly what ends it, and which quarterly declaration you must still submit during it.",
       "anchorFact": {
-        "claim": "Segurança Social contributions are not compulsory for people who opened independent activity less than 12 months ago, but anyone issuing recibos verdes must still submit a declaração trimestral through Segurança Social Direta by the last day of January, April, July and October.",
-        "kind": "deadline",
+        "claim": "Segurança Social contributions are not compulsory for people who opened independent activity less than 12 months ago, but the declaração trimestral remains due throughout that period for anyone issuing recibos verdes, because the declaration obligation is separate from the payment obligation.",
+        "kind": "figure",
         "verifyAt": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
         "volatility": "annual",
         "namedThing": "declaração trimestral"
@@ -1060,12 +1060,12 @@
       "title": "The 90-day claim window that shortens your unemployment benefit",
       "userQuestion": "What happens if I claim unemployment benefit late?",
       "scenario": "Someone who has just lost a job is dealing with paperwork and assumes the claim can wait until things settle down.",
-      "audience": "people who have just become unemployed",
+      "audience": "employees and freelancers who have just lost their income",
       "risk": "high",
       "volatility": "stable",
       "promise": "The 90-day claim window, and why filing late costs you benefit time rather than just delaying the first payment.",
       "anchorFact": {
-        "claim": "Subsídio de desemprego must be claimed within 90 consecutive days of the date of unemployment; claiming after that reduces the benefit award period by the length of the delay.",
+        "claim": "Subsídio de desemprego must be claimed within 90 consecutive days of the date of unemployment, and the same rule governs the subsídio por cessação de atividade for independent workers: a claim filed after the 90 days but still inside the legal grant period reduces the award period by the length of the delay.",
         "kind": "deadline",
         "verifyAt": "https://www.seg-social.pt/subsidio-de-desemprego",
         "volatility": "stable"
@@ -1631,7 +1631,7 @@
       "volatility": "annual",
       "promise": "The flat rate applied at source, the payer's withholding and reporting duties, and when a non-resident must still file here.",
       "anchorFact": {
-        "claim": "Independent work income paid to non-residents is subject to a taxa liberatória of 25% under artigo 71 of the Código do IRS, the paying entity must withhold at source and submit the Modelo 30 declaration under artigo 119, and a non-resident files a Portuguese return only for income not subjected to withholding.",
+        "claim": "Independent work income paid to non-residents is subject to a taxa liberatória of 25% under artigo 71 of the Código do IRS, and the paying entity must withhold at source and submit the Modelo 30 declaration under artigo 119.",
         "kind": "instrument",
         "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs71.aspx",
         "volatility": "annual"
@@ -1825,14 +1825,14 @@
       "audience": "expecting parents choosing a leave option",
       "risk": "high",
       "volatility": "annual",
-      "promise": "The pay percentage attached to each leave length, and the sharing combination that keeps you at the full rate for longer.",
+      "promise": "The two lengths a single parent can choose between, and what each is paid.",
       "anchorFact": {
-        "claim": "Initial licença parental can be taken as 120 days paid at 100% or 150 days paid at 80% when not shared, while sharing 150 days as 120 plus 30 is paid at 100% of reference remuneration for the full period.",
+        "claim": "Initial licença parental taken by one parent alone is 120 days paid at 100% of reference remuneration or 150 days paid at 80%.",
         "kind": "figure",
         "verifyAt": "https://www.gov.pt/guias/ter-uma-crianca/licenca-parental",
         "volatility": "annual"
       },
-      "notObvious": "Choosing the longer leave without sharing quietly cuts the rate to 80%, while the shared 120+30 combination gives more time at the full rate. Same family, very different money.",
+      "notObvious": "The longer leave is not simply more leave: thirty extra days cost a fifth of the pay across the whole period.",
       "journeyStage": "bringing_family",
       "source": {
         "canonicalUrl": "https://www.gov.pt/guias/ter-uma-crianca/licenca-parental",
@@ -3432,31 +3432,6 @@
       "source": {
         "canonicalUrl": "https://www2.gov.pt/pt/servicos/pedir-o-divorcio-por-mutuo-consentimento",
         "authority": "gov.pt / IRN"
-      }
-    },
-    {
-      "id": "iva-cash-accounting-regime-eligibility",
-      "pillar": "iva",
-      "valueClass": "threshold",
-      "title": "Paying IVA only once the client has actually paid you",
-      "userQuestion": "Can I avoid handing over IVA before my client pays the invoice?",
-      "scenario": "A small business funds IVA out of its own cash for months because clients pay late, unaware an alternative regime exists.",
-      "audience": "businesses with slow-paying clients",
-      "risk": "high",
-      "volatility": "annual",
-      "promise": "The turnover ceiling to join the cash regime, the lock-in before you can leave, and the wait before rejoining.",
-      "anchorFact": {
-        "claim": "The regime de caixa do IVA requires turnover in the year before the request of 2,000,000 euros or less, the option for the general exigibility regime can only be exercised after 2 consecutive calendar years under the cash regime, rejoining requires 2 consecutive calendar years since the previous option ended, and acceptance is not automatic but subject to validation.",
-        "kind": "figure",
-        "namedThing": "regime de caixa",
-        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00324.aspx",
-        "volatility": "annual"
-      },
-      "notObvious": "It shifts when IVA becomes payable rather than how much, which is a cash-flow lever most small businesses never learn they have.",
-      "journeyStage": "first_freelance_activity",
-      "source": {
-        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00324.aspx",
-        "authority": "Autoridade Tributária e Aduaneira"
       }
     },
     {
@@ -5545,31 +5520,6 @@
       }
     },
     {
-      "id": "freelance-late-cessation-claim-shortens-not-cancels",
-      "pillar": "freelance_business",
-      "valueClass": "deadline_action",
-      "title": "Ninety days to claim, and what a late claim really costs",
-      "userQuestion": "I missed the deadline for the cessation benefit. Is it gone?",
-      "scenario": "A freelancer who applies four months late assumes the claim is void, or applies without realising the delay is being deducted.",
-      "audience": "freelancers who lost their contracting entity",
-      "risk": "high",
-      "volatility": "stable",
-      "promise": "The claim window, and the day-for-day rule that applies when you file after it.",
-      "anchorFact": {
-        "claim": "The subsídio por cessação de atividade must be claimed within 90 consecutive days from the date of unemployment caused by the end of the service contract, and a claim delivered after those 90 days but still within the legal grant period reduces the grant period by the time corresponding to the delay.",
-        "kind": "deadline",
-        "namedThing": "cessação de atividade",
-        "verifyAt": "https://www.gov.pt/servicos/obter-informacoes-sobre-o-subsidio-por-cessacao-de-atividade",
-        "volatility": "stable"
-      },
-      "notObvious": "Lateness is priced, not punished: every day of delay is one fewer day of benefit, so applying immediately is worth money even when you are already late.",
-      "journeyStage": "running_a_business",
-      "source": {
-        "canonicalUrl": "https://www.gov.pt/servicos/obter-informacoes-sobre-o-subsidio-por-cessacao-de-atividade",
-        "authority": "gov.pt / Instituto da Segurança Social"
-      }
-    },
-    {
       "id": "social-security-sick-pay-waiting-period-differs-by-status",
       "pillar": "social_security",
       "valueClass": "threshold",
@@ -6131,7 +6081,7 @@
       "volatility": "stable",
       "promise": "The turnover limit for cash accounting, the single month the option can be exercised, when it takes effect, and the waits that apply to rejoining.",
       "anchorFact": {
-        "claim": "The regime de IVA de caixa requires previous-year turnover of 2,000,000 euros or less, the option may be exercised only during the month of October each year and takes effect on 1 January of the following year, the request is validated rather than granted automatically, and rejoining requires that a previous option ended at least 2 consecutive calendar years earlier, or that 1 year has passed since regularising a tax situation where the regime was terminated for irregularity.",
+        "claim": "The regime de IVA de caixa requires previous-year turnover of 2,000,000 euros or less, the option may be exercised only during the month of October each year and takes effect on 1 January of the following year, the request is validated rather than granted automatically, and rejoining requires that a previous option ended at least 2 consecutive calendar years earlier, or that 1 year has passed since regularising a tax situation where the regime was terminated for irregularity; leaving for the general exigibility regime is only possible after 2 consecutive calendar years under the cash regime.",
         "kind": "deadline",
         "namedThing": "regime de IVA de caixa",
         "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00324.aspx",
