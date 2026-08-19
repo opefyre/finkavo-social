@@ -8343,6 +8343,56 @@
         "canonicalUrl": "https://www.cnpd.pt/cidadaos/direitos/",
         "authority": "Comissão Nacional de Proteção de Dados"
       }
+    },
+    {
+      "id": "employment-the-meal-card-is-worth-more-than-the-cash",
+      "pillar": "employment",
+      "valueClass": "edge_case",
+      "title": "The same meal allowance is taxed differently by card and by cash",
+      "userQuestion": "Does it matter whether my meal allowance comes as cash or on a card?",
+      "scenario": "A worker takes the meal allowance in cash for convenience and quietly loses part of it to tax that a card would have kept.",
+      "audience": "employees receiving a meal allowance",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "Why the exempt ceiling depends on the payment method, and where the current limits are published.",
+      "anchorFact": {
+        "claim": "Under artigo 2 of the Código do IRS the subsídio de refeição is exempt only up to a published daily ceiling, and that ceiling is set higher where the allowance is paid through meal vouchers or a meal card than where it is paid in cash, with anything above the applicable limit taxed as category A income.",
+        "kind": "instrument",
+        "namedThing": "subsídio de refeição",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs2.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The payment method changes the tax-free amount for identical money, which makes the card worth more than the cash even before anyone spends it.",
+      "journeyStage": "in_employment",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs2.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "employment-what-your-own-car-earns-per-kilometre",
+      "pillar": "employment",
+      "valueClass": "threshold",
+      "title": "What using your own car for work is worth per kilometre",
+      "userQuestion": "How much should I be reimbursed for driving my own car for work?",
+      "scenario": "A worker accepts a round-sum payment for driving their own car and cannot tell whether it covers the journey or is taxable pay.",
+      "audience": "workers who drive their own car for work",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The per-kilometre reimbursement rate, what it is meant to cover, and the two costs that sit outside it.",
+      "anchorFact": {
+        "claim": "Since 1 January 2024 the transport allowance for using one's own vehicle in the employer's service is 0.12 euros per kilometre under artigo 22 of the Decreto-Lei 106/98, artigo 4 of the Portaria 1553-D/2008 and artigo 317 of the Lei 82/2023; it compensates predictable vehicle costs including fuel, insurance, taxes and maintenance, while parking and tolls are separate accessory expenses not included in it.",
+        "kind": "figure",
+        "namedThing": "ajudas de custo",
+        "verifyAt": "https://www.dgaep.gov.pt/stap/infoPage.cfm?objid=ccb9e9aa-5043-4683-b788-42d0f0274f4f",
+        "volatility": "annual"
+      },
+      "notObvious": "Tolls and parking are reimbursable on top because they are identified costs rather than estimates, which is the part most round-sum arrangements quietly absorb.",
+      "journeyStage": "in_employment",
+      "source": {
+        "canonicalUrl": "https://www.dgaep.gov.pt/stap/infoPage.cfm?objid=ccb9e9aa-5043-4683-b788-42d0f0274f4f",
+        "authority": "Direção-Geral da Administração e do Emprego Público"
+      }
     }
   ]
 }
