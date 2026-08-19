@@ -62,6 +62,24 @@ export async function generateStructured(
   request: StructuredRequest,
   config: LlmConfig = resolveLlmConfig(),
 ): Promise<{ text: string; model: string }> {
+  // The free tier's ceiling is per minute, so a burst — an initial generation plus two
+  // repairs for the same topic — can exhaust it in seconds even though the daily volume
+  // is tiny. Waiting out the window is the correct response: failing here would instead
+  // consume one of the topic's limited repair attempts for a non-editorial reason.
+  try {
+    return await callProvider(request, config);
+  } catch (error) {
+    if (!(error instanceof LlmRateLimitError)) throw error;
+    const waitSeconds = Math.min(error.retryAfterSeconds ?? 65, 120);
+    await new Promise(resolve => setTimeout(resolve, waitSeconds * 1000));
+    return callProvider(request, config);
+  }
+}
+
+async function callProvider(
+  request: StructuredRequest,
+  config: LlmConfig,
+): Promise<{ text: string; model: string }> {
   const timeout = AbortSignal.timeout(request.timeoutMs ?? 90_000);
 
   if (config.provider === "openai") {

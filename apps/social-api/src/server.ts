@@ -1584,7 +1584,16 @@ const server = http.createServer(async (req, res) => {
         const [claimed] = await tx`UPDATE social_publish_job SET status = 'processing', attempt_count = ${attempt}, lease_owner = ${workerId}, lease_expires_at = now() + INTERVAL '5 minutes', updated_at = now() WHERE id = ${candidate.id} RETURNING *`;
         const [post] = await tx`SELECT topic, hook, caption, call_to_action, hashtags, slides, render_files FROM social_post WHERE id = ${candidate.post_id}`;
         const requestFingerprint = hash({ postId: candidate.post_id, revisionId: candidate.revision_id, scheduledAt: candidate.scheduled_at, files: post.render_files });
-        await tx`INSERT INTO social_publish_attempt (job_id, attempt_number, request_fingerprint) VALUES (${candidate.id}, ${attempt}, ${requestFingerprint})`;
+        // A serialization retry can re-run this body after the row already exists, which
+        // raised a duplicate-key error on (job_id, attempt_number) and lost the publish.
+        // Refreshing the same attempt is safe: history is still append-only because the
+        // number always comes from max+1, so a genuinely new attempt gets a new row.
+        await tx`
+          INSERT INTO social_publish_attempt (job_id, attempt_number, request_fingerprint)
+          VALUES (${candidate.id}, ${attempt}, ${requestFingerprint})
+          ON CONFLICT (job_id, attempt_number)
+          DO UPDATE SET request_fingerprint = excluded.request_fingerprint, started_at = now()
+        `;
         return { ...claimed, post };
       });
       if (!job) return send(res, 200, { job: null });
