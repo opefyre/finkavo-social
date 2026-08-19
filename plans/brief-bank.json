@@ -10568,6 +10568,31 @@
         "canonicalUrl": "https://www.sns24.gov.pt/guia/direitos-e-deveres-do-utente/",
         "authority": "SNS 24"
       }
+    },
+    {
+      "id": "irs-the-automatic-deduction-every-employee-gets",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "The deduction every employee gets without a single receipt",
+      "userQuestion": "Is there a deduction on my salary I do not have to prove?",
+      "scenario": "An employee hunts for receipts to reduce their tax without realising a substantial deduction is applied automatically to employment income.",
+      "audience": "employees filing IRS",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The automatic deduction expressed as a multiple of the IAS, what happens when contributions exceed it, and the union dues uplift.",
+      "anchorFact": {
+        "claim": "Under artigo 25 of the Código do IRS category A employment income carries an automatic deduction of 8.54 times the value of the IAS, and where compulsory social security contributions exceed that amount the deduction becomes the total of those contributions; the deduction may be raised up to 75 per cent of 12 times the IAS where the difference results from professional-body dues required for the exclusive practice of the activity, and trade union contributions are deductible where they do not exceed 1 per cent of gross income, increased by 100 per cent.",
+        "kind": "figure",
+        "namedThing": "dedução específica",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs25.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "Union dues count for double, which is a rare uplift and one of the few deductions a worker can actively create.",
+      "journeyStage": "in_employment",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs25.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
