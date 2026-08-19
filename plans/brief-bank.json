@@ -10218,6 +10218,81 @@
         "canonicalUrl": "https://www.imt-ip.pt/veiculos/inspecao-de-veiculos/tipos-de-inspecoes/",
         "authority": "Instituto da Mobilidade e dos Transportes"
       }
+    },
+    {
+      "id": "irs-the-overall-ceiling-that-caps-every-deduction",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "The overall ceiling that caps all your deductions together",
+      "userQuestion": "Is there a limit on how much I can deduct in total?",
+      "scenario": "A household collects invoices all year expecting each category to add up, without knowing a single ceiling sits over all of them.",
+      "audience": "households claiming several IRS deductions",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The income bands that decide the overall deduction ceiling, the flat cap at the top, and the increase for larger families.",
+      "anchorFact": {
+        "claim": "Under artigo 78 of the Código do IRS deductions from the collection cover dependants and cohabiting ascendants, general family expenses, health and health insurance, education and training, property charges, alimony, invoice requirement, care homes, disability, international double taxation, tax benefits, the AIMI and domestic work; taxpayers whose taxable income falls within the first bracket have no overall limit, those above it face a formula-based limit, and those with income above the minimum of the first bracket of artigo 68-A are capped at 1,000 euros, with households of 3 or more dependants having the limits increased by 5 per cent per dependant.",
+        "kind": "figure",
+        "namedThing": "deduções à coleta",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs78.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "Lower earners face no overall cap at all, so the ceiling only starts biting as income rises and the deductions become worth less at the margin.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs78.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "iva-the-letting-exemption-and-what-falls-outside-it",
+      "pillar": "iva",
+      "valueClass": "edge_case",
+      "title": "Letting property is IVA exempt, until it is not",
+      "userQuestion": "Is renting out property subject to IVA?",
+      "scenario": "An owner letting parking or a hotel-style space applies the exemption that covers ordinary letting and is wrong.",
+      "audience": "people letting property or space",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The letting exemption in the IVA code and the five kinds of letting expressly carved out of it.",
+      "anchorFact": {
+        "claim": "Under artigo 9 of the Código do IVA the locação de bens imóveis is exempt, with express exclusions that remain taxable: hotel-type accommodation, letting of space for parking vehicles, letting of installed machinery and equipment, letting of safes, and letting of space for advertising.",
+        "kind": "instrument",
+        "namedThing": "locação de bens imóveis",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/iva9.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "A garage let separately from a home falls outside the exemption, which is where owners most often get the treatment wrong.",
+      "journeyStage": "renting_out",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/iva9.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "iva-the-exemption-for-your-own-written-work",
+      "pillar": "iva",
+      "valueClass": "insider",
+      "title": "Selling your own book is exempt from IVA",
+      "userQuestion": "Do I have to charge IVA on work I created myself?",
+      "scenario": "An author selling their own edition charges IVA they did not need to, or registers for a regime that does not apply to them.",
+      "audience": "authors and creators selling their own work",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The exemption for an author transmitting copies of their own published work, alongside the health and teaching exemptions in the same article.",
+      "anchorFact": {
+        "claim": "Under artigo 9 of the Código do IVA the transmission of copies of any literary, scientific, technical or artistic work published in bibliographic form by the author is exempt, in the same article that exempts medical and health services provided by hospitals, clinics and health professionals, teaching services from recognised establishments, professional training by public or accredited bodies, and services provided by funeral and cremation companies.",
+        "kind": "instrument",
+        "namedThing": "obra literária",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/iva9.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The exemption follows the author selling their own edition rather than the book as a product, so the same title is treated differently in a shop.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/iva9.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
