@@ -6143,6 +6143,56 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00324.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "iva-waiving-the-letting-exemption-needs-a-ratio",
+      "pillar": "iva",
+      "valueClass": "threshold",
+      "title": "The rent-to-value ratio that lets a landlord charge IVA",
+      "userQuestion": "Can I charge IVA on a commercial letting and deduct what I spend?",
+      "scenario": "A landlord refurbishing a unit for a business tenant absorbs the IVA on the works, not knowing the exemption can be waived.",
+      "audience": "landlords letting to businesses",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "What waiving the IVA exemption unlocks, the certificate it requires, and the two conditions including the rent ratio.",
+      "anchorFact": {
+        "claim": "Under the Decreto-Lei n.º 21/2007 a taxable person wishing to waive the IVA exemption on immovable property must ask the Autoridade Tributária for a certificado de renúncia; the waiver is admissible where the property is used for activities giving a right to deduct IVA and, in the case of letting, where the annual rent is equal to or greater than 25ths of the property's acquisition or construction value, and those who waive gain the right to deduct the tax borne on that property.",
+        "kind": "instrument",
+        "namedThing": "certificado de renúncia",
+        "verifyAt": "https://www.gov.pt/servicos/iva-certificado-de-renuncia",
+        "volatility": "stable"
+      },
+      "notObvious": "The rent has to clear a fraction of what the property cost, so a below-market rent to a friendly tenant can quietly disqualify the deduction on the works.",
+      "journeyStage": "renting_out",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/iva-certificado-de-renuncia",
+        "authority": "gov.pt / Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "identity-logging-in-with-another-countrys-eid",
+      "pillar": "identity_access",
+      "valueClass": "insider",
+      "title": "Using another country's digital ID to log in here",
+      "userQuestion": "Can I access Portuguese public services before I have a Chave Móvel Digital?",
+      "scenario": "A newly arrived EU citizen waits weeks for a Portuguese credential while holding a national eID that already works.",
+      "audience": "EU citizens new to Portugal",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The European authentication route into Portuguese public services, and the date from which it has been available.",
+      "anchorFact": {
+        "claim": "Under the eIDAS interoperability platform, since 29 September 2018 an EU citizen holding a notified national eID can access any public service online in any Member State, and Autenticação Europeia lets citizens of participating Member States confirm their identity to reach online services provided by Portuguese public entities.",
+        "kind": "artefact",
+        "namedThing": "Autenticação Europeia",
+        "verifyAt": "https://www.autenticacao.gov.pt/outros-meios/autenticacao-europeia",
+        "volatility": "stable"
+      },
+      "notObvious": "The credential you already own may be accepted here on day one, which removes the usual wait before anything official can be done online.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.autenticacao.gov.pt/outros-meios/autenticacao-europeia",
+        "authority": "Autenticação.gov / AMA"
+      }
     }
   ]
 }
