@@ -7568,6 +7568,56 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimi/Pages/cimi38.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "banking-the-mortgage-life-policy-you-can-buy-elsewhere",
+      "pillar": "banking_money",
+      "valueClass": "insider",
+      "title": "The mortgage insurance the bank cannot make you buy from them",
+      "userQuestion": "Do I have to take the life insurance my bank is selling with the mortgage?",
+      "scenario": "A borrower accepts the bank's own life policy for the whole term of the loan without ever comparing it, because it arrived bundled with the offer.",
+      "audience": "people taking out or holding a mortgage",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Whether the life cover is compulsory, your right to buy it elsewhere or use one you already hold, and what happens if you move the loan.",
+      "anchorFact": {
+        "claim": "A crédito à habitação contract is conditional on taking out a seguro de vida, but the customer has the right to choose the insurer they prefer or to give as security 1 or more life policies they already hold, provided these meet the minimum requirements set by the credit institution, and the customer may transfer the loan to another credit institution using the same life insurance contract as security.",
+        "kind": "procedure",
+        "namedThing": "seguro de vida",
+        "verifyAt": "https://www.asf.com.pt/pt/w/contrato-de-seguro-de-vida-associado-ao-cr%C3%A9dito-%C3%A0-habita%C3%A7%C3%A3o",
+        "volatility": "stable"
+      },
+      "notObvious": "The cover is compulsory but the seller is not, and the same policy can follow the loan to a different bank.",
+      "journeyStage": "buying_a_home",
+      "source": {
+        "canonicalUrl": "https://www.asf.com.pt/pt/w/contrato-de-seguro-de-vida-associado-ao-cr%C3%A9dito-%C3%A0-habita%C3%A7%C3%A3o",
+        "authority": "Autoridade de Supervisão de Seguros e Fundos de Pensões"
+      }
+    },
+    {
+      "id": "housing-only-one-home-insurance-is-actually-compulsory",
+      "pillar": "housing_property",
+      "valueClass": "edge_case",
+      "title": "Only one home insurance is compulsory, and it is not the one sold to you",
+      "userQuestion": "Is home insurance obligatory in Portugal?",
+      "scenario": "An owner buys a full multi-risk policy believing the law requires it, or skips fire cover on a flat where it is actually required.",
+      "audience": "owners of a flat or a house",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The single compulsory home insurance and who it applies to, what it must cover, and what the multi-risk policy adds on top.",
+      "anchorFact": {
+        "claim": "For housing the only compulsory insurance is seguro de incêndio, and only for buildings under propriedade horizontal, meaning buildings divided into apartments; it must cover each autonomous fraction and the common parts such as roof, stairs, lifts and garage according to the permilagem of each fraction, and must be contracted by the owners of each fraction, while the seguro multirriscos adds optional cover for damage to the property or its contents from risks other than fire such as flooding, storms and electrical risks, and may include civil liability.",
+        "kind": "procedure",
+        "namedThing": "seguro de incêndio",
+        "verifyAt": "https://www.consumidor.asf.com.pt/pt/seguros/seguro-de-habita%c3%a7%c3%a3o",
+        "volatility": "stable"
+      },
+      "notObvious": "A detached house has no compulsory insurance at all, and the compulsory one in a flat covers the shared roof and lifts as well as your own walls.",
+      "journeyStage": "buying_a_home",
+      "source": {
+        "canonicalUrl": "https://www.consumidor.asf.com.pt/pt/seguros/seguro-de-habita%c3%a7%c3%a3o",
+        "authority": "Autoridade de Supervisão de Seguros e Fundos de Pensões"
+      }
     }
   ]
 }
