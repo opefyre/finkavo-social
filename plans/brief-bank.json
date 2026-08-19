@@ -62,12 +62,12 @@
       "audience": "property owners receiving their first IMI notice",
       "promise": "The two euro thresholds that decide how many instalments you get, the months they fall in, and when paying early is allowed.",
       "anchorFact": {
-        "claim": "IMI is paid in a single instalment up to a lower euro threshold, in two instalments between the lower and upper thresholds, and in three instalments above the upper threshold, in the months set by the annual fiscal calendar.",
+        "claim": "IMI is paid in a single instalment by 31 May where the amount due is 100 euros or less, in two instalments due 31 May and 30 November where it is between 100 and 500 euros, and in three instalments due 31 May, 31 August and 30 November where it exceeds 500 euros; the taxpayer may instead pay the whole amount at once using the reference sent in May.",
         "kind": "figure",
         "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx",
         "volatility": "annual"
       },
-      "notObvious": "The split is presented as arbitrary in most explanations; naming the exact thresholds lets a reader predict their own bill before it arrives.",
+      "notObvious": "The May letter carries a reference for the full amount as well as the first instalment, so paying everything early is a choice the notice does not spell out.",
       "journeyStage": "renting_buying_moving",
       "source": {
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx",
@@ -1554,9 +1554,9 @@
       "audience": "families claiming abono de família for the first time",
       "risk": "high",
       "volatility": "annual",
-      "promise": "What late application costs you, the income check that happens automatically, and the reassessment you can now request online.",
+      "promise": "The six-month window that backdates the allowance to the birth, and what a later claim costs in months.",
       "anchorFact": {
-        "claim": "Where abono de família is not requested within the specified period, entitlement runs only from the month following submission of the request, and the household income bracket is confirmed automatically each year between Segurança Social and the Autoridade Tributária.",
+        "claim": "Where abono de família is requested within 6 months of the child's birth, entitlement runs from the month following the birth; where it is not requested within that period, entitlement runs only from the month following submission of the request, and the household income bracket is confirmed automatically each year between Segurança Social and the Autoridade Tributária.",
         "kind": "deadline",
         "namedThing": "abono de família",
         "verifyAt": "https://www2.gov.pt/servicos/requerer-o-abono-de-familia-para-criancas-e-jovens",

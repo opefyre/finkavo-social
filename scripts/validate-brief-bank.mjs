@@ -37,17 +37,25 @@ const REQUIRED = [
 // declares which kind of anchor it carries and the validator holds it to that kind.
 // This is deliberately explicit: a loose "any of these signals" check let definitional
 // claims pass as anchors.
+const NUMERAL = /\d|\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|fifty|sixty|ninety|hundred|thousand)\b/i;
+const MONTH = /\b(January|February|March|April|May|June|July|August|September|October|November|December)\b/;
+
 const ANCHOR_KINDS = {
   // a figure, rate, bracket or count
   figure: {
-    // (?:s|es|ed)? so that "percentages", "limited" and "rates" still count as signals
-    test: claim => /\d/.test(claim) || /\b(threshold|ceiling|limit|rate|percentage|bracket|cap|instalment)(?:s|es|ed)?\b/i.test(claim),
-    requirement: "a figure, rate, bracket or named limit",
+    // A numeral, spelled or written. The earlier version also accepted words like
+    // "ceiling" and "limit" as signals, which let claims such as "exempt up to a
+    // published price ceiling" pass as anchors while withholding the only thing a
+    // reader needs. If the kind is figure, the figure has to be in the claim.
+    test: claim => NUMERAL.test(claim),
+    requirement: "an actual figure — a numeral or a spelled-out number, not the word for one",
   },
   // a date, window or period
   deadline: {
-    test: claim => /\d/.test(claim) || /\b(deadline|window|period|within|annual|quarterly|monthly)(?:s|ly)?\b/i.test(claim),
-    requirement: "a date, window or named period",
+    // A numeral or a named month: "by the last day of January, April, July and
+    // October" is a real deadline. Bare "within the specified period" is not.
+    test: claim => NUMERAL.test(claim) || MONTH.test(claim),
+    requirement: "a date, a numeral or a named month — not the word \"period\" standing in for one",
   },
   // a citable legal instrument
   instrument: {
