@@ -10643,6 +10643,31 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs78b.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "irs-rent-and-mortgage-interest-both-deduct-at-fifteen",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "Rent and old mortgage interest, both at fifteen per cent",
+      "userQuestion": "Can I deduct my rent, or my mortgage interest?",
+      "scenario": "A tenant or an owner with an old loan claims nothing, or claims the wrong ceiling for their income.",
+      "audience": "tenants and holders of pre-2011 mortgages",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The percentage and ceiling for rent on a permanent home, the same for interest on a pre-2011 loan, and the higher ceilings for lower incomes.",
+      "anchorFact": {
+        "claim": "Under artigo 78-E of the Código do IRS 15 per cent of rent paid on a permanent home is deductible up to 800 euros, rising to 1,100 euros for households whose income falls at or below the first tax bracket, and 15 per cent of interest on mortgages contracted before 2011 is deductible up to 296 euros, rising to 450 euros on the same income condition, with the increases to the rent deduction being phased in at 50 per cent in 2025 and 75 per cent in 2026.",
+        "kind": "figure",
+        "namedThing": "encargos com imóveis",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs78e.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The higher ceilings are phased in rather than immediate, so the figure a lower-income tenant can actually claim this year is not the headline one.",
+      "journeyStage": "renting",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs78e.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
