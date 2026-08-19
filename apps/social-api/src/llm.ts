@@ -57,6 +57,96 @@ const MIN_COMPLETION_TOKENS = 2_600;
 
 const estimateTokens = (text: string) => Math.ceil(text.length / CHARS_PER_TOKEN);
 
+// ---------------------------------------------------------------------------------
+// Pacing.
+//
+// The free tier is a rolling per-minute allowance, and nothing here used to watch it:
+// requests went out back to back and the first sign of trouble was a 429 that had
+// already cost a generation attempt. A burst of three repairs for one topic can spend
+// the whole minute in seconds, so the fix is to hold a request at the door until the
+// window can afford it rather than to apologise for it afterwards.
+//
+// Waits are only taken inline when they are short. A caller is an open HTTP request from
+// n8n, so blocking it for the eleven minutes a daily-quota reset can ask for would time
+// the trigger out and lose the work. Anything longer than PACING_MAX_INLINE_WAIT_MS is
+// raised as a rate-limit error instead, which the server already treats as a deferral:
+// the concept keeps its repair attempts and is picked up on the next tick.
+const REQUESTS_PER_MINUTE = Number(process.env.LLM_REQUESTS_PER_MINUTE ?? 25);
+const PACING_MAX_INLINE_WAIT_MS = Number(process.env.LLM_MAX_INLINE_WAIT_MS ?? 45_000);
+const PACING_MIN_GAP_MS = Number(process.env.LLM_MIN_GAP_MS ?? 1_200);
+const WINDOW_MS = 60_000;
+
+type Spend = { at: number; tokens: number };
+let spends: Spend[] = [];
+let lastCallAt = 0;
+/** Set when the provider itself tells us to back off; no request goes out before it. */
+let providerBlockedUntil = 0;
+/** Requests queue rather than race: two callers must not both read the same free window. */
+let gate: Promise<unknown> = Promise.resolve();
+
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+function windowState(now: number) {
+  spends = spends.filter(spend => now - spend.at < WINDOW_MS);
+  return {
+    tokens: spends.reduce((total, spend) => total + spend.tokens, 0),
+    requests: spends.length,
+    oldest: spends.length ? spends[0].at : now,
+  };
+}
+
+/** Milliseconds until this request fits the window, or 0 if it fits now. */
+function waitFor(estimated: number, now: number): number {
+  if (now < providerBlockedUntil) return providerBlockedUntil - now;
+  const { tokens, requests, oldest } = windowState(now);
+  const overTokens = tokens + estimated > TOKENS_PER_MINUTE - SAFETY_MARGIN;
+  const overRequests = requests + 1 > REQUESTS_PER_MINUTE;
+  if (!overTokens && !overRequests) {
+    const gap = PACING_MIN_GAP_MS - (now - lastCallAt);
+    return gap > 0 && lastCallAt > 0 ? gap : 0;
+  }
+  // The window frees up as the oldest spend ages out of it.
+  return Math.max(250, WINDOW_MS - (now - oldest) + 250);
+}
+
+/**
+ * Holds the caller until the per-minute allowance can afford `estimated` tokens, then
+ * records the reservation. Serialised so concurrent callers cannot both claim the same
+ * headroom. Returns a settle() to reconcile the reservation against real usage.
+ */
+async function reserve(estimated: number): Promise<(actual: number | null) => void> {
+  const claim = gate.then(async () => {
+    for (;;) {
+      const now = Date.now();
+      const wait = waitFor(estimated, now);
+      if (wait === 0) break;
+      if (wait > PACING_MAX_INLINE_WAIT_MS) {
+        throw new LlmRateLimitError(
+          `paced locally: the ${TOKENS_PER_MINUTE}-token minute needs ${Math.ceil(wait / 1000)}s before this request fits`,
+          Math.ceil(wait / 1000),
+        );
+      }
+      await sleep(wait);
+    }
+    const at = Date.now();
+    lastCallAt = at;
+    const spend: Spend = { at, tokens: estimated };
+    spends.push(spend);
+    return spend;
+  });
+  // Keep the queue intact even when this caller gives up, so the next one still waits.
+  gate = claim.catch(() => undefined);
+  const spend = await claim;
+  return (actual: number | null) => {
+    if (actual !== null && Number.isFinite(actual)) spend.tokens = actual;
+  };
+}
+
+/** Called when the provider returns a pacing signal, so every caller backs off, not one. */
+function blockProvider(seconds: number) {
+  providerBlockedUntil = Math.max(providerBlockedUntil, Date.now() + Math.max(1, seconds) * 1000);
+}
+
 /**
  * Largest completion the provider will accept alongside this input. Falls back to a
  * floor rather than zero: if the input is so large that nothing fits, the request should
@@ -92,22 +182,39 @@ export async function generateStructured(
 ): Promise<{ text: string; model: string }> {
   // The free tier's ceiling is per minute, so a burst — an initial generation plus two
   // repairs for the same topic — can exhaust it in seconds even though the daily volume
-  // is tiny. Waiting out the window is the correct response: failing here would instead
-  // consume one of the topic's limited repair attempts for a non-editorial reason.
-  try {
-    return await callProvider(request, config);
-  } catch (error) {
-    if (!(error instanceof LlmRateLimitError)) throw error;
-    const waitSeconds = Math.min(error.retryAfterSeconds ?? 65, 120);
-    await new Promise(resolve => setTimeout(resolve, waitSeconds * 1000));
-    return callProvider(request, config);
+  // is tiny. The request is now paced before it is sent rather than after it is refused;
+  // a 429 that still gets through backs every caller off, not just this one.
+  const estimated = estimateTokens(request.instructions) + estimateTokens(request.input)
+    + (request.schema ? estimateTokens(JSON.stringify(request.schema)) : 0)
+    + completionBudget(request);
+
+  for (let attempt = 1; ; attempt++) {
+    const settle = await reserve(estimated);
+    try {
+      const result = await callProvider(request, config);
+      settle(result.totalTokens);
+      return { text: result.text, model: result.model };
+    } catch (error) {
+      // A refused request still cost the provider nothing, so release the reservation.
+      settle(0);
+      if (!(error instanceof LlmRateLimitError)) throw error;
+      blockProvider(error.retryAfterSeconds ?? 65);
+      // One inline retry, and only when the wait is short enough to hold the caller for.
+      const waitMs = Math.max(0, providerBlockedUntilMs() - Date.now());
+      if (attempt >= 2 || waitMs > PACING_MAX_INLINE_WAIT_MS) throw error;
+    }
   }
+}
+
+/** Exposed for the retry decision above; the value itself stays private to the gate. */
+function providerBlockedUntilMs(): number {
+  return providerBlockedUntil;
 }
 
 async function callProvider(
   request: StructuredRequest,
   config: LlmConfig,
-): Promise<{ text: string; model: string }> {
+): Promise<{ text: string; model: string; totalTokens: number | null }> {
   const timeout = AbortSignal.timeout(request.timeoutMs ?? 90_000);
 
   if (config.provider === "openai") {
@@ -130,7 +237,7 @@ async function callProvider(
     const text = result.output_text
       ?? result.output?.flatMap(item => item.content ?? []).find(item => item.type === "output_text")?.text;
     if (!text) throw new Error(`${config.provider} returned no structured output`);
-    return { text, model: config.model };
+    return { text, model: config.model, totalTokens: null };
   }
 
   // Groq exposes an OpenAI-compatible chat/completions endpoint.
@@ -159,10 +266,16 @@ async function callProvider(
     signal: timeout,
   });
   if (!response.ok) throw new Error(await describeFailure(response, config));
-  const result = await response.json() as { choices?: Array<{ message?: { content?: string } }> };
+  const result = await response.json() as {
+    choices?: Array<{ message?: { content?: string } }>;
+    usage?: { total_tokens?: number };
+  };
   const text = result.choices?.[0]?.message?.content;
   if (!text) throw new Error(`${config.provider} returned no structured output`);
-  return { text, model: config.model };
+  // Groq reports what the call really cost. Trusting it over the estimate keeps the
+  // window honest: the estimate reserves the completion ceiling, which is usually far
+  // more than the model actually writes.
+  return { text, model: config.model, totalTokens: result.usage?.total_tokens ?? null };
 }
 
 // Rate limits are a normal operating condition on a free tier, so they must stay
