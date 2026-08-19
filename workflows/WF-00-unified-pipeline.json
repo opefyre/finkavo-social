@@ -1,0 +1,78 @@
+{
+  "name": "Finkavo Social — Unified Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "* * * * *" }] }
+      },
+      "id": "unified-tick",
+      "name": "Every minute (Lisbon)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-420, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Single scheduler for the whole pipeline.\n//\n// Nine separate workflows each carried their own cron. That made the daily order\n// implicit, spread retry behaviour across graphs, and meant a schedule change needed\n// edits in several places. Here one tick decides what is due, and n8n runs the emitted\n// items through the HTTP node in order, so the morning sequence is explicit.\n//\n// All business logic lives behind the Social API; this node only decides *when*.\n\nconst now = new Date();\nconst parts = new Intl.DateTimeFormat('en-GB', {\n  timeZone: 'Europe/Lisbon', hour12: false,\n  weekday: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit',\n}).formatToParts(now).reduce((acc, p) => (acc[p.type] = p.value, acc), {});\n\nconst hour = Number(parts.hour);\nconst minute = Number(parts.minute);\nconst day = Number(parts.day);\nconst weekday = parts.weekday;\nconst minutes = hour * 60 + minute;\n\nconst due = [];\nconst add = (job, path, body, timeout) => due.push({ json: { job, path, body: body ?? {}, timeout: timeout ?? 120000 } });\n\n// --- 08:00 daily planning, in order -----------------------------------------\n// These must run as a sequence: sync occasions, select the day, build evidence,\n// then resolve holds and the flexible news slot.\nif (hour === 8 && minute === 0) {\n  add('planning.sync', '/v1/planning/sync', {}, 180000);\n  add('planning.daily', '/v1/planning/daily', {}, 300000);\n  add('evidence.research', '/v1/evidence/research', {}, 300000);\n  add('reserve.replace-held', '/v1/reserve/replace-held', {}, 180000);\n  add('news.decide-flex-slot', '/v1/news/decide-flex-slot', {}, 180000);\n}\n\n// --- generation and recovery -------------------------------------------------\n// Every 5 minutes across the working day. The API returns a no-op when a run is\n// already in flight, so overlap is not an error.\nif (hour >= 8 && hour <= 20 && minute % 5 === 2) {\n  add('generation.recover-day', '/v1/generation/recover-day',\n    { target: 5, maxRounds: 1, maxConcepts: 1, dailyAttemptBudget: 12 }, 300000);\n}\n\n// --- review delivery safety net ----------------------------------------------\n// Recovery sends new drafts to Discord itself; this only catches stragglers.\nif (hour === 8 && minute >= 10 && minute <= 55 && minute % 5 === 0) {\n  add('review.request-pending', '/v1/review/request-pending', {}, 180000);\n}\n\n// --- publishing loop ----------------------------------------------------------\n// Every 2 minutes: advance approved work, hand at most one post to Buffer, then\n// reconcile provider state. Buffer pacing is enforced inside the API.\nif (minutes % 2 === 0) {\n  add('automation.advance', '/v1/automation/advance', {}, 120000);\n  add('publish.process', '/v1/publish-jobs/process', {}, 120000);\n  add('publish.monitor', '/v1/publish-jobs/monitor', {}, 120000);\n}\n\n// --- discovery and official monitoring ----------------------------------------\nif (minute === 15 && hour % 3 === 0) add('discovery.rss', '/v1/discovery/rss', {}, 180000);\nif (minute === 45 && hour % 3 === 0) add('official.monitor', '/v1/official-sources/monitor', {}, 300000);\nif (minute === 30 && hour % 2 === 0) add('verification.triage', '/v1/verification/triage', {}, 180000);\nif (minute === 50 && hour % 3 === 0) add('news.dispatch-recent', '/v1/news/dispatch-recent', {}, 300000);\n\n// --- operations ---------------------------------------------------------------\nif (minute % 15 === 0) add('alerts.check', '/v1/alerts/check', {}, 120000);\nif (hour === 9 && minute === 0) add('reports.daily', '/v1/reports/daily', {}, 180000);\nif (weekday === 'Mon' && hour === 7 && minute === 0) add('maintenance.weekly', '/v1/maintenance/weekly', {}, 300000);\nif (day === 1 && hour === 7 && minute === 0) add('maintenance.monthly', '/v1/maintenance/monthly', {}, 300000);\n\nreturn due;\n"
+      },
+      "id": "unified-router",
+      "name": "Which jobs are due",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-200, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://127.0.0.1:4320{{ $json.path }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify($json.body) }}",
+        "options": {
+          "timeout": "={{ $json.timeout }}",
+          "response": { "response": { "neverError": true, "fullResponse": true } }
+        }
+      },
+      "id": "unified-call",
+      "name": "Run due job",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [40, 0],
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpBearerAuth": { "id": "socialApiBearer01", "name": "Finkavo Social API" }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// The HTTP node is set to neverError so that one failing job cannot abort the\n// remaining due jobs in the same tick. Real failures are re-raised here, after every\n// job has had its turn, and expected no-ops are allowed through quietly.\n//\n// A 409 from generation means a recovery run is already in flight for the date. That is\n// the overlap guard doing its job, not a fault: booking it as a failed execution is what\n// made WF-04 contribute a steady stream of false errors to the n8n failure rate.\nconst results = $input.all().map(item => {\n  const status = Number(item.json.statusCode ?? 0);\n  const job = item.json.job ?? 'unknown';\n  return { job, status, body: item.json.body };\n});\n\nconst benign = results.filter(r => r.status === 409 || r.status === 204);\nconst failed = results.filter(r => r.status && (r.status < 200 || r.status >= 300) && r.status !== 409 && r.status !== 204);\nconst ok = results.filter(r => r.status >= 200 && r.status < 300);\n\nif (failed.length) {\n  const detail = failed.map(r => `${r.job} -> ${r.status} ${JSON.stringify(r.body).slice(0, 200)}`).join(' | ');\n  throw new Error(`${failed.length} job(s) failed: ${detail}`);\n}\n\nreturn [{ json: { ran: results.length, ok: ok.length, skipped: benign.length, jobs: results.map(r => `${r.job}:${r.status}`) } }];\n"
+      },
+      "id": "unified-outcome",
+      "name": "Raise real failures only",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [280, 0]
+    }
+  ],
+  "connections": {
+    "Every minute (Lisbon)": {
+      "main": [[{ "node": "Which jobs are due", "type": "main", "index": 0 }]]
+    },
+    "Which jobs are due": {
+      "main": [[{ "node": "Run due job", "type": "main", "index": 0 }]]
+    },
+    "Run due job": {
+      "main": [[{ "node": "Raise real failures only", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "timezone": "Europe/Lisbon"
+  },
+  "active": false,
+  "tags": []
+}

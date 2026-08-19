@@ -20,6 +20,7 @@ import { authenticatedReviewer } from "./access-auth.js";
 import { findDuplicate, type DuplicateCandidate } from "./duplicate.js";
 import { editorialIdentity } from "./editorial-identity.js";
 import { eligibleReserveCards, loadEvergreenReserve } from "./evergreen-reserve.js";
+import { collectDiscoveries, collectOfficialPages } from "./collectors.js";
 import { sourceSupportsNewsTopic } from "./news-evidence.js";
 import { editorialScore } from "./editorial-score.js";
 import { boardPage } from "./board.js";
@@ -776,6 +777,42 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { received: items.length, inserted, duplicates: items.length - inserted });
     }
 
+    // Fetches the discovery feeds and stores what is new. Previously an n8n graph of
+    // Code + rssFeedRead nodes; folding it here lets the scheduler be a single workflow.
+    if (req.method === "POST" && url.pathname === "/v1/discovery/rss") {
+      const { items, failures, feedsChecked } = await collectDiscoveries();
+      if (!items.length) {
+        // An empty window is normal for a four-hour cutoff and must not read as failure.
+        await sql`INSERT INTO social_event (event_type, payload) VALUES ('discovery.empty', ${sql.json({ feedsChecked, failures })})`;
+        return send(res, 200, { feedsChecked, received: 0, inserted: 0, failures });
+      }
+      const stored = await internalApi("POST", "/v1/discoveries", { items, sourceKind: "news_discovery" });
+      if (!stored.ok) return send(res, 502, { error: "Failed to store discoveries", detail: stored.result, failures });
+      return send(res, 200, { feedsChecked, failures, ...stored.result });
+    }
+
+    // Fetches each monitored canonical page and records a snapshot. An individual page
+    // being unusable is reported per URL rather than failing the whole run, so one dead
+    // government page cannot stop change detection on the other five.
+    if (req.method === "POST" && url.pathname === "/v1/official-sources/monitor") {
+      const pages = await collectOfficialPages();
+      const results: Array<Record<string, unknown>> = [];
+      for (const page of pages) {
+        if (!page.body) {
+          results.push({ url: page.url, ok: false, error: (page as { error?: string }).error ?? `HTTP ${page.httpStatus}` });
+          continue;
+        }
+        const snapshot = await internalApi("POST", "/v1/official-sources/snapshot", {
+          url: page.url, httpStatus: page.httpStatus, body: page.body, fetchedAt: page.fetchedAt,
+        });
+        results.push({ url: page.url, ok: snapshot.ok, ...(snapshot.ok ? snapshot.result : { error: snapshot.result }) });
+      }
+      const changed = results.filter(item => item.changed).length;
+      const failed = results.filter(item => item.ok === false).length;
+      await sql`INSERT INTO social_event (event_type, payload) VALUES ('official_source.monitored', ${sql.json({ checked: results.length, changed, failed })})`;
+      return send(res, 200, { checked: results.length, changed, failed, results });
+    }
+
     if (req.method === "GET" && url.pathname === "/v1/discoveries") {
       const rows = await sql`SELECT id, canonical_url, title, publisher, locale, published_at, source_kind, evidence_state, category, risk_level, created_at FROM social_discovery ORDER BY COALESCE(published_at, created_at) DESC LIMIT 100`;
       return send(res, 200, { discoveries: rows });
@@ -1039,6 +1076,28 @@ const server = http.createServer(async (req, res) => {
       } finally {
         recoveryDaysInProgress.delete(day);
       }
+    }
+
+    // Idempotent safety net: sends any of today's drafts that recovery did not already
+    // hand to review. Replaces the WF-05 graph (GET posts -> Code -> IF -> POST review),
+    // so the scheduler no longer needs branching. An empty queue is a normal no-op.
+    if (req.method === "POST" && url.pathname === "/v1/review/request-pending") {
+      const day = lisbonDate(new Date());
+      const drafts = await sql`SELECT id FROM social_post WHERE planned_for=${day} AND status='draft' ORDER BY created_at`;
+      if (!drafts.length) return send(res, 200, { date: day, pending: 0, requested: 0, results: [] });
+      const results: Array<{ postId: string; ok: boolean; status: number; error: string | null }> = [];
+      for (const draft of drafts) {
+        const reviewed = await internalApi("POST", `/v1/posts/${draft.id}/request-review`, { expiresInMinutes: 180 });
+        results.push({
+          postId: String(draft.id),
+          ok: reviewed.ok,
+          status: reviewed.status,
+          error: reviewed.ok ? null : String(reviewed.result.error || "review request failed"),
+        });
+      }
+      const failures = results.filter(item => !item.ok).length;
+      await sql`INSERT INTO social_event (event_type, payload) VALUES ('review.request_pending', ${sql.json({ date: day, pending: drafts.length, failures })})`;
+      return send(res, 200, { date: day, pending: drafts.length, requested: results.length - failures, failures, results });
     }
 
     if (req.method === "GET" && url.pathname === "/v1/posts") {
