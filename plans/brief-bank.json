@@ -3471,7 +3471,7 @@
       "volatility": "stable",
       "promise": "Where the certificate is requested, the thirty-day window after three months, the cost, and how long it lasts.",
       "anchorFact": {
-        "claim": "An EU, EEA or Swiss national staying longer than three months must request the certificado de registo at the câmara municipal of their area of residence within 30 days after the first three months in national territory; it costs 15 euros, or 7.50 euros for children under 6, and is valid for 5 years.",
+        "claim": "An EU, EEA or Swiss national staying longer than three months must request the certificado de registo at the câmara municipal of their area of residence within 30 days after the first three months in national territory; it costs 15 euros, or 7.50 euros for children under 6, and is valid for 5 years; remaining in Portugal for more than three months without requesting it can bring a fine of 400 to 1,500 euros.",
         "kind": "deadline",
         "namedThing": "certificado de registo",
         "verifyAt": "https://www2.gov.pt/pt/servicos/pedir-o-certificado-de-registo-para-cidadao-da-ue/eee/suica",
@@ -9492,6 +9492,106 @@
       "source": {
         "canonicalUrl": "https://www.gov.pt/guias/regras-de-transito-e-mobilidade-em-portugal",
         "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "immigration-two-years-away-ends-permanent-residence",
+      "pillar": "immigration_residency",
+      "valueClass": "costly_mistake",
+      "title": "Two years away ends a permanent residence right",
+      "userQuestion": "Can I lose permanent residence by spending time abroad?",
+      "scenario": "Someone with settled status takes a long posting or returns to family abroad, and finds the right they spent five years earning has lapsed.",
+      "audience": "holders of EU permanent residence in Portugal",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The absence that ends permanent residence, the ten-year document that still needs renewing, and the fine for staying on an expired card.",
+      "anchorFact": {
+        "claim": "An EU citizen or their family member loses an acquired right of permanent residence on being absent from Portugal for more than 2 consecutive years; the permanent residence certificate or card costs 15 euros, is valid for 10 years and must be renewed before it expires, and non-EU family members who remain in Portugal after their permanent residence card expires can be fined between 400 and 1,500 euros.",
+        "kind": "figure",
+        "namedThing": "residência permanente",
+        "verifyAt": "https://www.gov.pt/guias/residir-em-portugal",
+        "volatility": "stable"
+      },
+      "notObvious": "The right is lost by absence rather than by paperwork, so a card that is still valid does not prove a right that two years abroad has already ended.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/residir-em-portugal",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "immigration-three-days-to-report-an-uncontrolled-entry",
+      "pillar": "immigration_residency",
+      "valueClass": "deadline_action",
+      "title": "Three working days to report entering by an uncontrolled border",
+      "userQuestion": "Do I have to tell anyone I arrived if nobody checked my passport?",
+      "scenario": "Someone arrives overland with no border check, assumes nothing is required, and is in breach from the fourth day.",
+      "audience": "non-EU nationals entering Portugal overland",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Who must report their presence and by when, the exemption for longer-term permit holders, and the case where the hotel does it for you.",
+      "anchorFact": {
+        "claim": "People without European nationality who enter national territory through an uncontrolled border must report their presence to the immigration service within 3 working days, unless they already hold a residence or stay authorisation for more than 6 months; where the person stays in a hotel or similar establishment after entry the obligation to make that communication falls on the establishment, and EU citizens do not need to report their presence at all.",
+        "kind": "deadline",
+        "namedThing": "comunicação de presença",
+        "verifyAt": "https://www.gov.pt/guias/residir-em-portugal",
+        "volatility": "stable"
+      },
+      "notObvious": "Checking into a hotel discharges the duty for you, which is why the obligation usually bites on people staying privately with friends or family.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/residir-em-portugal",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "citizenship-the-two-clocks-around-a-wedding-date",
+      "pillar": "citizenship_civil",
+      "valueClass": "deadline_action",
+      "title": "One month before and six months after, around a wedding",
+      "userQuestion": "How far ahead do we have to start the paperwork to marry?",
+      "scenario": "A couple books a venue and starts the registry process too late, or lets an authorised marriage lapse while waiting for a date.",
+      "audience": "couples planning to marry in Portugal",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The notice the registry process needs, the window the authorised marriage must happen in, and the age rules including the exception.",
+      "anchorFact": {
+        "claim": "The casamento process must be started at least 1 month before the intended date and the marriage must take place within 6 months of being authorised; as a rule people over 18 who are not first-degree relatives and have no other legal impediment may marry, and marriage from 16 is possible with the authorisation of the parents or guardian or where the conservatória do registo civil dispenses with that authorisation, while below that age marriage is not permitted.",
+        "kind": "deadline",
+        "namedThing": "casamento",
+        "verifyAt": "https://www.gov.pt/guias/casar-ou-viver-em-uniao-de-facto",
+        "volatility": "stable"
+      },
+      "notObvious": "Authorisation expires as well as taking time to obtain, so a long engagement after approval can quietly void the process.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/casar-ou-viver-em-uniao-de-facto",
+        "authority": "gov.pt / Instituto dos Registos e do Notariado"
+      }
+    },
+    {
+      "id": "citizenship-marrying-a-foreign-national-needs-a-fresh-certificate",
+      "pillar": "citizenship_civil",
+      "valueClass": "edge_case",
+      "title": "A foreign spouse needs a certificate less than six months old",
+      "userQuestion": "What extra document do we need if one of us is not Portuguese?",
+      "scenario": "A couple gathers documents over a long engagement and the foreign partner's capacity certificate ages past six months before the process starts.",
+      "audience": "couples where one partner is a foreign national",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The additional proof a foreign partner must produce, who issues it, and the age limit on the document.",
+      "anchorFact": {
+        "claim": "The rules for a marriage between two Portuguese citizens are the same as for a marriage between a Portuguese and a foreign citizen, except that the foreign person must prove they are able to marry by presenting a certificado de capacidade matrimonial issued by the competent authorities of their country and dated less than 6 months earlier.",
+        "kind": "artefact",
+        "namedThing": "certificado de capacidade matrimonial",
+        "verifyAt": "https://www.gov.pt/guias/casar-ou-viver-em-uniao-de-facto",
+        "volatility": "stable"
+      },
+      "notObvious": "The certificate ages out in six months, so obtaining it early in a long engagement is exactly the wrong order to do things in.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/casar-ou-viver-em-uniao-de-facto",
+        "authority": "gov.pt / Instituto dos Registos e do Notariado"
       }
     }
   ]
