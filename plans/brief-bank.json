@@ -10368,6 +10368,56 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs10.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "housing-the-imi-exemption-you-lose-by-filing-late",
+      "pillar": "housing_property",
+      "valueClass": "costly_mistake",
+      "title": "An automatic IMI exemption that late filing cancels",
+      "userQuestion": "Do I have to apply for the low-income IMI exemption?",
+      "scenario": "A qualifying household files IRS late and quietly loses an exemption that was being granted to them automatically each year.",
+      "audience": "low-income households owning their home",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The two ceilings the exemption depends on, that it is recognised automatically each year, and the single thing that cancels it.",
+      "anchorFact": {
+        "claim": "Under artigo 11-A of the CIMI the exemption requires that the household's total gross income does not exceed 2.3 times the value of 14 IAS and that the total taxable value of all rural and urban buildings belonging to the household does not exceed 10 times the value of 14 IAS; the exemptions are automatic and recognised officiously by the Autoridade Tributária on an annual basis, and failure by the taxpayer or any household member to meet their IRS and IMI declaration obligations on time results in the exemptions not being granted.",
+        "kind": "instrument",
+        "namedThing": "isenção de IMI",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimi/Pages/cimi11a.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "Nothing has to be claimed and everything can be lost by a late return, including a return filed late by another member of the household.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimi/Pages/cimi11a.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "freelance-the-coefficient-that-decides-your-taxable-income",
+      "pillar": "freelance_business",
+      "valueClass": "threshold",
+      "title": "The coefficient that decides how much of your income is taxed",
+      "userQuestion": "How much of what I invoice actually gets taxed under the simplified regime?",
+      "scenario": "A freelancer assumes one rate applies to everything and mis-estimates the tax on a year with several kinds of income.",
+      "audience": "freelancers on the simplified regime",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The coefficient applied to each kind of category B income, from goods and accommodation through listed professions to intellectual property.",
+      "anchorFact": {
+        "claim": "Under artigo 31 of the Código do IRS the simplified regime applies a coefficient of 0.15 to sales of goods and products and to hospitality and lodging services, 0.75 to income from the professional activities specifically listed in the table of artigo 151, 0.35 to other service provision, 0.95 to cryptoasset mining and intellectual property income, 0.30 to subsidies not intended for operations, 0.10 to operating subsidies and remaining category B income, and 0.50 to local accommodation in containment areas.",
+        "kind": "figure",
+        "namedThing": "regime simplificado",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs31.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "Being on the listed-professions coefficient taxes three quarters of your income while unlisted services are taxed on a third, so which line your activity falls under matters more than the rate.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs31.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
