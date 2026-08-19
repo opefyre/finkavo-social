@@ -9593,6 +9593,106 @@
         "canonicalUrl": "https://www.gov.pt/guias/casar-ou-viver-em-uniao-de-facto",
         "authority": "gov.pt / Instituto dos Registos e do Notariado"
       }
+    },
+    {
+      "id": "citizenship-marrying-after-sixty-fixes-the-property-regime",
+      "pillar": "citizenship_civil",
+      "valueClass": "edge_case",
+      "title": "Marrying after sixty fixes the property regime for you",
+      "userQuestion": "Can we choose any property regime we like when we marry?",
+      "scenario": "A couple marrying later in life plans a shared-property regime and discovers the law has already chosen separation for them.",
+      "audience": "couples marrying later in life",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The age at which separation of property becomes compulsory, and the inheritance right it does not touch.",
+      "anchorFact": {
+        "claim": "The regime of separação de bens is compulsory where one of the people marrying is over 60 years of age, and under that regime each person keeps what they already had and owns what they acquire during the marriage whether bought or given; separation of property does not apply to inheritance, and on the death of one spouse the survivor always has the share of the estate that the law gives them by virtue of being married.",
+        "kind": "figure",
+        "namedThing": "separação de bens",
+        "verifyAt": "https://www.gov.pt/guias/casar-ou-viver-em-uniao-de-facto",
+        "volatility": "stable"
+      },
+      "notObvious": "Separation of property does not disinherit anyone: the surviving spouse's legal share of the estate survives the regime entirely.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/casar-ou-viver-em-uniao-de-facto",
+        "authority": "gov.pt / Instituto dos Registos e do Notariado"
+      }
+    },
+    {
+      "id": "citizenship-children-from-before-rule-out-full-community",
+      "pillar": "citizenship_civil",
+      "valueClass": "edge_case",
+      "title": "Children from a previous relationship rule out full community",
+      "userQuestion": "Can we pool everything we own when we marry?",
+      "scenario": "A couple with grown children from earlier relationships plans the fullest shared regime and finds it is not available to them.",
+      "audience": "couples remarrying with children from before",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The regime that becomes unavailable when either partner has earlier children, the cap that applies to it anyway, and the fee a chosen regime adds.",
+      "anchorFact": {
+        "claim": "The regime of comunhão geral de bens cannot be chosen where either person marrying already has children from previous relationships, even where those children are adults or emancipated; even when it is chosen, on divorce neither spouse may receive more in the partilha than they would have received under comunhão de adquiridos, and opting for a regime other than the default requires a convenção antenupcial, which adds 100 euros to the cost of registering the marriage.",
+        "kind": "figure",
+        "namedThing": "comunhão geral de bens",
+        "verifyAt": "https://www.gov.pt/guias/casar-ou-viver-em-uniao-de-facto",
+        "volatility": "stable"
+      },
+      "notObvious": "The restriction protects the earlier children rather than the spouses, which is why it applies even when those children are grown and independent.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/casar-ou-viver-em-uniao-de-facto",
+        "authority": "gov.pt / Instituto dos Registos e do Notariado"
+      }
+    },
+    {
+      "id": "citizenship-what-the-default-regime-keeps-separate",
+      "pillar": "citizenship_civil",
+      "valueClass": "threshold",
+      "title": "What the default marriage regime keeps out of the pot",
+      "userQuestion": "If we do nothing, what actually becomes shared when we marry?",
+      "scenario": "A couple assumes the default regime pools everything, or nothing, and makes financial decisions on the wrong picture.",
+      "audience": "couples marrying without a prenuptial agreement",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The regime that applies automatically, what it makes joint, and the four things it leaves in one person's hands.",
+      "anchorFact": {
+        "claim": "Comunhão de adquiridos applies automatically where the couple do not choose another regime: everything the couple obtains after the marriage belongs to both, except inheritances, donations and each person's salary, while property each person held before the marriage remains theirs alone, as does property received after the marriage that results from a right of their own predating it.",
+        "kind": "procedure",
+        "namedThing": "comunhão de adquiridos",
+        "verifyAt": "https://www.gov.pt/guias/casar-ou-viver-em-uniao-de-facto",
+        "volatility": "stable"
+      },
+      "notObvious": "Salary stays personal under the default regime, which is the opposite of what most couples assume they are agreeing to.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/casar-ou-viver-em-uniao-de-facto",
+        "authority": "gov.pt / Instituto dos Registos e do Notariado"
+      }
+    },
+    {
+      "id": "citizenship-starting-a-marriage-process-online",
+      "pillar": "citizenship_civil",
+      "valueClass": "insider",
+      "title": "Who can start the marriage process without going to a counter",
+      "userQuestion": "Can we do the marriage paperwork online?",
+      "scenario": "A couple takes time off work to queue at a registry for a process one of the three online conditions would have let them start from home.",
+      "audience": "couples beginning the marriage process",
+      "risk": "low",
+      "volatility": "stable",
+      "promise": "The three conditions that open the online route, and the places a marriage may be celebrated with their cost implications.",
+      "anchorFact": {
+        "claim": "The casamento process may be started online provided both people are over 18, are Portuguese or Brazilian with the estatuto geral de igualdade de direitos e deveres, and hold a Cartão de Cidadão; celebration may take place at the conservatória do registo civil or elsewhere, and the registrar travelling, or the marriage taking place at a weekend or outside the conservatória's normal hours, carries costs.",
+        "kind": "procedure",
+        "namedThing": "casamento",
+        "verifyAt": "https://www.gov.pt/guias/casar-ou-viver-em-uniao-de-facto",
+        "volatility": "stable"
+      },
+      "notObvious": "The online route is open to Brazilian citizens holding the equality statute, which is the condition most couples do not realise they already meet.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/casar-ou-viver-em-uniao-de-facto",
+        "authority": "gov.pt / Instituto dos Registos e do Notariado"
+      }
     }
   ]
 }
