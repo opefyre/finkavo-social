@@ -6943,6 +6943,31 @@
         "canonicalUrl": "https://www.imt-ip.pt/condutores/informacoes-gerais/licenca-internacional-de-conducao/",
         "authority": "Instituto da Mobilidade e dos Transportes"
       }
+    },
+    {
+      "id": "banking-the-quarterly-ceiling-above-which-a-rate-is-usury",
+      "pillar": "banking_money",
+      "valueClass": "insider",
+      "title": "The published ceiling above which a loan rate is usury",
+      "userQuestion": "Is there a legal limit on what a consumer loan can charge me?",
+      "scenario": "Someone offered expensive credit assumes the price is simply the market and never checks it against the published ceiling for that credit type.",
+      "audience": "people taking out consumer credit",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "How the maximum rates are calculated each quarter, the two limits that bind them, and the point at which a rate becomes usurious.",
+      "anchorFact": {
+        "claim": "Under the Decreto-Lei n.º 133/2009 the Banco de Portugal determines and publishes quarterly the maximum TAEG for each type of consumer credit, set at the average TAEG charged in the market in the previous quarter increased by one quarter, and these maxima may not exceed the average TAEG of all consumer credit contracts increased by 50 per cent; the maximum TAEG is the limit above which rates are considered usury, and a maximum TAN is also published for the overdraft category.",
+        "kind": "instrument",
+        "namedThing": "TAEG",
+        "verifyAt": "https://clientebancario.bportugal.pt/en/interest-rates-consumer-credit",
+        "volatility": "volatile"
+      },
+      "notObvious": "The ceiling is set per credit type and moves every quarter, so the same rate can be lawful on a car loan and usurious on a personal one.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/en/interest-rates-consumer-credit",
+        "authority": "Banco de Portugal"
+      }
     }
   ]
 }
