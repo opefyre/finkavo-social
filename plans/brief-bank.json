@@ -79,7 +79,7 @@
     {
       "id": "banking-minimum-services-account-fee-cap",
       "pillar": "banking_money",
-      "valueClass": "insider",
+      "valueClass": "threshold",
       "title": "The capped-fee bank account branches will not offer you",
       "userQuestion": "Is there a Portuguese bank account with a legally limited annual fee?",
       "scenario": "Someone paying monthly account maintenance fees discovers their balance is being eaten by charges and assumes all Portuguese accounts work that way.",
@@ -1566,6 +1566,105 @@
       "source": {
         "canonicalUrl": "https://www2.gov.pt/servicos/requerer-o-abono-de-familia-para-criancas-e-jovens",
         "authority": "gov.pt / Segurança Social"
+      }
+    },
+    {
+      "id": "banking-account-switching-service-timeline",
+      "pillar": "banking_money",
+      "valueClass": "deadline_action",
+      "title": "Switching banks is a service the new bank must run for you",
+      "userQuestion": "Do I have to move all my direct debits myself when I change bank?",
+      "scenario": "Someone stays with an expensive bank because moving salary, standing orders and direct debits sounds like weeks of admin.",
+      "audience": "people considering changing bank",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The switching service every institution must offer, the business-day deadline it runs to, and what keeps paying from the old account meanwhile.",
+      "anchorFact": {
+        "claim": "Every institution must provide a serviço de mudança de conta which the new bank runs with the old one, and the account change process must be completed within 13 business days of the request; until it completes, direct debits continue from the original account provided it holds sufficient funds.",
+        "kind": "deadline",
+        "namedThing": "mudança de conta",
+        "verifyAt": "https://www.bportugal.pt/page/quer-mudar-sua-conta-para-outro-banco-saiba-como-fazer",
+        "volatility": "stable"
+      },
+      "notObvious": "People assume switching is their own admin project. It is a regulated service with a deadline, run by the receiving bank.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.bportugal.pt/page/quer-mudar-sua-conta-para-outro-banco-saiba-como-fazer",
+        "authority": "Banco de Portugal"
+      }
+    },
+    {
+      "id": "banking-direct-debit-authorisation-limits",
+      "pillar": "banking_money",
+      "valueClass": "insider",
+      "title": "The controls you can put on a direct debit before it takes money",
+      "userQuestion": "Can I cap what a company is allowed to take by direct debit?",
+      "scenario": "Someone setting up a utility or gym direct debit worries about an unexpected charge and sees no way to limit it.",
+      "audience": "people authorising direct debits",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The limits you can set on an authorisation, and the refund right that applies after a debit has already been taken.",
+      "anchorFact": {
+        "claim": "A débito direto authorisation can carry customer-defined controls such as a maximum amount and a validity period, and the payer retains defined rights to contest and obtain a refund of a debit after it has been executed.",
+        "kind": "artefact",
+        "namedThing": "débito direto",
+        "verifyAt": "https://www.bportugal.pt/page/debitos-diretos-sete-informacoes-que-vai-querer-saber",
+        "volatility": "stable"
+      },
+      "notObvious": "Authorisations are treated as all-or-nothing. The per-authorisation limits and the post-debit refund right are both standard and almost never offered up front.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.bportugal.pt/page/debitos-diretos-sete-informacoes-que-vai-querer-saber",
+        "authority": "Banco de Portugal"
+      }
+    },
+    {
+      "id": "irs-non-resident-flat-rate-and-payer-duty",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "The flat IRS rate on Portuguese income paid to a non-resident",
+      "userQuestion": "I live abroad but invoice a Portuguese client — how is that taxed?",
+      "scenario": "A non-resident freelancer invoices a Portuguese company and neither side is sure who withholds what, or whether a Portuguese return is needed.",
+      "audience": "non-residents earning income from Portugal",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The flat rate applied at source, the payer's withholding and reporting duties, and when a non-resident must still file here.",
+      "anchorFact": {
+        "claim": "Independent work income paid to non-residents is subject to a taxa liberatória of 25% under artigo 71 of the Código do IRS, the paying entity must withhold at source and submit the Modelo 30 declaration under artigo 119, and a non-resident files a Portuguese return only for income not subjected to withholding.",
+        "kind": "instrument",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs71.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "Both sides usually assume the other handles it. The payer carries the Modelo 30 duty even when withholding is reduced or exempt by treaty.",
+      "journeyStage": "first_tax_year",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs71.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-when-a-non-resident-must-still-file",
+      "pillar": "irs",
+      "valueClass": "edge_case",
+      "title": "When a non-resident still has to file a Portuguese return",
+      "userQuestion": "I already had tax withheld in Portugal — do I also need to submit a declaration?",
+      "scenario": "A non-resident with Portuguese rental or occasional income assumes withholding settled everything and files nothing.",
+      "audience": "non-residents with Portuguese-source income",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The income that withholding closes out, the income that still requires a return, and the residence question that decides which you are.",
+      "anchorFact": {
+        "claim": "A non-resident must submit a Portuguese IRS declaration only for income obtained in Portuguese territory that was not subject to withholding at the taxa liberatória, so income already taxed at source is generally not declared again.",
+        "kind": "artefact",
+        "namedThing": "taxa liberatória",
+        "verifyAt": "https://www.gov.pt/guias/imposto-sobre-o-rendimento-das-pessoas-singulares-irs-em-portugal",
+        "volatility": "annual"
+      },
+      "notObvious": "The rule cuts both ways and people get it wrong in both directions: filing unnecessarily, or missing a return on income nobody withheld from.",
+      "journeyStage": "first_tax_year",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/imposto-sobre-o-rendimento-das-pessoas-singulares-irs-em-portugal",
+        "authority": "gov.pt / Autoridade Tributária e Aduaneira"
       }
     }
   ]
