@@ -1489,8 +1489,28 @@ const server = http.createServer(async (req, res) => {
         // gate defers when Groq's day is gone, and provider failures are refunded below —
         // so this only has to stop a loop that has genuinely run out of ideas.
         dailyAttemptBudget: z.number().int().min(5).max(200).default(40),
+        // Publishing is a queue: a post takes the next free slot, and an overdue one is
+        // pushed forward rather than lost. Generation was not — it filled today and
+        // stopped, so a day the model had trouble with left the queue short with nothing
+        // behind it to draw on. Working ahead turns a bad day into a smaller buffer
+        // instead of an empty slot.
+        lookaheadDays: z.number().int().min(0).max(7).default(0),
       }).parse(await readJson(req));
-      const day = input.date || lisbonDate(new Date());
+      const requestedDay = input.date || lisbonDate(new Date());
+
+      // Work the earliest day that is still short. A day already holding its five costs
+      // nothing to skip, so successive runs move the buffer outward on their own.
+      let day = requestedDay;
+      for (let offset = 0; offset <= input.lookaheadDays; offset++) {
+        const candidate = addLisbonDays(requestedDay, offset);
+        const [held] = await sql`
+          SELECT count(*) AS count FROM social_post
+          WHERE planned_for=${candidate} AND archived_at IS NULL
+            AND status IN ('ready_for_review','approved','render_queued','rendered','scheduled','published')
+        `;
+        if (Number(held.count) < input.target) { day = candidate; break; }
+        day = candidate;
+      }
       if (recoveryDaysInProgress.has(day)) return send(res, 409, { error: "Recovery is already running for this date; the next scheduled cycle will retry." });
       recoveryDaysInProgress.add(day);
       try {
