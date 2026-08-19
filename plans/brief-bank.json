@@ -1261,15 +1261,15 @@
       "volatility": "stable",
       "promise": "The separate recapitulative return, how often it is due, and what it must list.",
       "anchorFact": {
-        "claim": "Supplying services to businesses in other EU countries requires submitting a declaração recapitulativa, modelo 8, monthly or quarterly, listing each client's NIF and the amounts invoiced.",
+        "claim": "Supplying services to businesses in other EU countries requires submitting a declaração recapitulativa, modelo 8, monthly or quarterly, listing each client's NIF and the amounts invoiced, and this declaration is mandatory even for taxpayers exempt under artigo 53 of the CIVA.",
         "kind": "instrument",
-        "verifyAt": "https://www2.gov.pt/pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "verifyAt": "https://www.gov.pt/servicos/iva-declaracao-recapitulativa-",
         "volatility": "stable"
       },
-      "notObvious": "It is a second, separate filing that exists only because of EU clients, and it is the one people discover through a penalty notice.",
+      "notObvious": "IVA exemption removes the IVA return but not this one, so the traders most likely to skip it are exactly the ones who must file it.",
       "journeyStage": "first_freelance_activity",
       "source": {
-        "canonicalUrl": "https://www2.gov.pt/pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "canonicalUrl": "https://www.gov.pt/servicos/iva-declaracao-recapitulativa-",
         "authority": "gov.pt / Autoridade Tributária e Aduaneira"
       }
     },
@@ -5192,6 +5192,81 @@
       "source": {
         "canonicalUrl": "https://www.gov.pt/servicos/ativar-a-assinatura-digital-da-chave-movel-digital-cmd-",
         "authority": "gov.pt / AMA"
+      }
+    },
+    {
+      "id": "iva-recapitulative-deadline-depends-on-fifty-thousand",
+      "pillar": "iva",
+      "valueClass": "threshold",
+      "title": "The fifty-thousand line that turns a quarterly return monthly",
+      "userQuestion": "Do I file the recapitulative statement monthly or quarterly?",
+      "scenario": "A trader files quarterly out of habit, crosses the goods threshold in one strong quarter, and is late on every month after it.",
+      "audience": "traders selling into the EU",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The two filing rhythms, the amount that switches you between them, and the lookback that keeps you there.",
+      "anchorFact": {
+        "claim": "For taxpayers in the normal IVA regime the declaração recapitulativa is due by the 20th of the month following the operations where intra-community transmissions of goods exceed 50,000 euros in the current quarter or in any of the 4 preceding quarters, and otherwise by the 20th of the month following the end of the calendar quarter.",
+        "kind": "deadline",
+        "namedThing": "declaração recapitulativa",
+        "verifyAt": "https://www.gov.pt/servicos/iva-declaracao-recapitulativa-",
+        "volatility": "annual"
+      },
+      "notObvious": "The four-quarter lookback means one big quarter keeps you on monthly filing for a year after the sales stop.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/iva-declaracao-recapitulativa-",
+        "authority": "gov.pt / Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "iva-restaurant-drinks-leave-the-intermediate-rate",
+      "pillar": "iva",
+      "valueClass": "edge_case",
+      "title": "The drinks that leave a restaurant bill at the top rate",
+      "userQuestion": "Does the whole restaurant bill get the intermediate IVA rate?",
+      "scenario": "A café applies one rate to the whole ticket and under-charges IVA on every soft drink and beer it sells.",
+      "audience": "people running food and drink businesses",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "Which part of a food and drink service takes the intermediate rate, and the four drink categories carved out of it.",
+      "anchorFact": {
+        "claim": "Verba 3.1 of Lista II of the Código do IVA applies the intermediate rate to food and beverage services with the exception of alcoholic drinks, refrigerantes, sumos, néctares and carbonated waters, which fall outside it.",
+        "kind": "instrument",
+        "namedThing": "Lista II",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/c-iva-listas.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The carve-out is by drink category rather than by whether it is served, so a still juice and a sparkling water can be taxed differently on the same tray.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/c-iva-listas.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "immigration-absences-that-do-not-break-the-five-years",
+      "pillar": "immigration_residency",
+      "valueClass": "edge_case",
+      "title": "Time abroad that still counts towards permanent residence",
+      "userQuestion": "Does leaving Portugal for a while reset my five years?",
+      "scenario": "An EU citizen who spent months abroad for work or a serious illness assumes the clock restarted and delays applying for years.",
+      "audience": "EU citizens approaching five years in Portugal",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "When the permanent residence certificate becomes available, and the two absence allowances that do not interrupt the count.",
+      "anchorFact": {
+        "claim": "The certificado de residência permanente can only be requested by EU nationals and their family members after 5 years of legal residence, and in counting those years temporary absences of up to 6 consecutive months per year do not count, nor do absences of up to 12 consecutive months for justified reasons such as pregnancy or childbirth, serious illness, studies or professional training, or a work posting to another country.",
+        "kind": "figure",
+        "namedThing": "certificado de residência permanente",
+        "verifyAt": "https://aima.gov.pt/pt/nacionais-ue-e-familiares/nacionais-ue/certificado-de-residencia-permanente-para-nacionais-ue",
+        "volatility": "stable"
+      },
+      "notObvious": "The longer twelve-month allowance is tied to named reasons, so the same absence can either count or not depending on why it happened.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://aima.gov.pt/pt/nacionais-ue-e-familiares/nacionais-ue/certificado-de-residencia-permanente-para-nacionais-ue",
+        "authority": "AIMA"
       }
     }
   ]
