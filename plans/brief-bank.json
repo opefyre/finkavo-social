@@ -4011,15 +4011,15 @@
       "audience": "people with a certified disability",
       "risk": "high",
       "volatility": "annual",
-      "promise": "The qualifying percentage, the residence condition, and the two components the benefit is made of.",
+      "promise": "The incapacity threshold that opens the benefit, and what each of its three parts is for.",
       "anchorFact": {
-        "claim": "The Prestação Social para a Inclusão is a monthly benefit for Portuguese and foreign nationals with a disability degree of 60% or more who have legal residence in Portugal, and comprises a base component compensating the general additional costs of disability and a complement aimed at combating poverty.",
+        "claim": "The Prestação Social para a Inclusão is a monthly benefit for Portuguese and foreign nationals with a disability degree of 60% or more who have legal residence in Portugal, and comprises a base component compensating the general additional costs of disability and a complement aimed at combating poverty, together with a majoração compensating specific costs arising from the disability.",
         "kind": "figure",
         "namedThing": "prestação social para a inclusão",
         "verifyAt": "https://www2.gov.pt/servicos/requerer-a-prestacao-social-para-a-inclusao",
         "volatility": "annual"
       },
-      "notObvious": "Sixty percent is a much lower bar than people assume, and the complement is a separate entitlement rather than a larger version of the base.",
+      "notObvious": "The complement is a distinct anti-poverty payment rather than a larger base component, so receiving one says nothing about receiving the other.",
       "journeyStage": "resolving_a_problem",
       "source": {
         "canonicalUrl": "https://www2.gov.pt/servicos/requerer-a-prestacao-social-para-a-inclusao",
@@ -6667,6 +6667,81 @@
       "source": {
         "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34514575-43562575",
         "authority": "Diário da República / Código dos Regimes Contributivos"
+      }
+    },
+    {
+      "id": "social-security-two-funeral-schemes-two-deadlines",
+      "pillar": "social_security",
+      "valueClass": "deadline_action",
+      "title": "Two funeral payments, six months apart in their deadlines",
+      "userQuestion": "Can I get help with funeral costs I paid for?",
+      "scenario": "Someone who paid for a funeral applies under the wrong scheme months later and finds the ninety-day one has closed.",
+      "audience": "people who paid for a funeral",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The two separate schemes, who each is for, the very different windows, and the ceiling on what is paid.",
+      "anchorFact": {
+        "claim": "The subsídio de funeral can be requested up to 6 months after the first day of the month following the death and pays a maximum of 3 times the IAS, published as 1,611.39 euros, while the separate reembolso de despesas de funeral must be requested within 90 consecutive days of the date of death by someone who paid for the funeral of a beneficiary of the general Segurança Social regime where the costs were not borne by the person entitled to the subsídio por morte.",
+        "kind": "deadline",
+        "namedThing": "subsídio de funeral",
+        "verifyAt": "https://www.gov.pt/servicos/requerer-o-subsidio-de-funeral-a-seguranca-social",
+        "volatility": "annual"
+      },
+      "notObvious": "Which scheme applies depends on the dead person's cover, not on who paid, and picking the wrong one can burn the shorter of two very different deadlines.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/reembolso-de-despesas-de-funeral",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "consumer-parcels-under-one-fifty-need-not-stop",
+      "pillar": "daily_life_consumer",
+      "valueClass": "threshold",
+      "title": "Why one parcel clears customs and the next one waits",
+      "userQuestion": "Why did I have to pay extra on a parcel from outside the EU?",
+      "scenario": "A shopper orders two similar items from abroad, one arrives normally and the other is held with fees to pay, with no obvious difference between them.",
+      "audience": "people ordering from outside the EU",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The value line under which a parcel need not stop, what the seller has to have done, and the separate fee the carrier can add.",
+      "anchorFact": {
+        "claim": "For postal items valued up to 150 euros, where the seller includes IVA in the final price the parcel does not have to stop at the border for IVA payment; postal items from outside the EU customs territory are presented to customs by CTT, which submits an electronic import declaration based on information given through the clearance portal, and CTT or the carrier may also charge a clearance fee on top of the tax.",
+        "kind": "figure",
+        "namedThing": "encomendas postais",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Compras/Encomendas_postais/Encomendas_Postais_Comercio_Eletronico/Paginas/default.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "What decides it is whether the seller collected the IVA at checkout, not the value alone, which is why two parcels of the same price behave differently.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Compras/Encomendas_postais/Encomendas_Postais_Comercio_Eletronico/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "driving-child-restraints-need-two-conditions-met",
+      "pillar": "driving_transport",
+      "valueClass": "threshold",
+      "title": "Twelve years and 135 centimetres, and both have to be true",
+      "userQuestion": "When can my child stop using a car seat?",
+      "scenario": "A tall ten-year-old is moved out of a restraint, or a short teenager is kept in one, because only one of the two tests is remembered.",
+      "audience": "parents driving children",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The two conditions that decide whether a restraint is required, where the child must sit, and the transport types exempted.",
+      "anchorFact": {
+        "claim": "Children under 12 years of age and less than 135 cm tall must be carried in the rear seat of vehicles fitted with seat belts using a homologated sistema de retenção adapted to their weight and height, while public passenger transport, TVDE and patient transport vehicles are exempt provided the child travels in the rear.",
+        "kind": "figure",
+        "namedThing": "sistema de retenção",
+        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2013-116041830-150903574",
+        "volatility": "stable"
+      },
+      "notObvious": "Both conditions have to hold for the requirement to apply, so a child who clears either the age or the height leaves the rule behind.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2013-116041830-150903574",
+        "authority": "Diário da República / Código da Estrada"
       }
     }
   ]
