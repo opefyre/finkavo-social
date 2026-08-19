@@ -4011,15 +4011,15 @@
       "audience": "people with a long-term disabling condition",
       "risk": "high",
       "volatility": "annual",
-      "promise": "The single certificate the schemes rely on, the threshold it must certify, and the IRS deductions it unlocks.",
+      "promise": "The incapacity level the certificate records, who issues it, and the two things the medical board decides.",
       "anchorFact": {
-        "claim": "The atestado médico de incapacidade multiuso is mandatory for people with disability of 60% or more to access social, economic and fiscal benefits including IRS, IUC, travel costs and prosthetics support, is issued following evaluation by a medical board which sets the degree and validity, and under artigo 87 of the CIRS allows a deduction of four times the IAS per taxpayer with disability and 2.5 times the IAS per disabled dependant or ascendant.",
-        "kind": "instrument",
-        "namedThing": "atestado multiuso",
+        "claim": "The atestado médico de incapacidade multiuso is mandatory for people with a disability of 60 per cent or more to access social, economic and fiscal benefits including support for travel costs and prosthetics, and is issued following evaluation by a junta médica which sets both the degree of incapacity and the certificate's validity.",
+        "kind": "artefact",
+        "namedThing": "atestado médico de incapacidade multiuso",
         "verifyAt": "https://www.sns24.gov.pt/servico/pedir-o-atestado-medico-de-incapacidade-multiuso/",
         "volatility": "annual"
       },
-      "notObvious": "One certificate serves every scheme, so the effort of obtaining it once is what unlocks tax, vehicle and health benefits together.",
+      "notObvious": "The board sets the validity as well as the percentage, so two people with the same degree can hold certificates that expire years apart.",
       "journeyStage": "resolving_a_problem",
       "source": {
         "canonicalUrl": "https://www.sns24.gov.pt/servico/pedir-o-atestado-medico-de-incapacidade-multiuso/",
