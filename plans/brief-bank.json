@@ -4808,7 +4808,7 @@
       "volatility": "stable",
       "promise": "The nationalities that qualify, the residence periods some require, where to register, and the cut-off before an election.",
       "anchorFact": {
-        "claim": "Local election voting is open to Portuguese citizens, Brazilian citizens with equal political rights status, EU nationals aged 17 or over registered in Portugal, and nationals of Brazil without that status, Cape Verde, Argentina, Chile, Colombia, Iceland, Norway, New Zealand, Peru, the United Kingdom, Uruguay or Venezuela resident in Portugal for more than two or three years depending on the country; recenseamento eleitoral registration is at the junta de freguesia of the address on the residence title, and recenseamento is suspended from the 60th day before an election.",
+        "claim": "Local election voting is open to Portuguese citizens, to EU nationals aged 17 or over on the Portuguese roll, to Brazilian and Cape Verdean citizens resident more than 2 years, and to nationals of Argentina, Chile, Colombia, Iceland, Norway, New Zealand, Peru, the United Kingdom, Uruguay and Venezuela resident more than 3 years, with other foreign citizens qualifying after 3 years only where their country grants Portuguese residents the same right under reciprocity; recenseamento eleitoral registration is at the junta de freguesia of the address on the residence title, and recenseamento is suspended from the 60th day before an election.",
         "kind": "artefact",
         "namedThing": "recenseamento eleitoral",
         "verifyAt": "https://www.cne.pt/faq2/95/5",
@@ -7492,6 +7492,31 @@
       "source": {
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00259.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "citizenship-brazilian-equality-statute-and-its-two-clocks",
+      "pillar": "citizenship_civil",
+      "valueClass": "threshold",
+      "title": "The statute that gives Brazilian residents Portuguese rights",
+      "userQuestion": "What does the equality statute actually give a Brazilian living here?",
+      "scenario": "A Brazilian resident with years in Portugal assumes political rights arrive with the residence card and never applies for the statute.",
+      "audience": "Brazilian citizens resident in Portugal",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Who can request the statute, the residence periods behind voting and standing locally, and what ends it.",
+      "anchorFact": {
+        "claim": "Any Brazilian person of legal age resident in Portugal with a valid residence title may request the Estatuto de Igualdade de Direitos e Deveres under the Treaty of Friendship, Cooperation and Consultation signed at Porto Seguro on 22 April 2000; voting in local elections requires a residence authorisation of more than 2 years and standing as a candidate more than 4 years, and the statute has no expiry date, ending only with the lapse or cancellation of the residence authorisation or with loss of Brazilian nationality.",
+        "kind": "figure",
+        "namedThing": "Estatuto de Igualdade de Direitos e Deveres",
+        "verifyAt": "https://www.gov.pt/servicos/pedir-o-estatuto-de-igualdade-de-direitos-e-deveres-para-cidadao-brasileiro-residente-em-portugal",
+        "volatility": "stable"
+      },
+      "notObvious": "Two different residence clocks sit inside one statute, so the right to vote arrives two years before the right to stand.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/pedir-o-estatuto-de-igualdade-de-direitos-e-deveres-para-cidadao-brasileiro-residente-em-portugal",
+        "authority": "gov.pt / Instituto dos Registos e do Notariado"
       }
     }
   ]
