@@ -6281,7 +6281,7 @@
       "volatility": "stable",
       "promise": "The length and pay rate of extended parental leave, the age limit it runs to, and the unpaid assistance leave that follows it.",
       "anchorFact": {
-        "claim": "Licença parental alargada for assistance to a child up to 6 years of age lasts up to 3 months paid at 25 per cent of reference remuneration where it is taken immediately after the initial parental benefit or after the other parent's extended benefit; each parent has the right to a full 3 months, which may be taken by both or by one, alternately or at the same time, and once exhausted parents may take child assistance leave up to a limit of 2 years, or 3 years for a third or subsequent child.",
+        "claim": "Licença parental alargada for assistance to a child up to 6 years of age lasts up to 3 months paid at 25 per cent of reference remuneration where it is taken immediately after the initial parental benefit or after the other parent's extended benefit; each parent has the right to a full 3 months, which may be taken by both or by one, alternately or at the same time, and once exhausted parents may take child assistance leave up to a limit of 2 years, or 3 years for a third or subsequent child; the same entitlement may instead be taken as 12 months of part-time work at half the normal period, or in alternating periods.",
         "kind": "figure",
         "namedThing": "licença parental alargada",
         "verifyAt": "https://www.seg-social.pt/subsidio-parental-alargado",
@@ -8842,6 +8842,131 @@
       "source": {
         "canonicalUrl": "https://www.gov.pt/guias/comprovativos-do-exercicio-de-atividade-profissional",
         "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "employment-the-fathers-days-that-are-not-optional",
+      "pillar": "employment",
+      "valueClass": "threshold",
+      "title": "Fifteen working days the father must take, and ten more he can",
+      "userQuestion": "How much leave is a father actually required and allowed to take?",
+      "scenario": "A father takes a few days around the birth and never claims the additional days that only exist if taken alongside the mother.",
+      "audience": "new fathers in employment",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The compulsory days and the window they fall in, the days that must be consecutive, and the extra days conditional on overlapping with the mother.",
+      "anchorFact": {
+        "claim": "A father must take 15 working days of leave within 30 days of the birth, at least 5 of them consecutively and immediately after it, paid at 100 per cent; a further 10 days at 100 per cent are available if taken at the same time as the mother's initial parental leave, with 2 additional days for each additional child in a multiple birth, and the father is also entitled to 3 dispensations to attend prenatal consultations.",
+        "kind": "figure",
+        "namedThing": "licença parental exclusiva do pai",
+        "verifyAt": "https://cite.gov.pt/direitos-e-deveres-dos-trabalhadores-e-das-trabalhadoras",
+        "volatility": "stable"
+      },
+      "notObvious": "The extra ten days exist only if they overlap with the mother's leave, so taking turns instead of overlapping quietly forfeits them.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://cite.gov.pt/direitos-e-deveres-dos-trabalhadores-e-das-trabalhadoras",
+        "authority": "CITE"
+      }
+    },
+    {
+      "id": "employment-night-work-and-pregnancy",
+      "pillar": "employment",
+      "valueClass": "threshold",
+      "title": "A hundred and twelve days off night work around a birth",
+      "userQuestion": "Can I be made to work nights while pregnant or just after giving birth?",
+      "scenario": "A worker on a night rota keeps the shifts through pregnancy because no one raises the exemption.",
+      "audience": "pregnant and recently pregnant night workers",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The length of the night work exemption, how it must be split around the birth, and the pay when no daytime role exists.",
+      "anchorFact": {
+        "claim": "A pregnant, puérpera or breastfeeding worker is exempt from night work between 20:00 and 07:00 for 112 days, at least half of which must fall before the expected date of birth, and where the employer cannot reassign her to daytime work she is paid 65 per cent of remuneration for that period.",
+        "kind": "figure",
+        "namedThing": "trabalho noturno",
+        "verifyAt": "https://cite.gov.pt/direitos-e-deveres-dos-trabalhadores-e-das-trabalhadoras",
+        "volatility": "stable"
+      },
+      "notObvious": "Half the exemption has to be used before the birth, so a worker who waits until afterwards can only ever claim part of it.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://cite.gov.pt/direitos-e-deveres-dos-trabalhadores-e-das-trabalhadoras",
+        "authority": "CITE"
+      }
+    },
+    {
+      "id": "employment-what-your-childs-age-exempts-you-from",
+      "pillar": "employment",
+      "valueClass": "insider",
+      "title": "Three work obligations a young child exempts you from",
+      "userQuestion": "Can I refuse overtime or a shifting rota while my child is small?",
+      "scenario": "A parent is rostered onto overtime and an adaptability regime and assumes both are simply part of the job.",
+      "audience": "parents of children under three",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The child ages that exempt a parent from overtime and from flexible-hours regimes, and the telework right that runs to age three.",
+      "anchorFact": {
+        "claim": "A worker with a child under 12 months is exempt from performing overtime, a worker with a child under 3 is exempt from adaptability and banking-hours regimes unless they consent in writing, and a worker with a child under 3 has the right to telework where the activity is compatible with it.",
+        "kind": "figure",
+        "namedThing": "isenção de trabalho suplementar",
+        "verifyAt": "https://cite.gov.pt/direitos-e-deveres-dos-trabalhadores-e-das-trabalhadoras",
+        "volatility": "stable"
+      },
+      "notObvious": "The adaptability exemption can be waived only in writing, so being put on a shifting rota by custom rather than by signature is not consent.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://cite.gov.pt/direitos-e-deveres-dos-trabalhadores-e-das-trabalhadoras",
+        "authority": "CITE"
+      }
+    },
+    {
+      "id": "employment-ending-a-fixed-term-contract-of-a-new-mother",
+      "pillar": "employment",
+      "valueClass": "deadline_action",
+      "title": "Letting a protected worker's fixed term lapse has to be reported",
+      "userQuestion": "My fixed-term contract was not renewed while I was pregnant. Is that just bad luck?",
+      "scenario": "A pregnant worker on a fixed-term contract is simply not renewed and assumes protection only covers dismissal.",
+      "audience": "pregnant workers on fixed-term contracts",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The notification an employer must make when not renewing a protected worker's fixed term, and the working days it must happen within.",
+      "anchorFact": {
+        "claim": "Non-renewal of a fixed-term contract of a pregnant, puérpera or breastfeeding worker requires the employer to notify CITE within 5 working days, separately from the parecer prévio required before dismissing such a worker.",
+        "kind": "deadline",
+        "namedThing": "CITE",
+        "verifyAt": "https://cite.gov.pt/direitos-e-deveres-dos-trabalhadores-e-das-trabalhadoras",
+        "volatility": "stable"
+      },
+      "notObvious": "Non-renewal is treated as its own regulated event, which means there is a record to ask about rather than a silence to accept.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://cite.gov.pt/direitos-e-deveres-dos-trabalhadores-e-das-trabalhadoras",
+        "authority": "CITE"
+      }
+    },
+    {
+      "id": "consumer-how-early-an-electricity-bill-must-reach-you",
+      "pillar": "daily_life_consumer",
+      "valueClass": "deadline_action",
+      "title": "Ten working days between the bill and its due date",
+      "userQuestion": "My electricity bill arrived days before it was due. Is that allowed?",
+      "scenario": "A household is repeatedly billed too late to arrange payment and treats it as normal supplier behaviour.",
+      "audience": "domestic electricity customers",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "How often a bill must be issued, and the lead time a supplier owes before the payment deadline, including the longer one for social tariff customers.",
+      "anchorFact": {
+        "claim": "The law establishes that the electricity bill must be sent monthly, although the consumer may agree a different period with the supplier, and it must reach the consumer at least 10 working days before the payment deadline, extended to 20 working days for consumers on the tarifa social.",
+        "kind": "deadline",
+        "namedThing": "fatura",
+        "verifyAt": "https://www.erse.pt/consumidores-de-energia/eletricidade/como-e-quando-paga/",
+        "volatility": "stable"
+      },
+      "notObvious": "The lead time is measured to the payment date rather than from the reading, so a bill covering an old period can still be late in the only sense that matters.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.erse.pt/consumidores-de-energia/eletricidade/como-e-quando-paga/",
+        "authority": "ERSE"
       }
     }
   ]
