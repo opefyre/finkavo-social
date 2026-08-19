@@ -6318,6 +6318,56 @@
         "canonicalUrl": "https://www.dgert.gov.pt/compensacao-por-despedimento-coletivo-artigo-366-o",
         "authority": "DGERT"
       }
+    },
+    {
+      "id": "health-extended-parental-leave-three-months-each",
+      "pillar": "health_family",
+      "valueClass": "threshold",
+      "title": "Three more months per parent, paid at a quarter",
+      "userQuestion": "Is there any paid leave left after the initial parental leave ends?",
+      "scenario": "A couple treats the end of initial parental leave as the end of paid options and one parent resigns instead.",
+      "audience": "parents of children under six",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The length and pay rate of extended parental leave, the age limit it runs to, and the unpaid assistance leave that follows it.",
+      "anchorFact": {
+        "claim": "Licença parental alargada for assistance to a child up to 6 years of age lasts up to 3 months paid at 25 per cent of reference remuneration where it is taken immediately after the initial parental benefit or after the other parent's extended benefit; each parent has the right to a full 3 months, which may be taken by both or by one, alternately or at the same time, and once exhausted parents may take child assistance leave up to a limit of 2 years, or 3 years for a third or subsequent child.",
+        "kind": "figure",
+        "namedThing": "licença parental alargada",
+        "verifyAt": "https://www.seg-social.pt/subsidio-parental-alargado",
+        "volatility": "stable"
+      },
+      "notObvious": "Three months belongs to each parent rather than to the couple, and the entitlement stays open until the child turns six rather than expiring with the initial leave.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/subsidio-parental-alargado",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "social-security-sick-child-benefit-six-month-qualifier",
+      "pillar": "social_security",
+      "valueClass": "threshold",
+      "title": "Six months of contributions before a sick child is covered",
+      "userQuestion": "Will I be paid for the days I take off when my child is ill?",
+      "scenario": "A recently hired parent takes days off for a sick child and finds nothing is paid because the contribution record is short.",
+      "audience": "working parents of a sick child",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The contribution record the benefit needs, whose children count, and the two percentages that set the daily amount.",
+      "anchorFact": {
+        "claim": "The subsídio para assistência a filho requires 6 months of work with contributions, consecutive or not, to Segurança Social or another social protection system on the day the leave starts; it covers biological, adopted and spouse's children, adult children who are part of the household, and children of any age with a disability or chronic illness, and the daily amount is 100 per cent of net reference remuneration with a floor of 65 per cent of reference remuneration.",
+        "kind": "figure",
+        "namedThing": "subsídio para assistência a filho",
+        "verifyAt": "https://www.seg-social.pt/subsidio-para-assistencia-a-filho",
+        "volatility": "stable"
+      },
+      "notObvious": "The six months need not be consecutive and may come from another country's system, which quietly qualifies parents who assume a short Portuguese record disqualifies them.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/subsidio-para-assistencia-a-filho",
+        "authority": "Instituto da Segurança Social"
+      }
     }
   ]
 }
