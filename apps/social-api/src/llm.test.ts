@@ -182,5 +182,28 @@ describe("free-tier pacing", () => {
     await expect(generateStructured(REQUEST)).rejects.toBeInstanceOf(LlmRateLimitError);
     expect(fetchMock.mock.calls.filter(call => String(call[0]).includes("openrouter"))).toHaveLength(firstRound);
   });
+
+  it("waits out a full token minute rather than refusing the second request", async () => {
+    // Two real requests do not fit one 8,000-token minute, so the second has to queue.
+    // Refusing it instead is what halved a recovery run's attempts.
+    const fetchMock = respondWith(4_000);
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    const { generateStructured } = await freshClient({
+      ...BASE_ENV,
+      LLM_TOKENS_PER_MINUTE: "8000",
+      LLM_MAX_INLINE_WAIT_MS: "70000",
+      LLM_MIN_GAP_MS: "0",
+    });
+
+    await generateStructured(REQUEST);
+    // The second would exceed the window on reservation, so it must wait, not throw.
+    // vi's fake clock lets the sixty-second wait pass without the test taking a minute.
+    vi.useFakeTimers();
+    const second = generateStructured(REQUEST);
+    await vi.advanceTimersByTimeAsync(61_000);
+    await expect(second).resolves.toBeTruthy();
+    vi.useRealTimers();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
 });
 

@@ -1482,7 +1482,13 @@ const server = http.createServer(async (req, res) => {
         target: z.number().int().min(1).max(5).default(5),
         maxRounds: z.number().int().min(1).max(8).default(6),
         maxConcepts: z.number().int().min(1).max(5).default(5),
-        dailyAttemptBudget: z.number().int().min(5).max(20).default(12),
+        // This is a runaway guard, not a production target. Capped at 20 it decided the
+        // day was over while slots were still empty: five posts at the observed pass rate
+        // needs more tries than that, and stopping short is the one outcome the schedule
+        // cannot absorb. Real scarcity is enforced where it actually exists — the token
+        // gate defers when Groq's day is gone, and provider failures are refunded below —
+        // so this only has to stop a loop that has genuinely run out of ideas.
+        dailyAttemptBudget: z.number().int().min(5).max(200).default(40),
       }).parse(await readJson(req));
       const day = input.date || lisbonDate(new Date());
       if (recoveryDaysInProgress.has(day)) return send(res, 409, { error: "Recovery is already running for this date; the next scheduled cycle will retry." });

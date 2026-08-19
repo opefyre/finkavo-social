@@ -115,7 +115,13 @@ const REQUESTS_PER_MINUTE = Number(process.env.LLM_REQUESTS_PER_MINUTE ?? 25);
 // same deferral every other pacing decision uses, rather than discovered as a 429.
 const TOKENS_PER_DAY = Number(process.env.LLM_TOKENS_PER_DAY ?? 200_000);
 const DAY_MS = 24 * 60 * 60 * 1000;
-const PACING_MAX_INLINE_WAIT_MS = Number(process.env.LLM_MAX_INLINE_WAIT_MS ?? 45_000);
+// Long enough to sit out a full token minute. A request costs about 4,500 of the 8,000,
+// so only one fits per minute and the second has to wait roughly sixty seconds — under a
+// 45-second limit that wait was refused instead, turning a queue into a deferral and
+// halving how many drafts a recovery run could attempt. Waiting is bounded by the window
+// itself, and the caller's timeout is now nine minutes, so it is affordable. Anything
+// genuinely longer — a provider back-off, a spent day — still defers rather than blocks.
+const PACING_MAX_INLINE_WAIT_MS = Number(process.env.LLM_MAX_INLINE_WAIT_MS ?? 70_000);
 const PACING_MIN_GAP_MS = Number(process.env.LLM_MIN_GAP_MS ?? 1_200);
 const WINDOW_MS = 60_000;
 
