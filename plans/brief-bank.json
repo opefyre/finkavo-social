@@ -6843,6 +6843,31 @@
         "canonicalUrl": "https://www.portaldahabitacao.pt/coeficientes-de-atualizacao-de-rendas",
         "authority": "Portal da Habitação / INE"
       }
+    },
+    {
+      "id": "education-four-days-between-results-and-enrolment",
+      "pillar": "education_children",
+      "valueClass": "deadline_action",
+      "title": "Four days between the university result and the enrolment deadline",
+      "userQuestion": "What happens straight after the first-phase results come out?",
+      "scenario": "A family goes away in late August, sees the placement result, and returns to find the enrolment window already shut.",
+      "audience": "families of applicants to public higher education",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "The three phases of the national competition, the 2026 dates for each, and the short enrolment window that follows the first result.",
+      "anchorFact": {
+        "claim": "The concurso nacional de acesso runs in 3 phases: in 2026 the 1st phase application ran from 20 July to 6 August, the 2nd from 25 August to 3 September and the 3rd from 23 to 25 September; 1st phase results were released on 23 August and enrolment at the institution for candidates placed in the 1st phase ran from 24 to 27 August.",
+        "kind": "deadline",
+        "namedThing": "concurso nacional de acesso",
+        "verifyAt": "https://www.dges.gov.pt/pt/pagina/calendario-concurso-nacional-de-acesso-0",
+        "volatility": "volatile"
+      },
+      "notObvious": "The second phase opens two days after the first-phase results, so the decision to accept a placement and the decision to try again are made in the same week.",
+      "journeyStage": "studying",
+      "source": {
+        "canonicalUrl": "https://www.dges.gov.pt/pt/pagina/calendario-concurso-nacional-de-acesso-0",
+        "authority": "Direção-Geral do Ensino Superior"
+      }
     }
   ]
 }
