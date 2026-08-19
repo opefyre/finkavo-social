@@ -5568,6 +5568,56 @@
         "canonicalUrl": "https://www.gov.pt/servicos/obter-informacoes-sobre-o-subsidio-por-cessacao-de-atividade",
         "authority": "gov.pt / Instituto da Segurança Social"
       }
+    },
+    {
+      "id": "social-security-sick-pay-waiting-period-differs-by-status",
+      "pillar": "social_security",
+      "valueClass": "threshold",
+      "title": "Three days or ten before sick pay starts",
+      "userQuestion": "When does sick pay actually start after I stop working?",
+      "scenario": "A freelancer budgets for a short unpaid gap the way an employee would and is a week out on the arithmetic.",
+      "audience": "workers taking sick leave",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The two waiting periods, which status each applies to, and the day payment begins for an independent worker.",
+      "anchorFact": {
+        "claim": "The período de espera for subsídio de doença is 3 days for employees and 10 days for independent workers, so an independent worker's subsidy begins on the 11th day of incapacity for work.",
+        "kind": "figure",
+        "namedThing": "subsídio de doença",
+        "verifyAt": "https://www.seg-social.pt/subsidio-de-doenca",
+        "volatility": "stable"
+      },
+      "notObvious": "A freelancer carries more than three times the unpaid gap an employee does for the same illness, which is what makes a short illness expensive rather than inconvenient.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/subsidio-de-doenca",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "freelance-accident-cover-stops-fifteen-days-abroad",
+      "pillar": "freelance_business",
+      "valueClass": "edge_case",
+      "title": "Where a freelancer's accident insurance stops covering them",
+      "userQuestion": "Does my work accident insurance follow me when I work abroad?",
+      "scenario": "A freelancer takes a month-long assignment in another EU country and is uninsured for most of it without knowing.",
+      "audience": "freelancers who work outside Portugal",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The territory the standard policy covers, the day count that ends it, and when an extension has to be contracted.",
+      "anchorFact": {
+        "claim": "An independent worker's seguro de acidentes de trabalho is valid throughout Portuguese territory and in EU member states where the worker carries out activity for a period not exceeding 15 days, and for longer periods or for activity in non-EU states an extension of cover must be contracted.",
+        "kind": "figure",
+        "namedThing": "seguro de acidentes de trabalho",
+        "verifyAt": "https://www.asf.com.pt/pt/w/seguro-de-acidentes-de-trabalho-de-trabalhadores-independentes",
+        "volatility": "stable"
+      },
+      "notObvious": "The limit is per stay rather than per year, and the cover simply runs out mid-assignment instead of failing at the border.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://www.asf.com.pt/pt/w/seguro-de-acidentes-de-trabalho-de-trabalhadores-independentes",
+        "authority": "Autoridade de Supervisão de Seguros e Fundos de Pensões"
+      }
     }
   ]
 }
