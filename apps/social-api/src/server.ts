@@ -192,6 +192,39 @@ async function internalApi(method: "GET" | "POST", pathname: string, body?: unkn
   return { ok: response.ok, status: response.status, result };
 }
 
+// --- provider cooldown -------------------------------------------------------------
+// Buffer's rate limit was previously handled only on the failing job, so the next tick
+// two minutes later called Buffer again regardless. Respecting the limit means not
+// calling at all until the window resets, which this gate enforces for every
+// Buffer-touching endpoint and across API restarts.
+const BUFFER_PROVIDER = "buffer";
+
+async function providerCooldownUntil(provider = BUFFER_PROVIDER): Promise<Date | null> {
+  const [row] = await sql`SELECT until FROM social_provider_cooldown WHERE provider=${provider} AND until>now()`;
+  return row ? new Date(String(row.until)) : null;
+}
+
+async function startProviderCooldown(minutes: number, reason: string, provider = BUFFER_PROVIDER) {
+  // Never shorten an existing cooldown: a later, longer retry-after wins.
+  const safeMinutes = Math.max(1, Math.ceil(minutes || 60));
+  await sql`
+    INSERT INTO social_provider_cooldown (provider, until, reason, updated_at)
+    VALUES (${provider}, now() + (${safeMinutes}::STRING || ' minutes')::INTERVAL, ${reason}, now())
+    ON CONFLICT (provider) DO UPDATE SET
+      until = GREATEST(social_provider_cooldown.until, excluded.until),
+      reason = excluded.reason,
+      updated_at = now()
+  `;
+  await sql`INSERT INTO social_event (event_type, payload) VALUES ('provider.cooldown_started', ${sql.json({ provider, minutes: safeMinutes, reason })})`;
+}
+
+/** Records a cooldown when the failure is a provider-side pacing signal. */
+async function noteProviderPacing(failure: BufferError) {
+  if (failure.code === "RATE_LIMIT_EXCEEDED" || failure.code === "BUFFER_QUEUE_FULL") {
+    await startProviderCooldown(failure.retryAfterMinutes || 60, failure.code);
+  }
+}
+
 async function reconcileBufferPublish(job: Record<string, any>) {
   const channelId = process.env.BUFFER_CHANNEL_ID;
   if (!channelId) throw new BufferError("BUFFER_CHANNEL_ID is not configured", "CHANNEL_NOT_CONFIGURED", false);
@@ -1482,6 +1515,8 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === "POST" && url.pathname === "/v1/publish-jobs/process") {
+      const cooldown = await providerCooldownUntil();
+      if (cooldown) return send(res, 200, { skipped: "buffer_cooldown", until: cooldown.toISOString() });
       const workerId = z.string().min(3).max(120).parse(req.headers["x-publisher-id"] || "n8n-publisher");
       const job: any = await sql.begin(async (tx) => {
         await tx`UPDATE social_publish_job SET status = 'retrying', lease_owner = NULL, lease_expires_at = NULL, available_at = now(), updated_at = now() WHERE status = 'processing' AND lease_expires_at < now()`;
@@ -1529,6 +1564,8 @@ const server = http.createServer(async (req, res) => {
             await sql`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'publish.reconciliation_failed',${sql.json({jobId:job.id,createError:failure.code,reconcileError:reconcileError instanceof Error?reconcileError.message:'unknown'})})`;
           }
         }
+        // A pacing failure pauses every Buffer call, not just this job's next attempt.
+        await noteProviderPacing(failure);
         const { retry, blocked, delayMinutes } = retryDecision(Number(job.attempt_count), failure.retryable, failure.ambiguous, failure.retryAfterMinutes);
         const [failed] = await sql.begin(async (tx) => {
           const [updated] = retry
@@ -1552,6 +1589,8 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === "POST" && url.pathname === "/v1/publish-jobs/monitor") {
+      const monitorCooldown = await providerCooldownUntil();
+      if (monitorCooldown) return send(res, 200, { skipped: "buffer_cooldown", until: monitorCooldown.toISOString(), checked: 0 });
       const jobs = await sql`
         SELECT * FROM social_publish_job
         WHERE status = 'scheduled' AND scheduled_at <= now() + INTERVAL '10 minutes'
@@ -1587,7 +1626,12 @@ const server = http.createServer(async (req, res) => {
         } catch (error) {
           results.push({ id: String(job.id), status: `monitor_error:${error instanceof Error ? error.message : "unknown"}` });
           await sql`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'publish.monitor_error',${sql.json({jobId:job.id,code:error instanceof BufferError?error.code:'MONITOR_ERROR'})})`;
-          if (error instanceof BufferError && error.code === "RATE_LIMIT_EXCEEDED") break;
+          // Stopping this batch is not enough on its own: without a recorded cooldown the
+          // next tick two minutes later calls Buffer again and logs the same error.
+          if (error instanceof BufferError) {
+            await noteProviderPacing(error);
+            if (error.code === "RATE_LIMIT_EXCEEDED" || error.code === "BUFFER_QUEUE_FULL") break;
+          }
         }
       }
       return send(res, 200, { results });
