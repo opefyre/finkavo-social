@@ -3027,7 +3027,7 @@
       "volatility": "stable",
       "promise": "The maximum waiting period for pre-existing conditions, and what happens if you do not declare one.",
       "anchorFact": {
-        "claim": "A health insurance contract may set a período de carência of no more than 1 year for cover of pre-existing conditions, and where the policyholder does not inform the insurer of pre-existing illnesses those illnesses are not guaranteed and the insurer may annul the contract.",
+        "claim": "Pre-existing diseases may be excluded generically or by named disease, or alternatively a health insurance contract may set a período de carência of no more than 1 year for cover of those diseases; where the policyholder does not inform the insurer of pre-existing illnesses those illnesses are not guaranteed and the insurer may annul the contract.",
         "kind": "figure",
         "verifyAt": "https://www.consumidor.asf.com.pt/pt/seguros/seguro-de-sa%C3%BAde",
         "volatility": "stable"
@@ -6367,6 +6367,81 @@
       "source": {
         "canonicalUrl": "https://www.seg-social.pt/subsidio-para-assistencia-a-filho",
         "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "driving-three-refusals-force-an-insurer-to-take-you",
+      "pillar": "driving_transport",
+      "valueClass": "insider",
+      "title": "Three refusals and the regulator picks your insurer",
+      "userQuestion": "No insurer will cover my car. Can I be left without compulsory insurance?",
+      "scenario": "A driver refused by several insurers after a claim history stops driving, or drives uninsured, believing there is no route left.",
+      "audience": "drivers refused compulsory motor insurance",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "What to collect from each insurer that refuses you, how many refusals it takes, and who then assigns a company obliged to accept.",
+      "anchorFact": {
+        "claim": "Insurers may refuse to write compulsory motor insurance, but anyone who fails to obtain acceptance from at least 3 insurers may demand a declaração de recusa from each, which insurers are obliged to provide, and on presenting those documents to the Autoridade de Supervisão de Seguros e Fundos de Pensões the regulator designates which insurer is obliged to accept the policy.",
+        "kind": "procedure",
+        "namedThing": "declaração de recusa",
+        "verifyAt": "https://www.consumidor.asf.com.pt/pt/seguro-autom%C3%B3vel-1",
+        "volatility": "stable"
+      },
+      "notObvious": "A refusal is not a dead end, it is a document. Three of them turn the regulator into the one who decides who covers you.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.consumidor.asf.com.pt/pt/seguro-autom%C3%B3vel-1",
+        "authority": "Autoridade de Supervisão de Seguros e Fundos de Pensões"
+      }
+    },
+    {
+      "id": "driving-thirty-days-either-way-at-policy-renewal",
+      "pillar": "driving_transport",
+      "valueClass": "deadline_action",
+      "title": "Thirty days before renewal, in both directions",
+      "userQuestion": "My premium went up at renewal. Was I supposed to be told?",
+      "scenario": "A driver notices a higher premium after it has already renewed, and has also missed the window to leave.",
+      "audience": "motor insurance policyholders",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The notice an insurer owes before changing your premium, and the matching notice you must give to stop the policy renewing.",
+      "anchorFact": {
+        "claim": "Before changing the premium the insurer must notify the policyholder at least 30 days before the contract's renewal date, and a policyholder who wants to prevent the contract renewing must denounce it 30 days before the renewal date; premiums rise with claims for which the insured is responsible and fall for each year without claims under bónus and malus.",
+        "kind": "deadline",
+        "namedThing": "renovação",
+        "verifyAt": "https://www.consumidor.asf.com.pt/pt/seguro-autom%C3%B3vel-1",
+        "volatility": "stable"
+      },
+      "notObvious": "The two clocks are the same length and run at the same time, so the notice of an increase arrives exactly as your own window to leave closes.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.consumidor.asf.com.pt/pt/seguro-autom%C3%B3vel-1",
+        "authority": "Autoridade de Supervisão de Seguros e Fundos de Pensões"
+      }
+    },
+    {
+      "id": "health-pre-existing-conditions-can-be-a-waiting-period",
+      "pillar": "health_family",
+      "valueClass": "insider",
+      "title": "The certificate that carries your cover to another insurer",
+      "userQuestion": "Can I change health insurer without starting the exclusions again?",
+      "scenario": "Someone stays with an expensive insurer for years because switching seems to mean declaring everything afresh and waiting all over again.",
+      "audience": "people buying private health insurance",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The standard-conditions regime behind pre-existing cover, and the certificate that lets cover follow you to a new insurer.",
+      "anchorFact": {
+        "claim": "The ASF standard conditions regime for doenças preexistentes includes congenital diseases and creates a certificado de pré-existências that allows the choice of another insurer with continuity of cover, a portability subject to defined conditions.",
+        "kind": "artefact",
+        "namedThing": "certificado de pré-existências",
+        "verifyAt": "https://www.consumidor.asf.com.pt/pt/seguros/seguro-de-sa%C3%BAde",
+        "volatility": "stable"
+      },
+      "notObvious": "Portability exists as a named document, so the question to ask a new insurer is not whether they will cover the condition but whether they accept the certificate.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.consumidor.asf.com.pt/pt/seguros/seguro-de-sa%C3%BAde",
+        "authority": "Autoridade de Supervisão de Seguros e Fundos de Pensões"
       }
     }
   ]
