@@ -11018,6 +11018,56 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimt/Pages/cimt36.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "iva-asking-for-the-credit-back-instead-of-carrying-it",
+      "pillar": "iva",
+      "valueClass": "threshold",
+      "title": "Asking for an IVA credit back instead of carrying it forever",
+      "userQuestion": "I am always in IVA credit. Can I get the money instead?",
+      "scenario": "A business carries an IVA credit year after year, treating it as a permanent balance rather than a refundable one.",
+      "audience": "businesses persistently in IVA credit",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The twelve months and the amount that make a credit refundable, the larger amount that allows an early claim, and the deadline for the State to pay.",
+      "anchorFact": {
+        "claim": "Under artigo 22 of the Código do IVA a refund may be claimed where, 12 months after the period in which the excess began, a credit above 250 euros persists in the taxpayer's favour, with an earlier refund possible where the credit exceeds 3,000 euros or in cessation situations from 25 euros; the refund must be made by the end of the 2nd month following the request, or within 30 days for taxpayers registered in the monthly refund regime.",
+        "kind": "figure",
+        "namedThing": "reembolso",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/iva22.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "A credit over three thousand euros does not have to wait the twelve months, which is the difference between a year of financing the State and a two-month wait.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/iva22.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "housing-a-rental-loss-expires-if-the-flat-sits-empty",
+      "pillar": "housing_property",
+      "valueClass": "costly_mistake",
+      "title": "A rental loss expires if the property stops earning",
+      "userQuestion": "Can I carry a loss on a rental property forward indefinitely?",
+      "scenario": "An owner books a large renovation loss, then leaves the property empty or lives in it, and loses the carry-forward entirely.",
+      "audience": "landlords carrying a rental loss forward",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The years a rental loss and a business loss can be carried, and the thirty-six months of letting that a rental loss depends on.",
+      "anchorFact": {
+        "claim": "Under artigo 55 of the Código do IRS a negative net result in categoria F may be carried forward to the 6 following years and a negative net result in categoria B to the 12 following years, but the right to carry a rental loss is forfeited where the properties the costs relate to do not generate categoria F income for at least 36 months, consecutive or interpolated, within the 5 years following the loss.",
+        "kind": "figure",
+        "namedThing": "resultado líquido negativo",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs55.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The loss is conditional on the property continuing to be let, so renovating and then keeping it empty destroys the very deduction the renovation created.",
+      "journeyStage": "renting_out",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs55.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
