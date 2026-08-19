@@ -11,9 +11,18 @@ export function reserveEvidenceScore(card:ReserveCard,evidence:ReserveEvidence[]
   return card.evidenceTerms.reduce((score,term)=>{const normalized=normalize(term);return score+(normalized.length>=3&&text.includes(normalized)?Math.min(20,normalized.length):0);},0);
 }
 
+// The reserve is emitted by scripts/build-90-day-plan.mjs as the briefs the current
+// window did not consume, so a fallback can never collide with something already
+// scheduled and every reserve card carries the same authored anchor and verified source
+// as a planned one. It replaces config/evergreen-reserve.json, whose 98 cards were sliced
+// from only 14 pages and asked for source-page summaries rather than useful answers.
 export async function loadEvergreenReserve():Promise<ReserveCard[]>{
-  const data=JSON.parse(await readFile(new URL("../../../config/evergreen-reserve.json",import.meta.url),"utf8")) as {cards:ReserveCard[]};
-  return data.cards;
+  const path=new URL("../../../plans/finkavo-reserve.json",import.meta.url);
+  let raw:string;
+  try{raw=await readFile(path,"utf8");}
+  catch{throw new Error("Reserve not found at plans/finkavo-reserve.json. Build it with 'node scripts/build-90-day-plan.mjs'.");}
+  const data=JSON.parse(raw) as {cards:ReserveCard[]};
+  return data.cards??[];
 }
 
 export function eligibleReserveCards(cards:ReserveCard[],evidence:ReserveEvidence[],recent:RecentReserveUse[],now=new Date()){

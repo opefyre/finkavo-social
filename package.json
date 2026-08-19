@@ -4,20 +4,21 @@
   "private": true,
   "description": "English-first, source-backed social content workflow for Finkavo",
   "packageManager": "pnpm@11.7.0",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "build": "pnpm -r build",
     "dev": "pnpm --filter @finkavo-social/renderer dev",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
     "render:fixture": "pnpm --filter @finkavo-social/renderer render:fixture",
-    "plan:build": "node scripts/build-annual-content-plan.mjs",
-    "plan:validate": "node scripts/validate-curated-plan.mjs",
     "calendar:validate": "node scripts/validate-official-calendar.mjs",
-    "reserve:build": "node scripts/build-evergreen-reserve.mjs",
-    "reserve:validate": "node scripts/validate-evergreen-reserve.mjs",
     "n8n:up": "docker compose --env-file .env -f infrastructure/n8n/compose.yaml up -d",
     "n8n:down": "docker compose --env-file .env -f infrastructure/n8n/compose.yaml down",
-    "n8n:logs": "docker compose --env-file .env -f infrastructure/n8n/compose.yaml logs -f n8n"
+    "n8n:logs": "docker compose --env-file .env -f infrastructure/n8n/compose.yaml logs -f n8n",
+    "plan:build": "node scripts/build-90-day-plan.mjs",
+    "plan:validate": "node scripts/validate-brief-bank.mjs",
+    "plan:verify-sources": "node scripts/validate-brief-bank.mjs --check-sources"
   }
 }

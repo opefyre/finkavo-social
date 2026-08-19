@@ -110,8 +110,27 @@ for (const event of calendar.events ?? []) {
 // Briefs are consumed at most once inside the window, so nothing can repeat. Ordering
 // spreads pillars rather than draining one at a time.
 const pool = [...bank.briefs];
+
+// Hold part of the bank back so failover always has somewhere to go. Without this the
+// window consumes every brief and a held slot has no verified replacement, which is how
+// the previous system ended up with 77 blocked concepts against 3 ready ones. The share
+// is taken from the pillars with the most briefs so coverage stays broad.
+const reserveShare = Number(argOf("reserve-share", "0.2"));
+const reserveTarget = Math.min(pool.length, Math.max(0, Math.round(pool.length * reserveShare)));
+const heldBack = new Set();
+if (reserveTarget > 0) {
+  const byPillarCount = new Map();
+  for (const brief of pool) byPillarCount.set(brief.pillar, (byPillarCount.get(brief.pillar) ?? 0) + 1);
+  const ordered = [...pool].sort((a, b) => (byPillarCount.get(b.pillar) - byPillarCount.get(a.pillar)) || a.id.localeCompare(b.id));
+  for (const brief of ordered) {
+    if (heldBack.size >= reserveTarget) break;
+    heldBack.add(brief.id);
+  }
+}
+
+const layoutPool = pool.filter(brief => !heldBack.has(brief.id));
 const byPillar = new Map();
-for (const brief of pool) {
+for (const brief of layoutPool) {
   if (!byPillar.has(brief.pillar)) byPillar.set(brief.pillar, []);
   byPillar.get(brief.pillar).push(brief);
 }
@@ -151,7 +170,7 @@ for (let dayIndex = 0; dayIndex < days; dayIndex++) {
     // A date-locked occasion outranks evergreen material and takes the slot directly.
     const event = todaysEvents.shift();
     if (event) {
-      const anchorBrief = pool.find(b => b.pillar === event.subjectFamily && !used.has(b.id));
+      const anchorBrief = layoutPool.find(b => b.pillar === event.subjectFamily && !used.has(b.id));
       if (anchorBrief) {
         used.add(anchorBrief.id);
         const occurrence = (occurrences.get(event.key) ?? 0) + 1;
@@ -212,11 +231,46 @@ const plan = {
 await mkdir(new URL("../plans", import.meta.url), { recursive: true });
 await writeFile(new URL("../plans/finkavo-90-day-plan.json", import.meta.url), `${JSON.stringify(plan, null, 2)}\n`);
 
+// The reserve is whatever the window did not consume. Deriving it here rather than
+// maintaining a separate file means a fallback can never collide with a brief already
+// scheduled inside the window, and reserve cards inherit the same authored anchors and
+// verified sources as planned ones. The previous config/evergreen-reserve.json held 98
+// cards sliced from only 14 pages, with source-centric required answers.
+const reserveCards = pool
+  .filter(brief => !used.has(brief.id))
+  .map(brief => ({
+    id: brief.id,
+    subjectFamily: brief.pillar,
+    topic: brief.title,
+    userQuestion: brief.userQuestion,
+    audience: brief.audience,
+    contentIntent: INTENT_BY_VALUE_CLASS[brief.valueClass] ?? "evergreen_explainer",
+    purpose: brief.promise,
+    requiredAnswers: [
+      `Answer directly: ${brief.userQuestion}`,
+      `Establish the situation: ${brief.scenario}`,
+      `State and explain the anchor: ${brief.anchorFact.claim}`,
+    ],
+    sourcePolicy: {
+      canonicalUrl: brief.source.canonicalUrl,
+      requiredAuthority: brief.source.authority,
+      officialRequired: true,
+      freshnessDays: FRESHNESS_DAYS[brief.volatility] ?? 30,
+    },
+    evidenceTerms: deriveEvidenceTerms(brief),
+    status: "eligible",
+  }));
+
+await writeFile(
+  new URL("../plans/finkavo-reserve.json", import.meta.url),
+  `${JSON.stringify({ version: 1, generatedAt: plan.generatedAt, source: "plans/brief-bank.json (unused by the current window)", cards: reserveCards }, null, 2)}\n`,
+);
+
 const wanted = days * SLOT_TIMES.length;
 const daysFilled = new Set(rows.map(r => r.date)).size;
 console.log(`plan window : ${iso(start)} for ${days} days (${wanted} slots)`);
 console.log(`slots filled: ${rows.length}  days covered: ${daysFilled}`);
-console.log(`briefs used : ${used.size} of ${pool.length} in the bank`);
+console.log(`briefs used : ${used.size} of ${pool.length} in the bank (${heldBack.size} held back as reserve)`);
 
 const titles = new Set(rows.map(r => r.title));
 console.log(`unique titles: ${titles.size} of ${rows.length} rows` + (titles.size === rows.length ? "  (no repetition)" : "  ** REPETITION **"));

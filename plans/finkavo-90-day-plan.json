@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "generatedAt": "2026-08-19T08:58:07.379Z",
+  "generatedAt": "2026-08-19T10:04:40.198Z",
   "source": "plans/brief-bank.json",
   "window": {
     "start": "2026-08-20",
@@ -9,261 +9,6 @@
   "rows": [
     {
       "date": "2026-08-20",
-      "time": "08:30",
-      "slot": 1,
-      "pillar": "identity_access",
-      "angle": "insider",
-      "title": "How to end the fiscal representative obligation with electronic notifications",
-      "audience": "non-EU nationals with a Portuguese NIF",
-      "risk": "high",
-      "timing": "evergreen",
-      "reserve": "none",
-      "searchTerms": "NIF | NISS | Chave Móvel Digital | Portal das Finanças | Segurança Social Direta | representante fiscal | notificações eletrónicas | Cartão de Cidadão | título de residência",
-      "authority": "Autoridade Tributária e Aduaneira",
-      "occurrence": 1,
-      "evidenceTerms": "Decreto-Lei 44/2022 and artigo 38-A of | Portal das Finanças",
-      "curationStatus": "curated_90_day",
-      "brief": {
-        "briefId": "identity-fiscal-representative-avoided-by-enotifications",
-        "subjectFamily": "identity_access",
-        "userQuestion": "Do I still need to pay someone to be my fiscal representative in Portugal?",
-        "purpose": "How to drop the paid representative by adhering to electronic notifications yourself, and the one condition that keeps the obligation in place.",
-        "requiredAnswers": [
-          "Answer directly: Do I still need to pay someone to be my fiscal representative in Portugal?",
-          "Establish the situation: A non-EU resident has been quoted an annual fee by a firm offering to act as their fiscal representative, and assumes it is mandatory.",
-          "State and explain the anchor: Decreto-Lei 44/2022 and artigo 38-A of the CPPT exempt a non-resident taxpayer from appointing a fiscal representative when they adhere to a dematerialised notification channel, including the Portal das Finanças electronic notifications and citations service."
-        ],
-        "sourcePolicy": {
-          "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Dados_pessoais_familia/Dados_pessoais/Notificacoes_e_citacoes_eletronicas/Paginas/default.aspx",
-          "requiredAuthority": "Autoridade Tributária e Aduaneira",
-          "officialRequired": true,
-          "freshnessDays": 90
-        },
-        "timingBehavior": "flexible_evergreen",
-        "fallback": null,
-        "contentIntent": "golden_tip",
-        "occurrenceKey": null,
-        "campaignStage": null,
-        "valueClass": "insider",
-        "scenario": "A non-EU resident has been quoted an annual fee by a firm offering to act as their fiscal representative, and assumes it is mandatory.",
-        "promise": "How to drop the paid representative by adhering to electronic notifications yourself, and the one condition that keeps the obligation in place.",
-        "notObvious": "Most pages state the representative requirement as absolute and stop there. The adherence route is the part that saves real money every year.",
-        "anchorFact": {
-          "claim": "Decreto-Lei 44/2022 and artigo 38-A of the CPPT exempt a non-resident taxpayer from appointing a fiscal representative when they adhere to a dematerialised notification channel, including the Portal das Finanças electronic notifications and citations service.",
-          "kind": "instrument",
-          "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Dados_pessoais_familia/Dados_pessoais/Notificacoes_e_citacoes_eletronicas/Paginas/default.aspx",
-          "volatility": "stable"
-        },
-        "journeyStage": "first_30_days"
-      }
-    },
-    {
-      "date": "2026-08-20",
-      "time": "11:30",
-      "slot": 2,
-      "pillar": "housing_property",
-      "angle": "threshold",
-      "title": "The two thresholds that decide how many IMI instalments you get",
-      "audience": "property owners receiving their first IMI notice",
-      "risk": "high",
-      "timing": "evergreen",
-      "reserve": "none",
-      "searchTerms": "arrendamento | IMI | AIMI | IMT | imóvel | caderneta predial | Imposto do Selo | habitação própria permanente | VPT",
-      "authority": "Autoridade Tributária e Aduaneira",
-      "occurrence": 1,
-      "evidenceTerms": "IMI",
-      "curationStatus": "curated_90_day",
-      "brief": {
-        "briefId": "housing-imi-instalment-thresholds",
-        "subjectFamily": "housing_property",
-        "userQuestion": "Why did my neighbour pay IMI in one go and I have three instalments?",
-        "purpose": "The two euro thresholds that decide how many instalments you get, the months they fall in, and when paying early is allowed.",
-        "requiredAnswers": [
-          "Answer directly: Why did my neighbour pay IMI in one go and I have three instalments?",
-          "Establish the situation: A first-time property owner receives an IMI notice in May and does not understand why the amount is split, or whether they can choose.",
-          "State and explain the anchor: IMI is paid in a single instalment up to a lower euro threshold, in two instalments between the lower and upper thresholds, and in three instalments above the upper threshold, in the months set by the annual fiscal calendar."
-        ],
-        "sourcePolicy": {
-          "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx",
-          "requiredAuthority": "Autoridade Tributária e Aduaneira",
-          "officialRequired": true,
-          "freshnessDays": 30
-        },
-        "timingBehavior": "flexible_evergreen",
-        "fallback": null,
-        "contentIntent": "evergreen_explainer",
-        "occurrenceKey": null,
-        "campaignStage": null,
-        "valueClass": "threshold",
-        "scenario": "A first-time property owner receives an IMI notice in May and does not understand why the amount is split, or whether they can choose.",
-        "promise": "The two euro thresholds that decide how many instalments you get, the months they fall in, and when paying early is allowed.",
-        "notObvious": "The split is presented as arbitrary in most explanations; naming the exact thresholds lets a reader predict their own bill before it arrives.",
-        "anchorFact": {
-          "claim": "IMI is paid in a single instalment up to a lower euro threshold, in two instalments between the lower and upper thresholds, and in three instalments above the upper threshold, in the months set by the annual fiscal calendar.",
-          "kind": "figure",
-          "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx",
-          "volatility": "annual"
-        },
-        "journeyStage": "renting_buying_moving"
-      }
-    },
-    {
-      "date": "2026-08-20",
-      "time": "14:30",
-      "slot": 3,
-      "pillar": "identity_access",
-      "angle": "costly_mistake",
-      "title": "The Finanças lockout that traps people who moved",
-      "audience": "residents locked out of Portal das Finanças",
-      "risk": "medium",
-      "timing": "evergreen",
-      "reserve": "none",
-      "searchTerms": "NIF | NISS | Chave Móvel Digital | Portal das Finanças | Segurança Social Direta | representante fiscal | notificações eletrónicas | Cartão de Cidadão | título de residência",
-      "authority": "Autenticação.gov",
-      "occurrence": 1,
-      "evidenceTerms": "Chave Móvel Digital | Portal das Finanças",
-      "curationStatus": "curated_90_day",
-      "brief": {
-        "briefId": "identity-financas-password-address-deadlock",
-        "subjectFamily": "identity_access",
-        "userQuestion": "My Portal das Finanças password letter goes to an address I left. How do I get back in?",
-        "purpose": "The three ways to break the circular dependency, and which one works without an in-person appointment.",
-        "requiredAnswers": [
-          "Answer directly: My Portal das Finanças password letter goes to an address I left. How do I get back in?",
-          "Establish the situation: Someone registered a NIF using a temporary or lawyer's address, has since moved, and now cannot log in because the new password is posted to the old address — and changing the address requires logging in.",
-          "State and explain the anchor: A replacement Portal das Finanças password is posted to the taxpayer's registered address, but the registered address can be changed online by authenticating with Chave Móvel Digital instead, which breaks the dependency on receiving that letter."
-        ],
-        "sourcePolicy": {
-          "canonicalUrl": "https://www.autenticacao.gov.pt/cmd-pedido-chave",
-          "requiredAuthority": "Autenticação.gov",
-          "officialRequired": true,
-          "freshnessDays": 90
-        },
-        "timingBehavior": "flexible_evergreen",
-        "fallback": null,
-        "contentIntent": "common_mistake",
-        "occurrenceKey": null,
-        "campaignStage": null,
-        "valueClass": "costly_mistake",
-        "scenario": "Someone registered a NIF using a temporary or lawyer's address, has since moved, and now cannot log in because the new password is posted to the old address — and changing the address requires logging in.",
-        "promise": "The three ways to break the circular dependency, and which one works without an in-person appointment.",
-        "notObvious": "The circular dependency is the actual problem people hit, and it is never covered by posts that just say 'request a new password'.",
-        "anchorFact": {
-          "claim": "A replacement Portal das Finanças password is posted to the taxpayer's registered address, but the registered address can be changed online by authenticating with Chave Móvel Digital instead, which breaks the dependency on receiving that letter.",
-          "kind": "procedure",
-          "namedThing": "Chave Móvel Digital",
-          "verifyAt": "https://www2.gov.pt/servicos/ativar-a-chave-movel-digital",
-          "volatility": "stable"
-        },
-        "journeyStage": "resolving_a_problem"
-      }
-    },
-    {
-      "date": "2026-08-20",
-      "time": "18:00",
-      "slot": 4,
-      "pillar": "employment",
-      "angle": "edge_case",
-      "title": "The public holiday that lands on your day off",
-      "audience": "employees on fixed weekly schedules",
-      "risk": "medium",
-      "timing": "news_flex",
-      "reserve": "breaking_news",
-      "searchTerms": "contrato de trabalho | Código do Trabalho | salário | férias | feriado | período experimental | aviso prévio",
-      "authority": "Diário da República",
-      "occurrence": 1,
-      "evidenceTerms": "Código do Trabalho governs entitle | Código do Trabalho",
-      "curationStatus": "curated_90_day",
-      "brief": {
-        "briefId": "employment-holiday-falls-on-rest-day",
-        "subjectFamily": "employment",
-        "userQuestion": "A public holiday fell on a Saturday — do I get anything for it?",
-        "purpose": "What the Código do Trabalho actually entitles you to, and the one situation where a compensating rest day is owed.",
-        "requiredAnswers": [
-          "Answer directly: A public holiday fell on a Saturday — do I get anything for it?",
-          "Establish the situation: An employee notices a holiday fell on a non-working day and hears conflicting claims about compensation days from colleagues.",
-          "State and explain the anchor: The Código do Trabalho governs entitlement when a mandatory public holiday coincides with a weekly rest day, and compensation is not automatic in all cases."
-        ],
-        "sourcePolicy": {
-          "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475",
-          "requiredAuthority": "Diário da República",
-          "officialRequired": true,
-          "freshnessDays": 90
-        },
-        "timingBehavior": "fixed_or_campaign",
-        "fallback": {
-          "kind": "named_evergreen",
-          "title": "The public holiday that lands on your day off"
-        },
-        "contentIntent": "common_mistake",
-        "occurrenceKey": null,
-        "campaignStage": null,
-        "valueClass": "edge_case",
-        "scenario": "An employee notices a holiday fell on a non-working day and hears conflicting claims about compensation days from colleagues.",
-        "promise": "What the Código do Trabalho actually entitles you to, and the one situation where a compensating rest day is owed.",
-        "notObvious": "This is argued about in every workplace every year and is usually answered wrongly from hearsay rather than from the consolidated law.",
-        "anchorFact": {
-          "claim": "The Código do Trabalho governs entitlement when a mandatory public holiday coincides with a weekly rest day, and compensation is not automatic in all cases.",
-          "kind": "instrument",
-          "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475",
-          "volatility": "stable"
-        },
-        "journeyStage": "first_employment"
-      }
-    },
-    {
-      "date": "2026-08-20",
-      "time": "21:00",
-      "slot": 5,
-      "pillar": "health_family",
-      "angle": "insider",
-      "title": "SNS fee exemption renews itself, but only if you filed IRS",
-      "audience": "patients already granted a fee exemption",
-      "risk": "medium",
-      "timing": "evergreen",
-      "reserve": "none",
-      "searchTerms": "SNS | centro de saúde | médico de família | número de utente | taxas moderadoras | insuficiência económica | IAS",
-      "authority": "gov.pt / SNS",
-      "occurrence": 1,
-      "evidenceTerms": "taxas moderadoras | SNS | insuficiência económica",
-      "curationStatus": "curated_90_day",
-      "brief": {
-        "briefId": "health-exemption-reassessed-automatically",
-        "subjectFamily": "health_family",
-        "userQuestion": "Do I have to reapply for my SNS fee exemption every year?",
-        "purpose": "The automatic annual reassessment date, the data it is based on, and the one thing that silently ends the exemption.",
-        "requiredAnswers": [
-          "Answer directly: Do I have to reapply for my SNS fee exemption every year?",
-          "Establish the situation: Someone granted an exemption last year is unsure whether to reapply, and does not realise the renewal is computed from their tax return.",
-          "State and explain the anchor: Insuficiência económica for taxas moderadoras is reassessed automatically each year by 30 September using income declared to the Autoridade Tributária, so no renewal request is needed and the exemption is recorded against the utente record."
-        ],
-        "sourcePolicy": {
-          "canonicalUrl": "https://www.gov.pt/servicos/pedir-a-isencao-de-taxas-moderadoras-por-insuficiencia-economica",
-          "requiredAuthority": "gov.pt / SNS",
-          "officialRequired": true,
-          "freshnessDays": 30
-        },
-        "timingBehavior": "flexible_evergreen",
-        "fallback": null,
-        "contentIntent": "golden_tip",
-        "occurrenceKey": null,
-        "campaignStage": null,
-        "valueClass": "insider",
-        "scenario": "Someone granted an exemption last year is unsure whether to reapply, and does not realise the renewal is computed from their tax return.",
-        "promise": "The automatic annual reassessment date, the data it is based on, and the one thing that silently ends the exemption.",
-        "notObvious": "Because the reassessment reads the tax return, not filing IRS can quietly remove an exemption nobody told you was conditional on it.",
-        "anchorFact": {
-          "claim": "Insuficiência económica for taxas moderadoras is reassessed automatically each year by 30 September using income declared to the Autoridade Tributária, so no renewal request is needed and the exemption is recorded against the utente record.",
-          "kind": "deadline",
-          "namedThing": "taxas moderadoras",
-          "verifyAt": "https://www.gov.pt/servicos/pedir-a-isencao-de-taxas-moderadoras-por-insuficiencia-economica",
-          "volatility": "annual"
-        },
-        "journeyStage": "resolving_a_problem"
-      }
-    },
-    {
-      "date": "2026-08-21",
       "time": "08:30",
       "slot": 1,
       "pillar": "social_security",
@@ -313,7 +58,7 @@
       }
     },
     {
-      "date": "2026-08-21",
+      "date": "2026-08-20",
       "time": "11:30",
       "slot": 2,
       "pillar": "irs",
@@ -363,9 +108,113 @@
       }
     },
     {
-      "date": "2026-08-21",
+      "date": "2026-08-20",
       "time": "14:30",
       "slot": 3,
+      "pillar": "employment",
+      "angle": "edge_case",
+      "title": "The public holiday that lands on your day off",
+      "audience": "employees on fixed weekly schedules",
+      "risk": "medium",
+      "timing": "evergreen",
+      "reserve": "none",
+      "searchTerms": "contrato de trabalho | Código do Trabalho | salário | férias | feriado | período experimental | aviso prévio",
+      "authority": "Diário da República",
+      "occurrence": 1,
+      "evidenceTerms": "Código do Trabalho governs entitle | Código do Trabalho",
+      "curationStatus": "curated_90_day",
+      "brief": {
+        "briefId": "employment-holiday-falls-on-rest-day",
+        "subjectFamily": "employment",
+        "userQuestion": "A public holiday fell on a Saturday — do I get anything for it?",
+        "purpose": "What the Código do Trabalho actually entitles you to, and the one situation where a compensating rest day is owed.",
+        "requiredAnswers": [
+          "Answer directly: A public holiday fell on a Saturday — do I get anything for it?",
+          "Establish the situation: An employee notices a holiday fell on a non-working day and hears conflicting claims about compensation days from colleagues.",
+          "State and explain the anchor: The Código do Trabalho governs entitlement when a mandatory public holiday coincides with a weekly rest day, and compensation is not automatic in all cases."
+        ],
+        "sourcePolicy": {
+          "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475",
+          "requiredAuthority": "Diário da República",
+          "officialRequired": true,
+          "freshnessDays": 90
+        },
+        "timingBehavior": "flexible_evergreen",
+        "fallback": null,
+        "contentIntent": "common_mistake",
+        "occurrenceKey": null,
+        "campaignStage": null,
+        "valueClass": "edge_case",
+        "scenario": "An employee notices a holiday fell on a non-working day and hears conflicting claims about compensation days from colleagues.",
+        "promise": "What the Código do Trabalho actually entitles you to, and the one situation where a compensating rest day is owed.",
+        "notObvious": "This is argued about in every workplace every year and is usually answered wrongly from hearsay rather than from the consolidated law.",
+        "anchorFact": {
+          "claim": "The Código do Trabalho governs entitlement when a mandatory public holiday coincides with a weekly rest day, and compensation is not automatic in all cases.",
+          "kind": "instrument",
+          "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475",
+          "volatility": "stable"
+        },
+        "journeyStage": "first_employment"
+      }
+    },
+    {
+      "date": "2026-08-20",
+      "time": "18:00",
+      "slot": 4,
+      "pillar": "health_family",
+      "angle": "insider",
+      "title": "SNS fee exemption renews itself, but only if you filed IRS",
+      "audience": "patients already granted a fee exemption",
+      "risk": "medium",
+      "timing": "news_flex",
+      "reserve": "breaking_news",
+      "searchTerms": "SNS | centro de saúde | médico de família | número de utente | taxas moderadoras | insuficiência económica | IAS",
+      "authority": "gov.pt / SNS",
+      "occurrence": 1,
+      "evidenceTerms": "taxas moderadoras | SNS | insuficiência económica",
+      "curationStatus": "curated_90_day",
+      "brief": {
+        "briefId": "health-exemption-reassessed-automatically",
+        "subjectFamily": "health_family",
+        "userQuestion": "Do I have to reapply for my SNS fee exemption every year?",
+        "purpose": "The automatic annual reassessment date, the data it is based on, and the one thing that silently ends the exemption.",
+        "requiredAnswers": [
+          "Answer directly: Do I have to reapply for my SNS fee exemption every year?",
+          "Establish the situation: Someone granted an exemption last year is unsure whether to reapply, and does not realise the renewal is computed from their tax return.",
+          "State and explain the anchor: Insuficiência económica for taxas moderadoras is reassessed automatically each year by 30 September using income declared to the Autoridade Tributária, so no renewal request is needed and the exemption is recorded against the utente record."
+        ],
+        "sourcePolicy": {
+          "canonicalUrl": "https://www.gov.pt/servicos/pedir-a-isencao-de-taxas-moderadoras-por-insuficiencia-economica",
+          "requiredAuthority": "gov.pt / SNS",
+          "officialRequired": true,
+          "freshnessDays": 30
+        },
+        "timingBehavior": "fixed_or_campaign",
+        "fallback": {
+          "kind": "named_evergreen",
+          "title": "SNS fee exemption renews itself, but only if you filed IRS"
+        },
+        "contentIntent": "golden_tip",
+        "occurrenceKey": null,
+        "campaignStage": null,
+        "valueClass": "insider",
+        "scenario": "Someone granted an exemption last year is unsure whether to reapply, and does not realise the renewal is computed from their tax return.",
+        "promise": "The automatic annual reassessment date, the data it is based on, and the one thing that silently ends the exemption.",
+        "notObvious": "Because the reassessment reads the tax return, not filing IRS can quietly remove an exemption nobody told you was conditional on it.",
+        "anchorFact": {
+          "claim": "Insuficiência económica for taxas moderadoras is reassessed automatically each year by 30 September using income declared to the Autoridade Tributária, so no renewal request is needed and the exemption is recorded against the utente record.",
+          "kind": "deadline",
+          "namedThing": "taxas moderadoras",
+          "verifyAt": "https://www.gov.pt/servicos/pedir-a-isencao-de-taxas-moderadoras-por-insuficiencia-economica",
+          "volatility": "annual"
+        },
+        "journeyStage": "resolving_a_problem"
+      }
+    },
+    {
+      "date": "2026-08-20",
+      "time": "21:00",
+      "slot": 5,
       "pillar": "daily_life_consumer",
       "angle": "decision",
       "title": "Complaints book or regulator: which one gets a result",
@@ -415,162 +264,8 @@
     },
     {
       "date": "2026-08-21",
-      "time": "18:00",
-      "slot": 4,
-      "pillar": "identity_access",
-      "angle": "edge_case",
-      "title": "Activating Chave Móvel Digital without a Cartão de Cidadão",
-      "audience": "foreign residents without a Cartão de Cidadão",
-      "risk": "medium",
-      "timing": "news_flex",
-      "reserve": "breaking_news",
-      "searchTerms": "NIF | NISS | Chave Móvel Digital | Portal das Finanças | Segurança Social Direta | representante fiscal | notificações eletrónicas | Cartão de Cidadão | título de residência",
-      "authority": "gov.pt / Autenticação.gov",
-      "occurrence": 1,
-      "evidenceTerms": "título de residência | Chave Móvel Digital | Portal das Finanças | Cartão de Cidadão",
-      "curationStatus": "curated_90_day",
-      "brief": {
-        "briefId": "identity-cmd-activation-route-differs-for-foreigners",
-        "subjectFamily": "identity_access",
-        "userQuestion": "Can I activate Chave Móvel Digital with a residence permit instead of a citizen card?",
-        "purpose": "Which identity documents CMD accepts, why the online route rejects you, and where activation actually has to happen.",
-        "requiredAnswers": [
-          "Answer directly: Can I activate Chave Móvel Digital with a residence permit instead of a citizen card?",
-          "Establish the situation: A foreign resident tries to activate CMD online, the flow only accepts a citizen card, and they conclude CMD is unavailable to them.",
-          "State and explain the anchor: Chave Móvel Digital can be activated by a foreign person using a passport, título de residência or residence card, but online activation through autenticacao.gov, the Portal das Finanças and the gov.pt app is available only to holders of a Portuguese Cartão de Cidadão."
-        ],
-        "sourcePolicy": {
-          "canonicalUrl": "https://www.gov.pt/servicos/ativar-a-chave-movel-digital",
-          "requiredAuthority": "gov.pt / Autenticação.gov",
-          "officialRequired": true,
-          "freshnessDays": 90
-        },
-        "timingBehavior": "fixed_or_campaign",
-        "fallback": {
-          "kind": "named_evergreen",
-          "title": "Activating Chave Móvel Digital without a Cartão de Cidadão"
-        },
-        "contentIntent": "common_mistake",
-        "occurrenceKey": null,
-        "campaignStage": null,
-        "valueClass": "edge_case",
-        "scenario": "A foreign resident tries to activate CMD online, the flow only accepts a citizen card, and they conclude CMD is unavailable to them.",
-        "promise": "Which identity documents CMD accepts, why the online route rejects you, and where activation actually has to happen.",
-        "notObvious": "The online route silently excludes exactly the people most likely to need CMD, and the eligibility page does not present that as the reason activation failed.",
-        "anchorFact": {
-          "claim": "Chave Móvel Digital can be activated by a foreign person using a passport, título de residência or residence card, but online activation through autenticacao.gov, the Portal das Finanças and the gov.pt app is available only to holders of a Portuguese Cartão de Cidadão.",
-          "kind": "artefact",
-          "namedThing": "título de residência",
-          "verifyAt": "https://www.gov.pt/servicos/ativar-a-chave-movel-digital",
-          "volatility": "stable"
-        },
-        "journeyStage": "first_30_days"
-      }
-    },
-    {
-      "date": "2026-08-21",
-      "time": "21:00",
-      "slot": 5,
-      "pillar": "employment",
-      "angle": "threshold",
-      "title": "How long a período experimental lasts for your kind of role",
-      "audience": "employees starting a new contract",
-      "risk": "medium",
-      "timing": "evergreen",
-      "reserve": "none",
-      "searchTerms": "contrato de trabalho | Código do Trabalho | salário | férias | feriado | período experimental | aviso prévio",
-      "authority": "Diário da República",
-      "occurrence": 1,
-      "evidenceTerms": "Código do Trabalho the período exp | Código do Trabalho | período experimental",
-      "curationStatus": "curated_90_day",
-      "brief": {
-        "briefId": "employment-experimental-period-length-by-role",
-        "subjectFamily": "employment",
-        "userQuestion": "How long is my probation period supposed to be?",
-        "purpose": "The three statutory lengths for open-ended contracts, the shorter ones for fixed-term contracts, and which bracket your role falls in.",
-        "requiredAnswers": [
-          "Answer directly: How long is my probation period supposed to be?",
-          "Establish the situation: A new hire is told they are on probation but never told for how long, and cannot tell whether the length in their contract is lawful.",
-          "State and explain the anchor: Under the Código do Trabalho the período experimental for an indefinite-term contract is 90 days generally, 180 days for roles of technical complexity or high responsibility, and 240 days for management and senior posts, while fixed-term contracts have 30 or 15 days depending on duration."
-        ],
-        "sourcePolicy": {
-          "canonicalUrl": "https://diariodarepublica.pt/dr/lexionario/termo/periodo-experimental",
-          "requiredAuthority": "Diário da República",
-          "officialRequired": true,
-          "freshnessDays": 90
-        },
-        "timingBehavior": "flexible_evergreen",
-        "fallback": null,
-        "contentIntent": "evergreen_explainer",
-        "occurrenceKey": null,
-        "campaignStage": null,
-        "valueClass": "threshold",
-        "scenario": "A new hire is told they are on probation but never told for how long, and cannot tell whether the length in their contract is lawful.",
-        "promise": "The three statutory lengths for open-ended contracts, the shorter ones for fixed-term contracts, and which bracket your role falls in.",
-        "notObvious": "Employers often state a single number. Knowing which bracket the role legally falls in is what tells you whether the contract is correct.",
-        "anchorFact": {
-          "claim": "Under the Código do Trabalho the período experimental for an indefinite-term contract is 90 days generally, 180 days for roles of technical complexity or high responsibility, and 240 days for management and senior posts, while fixed-term contracts have 30 or 15 days depending on duration.",
-          "kind": "figure",
-          "verifyAt": "https://diariodarepublica.pt/dr/lexionario/termo/periodo-experimental",
-          "volatility": "stable"
-        },
-        "journeyStage": "first_employment"
-      }
-    },
-    {
-      "date": "2026-08-22",
       "time": "08:30",
       "slot": 1,
-      "pillar": "housing_property",
-      "angle": "edge_case",
-      "title": "The landlords exempt from electronic rent receipts still owe Modelo 44",
-      "audience": "landlords exempt from electronic rent receipts",
-      "risk": "high",
-      "timing": "evergreen",
-      "reserve": "none",
-      "searchTerms": "arrendamento | IMI | AIMI | IMT | imóvel | caderneta predial | Imposto do Selo | habitação própria permanente | VPT",
-      "authority": "Autoridade Tributária e Aduaneira",
-      "occurrence": 1,
-      "evidenceTerms": "Modelo 44 annual rent declaration",
-      "curationStatus": "curated_90_day",
-      "brief": {
-        "briefId": "housing-modelo-44-exempt-landlords",
-        "subjectFamily": "housing_property",
-        "userQuestion": "I do not issue electronic rent receipts — do I still have to declare the rent?",
-        "purpose": "Who the exemption covers, the annual declaration that replaces the receipts, and the February deadline for it.",
-        "requiredAnswers": [
-          "Answer directly: I do not issue electronic rent receipts — do I still have to declare the rent?",
-          "Establish the situation: A landlord over 65, or with a rural contract, correctly stops issuing recibos de renda eletrónicos and assumes the reporting obligation ends with it.",
-          "State and explain the anchor: Landlords exempt from issuing electronic rent receipts, including those aged 65 or over on 31 December of the previous year and those with rural contracts, must instead submit the Modelo 44 annual rent declaration by the end of February."
-        ],
-        "sourcePolicy": {
-          "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00358.aspx",
-          "requiredAuthority": "Autoridade Tributária e Aduaneira",
-          "officialRequired": true,
-          "freshnessDays": 30
-        },
-        "timingBehavior": "flexible_evergreen",
-        "fallback": null,
-        "contentIntent": "common_mistake",
-        "occurrenceKey": null,
-        "campaignStage": null,
-        "valueClass": "edge_case",
-        "scenario": "A landlord over 65, or with a rural contract, correctly stops issuing recibos de renda eletrónicos and assumes the reporting obligation ends with it.",
-        "promise": "Who the exemption covers, the annual declaration that replaces the receipts, and the February deadline for it.",
-        "notObvious": "The exemption is well known and the replacement obligation is not, so people who correctly stop issuing receipts silently acquire a missed filing.",
-        "anchorFact": {
-          "claim": "Landlords exempt from issuing electronic rent receipts, including those aged 65 or over on 31 December of the previous year and those with rural contracts, must instead submit the Modelo 44 annual rent declaration by the end of February.",
-          "kind": "instrument",
-          "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00358.aspx",
-          "volatility": "annual"
-        },
-        "journeyStage": "renting_buying_moving"
-      }
-    },
-    {
-      "date": "2026-08-22",
-      "time": "11:30",
-      "slot": 2,
       "pillar": "social_security",
       "angle": "threshold",
       "title": "The minimum Segurança Social contribution when you invoiced nothing",
@@ -618,16 +313,116 @@
       }
     },
     {
-      "date": "2026-08-22",
+      "date": "2026-08-21",
+      "time": "11:30",
+      "slot": 2,
+      "pillar": "irs",
+      "angle": "deadline_action",
+      "title": "The February e-Fatura window that decides your IRS deductions",
+      "audience": "employees and freelancers claiming IRS deductions",
+      "risk": "high",
+      "timing": "evergreen",
+      "reserve": "none",
+      "searchTerms": "IRS | Modelo 3 | e-Fatura | Anexo J | IRS Automático | IRS Jovem | IAS",
+      "authority": "Autoridade Tributária e Aduaneira",
+      "occurrence": 1,
+      "evidenceTerms": "IRS | e-Fatura",
+      "curationStatus": "curated_90_day",
+      "brief": {
+        "briefId": "irs-efatura-validation-window",
+        "subjectFamily": "irs",
+        "userQuestion": "What is the last day I can fix my e-Fatura invoices for this year's IRS?",
+        "purpose": "The February cut-off for classifying invoices, what happens when it lands on a weekend, and why filing season is too late to fix it.",
+        "requiredAnswers": [
+          "Answer directly: What is the last day I can fix my e-Fatura invoices for this year's IRS?",
+          "Establish the situation: Someone assumes deductions can be corrected when they file in April, and discovers the invoice classification closed months earlier.",
+          "State and explain the anchor: Invoices from the previous year must be consulted, registered or confirmed in e-Fatura by the end of February, with the deadline moving to the next working day when it falls on a weekend."
+        ],
+        "sourcePolicy": {
+          "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/prazos/Paginas/default.aspx",
+          "requiredAuthority": "Autoridade Tributária e Aduaneira",
+          "officialRequired": true,
+          "freshnessDays": 30
+        },
+        "timingBehavior": "flexible_evergreen",
+        "fallback": null,
+        "contentIntent": "deadline_reminder",
+        "occurrenceKey": null,
+        "campaignStage": null,
+        "valueClass": "deadline_action",
+        "scenario": "Someone assumes deductions can be corrected when they file in April, and discovers the invoice classification closed months earlier.",
+        "promise": "The February cut-off for classifying invoices, what happens when it lands on a weekend, and why filing season is too late to fix it.",
+        "notObvious": "The deduction deadline is two months before the filing deadline. People conflate the two and lose deductions they already paid for.",
+        "anchorFact": {
+          "claim": "Invoices from the previous year must be consulted, registered or confirmed in e-Fatura by the end of February, with the deadline moving to the next working day when it falls on a weekend.",
+          "kind": "deadline",
+          "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/prazos/Paginas/default.aspx",
+          "volatility": "annual"
+        },
+        "journeyStage": "first_tax_year"
+      }
+    },
+    {
+      "date": "2026-08-21",
       "time": "14:30",
       "slot": 3,
+      "pillar": "employment",
+      "angle": "threshold",
+      "title": "How long a período experimental lasts for your kind of role",
+      "audience": "employees starting a new contract",
+      "risk": "medium",
+      "timing": "evergreen",
+      "reserve": "none",
+      "searchTerms": "contrato de trabalho | Código do Trabalho | salário | férias | feriado | período experimental | aviso prévio",
+      "authority": "Diário da República",
+      "occurrence": 1,
+      "evidenceTerms": "Código do Trabalho the período exp | Código do Trabalho | período experimental",
+      "curationStatus": "curated_90_day",
+      "brief": {
+        "briefId": "employment-experimental-period-length-by-role",
+        "subjectFamily": "employment",
+        "userQuestion": "How long is my probation period supposed to be?",
+        "purpose": "The three statutory lengths for open-ended contracts, the shorter ones for fixed-term contracts, and which bracket your role falls in.",
+        "requiredAnswers": [
+          "Answer directly: How long is my probation period supposed to be?",
+          "Establish the situation: A new hire is told they are on probation but never told for how long, and cannot tell whether the length in their contract is lawful.",
+          "State and explain the anchor: Under the Código do Trabalho the período experimental for an indefinite-term contract is 90 days generally, 180 days for roles of technical complexity or high responsibility, and 240 days for management and senior posts, while fixed-term contracts have 30 or 15 days depending on duration."
+        ],
+        "sourcePolicy": {
+          "canonicalUrl": "https://diariodarepublica.pt/dr/lexionario/termo/periodo-experimental",
+          "requiredAuthority": "Diário da República",
+          "officialRequired": true,
+          "freshnessDays": 90
+        },
+        "timingBehavior": "flexible_evergreen",
+        "fallback": null,
+        "contentIntent": "evergreen_explainer",
+        "occurrenceKey": null,
+        "campaignStage": null,
+        "valueClass": "threshold",
+        "scenario": "A new hire is told they are on probation but never told for how long, and cannot tell whether the length in their contract is lawful.",
+        "promise": "The three statutory lengths for open-ended contracts, the shorter ones for fixed-term contracts, and which bracket your role falls in.",
+        "notObvious": "Employers often state a single number. Knowing which bracket the role legally falls in is what tells you whether the contract is correct.",
+        "anchorFact": {
+          "claim": "Under the Código do Trabalho the período experimental for an indefinite-term contract is 90 days generally, 180 days for roles of technical complexity or high responsibility, and 240 days for management and senior posts, while fixed-term contracts have 30 or 15 days depending on duration.",
+          "kind": "figure",
+          "verifyAt": "https://diariodarepublica.pt/dr/lexionario/termo/periodo-experimental",
+          "volatility": "stable"
+        },
+        "journeyStage": "first_employment"
+      }
+    },
+    {
+      "date": "2026-08-21",
+      "time": "18:00",
+      "slot": 4,
       "pillar": "daily_life_consumer",
       "angle": "threshold",
       "title": "The 24-month cap on telecom lock-in, and the tariffs operators must also offer",
       "audience": "people signing a telecoms contract",
       "risk": "low",
-      "timing": "evergreen",
-      "reserve": "none",
+      "timing": "news_flex",
+      "reserve": "breaking_news",
       "searchTerms": "ePortugal | Livro de Reclamações | ANACOM | energia | arbitragem de consumo | fidelização | ANACOM",
       "authority": "ANACOM",
       "occurrence": 1,
@@ -649,8 +444,11 @@
           "officialRequired": true,
           "freshnessDays": 90
         },
-        "timingBehavior": "flexible_evergreen",
-        "fallback": null,
+        "timingBehavior": "fixed_or_campaign",
+        "fallback": {
+          "kind": "named_evergreen",
+          "title": "The 24-month cap on telecom lock-in, and the tariffs operators must also offer"
+        },
         "contentIntent": "evergreen_explainer",
         "occurrenceKey": null,
         "campaignStage": null,
@@ -668,61 +466,7 @@
       }
     },
     {
-      "date": "2026-08-22",
-      "time": "18:00",
-      "slot": 4,
-      "pillar": "identity_access",
-      "angle": "insider",
-      "title": "Every Chave Móvel Digital needs its own phone number",
-      "audience": "families setting up CMD for more than one person",
-      "risk": "low",
-      "timing": "news_flex",
-      "reserve": "breaking_news",
-      "searchTerms": "NIF | NISS | Chave Móvel Digital | Portal das Finanças | Segurança Social Direta | representante fiscal | notificações eletrónicas | Cartão de Cidadão | título de residência",
-      "authority": "Autenticação.gov",
-      "occurrence": 1,
-      "evidenceTerms": "Chave Móvel Digital",
-      "curationStatus": "curated_90_day",
-      "brief": {
-        "briefId": "identity-cmd-one-phone-number-per-person",
-        "subjectFamily": "identity_access",
-        "userQuestion": "Can I use my phone number for my child's or partner's Chave Móvel Digital?",
-        "purpose": "Why a number cannot be shared, what that means for a child's CMD, and how to plan it before you start.",
-        "requiredAnswers": [
-          "Answer directly: Can I use my phone number for my child's or partner's Chave Móvel Digital?",
-          "Establish the situation: A parent setting up CMD for a child, or a couple sharing one handset, tries to reuse the same number and the second activation fails without a clear reason.",
-          "State and explain the anchor: Chave Móvel Digital binds one mobile phone number to one identity document, and each Chave Móvel Digital requires its own unique phone number even when it is being set up for a child or another family member."
-        ],
-        "sourcePolicy": {
-          "canonicalUrl": "https://www.autenticacao.gov.pt/cmd-pedido-chave",
-          "requiredAuthority": "Autenticação.gov",
-          "officialRequired": true,
-          "freshnessDays": 90
-        },
-        "timingBehavior": "fixed_or_campaign",
-        "fallback": {
-          "kind": "named_evergreen",
-          "title": "Every Chave Móvel Digital needs its own phone number"
-        },
-        "contentIntent": "golden_tip",
-        "occurrenceKey": null,
-        "campaignStage": null,
-        "valueClass": "insider",
-        "scenario": "A parent setting up CMD for a child, or a couple sharing one handset, tries to reuse the same number and the second activation fails without a clear reason.",
-        "promise": "Why a number cannot be shared, what that means for a child's CMD, and how to plan it before you start.",
-        "notObvious": "Households routinely discover this only after the second activation fails, having already used their only spare number.",
-        "anchorFact": {
-          "claim": "Chave Móvel Digital binds one mobile phone number to one identity document, and each Chave Móvel Digital requires its own unique phone number even when it is being set up for a child or another family member.",
-          "kind": "artefact",
-          "namedThing": "Chave Móvel Digital",
-          "verifyAt": "https://www.autenticacao.gov.pt/cmd-pedido-chave",
-          "volatility": "stable"
-        },
-        "journeyStage": "bringing_family"
-      }
-    },
-    {
-      "date": "2026-08-22",
+      "date": "2026-08-21",
       "time": "21:00",
       "slot": 5,
       "pillar": "banking_money",
@@ -772,84 +516,34 @@
       }
     },
     {
-      "date": "2026-08-23",
+      "date": "2026-08-22",
       "time": "08:30",
       "slot": 1,
-      "pillar": "irs",
-      "angle": "deadline_action",
-      "title": "The February e-Fatura window that decides your IRS deductions",
-      "audience": "employees and freelancers claiming IRS deductions",
+      "pillar": "social_security",
+      "angle": "decision",
+      "title": "Why some independent workers pay 21.4% and others 25.2%",
+      "audience": "freelancers choosing a legal form",
       "risk": "high",
       "timing": "evergreen",
       "reserve": "none",
-      "searchTerms": "IRS | Modelo 3 | e-Fatura | Anexo J | IRS Automático | IRS Jovem | IAS",
-      "authority": "Autoridade Tributária e Aduaneira",
+      "searchTerms": "Segurança Social | declaração trimestral | contribuições | NISS | trabalhador independente",
+      "authority": "Instituto da Segurança Social",
       "occurrence": 1,
-      "evidenceTerms": "IRS | e-Fatura",
+      "evidenceTerms": "empresários em nome individual",
       "curationStatus": "curated_90_day",
       "brief": {
-        "briefId": "irs-efatura-validation-window",
-        "subjectFamily": "irs",
-        "userQuestion": "What is the last day I can fix my e-Fatura invoices for this year's IRS?",
-        "purpose": "The February cut-off for classifying invoices, what happens when it lands on a weekend, and why filing season is too late to fix it.",
+        "briefId": "social-security-rate-differs-by-legal-form",
+        "subjectFamily": "social_security",
+        "userQuestion": "Why is my Segurança Social rate higher than another freelancer's?",
+        "purpose": "Which contribution rate attaches to which legal form, and what that difference costs over a year.",
         "requiredAnswers": [
-          "Answer directly: What is the last day I can fix my e-Fatura invoices for this year's IRS?",
-          "Establish the situation: Someone assumes deductions can be corrected when they file in April, and discovers the invoice classification closed months earlier.",
-          "State and explain the anchor: Invoices from the previous year must be consulted, registered or confirmed in e-Fatura by the end of February, with the deadline moving to the next working day when it falls on a weekend."
+          "Answer directly: Why is my Segurança Social rate higher than another freelancer's?",
+          "Establish the situation: Two people doing similar work compare contribution bills and find materially different rates, without knowing the legal form is what separates them.",
+          "State and explain the anchor: The contribution rate for independent workers is 21.4%, while the rate for empresários em nome individual, holders of an estabelecimento individual de responsabilidade limitada and their spouses is 25.2%."
         ],
         "sourcePolicy": {
-          "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/prazos/Paginas/default.aspx",
-          "requiredAuthority": "Autoridade Tributária e Aduaneira",
-          "officialRequired": true,
-          "freshnessDays": 30
-        },
-        "timingBehavior": "flexible_evergreen",
-        "fallback": null,
-        "contentIntent": "deadline_reminder",
-        "occurrenceKey": null,
-        "campaignStage": null,
-        "valueClass": "deadline_action",
-        "scenario": "Someone assumes deductions can be corrected when they file in April, and discovers the invoice classification closed months earlier.",
-        "promise": "The February cut-off for classifying invoices, what happens when it lands on a weekend, and why filing season is too late to fix it.",
-        "notObvious": "The deduction deadline is two months before the filing deadline. People conflate the two and lose deductions they already paid for.",
-        "anchorFact": {
-          "claim": "Invoices from the previous year must be consulted, registered or confirmed in e-Fatura by the end of February, with the deadline moving to the next working day when it falls on a weekend.",
-          "kind": "deadline",
-          "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/prazos/Paginas/default.aspx",
-          "volatility": "annual"
-        },
-        "journeyStage": "first_tax_year"
-      }
-    },
-    {
-      "date": "2026-08-23",
-      "time": "11:30",
-      "slot": 2,
-      "pillar": "housing_property",
-      "angle": "threshold",
-      "title": "The purchase-price ceilings for the under-35 IMT and Stamp Duty exemption",
-      "audience": "first-time buyers under 35",
-      "risk": "high",
-      "timing": "evergreen",
-      "reserve": "none",
-      "searchTerms": "arrendamento | IMI | AIMI | IMT | imóvel | caderneta predial | Imposto do Selo | habitação própria permanente | VPT",
-      "authority": "gov.pt / Autoridade Tributária e Aduaneira",
-      "occurrence": 1,
-      "evidenceTerms": "IMT | Imposto do Selo | habitação própria permanente",
-      "curationStatus": "curated_90_day",
-      "brief": {
-        "briefId": "housing-imt-is-exemption-under-35-ceilings",
-        "subjectFamily": "housing_property",
-        "userQuestion": "Up to what price is a first home exempt from IMT for buyers under 35?",
-        "purpose": "The price up to which the exemption is total, the band where it applies only partially, and the point where it stops entirely.",
-        "requiredAnswers": [
-          "Answer directly: Up to what price is a first home exempt from IMT for buyers under 35?",
-          "Establish the situation: A first-time buyer under 35 is comparing properties and does not know at what price the exemption stops applying in full.",
-          "State and explain the anchor: For a first purchase of habitação própria permanente by a buyer under 35, IMT and Imposto do Selo exemption is total up to a published price ceiling and applies only up to that ceiling for purchases in the band above it, ceasing entirely above the upper limit."
-        ],
-        "sourcePolicy": {
-          "canonicalUrl": "https://www.gov.pt/servicos/pedir-isencao-imt-e-is",
-          "requiredAuthority": "gov.pt / Autoridade Tributária e Aduaneira",
+          "canonicalUrl": "https://www.seg-social.pt/trabalhadores-independentes",
+          "requiredAuthority": "Instituto da Segurança Social",
           "officialRequired": true,
           "freshnessDays": 30
         },
@@ -858,21 +552,73 @@
         "contentIntent": "evergreen_explainer",
         "occurrenceKey": null,
         "campaignStage": null,
-        "valueClass": "threshold",
-        "scenario": "A first-time buyer under 35 is comparing properties and does not know at what price the exemption stops applying in full.",
-        "promise": "The price up to which the exemption is total, the band where it applies only partially, and the point where it stops entirely.",
-        "notObvious": "The partial band is what actually decides an offer price, and it is routinely reported as a single all-or-nothing number.",
+        "valueClass": "decision",
+        "scenario": "Two people doing similar work compare contribution bills and find materially different rates, without knowing the legal form is what separates them.",
+        "promise": "Which contribution rate attaches to which legal form, and what that difference costs over a year.",
+        "notObvious": "The rate is almost always quoted as a single number. The higher rate attached to a different legal form is a real, avoidable annual cost.",
         "anchorFact": {
-          "claim": "For a first purchase of habitação própria permanente by a buyer under 35, IMT and Imposto do Selo exemption is total up to a published price ceiling and applies only up to that ceiling for purchases in the band above it, ceasing entirely above the upper limit.",
+          "claim": "The contribution rate for independent workers is 21.4%, while the rate for empresários em nome individual, holders of an estabelecimento individual de responsabilidade limitada and their spouses is 25.2%.",
           "kind": "figure",
-          "verifyAt": "https://www.gov.pt/servicos/pedir-isencao-imt-e-is",
-          "volatility": "annual"
+          "verifyAt": "https://www.seg-social.pt/trabalhadores-independentes",
+          "volatility": "annual",
+          "namedThing": "empresários em nome individual"
         },
-        "journeyStage": "renting_buying_moving"
+        "journeyStage": "first_freelance_activity"
       }
     },
     {
-      "date": "2026-08-23",
+      "date": "2026-08-22",
+      "time": "11:30",
+      "slot": 2,
+      "pillar": "immigration_residency",
+      "angle": "scenario",
+      "title": "Proof of address accepted by AIMA when the lease is not in your name",
+      "audience": "residence applicants without a registered lease",
+      "risk": "high",
+      "timing": "evergreen",
+      "reserve": "none",
+      "searchTerms": "AIMA | autorização de residência | visto | reagrupamento familiar | CPLP | atestado de residência",
+      "authority": "AIMA",
+      "occurrence": 1,
+      "evidenceTerms": "atestado de residência | AIMA",
+      "curationStatus": "curated_90_day",
+      "brief": {
+        "briefId": "immigration-aima-proof-of-address-without-lease",
+        "subjectFamily": "immigration_residency",
+        "userQuestion": "AIMA wants proof of address but I sublet and have no contract — what is accepted?",
+        "purpose": "Which alternative documents are accepted, which one you can obtain from the junta de freguesia, and how long it takes.",
+        "requiredAnswers": [
+          "Answer directly: AIMA wants proof of address but I sublet and have no contract — what is accepted?",
+          "Establish the situation: An applicant sharing a flat has no registered lease, no utility bill in their name, and an AIMA appointment approaching.",
+          "State and explain the anchor: A atestado de residência issued by the junta de freguesia is an accepted proof of residence where a lease or utility bill in the applicant's name is unavailable."
+        ],
+        "sourcePolicy": {
+          "canonicalUrl": "https://aima.gov.pt/pt",
+          "requiredAuthority": "AIMA",
+          "officialRequired": true,
+          "freshnessDays": 7
+        },
+        "timingBehavior": "flexible_evergreen",
+        "fallback": null,
+        "contentIntent": "audience_specific",
+        "occurrenceKey": null,
+        "campaignStage": null,
+        "valueClass": "scenario",
+        "scenario": "An applicant sharing a flat has no registered lease, no utility bill in their name, and an AIMA appointment approaching.",
+        "promise": "Which alternative documents are accepted, which one you can obtain from the junta de freguesia, and how long it takes.",
+        "notObvious": "The junta route is the practical answer to the single most common blocking document, and it is buried in municipal pages rather than immigration guides.",
+        "anchorFact": {
+          "claim": "A atestado de residência issued by the junta de freguesia is an accepted proof of residence where a lease or utility bill in the applicant's name is unavailable.",
+          "kind": "artefact",
+          "namedThing": "atestado de residência",
+          "verifyAt": "https://aima.gov.pt/pt",
+          "volatility": "volatile"
+        },
+        "journeyStage": "renewing_status"
+      }
+    },
+    {
+      "date": "2026-08-22",
       "time": "14:30",
       "slot": 3,
       "pillar": "employment",
@@ -922,7 +668,7 @@
       }
     },
     {
-      "date": "2026-08-23",
+      "date": "2026-08-22",
       "time": "18:00",
       "slot": 4,
       "pillar": "daily_life_consumer",
@@ -976,7 +722,7 @@
       }
     },
     {
-      "date": "2026-08-23",
+      "date": "2026-08-22",
       "time": "21:00",
       "slot": 5,
       "pillar": "education_children",
@@ -1026,109 +772,7 @@
       }
     },
     {
-      "date": "2026-08-24",
-      "time": "08:30",
-      "slot": 1,
-      "pillar": "social_security",
-      "angle": "decision",
-      "title": "Why some independent workers pay 21.4% and others 25.2%",
-      "audience": "freelancers choosing a legal form",
-      "risk": "high",
-      "timing": "evergreen",
-      "reserve": "none",
-      "searchTerms": "Segurança Social | declaração trimestral | contribuições | NISS | trabalhador independente",
-      "authority": "Instituto da Segurança Social",
-      "occurrence": 1,
-      "evidenceTerms": "empresários em nome individual",
-      "curationStatus": "curated_90_day",
-      "brief": {
-        "briefId": "social-security-rate-differs-by-legal-form",
-        "subjectFamily": "social_security",
-        "userQuestion": "Why is my Segurança Social rate higher than another freelancer's?",
-        "purpose": "Which contribution rate attaches to which legal form, and what that difference costs over a year.",
-        "requiredAnswers": [
-          "Answer directly: Why is my Segurança Social rate higher than another freelancer's?",
-          "Establish the situation: Two people doing similar work compare contribution bills and find materially different rates, without knowing the legal form is what separates them.",
-          "State and explain the anchor: The contribution rate for independent workers is 21.4%, while the rate for empresários em nome individual, holders of an estabelecimento individual de responsabilidade limitada and their spouses is 25.2%."
-        ],
-        "sourcePolicy": {
-          "canonicalUrl": "https://www.seg-social.pt/trabalhadores-independentes",
-          "requiredAuthority": "Instituto da Segurança Social",
-          "officialRequired": true,
-          "freshnessDays": 30
-        },
-        "timingBehavior": "flexible_evergreen",
-        "fallback": null,
-        "contentIntent": "evergreen_explainer",
-        "occurrenceKey": null,
-        "campaignStage": null,
-        "valueClass": "decision",
-        "scenario": "Two people doing similar work compare contribution bills and find materially different rates, without knowing the legal form is what separates them.",
-        "promise": "Which contribution rate attaches to which legal form, and what that difference costs over a year.",
-        "notObvious": "The rate is almost always quoted as a single number. The higher rate attached to a different legal form is a real, avoidable annual cost.",
-        "anchorFact": {
-          "claim": "The contribution rate for independent workers is 21.4%, while the rate for empresários em nome individual, holders of an estabelecimento individual de responsabilidade limitada and their spouses is 25.2%.",
-          "kind": "figure",
-          "verifyAt": "https://www.seg-social.pt/trabalhadores-independentes",
-          "volatility": "annual",
-          "namedThing": "empresários em nome individual"
-        },
-        "journeyStage": "first_freelance_activity"
-      }
-    },
-    {
-      "date": "2026-08-24",
-      "time": "11:30",
-      "slot": 2,
-      "pillar": "immigration_residency",
-      "angle": "scenario",
-      "title": "Proof of address accepted by AIMA when the lease is not in your name",
-      "audience": "residence applicants without a registered lease",
-      "risk": "high",
-      "timing": "evergreen",
-      "reserve": "none",
-      "searchTerms": "AIMA | autorização de residência | visto | reagrupamento familiar | CPLP | atestado de residência",
-      "authority": "AIMA",
-      "occurrence": 1,
-      "evidenceTerms": "atestado de residência | AIMA",
-      "curationStatus": "curated_90_day",
-      "brief": {
-        "briefId": "immigration-aima-proof-of-address-without-lease",
-        "subjectFamily": "immigration_residency",
-        "userQuestion": "AIMA wants proof of address but I sublet and have no contract — what is accepted?",
-        "purpose": "Which alternative documents are accepted, which one you can obtain from the junta de freguesia, and how long it takes.",
-        "requiredAnswers": [
-          "Answer directly: AIMA wants proof of address but I sublet and have no contract — what is accepted?",
-          "Establish the situation: An applicant sharing a flat has no registered lease, no utility bill in their name, and an AIMA appointment approaching.",
-          "State and explain the anchor: A atestado de residência issued by the junta de freguesia is an accepted proof of residence where a lease or utility bill in the applicant's name is unavailable."
-        ],
-        "sourcePolicy": {
-          "canonicalUrl": "https://aima.gov.pt/pt",
-          "requiredAuthority": "AIMA",
-          "officialRequired": true,
-          "freshnessDays": 7
-        },
-        "timingBehavior": "flexible_evergreen",
-        "fallback": null,
-        "contentIntent": "audience_specific",
-        "occurrenceKey": null,
-        "campaignStage": null,
-        "valueClass": "scenario",
-        "scenario": "An applicant sharing a flat has no registered lease, no utility bill in their name, and an AIMA appointment approaching.",
-        "promise": "Which alternative documents are accepted, which one you can obtain from the junta de freguesia, and how long it takes.",
-        "notObvious": "The junta route is the practical answer to the single most common blocking document, and it is buried in municipal pages rather than immigration guides.",
-        "anchorFact": {
-          "claim": "A atestado de residência issued by the junta de freguesia is an accepted proof of residence where a lease or utility bill in the applicant's name is unavailable.",
-          "kind": "artefact",
-          "namedThing": "atestado de residência",
-          "verifyAt": "https://aima.gov.pt/pt",
-          "volatility": "volatile"
-        },
-        "journeyStage": "renewing_status"
-      }
-    },
-    {
-      "date": "2026-08-25",
+      "date": "2026-08-23",
       "time": "08:30",
       "slot": 1,
       "pillar": "irs",
@@ -1178,7 +822,7 @@
       }
     },
     {
-      "date": "2026-08-25",
+      "date": "2026-08-23",
       "time": "11:30",
       "slot": 2,
       "pillar": "health_family",
@@ -1229,7 +873,7 @@
       }
     },
     {
-      "date": "2026-08-26",
+      "date": "2026-08-24",
       "time": "08:30",
       "slot": 1,
       "pillar": "driving_transport",
@@ -1280,7 +924,7 @@
       }
     },
     {
-      "date": "2026-08-26",
+      "date": "2026-08-24",
       "time": "11:30",
       "slot": 2,
       "pillar": "freelance_business",
@@ -1330,7 +974,7 @@
       }
     },
     {
-      "date": "2026-08-27",
+      "date": "2026-08-25",
       "time": "08:30",
       "slot": 1,
       "pillar": "citizenship_civil",
@@ -1381,58 +1025,57 @@
       }
     },
     {
-      "date": "2026-08-27",
+      "date": "2026-08-25",
       "time": "11:30",
       "slot": 2,
-      "pillar": "housing_property",
-      "angle": "costly_mistake",
-      "title": "The IMT exemption has to be requested before the deed, not after",
-      "audience": "buyers claiming an IMT exemption",
+      "pillar": "identity_access",
+      "angle": "insider",
+      "title": "How to end the fiscal representative obligation with electronic notifications",
+      "audience": "non-EU nationals with a Portuguese NIF",
       "risk": "high",
       "timing": "evergreen",
       "reserve": "none",
-      "searchTerms": "arrendamento | IMI | AIMI | IMT | imóvel | caderneta predial | Imposto do Selo | habitação própria permanente | VPT",
-      "authority": "gov.pt / Autoridade Tributária e Aduaneira",
+      "searchTerms": "NIF | NISS | Chave Móvel Digital | Portal das Finanças | Segurança Social Direta | representante fiscal | notificações eletrónicas | Cartão de Cidadão | título de residência",
+      "authority": "Autoridade Tributária e Aduaneira",
       "occurrence": 1,
-      "evidenceTerms": "escritura | IMT",
+      "evidenceTerms": "Decreto-Lei 44/2022 and artigo 38-A of | Portal das Finanças",
       "curationStatus": "curated_90_day",
       "brief": {
-        "briefId": "housing-imt-exemption-must-precede-the-deed",
-        "subjectFamily": "housing_property",
-        "userQuestion": "I completed the purchase before claiming the IMT exemption — can I still get it?",
-        "purpose": "When the request must be made, where to make it, and why completing first is the expensive order to do it in.",
+        "briefId": "identity-fiscal-representative-avoided-by-enotifications",
+        "subjectFamily": "identity_access",
+        "userQuestion": "Do I still need to pay someone to be my fiscal representative in Portugal?",
+        "purpose": "How to drop the paid representative by adhering to electronic notifications yourself, and the one condition that keeps the obligation in place.",
         "requiredAnswers": [
-          "Answer directly: I completed the purchase before claiming the IMT exemption — can I still get it?",
-          "Establish the situation: A buyer signs the escritura assuming the exemption is applied automatically or can be reclaimed later, and finds the tax already settled.",
-          "State and explain the anchor: A request for IMT exemption must be made before the purchase and the escritura, either online on the Portal das Finanças or at a Serviço de Finanças counter, because IMT is settled ahead of the deed."
+          "Answer directly: Do I still need to pay someone to be my fiscal representative in Portugal?",
+          "Establish the situation: A non-EU resident has been quoted an annual fee by a firm offering to act as their fiscal representative, and assumes it is mandatory.",
+          "State and explain the anchor: Decreto-Lei 44/2022 and artigo 38-A of the CPPT exempt a non-resident taxpayer from appointing a fiscal representative when they adhere to a dematerialised notification channel, including the Portal das Finanças electronic notifications and citations service."
         ],
         "sourcePolicy": {
-          "canonicalUrl": "https://www.gov.pt/servicos/pedir-isencao-imt-e-is",
-          "requiredAuthority": "gov.pt / Autoridade Tributária e Aduaneira",
+          "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Dados_pessoais_familia/Dados_pessoais/Notificacoes_e_citacoes_eletronicas/Paginas/default.aspx",
+          "requiredAuthority": "Autoridade Tributária e Aduaneira",
           "officialRequired": true,
           "freshnessDays": 90
         },
         "timingBehavior": "flexible_evergreen",
         "fallback": null,
-        "contentIntent": "common_mistake",
+        "contentIntent": "golden_tip",
         "occurrenceKey": null,
         "campaignStage": null,
-        "valueClass": "costly_mistake",
-        "scenario": "A buyer signs the escritura assuming the exemption is applied automatically or can be reclaimed later, and finds the tax already settled.",
-        "promise": "When the request must be made, where to make it, and why completing first is the expensive order to do it in.",
-        "notObvious": "Ordering is the whole risk. Nothing in the buying process prompts you, and the cost of getting the sequence wrong is the full tax.",
+        "valueClass": "insider",
+        "scenario": "A non-EU resident has been quoted an annual fee by a firm offering to act as their fiscal representative, and assumes it is mandatory.",
+        "promise": "How to drop the paid representative by adhering to electronic notifications yourself, and the one condition that keeps the obligation in place.",
+        "notObvious": "Most pages state the representative requirement as absolute and stop there. The adherence route is the part that saves real money every year.",
         "anchorFact": {
-          "claim": "A request for IMT exemption must be made before the purchase and the escritura, either online on the Portal das Finanças or at a Serviço de Finanças counter, because IMT is settled ahead of the deed.",
-          "kind": "procedure",
-          "namedThing": "escritura",
-          "verifyAt": "https://www.gov.pt/servicos/pedir-isencao-imt-e-is",
+          "claim": "Decreto-Lei 44/2022 and artigo 38-A of the CPPT exempt a non-resident taxpayer from appointing a fiscal representative when they adhere to a dematerialised notification channel, including the Portal das Finanças electronic notifications and citations service.",
+          "kind": "instrument",
+          "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Dados_pessoais_familia/Dados_pessoais/Notificacoes_e_citacoes_eletronicas/Paginas/default.aspx",
           "volatility": "stable"
         },
-        "journeyStage": "renting_buying_moving"
+        "journeyStage": "first_30_days"
       }
     },
     {
-      "date": "2026-08-28",
+      "date": "2026-08-26",
       "time": "08:30",
       "slot": 1,
       "pillar": "social_security",
@@ -1482,7 +1125,7 @@
       }
     },
     {
-      "date": "2026-08-28",
+      "date": "2026-08-26",
       "time": "11:30",
       "slot": 2,
       "pillar": "iva",
@@ -1532,7 +1175,7 @@
       }
     },
     {
-      "date": "2026-08-29",
+      "date": "2026-08-27",
       "time": "08:30",
       "slot": 1,
       "pillar": "immigration_residency",
@@ -1583,7 +1226,7 @@
       }
     },
     {
-      "date": "2026-08-29",
+      "date": "2026-08-27",
       "time": "11:30",
       "slot": 2,
       "pillar": "irs",
@@ -1633,7 +1276,7 @@
       }
     },
     {
-      "date": "2026-08-30",
+      "date": "2026-08-28",
       "time": "08:30",
       "slot": 1,
       "pillar": "health_family",
@@ -1683,7 +1326,7 @@
       }
     },
     {
-      "date": "2026-08-30",
+      "date": "2026-08-28",
       "time": "11:30",
       "slot": 2,
       "pillar": "driving_transport",
@@ -1733,7 +1376,7 @@
       }
     },
     {
-      "date": "2026-08-31",
+      "date": "2026-08-29",
       "time": "08:30",
       "slot": 1,
       "pillar": "freelance_business",
@@ -1784,7 +1427,7 @@
       }
     },
     {
-      "date": "2026-08-31",
+      "date": "2026-08-29",
       "time": "11:30",
       "slot": 2,
       "pillar": "citizenship_civil",

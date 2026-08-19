@@ -1,0 +1,182 @@
+{
+  "version": 1,
+  "generatedAt": "2026-08-19T10:04:40.198Z",
+  "source": "plans/brief-bank.json (unused by the current window)",
+  "cards": [
+    {
+      "id": "identity-financas-password-address-deadlock",
+      "subjectFamily": "identity_access",
+      "topic": "The Finanças lockout that traps people who moved",
+      "userQuestion": "My Portal das Finanças password letter goes to an address I left. How do I get back in?",
+      "audience": "residents locked out of Portal das Finanças",
+      "contentIntent": "common_mistake",
+      "purpose": "The three ways to break the circular dependency, and which one works without an in-person appointment.",
+      "requiredAnswers": [
+        "Answer directly: My Portal das Finanças password letter goes to an address I left. How do I get back in?",
+        "Establish the situation: Someone registered a NIF using a temporary or lawyer's address, has since moved, and now cannot log in because the new password is posted to the old address — and changing the address requires logging in.",
+        "State and explain the anchor: A replacement Portal das Finanças password is posted to the taxpayer's registered address, but the registered address can be changed online by authenticating with Chave Móvel Digital instead, which breaks the dependency on receiving that letter."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.autenticacao.gov.pt/cmd-pedido-chave",
+        "requiredAuthority": "Autenticação.gov",
+        "officialRequired": true,
+        "freshnessDays": 90
+      },
+      "evidenceTerms": [
+        "Chave Móvel Digital",
+        "Portal das Finanças"
+      ],
+      "status": "eligible"
+    },
+    {
+      "id": "housing-imi-instalment-thresholds",
+      "subjectFamily": "housing_property",
+      "topic": "The two thresholds that decide how many IMI instalments you get",
+      "userQuestion": "Why did my neighbour pay IMI in one go and I have three instalments?",
+      "audience": "property owners receiving their first IMI notice",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "The two euro thresholds that decide how many instalments you get, the months they fall in, and when paying early is allowed.",
+      "requiredAnswers": [
+        "Answer directly: Why did my neighbour pay IMI in one go and I have three instalments?",
+        "Establish the situation: A first-time property owner receives an IMI notice in May and does not understand why the amount is split, or whether they can choose.",
+        "State and explain the anchor: IMI is paid in a single instalment up to a lower euro threshold, in two instalments between the lower and upper thresholds, and in three instalments above the upper threshold, in the months set by the annual fiscal calendar."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx",
+        "requiredAuthority": "Autoridade Tributária e Aduaneira",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "IMI"
+      ],
+      "status": "eligible"
+    },
+    {
+      "id": "housing-modelo-44-exempt-landlords",
+      "subjectFamily": "housing_property",
+      "topic": "The landlords exempt from electronic rent receipts still owe Modelo 44",
+      "userQuestion": "I do not issue electronic rent receipts — do I still have to declare the rent?",
+      "audience": "landlords exempt from electronic rent receipts",
+      "contentIntent": "common_mistake",
+      "purpose": "Who the exemption covers, the annual declaration that replaces the receipts, and the February deadline for it.",
+      "requiredAnswers": [
+        "Answer directly: I do not issue electronic rent receipts — do I still have to declare the rent?",
+        "Establish the situation: A landlord over 65, or with a rural contract, correctly stops issuing recibos de renda eletrónicos and assumes the reporting obligation ends with it.",
+        "State and explain the anchor: Landlords exempt from issuing electronic rent receipts, including those aged 65 or over on 31 December of the previous year and those with rural contracts, must instead submit the Modelo 44 annual rent declaration by the end of February."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00358.aspx",
+        "requiredAuthority": "Autoridade Tributária e Aduaneira",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "Modelo 44 annual rent declaration"
+      ],
+      "status": "eligible"
+    },
+    {
+      "id": "identity-cmd-activation-route-differs-for-foreigners",
+      "subjectFamily": "identity_access",
+      "topic": "Activating Chave Móvel Digital without a Cartão de Cidadão",
+      "userQuestion": "Can I activate Chave Móvel Digital with a residence permit instead of a citizen card?",
+      "audience": "foreign residents without a Cartão de Cidadão",
+      "contentIntent": "common_mistake",
+      "purpose": "Which identity documents CMD accepts, why the online route rejects you, and where activation actually has to happen.",
+      "requiredAnswers": [
+        "Answer directly: Can I activate Chave Móvel Digital with a residence permit instead of a citizen card?",
+        "Establish the situation: A foreign resident tries to activate CMD online, the flow only accepts a citizen card, and they conclude CMD is unavailable to them.",
+        "State and explain the anchor: Chave Móvel Digital can be activated by a foreign person using a passport, título de residência or residence card, but online activation through autenticacao.gov, the Portal das Finanças and the gov.pt app is available only to holders of a Portuguese Cartão de Cidadão."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.gov.pt/servicos/ativar-a-chave-movel-digital",
+        "requiredAuthority": "gov.pt / Autenticação.gov",
+        "officialRequired": true,
+        "freshnessDays": 90
+      },
+      "evidenceTerms": [
+        "título de residência",
+        "Chave Móvel Digital",
+        "Portal das Finanças",
+        "Cartão de Cidadão"
+      ],
+      "status": "eligible"
+    },
+    {
+      "id": "identity-cmd-one-phone-number-per-person",
+      "subjectFamily": "identity_access",
+      "topic": "Every Chave Móvel Digital needs its own phone number",
+      "userQuestion": "Can I use my phone number for my child's or partner's Chave Móvel Digital?",
+      "audience": "families setting up CMD for more than one person",
+      "contentIntent": "golden_tip",
+      "purpose": "Why a number cannot be shared, what that means for a child's CMD, and how to plan it before you start.",
+      "requiredAnswers": [
+        "Answer directly: Can I use my phone number for my child's or partner's Chave Móvel Digital?",
+        "Establish the situation: A parent setting up CMD for a child, or a couple sharing one handset, tries to reuse the same number and the second activation fails without a clear reason.",
+        "State and explain the anchor: Chave Móvel Digital binds one mobile phone number to one identity document, and each Chave Móvel Digital requires its own unique phone number even when it is being set up for a child or another family member."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.autenticacao.gov.pt/cmd-pedido-chave",
+        "requiredAuthority": "Autenticação.gov",
+        "officialRequired": true,
+        "freshnessDays": 90
+      },
+      "evidenceTerms": [
+        "Chave Móvel Digital"
+      ],
+      "status": "eligible"
+    },
+    {
+      "id": "housing-imt-is-exemption-under-35-ceilings",
+      "subjectFamily": "housing_property",
+      "topic": "The purchase-price ceilings for the under-35 IMT and Stamp Duty exemption",
+      "userQuestion": "Up to what price is a first home exempt from IMT for buyers under 35?",
+      "audience": "first-time buyers under 35",
+      "contentIntent": "evergreen_explainer",
+      "purpose": "The price up to which the exemption is total, the band where it applies only partially, and the point where it stops entirely.",
+      "requiredAnswers": [
+        "Answer directly: Up to what price is a first home exempt from IMT for buyers under 35?",
+        "Establish the situation: A first-time buyer under 35 is comparing properties and does not know at what price the exemption stops applying in full.",
+        "State and explain the anchor: For a first purchase of habitação própria permanente by a buyer under 35, IMT and Imposto do Selo exemption is total up to a published price ceiling and applies only up to that ceiling for purchases in the band above it, ceasing entirely above the upper limit."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.gov.pt/servicos/pedir-isencao-imt-e-is",
+        "requiredAuthority": "gov.pt / Autoridade Tributária e Aduaneira",
+        "officialRequired": true,
+        "freshnessDays": 30
+      },
+      "evidenceTerms": [
+        "IMT",
+        "Imposto do Selo",
+        "habitação própria permanente"
+      ],
+      "status": "eligible"
+    },
+    {
+      "id": "housing-imt-exemption-must-precede-the-deed",
+      "subjectFamily": "housing_property",
+      "topic": "The IMT exemption has to be requested before the deed, not after",
+      "userQuestion": "I completed the purchase before claiming the IMT exemption — can I still get it?",
+      "audience": "buyers claiming an IMT exemption",
+      "contentIntent": "common_mistake",
+      "purpose": "When the request must be made, where to make it, and why completing first is the expensive order to do it in.",
+      "requiredAnswers": [
+        "Answer directly: I completed the purchase before claiming the IMT exemption — can I still get it?",
+        "Establish the situation: A buyer signs the escritura assuming the exemption is applied automatically or can be reclaimed later, and finds the tax already settled.",
+        "State and explain the anchor: A request for IMT exemption must be made before the purchase and the escritura, either online on the Portal das Finanças or at a Serviço de Finanças counter, because IMT is settled ahead of the deed."
+      ],
+      "sourcePolicy": {
+        "canonicalUrl": "https://www.gov.pt/servicos/pedir-isencao-imt-e-is",
+        "requiredAuthority": "gov.pt / Autoridade Tributária e Aduaneira",
+        "officialRequired": true,
+        "freshnessDays": 90
+      },
+      "evidenceTerms": [
+        "escritura",
+        "IMT"
+      ],
+      "status": "eligible"
+    }
+  ]
+}
