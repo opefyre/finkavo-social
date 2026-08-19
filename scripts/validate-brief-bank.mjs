@@ -51,7 +51,7 @@ const ANCHOR_KINDS = {
   },
   // a citable legal instrument
   instrument: {
-    test: claim => /\b(artigo|article|modelo|anexo|lei|decreto|portaria|c[óo]digo|regulamento)\b/i.test(claim),
+    test: claim => /\b(artigo|article|modelo|anexo|lei|decreto|portaria|c[óo]digo|regulamento|CIVA|RITI|CPPT|CIRS|CIRC|CIMI|CIMT)\b/i.test(claim),
     requirement: "a citable legal instrument (artigo, lei, decreto, código, modelo, anexo…)",
   },
   // a specific official document, form or account type the reader can ask for by name
@@ -229,17 +229,26 @@ if (process.argv.includes("--check-sources")) {
   const BROWSER_UA =
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36";
 
+  const probe = async url => fetch(url, {
+    redirect: "follow",
+    headers: { "user-agent": BROWSER_UA, "accept-language": "pt-PT,pt;q=0.9,en;q=0.8" },
+    signal: AbortSignal.timeout(25_000),
+  });
+
   const results = await Promise.all([...targets].map(async ([url, id]) => {
-    try {
-      const response = await fetch(url, {
-        redirect: "follow",
-        headers: { "user-agent": BROWSER_UA, "accept-language": "pt-PT,pt;q=0.9,en;q=0.8" },
-        signal: AbortSignal.timeout(25_000),
-      });
-      return { url, id, status: response.status };
-    } catch (error) {
-      return { url, id, status: 0, error: String(error.message ?? error) };
+    // Some Portuguese government hosts intermittently reject Node's TLS handshake even
+    // though the page is fine in a browser and under curl. One retry keeps a transient
+    // failure from being reported as a dead source across dozens of briefs.
+    for (const attempt of [1, 2]) {
+      try {
+        const response = await probe(url);
+        return { url, id, status: response.status };
+      } catch (error) {
+        if (attempt === 2) return { url, id, status: 0, error: String(error.message ?? error) };
+        await new Promise(resolve => setTimeout(resolve, 1500));
+      }
     }
+    return { url, id, status: 0, error: "unreachable" };
   }));
 
   const dead = results.filter(r => r.status === 404 || r.status === 410);

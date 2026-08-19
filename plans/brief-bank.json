@@ -1223,6 +1223,201 @@
         "canonicalUrl": "https://www2.gov.pt/servicos/pedir-o-numero-de-identificacao-da-seguranca-social-niss-",
         "authority": "gov.pt / Segurança Social"
       }
+    },
+    {
+      "id": "iva-reverse-charge-on-eu-b2b-services",
+      "pillar": "iva",
+      "valueClass": "edge_case",
+      "title": "Invoicing an EU business client without charging IVA",
+      "userQuestion": "Do I add Portuguese IVA when my client is a company in another EU country?",
+      "scenario": "A freelancer lands a first client in another EU country and does not know whether to invoice with or without IVA, or what to check before deciding.",
+      "audience": "freelancers invoicing EU business clients",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "When the tax obligation moves to your client, the VIES check you must do first, and what the invoice has to say.",
+      "anchorFact": {
+        "claim": "Under the CIVA and the RITI, for B2B services supplied within the European Union the autoliquidação or reverse charge rule moves the obligation to assess and pay the tax from the supplier to the acquiring taxable person, and the client's NIF with country prefix must be confirmed as registered in VIES.",
+        "kind": "instrument",
+        "verifyAt": "https://www2.gov.pt/pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "volatility": "stable"
+      },
+      "notObvious": "The VIES check is the condition, not a formality. Invoicing without IVA to a client who is not validly registered leaves the tax owed by you.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "authority": "gov.pt / Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "iva-recapitulative-statement-for-eu-services",
+      "pillar": "iva",
+      "valueClass": "deadline_action",
+      "title": "The extra IVA return that EU clients trigger",
+      "userQuestion": "Is there anything else to file when I invoice clients in other EU countries?",
+      "scenario": "A freelancer correctly invoices an EU client without IVA and assumes the periodic return is the end of the obligation.",
+      "audience": "freelancers with clients in other EU countries",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The separate recapitulative return, how often it is due, and what it must list.",
+      "anchorFact": {
+        "claim": "Supplying services to businesses in other EU countries requires submitting a declaração recapitulativa, modelo 8, monthly or quarterly, listing each client's NIF and the amounts invoiced.",
+        "kind": "instrument",
+        "verifyAt": "https://www2.gov.pt/pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "volatility": "stable"
+      },
+      "notObvious": "It is a second, separate filing that exists only because of EU clients, and it is the one people discover through a penalty notice.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "authority": "gov.pt / Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "driving-iuc-due-in-your-registration-month",
+      "pillar": "driving_transport",
+      "valueClass": "deadline_action",
+      "title": "IUC is due in the month your plate was first registered",
+      "userQuestion": "When is my vehicle tax actually due?",
+      "scenario": "An owner waits for a bill that never arrives, because IUC is self-assessed and falls in a month tied to the vehicle rather than the calendar.",
+      "audience": "vehicle owners in Portugal",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "The month your IUC falls due, the different rule for a vehicle's first year, and how to generate the payment reference yourself.",
+      "anchorFact": {
+        "claim": "IUC is paid during the month of the vehicle's matrícula each year until ownership ends or the registration is cancelled, and in the first year, including imported vehicles, it is due within 30 days after the end of the legal period for registering the vehicle.",
+        "kind": "deadline",
+        "namedThing": "IUC",
+        "verifyAt": "https://www2.gov.pt/servicos/pagar-o-imposto-unico-de-circulacao-iuc-",
+        "volatility": "volatile"
+      },
+      "notObvious": "No bill is sent. The due month is a property of the plate, which is why missed IUC generates millions of enforcement cases.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/pagar-o-imposto-unico-de-circulacao-iuc-",
+        "authority": "gov.pt / Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "driving-iuc-moving-to-april-with-instalments",
+      "pillar": "driving_transport",
+      "valueClass": "threshold",
+      "title": "The approved change moving IUC to April with instalments",
+      "userQuestion": "Is it true that vehicle tax is changing to a single month for everyone?",
+      "scenario": "An owner hears the payment month is changing and cannot tell whether it affects this year's payment or a later one.",
+      "audience": "vehicle owners planning ahead",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "The month the tax moves to, the euro bands that decide how many instalments you get, and the year the change starts.",
+      "anchorFact": {
+        "claim": "An approved reform moves IUC payment to April with instalments by amount: a single payment in April up to 100 euros, two in April and October above 100 and up to 500 euros, and three in April, July and October above 500 euros, taking effect from 2027 under a transitional regime.",
+        "kind": "figure",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Veiculos/IUC/Paginas/default.aspx",
+        "volatility": "volatile"
+      },
+      "notObvious": "Announcements rarely say which year it starts. Knowing this year still follows the plate month prevents both a missed payment and a wasted early one.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Veiculos/IUC/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "freelance-closing-activity-30-day-window",
+      "pillar": "freelance_business",
+      "valueClass": "deadline_action",
+      "title": "The 30-day window to close freelance activity properly",
+      "userQuestion": "I stopped freelancing — do I have to tell Finanças, and by when?",
+      "scenario": "Someone stops invoicing and assumes activity lapses on its own, while obligations keep accruing against an open registration.",
+      "audience": "people who have stopped freelancing",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The 30-day deadline, the validation code that actually confirms closure, and why Segurança Social needs no separate request.",
+      "anchorFact": {
+        "claim": "A cessação de atividade must be communicated to Finanças within 30 days of ceasing self-employed work; the generated document carries a code that must be entered under Validação de documentos to confirm closure, and Segurança Social deregistration follows automatically because the two cross-check information.",
+        "kind": "deadline",
+        "namedThing": "cessação de atividade",
+        "verifyAt": "https://www2.gov.pt/servicos/pessoa-singular-declaracao-de-cessacao-de-atividade-",
+        "volatility": "stable"
+      },
+      "notObvious": "Most people never enter the validation code and believe they have closed. The registration stays open, and so do the obligations.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/pessoa-singular-declaracao-de-cessacao-de-atividade-",
+        "authority": "gov.pt / Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "freelance-open-activity-can-suspend-your-benefit",
+      "pillar": "freelance_business",
+      "valueClass": "costly_mistake",
+      "title": "Leaving activity open can suspend the benefit you are claiming",
+      "userQuestion": "Can an open freelance registration affect my unemployment or social support?",
+      "scenario": "Someone claiming support still has activity registered from occasional past work and does not connect the two.",
+      "audience": "benefit claimants with a dormant freelance registration",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The income level and activity status that force closure, what happens to the benefit if you do not, and the IRS box that must reflect it.",
+      "anchorFact": {
+        "claim": "Where income exceeds 1 IAS or the activity counts as the principal activity, the activity must be closed at Finanças to keep entitlement to the support, otherwise it can be suspended or cancelled, and the cessação must be reported in the following year's IRS return in anexo B, quadro 14.",
+        "kind": "figure",
+        "verifyAt": "https://www2.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/apoios-e-encerramento-da-atividade",
+        "volatility": "annual"
+      },
+      "notObvious": "The link between a dormant registration and a suspended benefit is invisible until the payment stops, and by then it is retroactive.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/apoios-e-encerramento-da-atividade",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "citizenship-marriage-process-six-month-validity",
+      "pillar": "citizenship_civil",
+      "valueClass": "deadline_action",
+      "title": "A marriage authorisation is only valid for six months",
+      "userQuestion": "How far in advance should we start the marriage paperwork?",
+      "scenario": "A couple starts the civil paperwork very early to be safe, or leaves it late, without knowing the authorisation itself expires.",
+      "audience": "couples planning to marry in Portugal",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The six-month validity of the authorisation, when to start the preliminary process, and what expiry means for the date you booked.",
+      "anchorFact": {
+        "claim": "The marriage must be celebrated within 6 months counting from the date of the decision authorising it, and the preliminary process of publicações should be organised 6 months ahead of the chosen celebration date.",
+        "kind": "deadline",
+        "namedThing": "casamento",
+        "verifyAt": "https://www.gov.pt/servicos/iniciar-o-processo-de-casamento",
+        "volatility": "stable"
+      },
+      "notObvious": "Starting too early is a real risk, not just late. The authorisation expires and the process has to be redone.",
+      "journeyStage": "long_term_residence",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/iniciar-o-processo-de-casamento",
+        "authority": "gov.pt / IRN"
+      }
+    },
+    {
+      "id": "citizenship-skipping-publications-changes-property-regime",
+      "pillar": "citizenship_civil",
+      "valueClass": "costly_mistake",
+      "title": "Skipping the preliminary process changes your marital property regime",
+      "userQuestion": "What actually happens if we marry without the preliminary publications process?",
+      "scenario": "A couple marries abroad or informally without the preliminary process and later discovers their intended property arrangement did not take effect.",
+      "audience": "couples who married without the preliminary process",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The property regime imposed by default, what happens to an antenuptial agreement, and who this applies to.",
+      "anchorFact": {
+        "claim": "Under the Código Civil, where both spouses are Portuguese citizens and the marriage was not preceded by the processo preliminar de publicações, the imperative regime of separação de bens applies and any convenção antenupcial the parties entered into is compromised.",
+        "kind": "instrument",
+        "verifyAt": "https://irn.justica.gov.pt/Servicos/Cidadao/Casamento/Organizar-o-casamento",
+        "volatility": "stable"
+      },
+      "notObvious": "A procedural omission silently overrides the couple's chosen property regime, and the consequence only surfaces at divorce or inheritance.",
+      "journeyStage": "long_term_residence",
+      "source": {
+        "canonicalUrl": "https://irn.justica.gov.pt/Servicos/Cidadao/Casamento/Organizar-o-casamento",
+        "authority": "IRN"
+      }
     }
   ]
 }

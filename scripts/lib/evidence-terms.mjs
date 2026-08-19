@@ -9,9 +9,9 @@
 export const PILLAR_TERMS = {
   identity_access: ["NIF", "NISS", "Chave Móvel Digital", "Portal das Finanças", "Segurança Social Direta", "representante fiscal", "notificações eletrónicas", "Cartão de Cidadão", "título de residência"],
   immigration_residency: ["AIMA", "autorização de residência", "visto", "reagrupamento familiar", "CPLP", "atestado de residência"],
-  citizenship_civil: ["IRN", "cidadania", "nacionalidade", "registo civil", "naturalização"],
+  citizenship_civil: ["IRN", "cidadania", "nacionalidade", "registo civil", "naturalização", "casamento", "publicações", "convenção antenupcial"],
   freelance_business: ["trabalhador independente", "abrir atividade", "recibos verdes", "CAE", "ato isolado", "cessação de atividade"],
-  iva: ["IVA", "CIVA", "artigo 53", "declaração periódica", "VIES", "declaração de alterações"],
+  iva: ["IVA", "CIVA", "artigo 53", "declaração periódica", "VIES", "declaração de alterações", "declaração recapitulativa", "autoliquidação"],
   irs: ["IRS", "Modelo 3", "e-Fatura", "Anexo J", "IRS Automático", "IRS Jovem", "IAS"],
   social_security: ["Segurança Social", "declaração trimestral", "contribuições", "NISS", "trabalhador independente"],
   housing_property: ["arrendamento", "IMI", "AIMI", "IMT", "imóvel", "caderneta predial", "certidão permanente", "registo predial", "Imposto do Selo", "habitação própria permanente", "VPT"],
