@@ -7,11 +7,11 @@
 // Every match here is word-bounded, and failure is explicit rather than guessed.
 
 export const PILLAR_TERMS = {
-  identity_access: ["NIF", "NISS", "Chave Móvel Digital", "Portal das Finanças", "Segurança Social Direta", "representante fiscal", "notificações eletrónicas", "Cartão de Cidadão", "título de residência"],
+  identity_access: ["NIF", "NISS", "Chave Móvel Digital", "Portal das Finanças", "Segurança Social Direta", "representante fiscal", "notificações eletrónicas", "Cartão de Cidadão", "título de residência", "domicílio fiscal", "morada"],
   immigration_residency: ["AIMA", "autorização de residência", "visto", "reagrupamento familiar", "CPLP", "atestado de residência", "visto para procura de trabalho"],
   citizenship_civil: ["IRN", "cidadania", "nacionalidade", "registo civil", "naturalização", "Cartão de Cidadão", "casamento", "publicações", "convenção antenupcial"],
   freelance_business: ["trabalhador independente", "abrir atividade", "recibos verdes", "CAE", "ato isolado", "cessação de atividade", "regime simplificado", "coeficiente"],
-  iva: ["IVA", "CIVA", "artigo 53", "declaração periódica", "VIES", "declaração de alterações", "declaração recapitulativa", "autoliquidação"],
+  iva: ["IVA", "CIVA", "artigo 53", "declaração periódica", "VIES", "declaração de alterações", "declaração recapitulativa", "autoliquidação", "taxa reduzida", "taxa intermédia", "Lista I", "Lista II"],
   irs: ["IRS", "Modelo 3", "e-Fatura", "Anexo J", "IRS Automático", "IRS Jovem", "IAS", "taxa liberatória", "Modelo 30", "retenção na fonte"],
   social_security: ["Segurança Social", "declaração trimestral", "contribuições", "NISS", "trabalhador independente", "subsídio parental"],
   housing_property: ["arrendamento", "IMI", "AIMI", "IMT", "imóvel", "caderneta predial", "certidão permanente", "registo predial", "Imposto do Selo", "habitação própria permanente", "VPT", "oposição à renovação", "NRAU"],
@@ -20,7 +20,7 @@ export const PILLAR_TERMS = {
   health_family: ["SNS", "centro de saúde", "médico de família", "número de utente", "taxas moderadoras", "insuficiência económica", "IAS", "consulta de recurso", "SNS 24", "licença parental", "subsídio parental"],
   driving_transport: ["IMT", "carta de condução", "IUC", "veículo", "troca de carta", "título de condução", "inspeção periódica", "IPO"],
   education_children: ["matrícula escolar", "educação", "equivalência", "reconhecimento", "Direção-Geral da Educação", "Portal das Matrículas", "ASE", "abono de família", "prova escolar"],
-  daily_life_consumer: ["ePortugal", "Livro de Reclamações", "ANACOM", "energia", "arbitragem de consumo", "fidelização", "ANACOM", "livre resolução", "garantia"],
+  daily_life_consumer: ["ePortugal", "Livro de Reclamações", "ANACOM", "energia", "arbitragem de consumo", "fidelização", "ANACOM", "livre resolução", "garantia", "comercializador", "ERSE"],
 };
 
 const INSTRUMENT_PATTERN =

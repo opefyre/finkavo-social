@@ -1911,6 +1911,129 @@
         "canonicalUrl": "https://diariodarepublica.pt/dr/lexionario/termo/oposicao-a-renovacao-contrato",
         "authority": "Diário da República"
       }
+    },
+    {
+      "id": "iva-rates-differ-by-region",
+      "pillar": "iva",
+      "valueClass": "threshold",
+      "title": "IVA rates are not the same in mainland Portugal, Madeira and the Azores",
+      "userQuestion": "Which IVA rate do I charge a client in Madeira or the Azores?",
+      "scenario": "A freelancer or small business invoices across regions and applies the mainland rate everywhere, or quotes a price that turns out wrong.",
+      "audience": "businesses invoicing across Portuguese regions",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "All three rate tiers for each of the three regions, so you can price and invoice correctly wherever the client is.",
+      "anchorFact": {
+        "claim": "The standard IVA rate is 23% on the mainland, 16% in the Azores and 22% in Madeira; the intermediate rate is 13%, 9% and 12% respectively; and the reduced rate is 6% on the mainland and 4% in both the Azores and Madeira.",
+        "kind": "figure",
+        "verifyAt": "https://www.gov.pt/guias/imposto-sobre-valor-acrescentado-iva-em-portugal",
+        "volatility": "annual"
+      },
+      "notObvious": "Nine different figures where most people carry one. Regional rates are the quiet source of wrong invoices and mispriced quotes.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/imposto-sobre-valor-acrescentado-iva-em-portugal",
+        "authority": "gov.pt / Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "iva-which-list-your-product-falls-in",
+      "pillar": "iva",
+      "valueClass": "decision",
+      "title": "Whether you charge 6% or 13% depends on which list it is in",
+      "userQuestion": "Why is restaurant food taxed differently from supermarket food?",
+      "scenario": "Someone selling food, drink or a mixed service cannot tell which rate applies and guesses, creating an assessment risk either way.",
+      "audience": "businesses selling food, drink or mixed services",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "What each CIVA list covers, the everyday examples that sit in each, and where to check a specific product.",
+      "anchorFact": {
+        "claim": "The reduced rate applies to goods and services in Lista I of the Código do IVA, covering most food, medicines, public transport, books and newspapers, while the intermediate rate applies to Lista II, covering restaurant services, common wines and bottled water.",
+        "kind": "instrument",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/c-iva-listas.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The split is by statutory list, not by intuition, which is why the same ingredient carries different rates in a shop and on a plate.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/c-iva-listas.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "identity-address-change-propagates-from-the-card",
+      "pillar": "identity_access",
+      "valueClass": "deadline_action",
+      "title": "Changing your citizen card address updates Finanças for you",
+      "userQuestion": "Do I have to tell Finanças separately when I move?",
+      "scenario": "Someone who has moved dutifully updates one service at a time, or updates none, unaware of a 60-day obligation and a single action that covers several bodies.",
+      "audience": "residents who have changed address",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The 60-day deadline to declare a new fiscal domicile, the one change that satisfies it, and the confirmation step with its own 90-day limit.",
+      "anchorFact": {
+        "claim": "A change of habitual residence must be communicated to the Autoridade Tributária within 60 days, changing the address on the Cartão de Cidadão performs that communication, changes are transmitted automatically to Finanças, Segurança Social and the SNS, and the address change must be confirmed within 90 days.",
+        "kind": "deadline",
+        "namedThing": "domicílio fiscal",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Dados_pessoais_familia/Dados_pessoais/Morada/Paginas/default.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "One action covers three bodies, but the separate confirmation step is what people skip, leaving the change incomplete and mail going to the old address.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Dados_pessoais_familia/Dados_pessoais/Morada/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "consumer-switching-energy-supplier-is-free",
+      "pillar": "daily_life_consumer",
+      "valueClass": "deadline_action",
+      "title": "Switching electricity supplier is free and capped at three weeks",
+      "userQuestion": "What does it cost and how long does it take to change electricity supplier?",
+      "scenario": "Someone on an expensive tariff stays put, fearing a gap in supply, a cancellation fee, or weeks of dealing with two companies.",
+      "audience": "households on an uncompetitive energy tariff",
+      "risk": "low",
+      "volatility": "stable",
+      "promise": "That the switch is free with no limit on how often, the three-week completion window, and why you never contact the old supplier.",
+      "anchorFact": {
+        "claim": "Changing electricity supplier has no cost and no maximum number of switches, supply cannot be cut during the process, the switch must be completed within 3 weeks of the new contract, and the new supplier terminates the previous contract so the consumer does not need to.",
+        "kind": "deadline",
+        "namedThing": "comercializador",
+        "verifyAt": "https://www.erse.pt/consumidores-de-energia/eletricidade/contratarmudar-de-comercializador/",
+        "volatility": "stable"
+      },
+      "notObvious": "The fear of a supply gap or an exit process is what keeps people on bad tariffs, and both are removed by rules almost nobody knows exist.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.erse.pt/consumidores-de-energia/eletricidade/contratarmudar-de-comercializador/",
+        "authority": "ERSE"
+      }
+    },
+    {
+      "id": "consumer-energy-switch-loyalty-and-final-bill",
+      "pillar": "daily_life_consumer",
+      "valueClass": "edge_case",
+      "title": "The two costs that can still follow an energy switch",
+      "userQuestion": "Are there any charges at all when I leave my energy supplier?",
+      "scenario": "A customer switches, assumes it is done, then receives an unexpected bill from the old supplier weeks later and cannot tell if it is legitimate.",
+      "audience": "customers who have switched energy supplier",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The one situation that does carry a penalty, the 14-day withdrawal on the new contract, and the final settlement bill that arrives afterwards.",
+      "anchorFact": {
+        "claim": "Switching is free unless a fidelização period is in progress, in which case an early termination penalty may apply; the new contract can be withdrawn from within 14 days at no cost, and the previous supplier must send a final settlement invoice within 6 weeks of the switch, which may be based on an estimated reading.",
+        "kind": "deadline",
+        "namedThing": "fidelização",
+        "verifyAt": "https://www.erse.pt/consumidores-de-energia/eletricidade/contratarmudar-de-comercializador/",
+        "volatility": "stable"
+      },
+      "notObvious": "The late final bill looks like an error and gets disputed or ignored. Knowing it is required within six weeks, and may be estimated, tells you whether to challenge the reading.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.erse.pt/consumidores-de-energia/eletricidade/contratarmudar-de-comercializador/",
+        "authority": "ERSE"
+      }
     }
   ]
 }
