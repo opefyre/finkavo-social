@@ -10843,6 +10843,56 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs99.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "housing-the-ten-euro-floor-below-which-imi-is-not-charged",
+      "pillar": "housing_property",
+      "valueClass": "threshold",
+      "title": "The ten euros below which no property tax is raised",
+      "userQuestion": "Why did I not receive an IMI bill for a small plot?",
+      "scenario": "An owner of low-value land waits for a bill that will never come and worries about arrears that do not exist.",
+      "audience": "owners of low-value property",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The amount below which no assessment is issued at all, when the annual assessment is made, and that corrections can come at any time.",
+      "anchorFact": {
+        "claim": "Under artigo 113 of the CIMI the tax is assessed annually in relation to each municipality by the central services in February and April of the following year, no assessment takes place whenever the amount of tax to collect is below 10 euros, and additional assessments and those resulting from official reviews may be carried out at any time.",
+        "kind": "instrument",
+        "namedThing": "liquidação",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimi/Pages/cimi113.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Silence is not the same as being exempt: an official review can raise an assessment at any time, so a plot that never billed is not a plot that never will.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimi/Pages/cimi113.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "housing-when-a-renovation-starts-the-tax-clock",
+      "pillar": "housing_property",
+      "valueClass": "edge_case",
+      "title": "The year a renovation starts the property tax clock",
+      "userQuestion": "From when is IMI charged on a house I built or improved?",
+      "scenario": "An owner finishing works late in the year is billed for that whole year and cannot see why.",
+      "audience": "people building or improving a property",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The year from which IMI becomes due after building or improvement, and the year it starts when a previously exempt home stops being lived in.",
+      "anchorFact": {
+        "claim": "Under artigo 9 of the CIMI the tax is due from the year, inclusive, in which the works of building, improvement or other alterations that changed the property's taxable value are completed, and from the year, inclusive, in which a portion of territory must be classified as a building; where a taxpayer acquires a new permanent home while holding an exempt property, taxation of the former begins in the year in which it ceased to be inhabited by its owner.",
+        "kind": "instrument",
+        "namedThing": "imposto municipal sobre imóveis",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimi/Pages/cimi9.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The year counts inclusively, so finishing works in December pulls the whole of that year into charge rather than starting the following January.",
+      "journeyStage": "buying_a_home",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimi/Pages/cimi9.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
