@@ -10593,6 +10593,31 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs25.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "irs-the-care-home-deduction-reaches-further-than-parents",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "The care home deduction that reaches beyond your own parents",
+      "userQuestion": "Can I deduct what I pay towards a relative's care home?",
+      "scenario": "Someone paying towards an aunt's or sibling's home care assumes only a parent's costs count and claims nothing.",
+      "audience": "people paying towards a relative's care",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The percentage and annual ceiling on care home charges, the kinds of care covered, and how far the family relationship can stretch.",
+      "anchorFact": {
+        "claim": "Under artigo 84 of the Código do IRS 25 per cent of the amount borne as encargos com lares is deductible up to an annual ceiling of 403.75 euros, covering home support, care homes and institutions supporting the elderly, in respect of the taxpayer, their dependants, their ascendants and collateral relatives up to the third degree who do not have income above the guaranteed minimum monthly wage.",
+        "kind": "figure",
+        "namedThing": "encargos com lares",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs84.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "Collateral relatives to the third degree brings siblings, aunts, uncles, nieces and nephews inside the deduction, which is far wider than most people claim.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs84.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
