@@ -5718,6 +5718,56 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Residir_em_Portugal/Alteracao_nao_residente_para_residente/Paginas/default.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "health-european-card-does-not-make-care-free",
+      "pillar": "health_family",
+      "valueClass": "edge_case",
+      "title": "The European card gives you local treatment, not free treatment",
+      "userQuestion": "Does the European health card cover everything if I fall ill abroad?",
+      "scenario": "A traveller relies on the card as insurance, receives care in a country with high user charges, and is billed.",
+      "audience": "people travelling in Europe",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "What the card actually entitles you to, the countries it reaches, and the substitute document when it cannot arrive in time.",
+      "anchorFact": {
+        "claim": "The Cartão Europeu de Seguro de Doença gives care on the same terms as beneficiaries of the social security system of the country you are in, which means care may not be free and taxas moderadoras or co-payments may apply; it is valid in European Union member states, Liechtenstein, Norway, Iceland, Switzerland and the United Kingdom, and the Certificado Provisório de Substituição has the same legal value with a validity of 3 months.",
+        "kind": "artefact",
+        "namedThing": "Cartão Europeu de Seguro de Doença",
+        "verifyAt": "https://www.sns24.gov.pt/guia/cartao-europeu-de-seguro-de-doenca/",
+        "volatility": "stable"
+      },
+      "notObvious": "It equalises you with a local, and a local pays what locals pay. In some countries that is far more than nothing.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.sns24.gov.pt/guia/cartao-europeu-de-seguro-de-doenca/",
+        "authority": "SNS 24"
+      }
+    },
+    {
+      "id": "health-european-card-renewal-window-and-delivery",
+      "pillar": "health_family",
+      "valueClass": "deadline_action",
+      "title": "Thirty days to renew a card that takes a week to arrive",
+      "userQuestion": "When should I renew the European health card before a trip?",
+      "scenario": "Someone requests the card days before travelling and leaves without it, or renews too early and is refused.",
+      "audience": "Segurança Social beneficiaries planning travel",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The card's validity, the narrow renewal window, and the delivery time to build into a trip.",
+      "anchorFact": {
+        "claim": "The Cartão Europeu de Seguro de Doença is valid for 3 years and renewal must be made in the last 30 days before the validity shown on the card ends; beneficiaries with a NISS request it through Segurança Social Direta and delivery takes 5 to 7 working days, posted to the address registered in the Sistema de Informação da Segurança Social.",
+        "kind": "deadline",
+        "namedThing": "CESD",
+        "verifyAt": "https://www.seg-social.pt/pedido-cartao-europeu-seguro-doenca",
+        "volatility": "stable"
+      },
+      "notObvious": "It is posted to the address Segurança Social holds, not the one you type into the request, so a stale address quietly loses the card.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/pedido-cartao-europeu-seguro-doenca",
+        "authority": "Instituto da Segurança Social"
+      }
     }
   ]
 }
