@@ -7868,6 +7868,31 @@
         "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/1966-34509075-49925475",
         "authority": "Diário da República / Código Civil"
       }
+    },
+    {
+      "id": "driving-paying-the-fine-does-not-end-a-driving-ban",
+      "pillar": "driving_transport",
+      "valueClass": "costly_mistake",
+      "title": "Paying the fine does not close a case that carries a ban",
+      "userQuestion": "I paid the fine. Can I still lose my licence over it?",
+      "scenario": "A driver pays a serious offence voluntarily to be rid of it, then receives a decision setting a period of inibição they never argued against.",
+      "audience": "drivers cited for a serious or very serious offence",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "What voluntary payment settles and what it leaves open, and the twenty working days to take the decision to a judge.",
+      "anchorFact": {
+        "claim": "In grave or muito grave road offences carrying the accessory sanction of inibição de conduzir, voluntary payment of the coima does not end the process: it continues, restricted to assessing the elements for applying and determining the duration of the driving ban, and a defendant who wants to contest the administrative decision may request judicial review within 20 working days of being notified of it.",
+        "kind": "deadline",
+        "namedThing": "inibição de conduzir",
+        "verifyAt": "https://ansr.pt/contraordenacoes",
+        "volatility": "stable"
+      },
+      "notObvious": "Paying removes the argument about the fine and leaves the ban to be decided without you, which is the opposite of what paying early usually achieves.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://ansr.pt/contraordenacoes",
+        "authority": "Autoridade Nacional de Segurança Rodoviária"
+      }
     }
   ]
 }
