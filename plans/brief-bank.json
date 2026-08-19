@@ -4658,7 +4658,7 @@
       "volatility": "stable",
       "promise": "The administrative complaint window, the shorter window after it is rejected, and when interest is owed back to you.",
       "anchorFact": {
-        "claim": "Under artigo 70 of the CPPT a reclamação graciosa may be filed on the same grounds as judicial challenge within 120 days of the facts in artigo 102, and on express or tacit rejection the taxpayer may bring an impugnação judicial within 30 days of the rejection notification or of the presumption of tacit rejection; indemnity interest is due where error attributable to the tax services caused an overpayment.",
+        "claim": "Under artigo 70 of the CPPT a reclamação graciosa may be filed on the same grounds as judicial challenge within 120 days of the facts in artigo 102, and on express or tacit rejection the taxpayer may bring an impugnação judicial within 30 days of the rejection notification or of the presumption of tacit rejection; indemnity interest is due where error attributable to the tax services caused an overpayment; where a document or court decision only becomes available later, or facts could not previously be invoked, the 120 days count from when the claimant could obtain the document or learn of the fact, and the deadline is suspended while public documents are requested or court proceedings are pending.",
         "kind": "instrument",
         "namedThing": "reclamação graciosa",
         "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cppt/Pages/cppt70.aspx",
@@ -11066,6 +11066,31 @@
       "journeyStage": "renting_out",
       "source": {
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs55.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-four-years-before-an-assessment-can-no-longer-be-made",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "Four years to assess a tax, and the cases that stretch it to twelve",
+      "userQuestion": "How far back can Finanças go to assess me?",
+      "scenario": "Someone assumes an old year is closed, or conversely that the tax authority can reach back indefinitely.",
+      "audience": "taxpayers worried about past years",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The ordinary expiry period for the right to assess, the shorter one for a declared error, where the clock starts, and the two situations that extend it.",
+      "anchorFact": {
+        "claim": "Under artigo 45 of the Lei Geral Tributária the right to assess taxes expires if the assessment is not validly notified to the taxpayer within 4 years, reduced to 3 years where there is an error evidenced in the taxpayer's own declaration; for periodic taxes the period runs from the end of the year in which the taxable event occurred and for non-periodic taxes from the date of the event, with IVA and withholding taxes counting from the start of the following calendar year; the period extends until the dismissal or final judgment of criminal proceedings plus 1 year, and to 12 years where jurisdictions with favourable tax regimes or unreported foreign deposit accounts are involved.",
+        "kind": "figure",
+        "namedThing": "caducidade",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/lgt/Pages/lgt45.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Declaring an error yourself shortens the window to three years, so the honest correction closes the year faster than silence does.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/lgt/Pages/lgt45.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
     }
