@@ -7043,6 +7043,56 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/destaques/Paginas/FAQs_Representante_Fiscal_do_Nao_Residente_Notif_eletronicas.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "health-continued-care-referral-happens-before-discharge",
+      "pillar": "health_family",
+      "valueClass": "deadline_action",
+      "title": "Continued care is arranged before the hospital discharge, not after",
+      "userQuestion": "How does a relative get a place in the continued care network?",
+      "scenario": "A family waits until a relative is home and struggling before asking about continued care, by which point the hospital route has closed.",
+      "audience": "families of a hospitalised relative",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "When a referral can be made, who makes it, and which parts of continued care a patient actually pays for.",
+      "anchorFact": {
+        "claim": "Referral to the RNCCI can be made from the beginning of a hospital stay up to 4 days before the scheduled discharge date, with the hospital's Equipa de Gestão de Altas sending an admission proposal to the Equipa Coordenadora Local for the patient's area of residence; user co-payment arises only in medium-duration rehabilitation units and long-duration maintenance units, healthcare costs are covered by the SNS or other health subsystems in every typology, and social support costs are co-paid according to household income assessed by the local coordinating team.",
+        "kind": "deadline",
+        "namedThing": "RNCCI",
+        "verifyAt": "https://www.seg-social.pt/rede-nacional-de-cuidados-continuados-integrados-rncci",
+        "volatility": "stable"
+      },
+      "notObvious": "The referral is a hospital act with its own cut-off four days before discharge, so the window closes while the family is still focused on the illness.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/rede-nacional-de-cuidados-continuados-integrados-rncci",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "health-adse-covers-parents-below-an-income-line",
+      "pillar": "health_family",
+      "valueClass": "threshold",
+      "title": "The income line that lets a parent join your ADSE",
+      "userQuestion": "Can I put my mother or father on my ADSE?",
+      "scenario": "A public sector worker supporting a low-income parent never checks whether the parent can be enrolled as a family beneficiary.",
+      "audience": "ADSE titleholders supporting a parent",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "Who can be enrolled as a family beneficiary, the income test for ascendants, and who may submit the enrolment.",
+      "anchorFact": {
+        "claim": "Spouses, descendants and ascendants of an ADSE beneficiário titular may be enrolled as family beneficiaries, ascendants qualify only where they do not have monthly income equal to or greater than 60 per cent of the minimum monthly salary, and enrolment may be submitted by the titleholder, their legal representative or the employer; titleholders contribute at a discount of 3.50 per cent.",
+        "kind": "figure",
+        "namedThing": "ADSE",
+        "verifyAt": "https://www.gov.pt/servicos/inscrever-familiar-ou-equiparado-como-beneficiario-da-adse-i.p.",
+        "volatility": "annual"
+      },
+      "notObvious": "The ascendant test is on their own income, not on the household's, so a parent living with a well-paid child can still qualify.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/inscrever-familiar-ou-equiparado-como-beneficiario-da-adse-i.p.",
+        "authority": "gov.pt / ADSE"
+      }
     }
   ]
 }
