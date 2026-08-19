@@ -7518,6 +7518,56 @@
         "canonicalUrl": "https://www.gov.pt/servicos/pedir-o-estatuto-de-igualdade-de-direitos-e-deveres-para-cidadao-brasileiro-residente-em-portugal",
         "authority": "gov.pt / Instituto dos Registos e do Notariado"
       }
+    },
+    {
+      "id": "housing-an-empty-flat-multiplies-its-own-imi",
+      "pillar": "housing_property",
+      "valueClass": "costly_mistake",
+      "title": "An empty flat multiplies its own property tax every year",
+      "userQuestion": "What does it cost to leave a property empty?",
+      "scenario": "An owner holds a flat empty while deciding what to do with it, and the annual bill escalates rather than staying flat.",
+      "audience": "owners of an empty or ruined property",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "The categories that trigger the aggravated rate, that the multiplier escalates each year, and the extra increase where the owner is a company.",
+      "anchorFact": {
+        "claim": "Under artigo 112 of the CIMI the IMI rate is multiplied annually for prédios urbanos that have been devolutos for more than 1 year and for buildings in ruins, with a further aggravation in areas of urban pressure for housing property that is neither rented nor occupied as a permanent residence, and a higher aggravation where the taxpayer is a legal person or equivalent entity.",
+        "kind": "instrument",
+        "namedThing": "prédios urbanos devolutos",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimi/Pages/cimi112.aspx",
+        "volatility": "volatile"
+      },
+      "notObvious": "The multiplier compounds year on year rather than applying once, so the cost of indecision grows faster than the property is likely to.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimi/Pages/cimi112.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "housing-your-imi-bill-is-a-formula-you-can-check",
+      "pillar": "housing_property",
+      "valueClass": "insider",
+      "title": "The six factors behind the value your IMI is charged on",
+      "userQuestion": "Where does the taxable value of my house actually come from?",
+      "scenario": "An owner treats the assessed value as an opaque official number and never notices a coefficient that no longer matches the property.",
+      "audience": "property owners questioning their IMI",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The formula behind the taxable value, what each of the six factors represents, and the age factor that moves with time.",
+      "anchorFact": {
+        "claim": "Under artigo 38 of the CIMI the valor patrimonial tributário of urban property for housing, commerce, industry and services is Vt = Vc x A x Ca x Cl x Cq x Cv, where Vc is the base value of built property, A the gross construction area plus area exceeding the implantation area, Ca the affectation coefficient, Cl the location coefficient, Cq the quality and comfort coefficient and Cv the vetustez coefficient, which is a function of the whole number of years elapsed since the building permit was issued or the works were completed.",
+        "kind": "instrument",
+        "namedThing": "valor patrimonial tributário",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimi/Pages/cimi38.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The age factor only moves when the value is reassessed, so a property whose assessment is years old is being taxed as a younger building than it is.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimi/Pages/cimi38.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
