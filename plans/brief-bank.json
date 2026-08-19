@@ -7093,6 +7093,56 @@
         "canonicalUrl": "https://www.gov.pt/servicos/inscrever-familiar-ou-equiparado-como-beneficiario-da-adse-i.p.",
         "authority": "gov.pt / ADSE"
       }
+    },
+    {
+      "id": "employment-two-hours-a-day-for-feeding-a-baby",
+      "pillar": "employment",
+      "valueClass": "threshold",
+      "title": "Two hours a day for feeding, whether or not you breastfeed",
+      "userQuestion": "What time off am I entitled to for feeding a baby?",
+      "scenario": "A parent who is not breastfeeding assumes the daily dispensation does not apply to them and takes unpaid time instead.",
+      "audience": "parents of a baby returning to work",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The daily feeding dispensations, the extra time for more than one baby, and the version that applies when the baby is bottle fed.",
+      "anchorFact": {
+        "claim": "While a baby is being breastfed the mother is entitled to 2 daily dispensations of up to 1 hour each unless another arrangement is agreed with the employer, plus an additional 30 minutes per baby where there is more than one; where the baby is not breastfed, either parent is entitled to a daily dispensation for bottle feeding equal to the breastfeeding one until the child is 1 year old.",
+        "kind": "figure",
+        "namedThing": "dispensa para amamentação",
+        "verifyAt": "https://cite.gov.pt/direitos-exclusivos-da-trabalhadora-gravida-puerpera-e-lactante",
+        "volatility": "stable"
+      },
+      "notObvious": "The bottle-feeding version belongs to either parent rather than only to the mother, which is the part employers and parents both tend to miss.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://cite.gov.pt/direitos-exclusivos-da-trabalhadora-gravida-puerpera-e-lactante",
+        "authority": "CITE"
+      }
+    },
+    {
+      "id": "employment-dismissing-a-new-mother-without-cite-is-void",
+      "pillar": "employment",
+      "valueClass": "costly_mistake",
+      "title": "A dismissal without the CITE opinion is void, not merely wrong",
+      "userQuestion": "Can I be dismissed while pregnant or on parental leave?",
+      "scenario": "A pregnant worker or one on parental leave accepts a dismissal letter as final without checking whether the required prior opinion was ever sought.",
+      "audience": "pregnant workers and workers on parental leave",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The opinion an employer must obtain first, what happens if it was skipped, and the thirty days that follow an unfavourable one.",
+      "anchorFact": {
+        "claim": "Dismissal of a pregnant, puérpera or breastfeeding worker, or of a worker taking initial parental leave in any of its forms, requires a parecer prévio from CITE, and a dismissal is null where that opinion was not requested; where the opinion is unfavourable the employer may only dismiss after a court decision recognising justified grounds, and that action must be brought within 30 days of notification of the opinion.",
+        "kind": "procedure",
+        "namedThing": "parecer prévio",
+        "verifyAt": "https://www.gov.pt/servicos/trabalhadora-gravida-em-licenca-parental-ou-que-amamenta-parecer-previo-ao-despedimento",
+        "volatility": "stable"
+      },
+      "notObvious": "Null is stronger than unfair: the dismissal never legally happened, which is a different starting point from arguing about compensation.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/trabalhadora-gravida-em-licenca-parental-ou-que-amamenta-parecer-previo-ao-despedimento",
+        "authority": "gov.pt / CITE"
+      }
     }
   ]
 }
