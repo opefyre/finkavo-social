@@ -8593,6 +8593,106 @@
         "canonicalUrl": "https://www.dgeg.gov.pt/pt/areas-transversais/politicas-de-protecao-ao-consumidor-de-energia/tarifa-social-de-energia/quais-as-condicoes-de-atribuicao-da-tarifa-social-de-energia/",
         "authority": "Direção-Geral de Energia e Geologia"
       }
+    },
+    {
+      "id": "social-security-sick-child-days-depend-on-the-childs-age",
+      "pillar": "social_security",
+      "valueClass": "threshold",
+      "title": "Fifteen days or thirty, decided by the child's age",
+      "userQuestion": "How many days a year can I take to look after a sick child?",
+      "scenario": "A parent rations days off on a guess and either runs out early or leaves entitlement unused.",
+      "audience": "working parents of a sick child",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The annual day counts either side of the child's twelfth birthday, the extra day per additional child, and the rule for adult children.",
+      "anchorFact": {
+        "claim": "The subsídio para assistência a filho covers 15 days per year where the child is over 12 and 30 days per year where the child is under 12, taken consecutively or not, with those periods increased by 1 day for each additional child; where the child is over 18 the subsidy is granted only if they are part of the beneficiary's household.",
+        "kind": "figure",
+        "namedThing": "subsídio para assistência a filho",
+        "verifyAt": "https://www.gov.pt/guias/apoio-a-familia/apoio-em-caso-de-doenca-e-morte",
+        "volatility": "stable"
+      },
+      "notObvious": "The allowance doubles below age twelve rather than tapering, so the year a child turns twelve halves what the family can take.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/apoio-a-familia/apoio-em-caso-de-doenca-e-morte",
+        "authority": "gov.pt / Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "social-security-funeral-reimbursement-excludes-the-death-grant",
+      "pillar": "social_security",
+      "valueClass": "edge_case",
+      "title": "The funeral reimbursement that cancels out the death grant",
+      "userQuestion": "Can a family claim both the death grant and the funeral costs back?",
+      "scenario": "A family claims one benefit, then applies for the other, and discovers the two cannot be held together.",
+      "audience": "families arranging a funeral",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "What each of the two payments is for, and the rule that stops them being combined.",
+      "anchorFact": {
+        "claim": "The subsídio por morte is a single payment to family members of a deceased Segurança Social or voluntary social insurance beneficiary to compensate the costs of the death, while the reembolso das despesas de funeral is a single payment to whoever paid for the funeral of a beneficiary of the general regime, and the reimbursement of expenses is not cumulable with the subsídio por morte.",
+        "kind": "procedure",
+        "namedThing": "reembolso das despesas de funeral",
+        "verifyAt": "https://www.gov.pt/guias/apoio-a-familia/apoio-em-caso-de-doenca-e-morte",
+        "volatility": "stable"
+      },
+      "notObvious": "Choosing between them is a decision, not a formality, and the family should work out which is larger before claiming either.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/apoio-a-familia/apoio-em-caso-de-doenca-e-morte",
+        "authority": "gov.pt / Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "health-the-thirteenth-week-that-starts-a-payment",
+      "pillar": "health_family",
+      "valueClass": "deadline_action",
+      "title": "The thirteenth week of pregnancy that starts a payment",
+      "userQuestion": "Is there any money during pregnancy itself, before the baby arrives?",
+      "scenario": "An expectant mother waits for the birth to claim anything, and loses months of an allowance that starts mid-pregnancy.",
+      "audience": "pregnant women resident in Portugal",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The week of pregnancy the pre-natal allowance starts from, how long it runs, and how the two schemes differ.",
+      "anchorFact": {
+        "claim": "The abono de família pré-natal is paid to a pregnant woman resident in Portugal from the 13th week of gestation; through Segurança Social it is granted for 6 months from the month following the one in which the 13th week is reached, or until the birth, while the Caixa Geral de Aposentações version is granted to pregnant women in low-income families from the 13th week until the 6th month after the birth.",
+        "kind": "deadline",
+        "namedThing": "abono de família pré-natal",
+        "verifyAt": "https://www.gov.pt/guias/apoio-a-familia/assistencia-na-gravidez",
+        "volatility": "annual"
+      },
+      "notObvious": "The two schemes end at different points, so which body pays decides whether the money stops at the birth or continues past it.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/apoio-a-familia/assistencia-na-gravidez",
+        "authority": "gov.pt / Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "health-risk-pregnancy-pay-has-a-contribution-test",
+      "pillar": "health_family",
+      "valueClass": "threshold",
+      "title": "Being signed off in pregnancy still has a contribution test",
+      "userQuestion": "Will I be paid if a doctor stops me working during pregnancy?",
+      "scenario": "A woman signed off for a clinical risk assumes payment is automatic, and misses either the contribution condition or the six-month claim window.",
+      "audience": "pregnant workers signed off for clinical risk",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The contribution record the benefit needs, the extra condition for independent workers, the claim window, and the means test behind the social version.",
+      "anchorFact": {
+        "claim": "The subsídio por risco clínico durante a gravidez requires a guarantee period of 6 calendar months with registered remuneration, that the worker takes the corresponding leave, and for independent workers that contributions are paid up to 3 months before they stop working, with the claim made within 6 months of the first day of impediment; where there is no entitlement, the subsídio social version requires residence, professional activity, household movable assets not above 128,911.20 euros being 240 times the IAS, and monthly income per household member no higher than 429.70 euros being 80 per cent of the IAS.",
+        "kind": "figure",
+        "namedThing": "subsídio por risco clínico",
+        "verifyAt": "https://www.gov.pt/guias/apoio-a-familia/assistencia-na-gravidez",
+        "volatility": "annual"
+      },
+      "notObvious": "There are two versions and the second is means tested, so being refused the first is the moment to check the asset and income ceilings rather than to give up.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/apoio-a-familia/assistencia-na-gravidez",
+        "authority": "gov.pt / Instituto da Segurança Social"
+      }
     }
   ]
 }
