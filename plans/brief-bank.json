@@ -8043,6 +8043,56 @@
         "canonicalUrl": "https://www.gov.pt/servicos/pedir-o-reembolso-de-despesas-de-saude-a-adse",
         "authority": "gov.pt / ADSE"
       }
+    },
+    {
+      "id": "housing-two-documents-a-deed-can-be-refused-without",
+      "pillar": "housing_property",
+      "valueClass": "edge_case",
+      "title": "Two documents whose need depends on the building's dates",
+      "userQuestion": "Which property documents do we actually need for the deed?",
+      "scenario": "A sale is arranged and the deed cannot proceed because a licence or technical sheet nobody thought applicable turns out to be required.",
+      "audience": "people buying or selling a Portuguese property",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "What each document is, and the two dates that decide whether the property needs it.",
+      "anchorFact": {
+        "claim": "A licença de utilização is issued by the câmara municipal confirming a property has been inspected and complies with current legislation and is required for properties built after August 1951, while the ficha técnica de habitação sets out the property's main technical and functional characteristics and is required where the licença de utilização was issued after 30 March 2004; both sit alongside the parties' civil and tax identification and proof of registration in the documents needed for the escritura.",
+        "kind": "figure",
+        "namedThing": "licença de utilização",
+        "verifyAt": "https://www.gov.pt/guias/compra-e-venda-de-imoveis-em-portugal-cidadaos-europeus",
+        "volatility": "stable"
+      },
+      "notObvious": "Which documents apply is decided by two fixed dates in the building's history rather than by the age of the sale, so an older property can legitimately have neither.",
+      "journeyStage": "buying_a_home",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/compra-e-venda-de-imoveis-em-portugal-cidadaos-europeus",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "housing-one-counter-that-does-the-whole-purchase",
+      "pillar": "housing_property",
+      "valueClass": "insider",
+      "title": "The counter that does the tax, the deed and the registration at once",
+      "userQuestion": "Do I need a notary, a registry and Finanças to buy a house?",
+      "scenario": "A buyer books a notary, then queues separately at Finanças and the registry, repeating documents at each.",
+      "audience": "people completing a property purchase",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "What the single-counter service can do in one sitting, and the extra requests that can be made at the same time.",
+      "anchorFact": {
+        "claim": "The Casa Pronta service handles purchase and sale contracts, mortgages, donations, exchanges and the constitution of propriedade horizontal, and at the same counter it is possible to pay taxes including the IMT settlement, celebrate the purchase contract, carry out all the registrations immediately, request the IMI exemption and change the tax address; the deed itself may also be done at a notary, through a lawyer, at the property registry single counter or by authenticated private document.",
+        "kind": "artefact",
+        "namedThing": "Casa Pronta",
+        "verifyAt": "https://www.gov.pt/servicos/usar-o-servico-casa-pronta",
+        "volatility": "stable"
+      },
+      "notObvious": "The IMI exemption request and the change of tax address can be made in the same sitting, which is where most buyers create their own follow-up work.",
+      "journeyStage": "buying_a_home",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/usar-o-servico-casa-pronta",
+        "authority": "gov.pt / Instituto dos Registos e do Notariado"
+      }
     }
   ]
 }
