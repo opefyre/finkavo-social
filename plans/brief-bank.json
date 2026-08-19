@@ -9868,6 +9868,106 @@
         "canonicalUrl": "https://www.gov.pt/guias/ter-uma-crianca/dispensas-e-faltas-ao-trabalho-dos-pais",
         "authority": "gov.pt"
       }
+    },
+    {
+      "id": "identity-three-numbers-in-a-single-request",
+      "pillar": "identity_access",
+      "valueClass": "insider",
+      "title": "Three national numbers you can request in one go",
+      "userQuestion": "Do I have to apply separately for the tax, social security and health numbers?",
+      "scenario": "A new arrival queues three times at three institutions for numbers that can be requested together.",
+      "audience": "foreign nationals with an address in Portugal",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The single request that covers the tax, social security and health numbers, and what each of them unlocks.",
+      "anchorFact": {
+        "claim": "Foreign people with an address in Portugal may request, in a single request, the Número de Identificação Fiscal, the Número de Identificação da Segurança Social and the national SNS patient number; the NIF allows a person to work, open a bank account and meet tax obligations, the NISS gives access to supports and subsidies and to contribution duties, and requesting the NIF is free.",
+        "kind": "procedure",
+        "namedThing": "Número de Identificação Fiscal",
+        "verifyAt": "https://www.gov.pt/guias/como-pedir-o-nif-e-o-niss-para-pessoas-estrangeiras-em-portugal",
+        "volatility": "stable"
+      },
+      "notObvious": "The combined request exists but is not the default route, so almost everyone does it three times.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/como-pedir-o-nif-e-o-niss-para-pessoas-estrangeiras-em-portugal",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "immigration-a-pending-residence-application-is-enough-for-a-niss",
+      "pillar": "immigration_residency",
+      "valueClass": "insider",
+      "title": "A pending residence application is enough for a social security number",
+      "userQuestion": "Do I need the residence permit in hand before I can get a NISS?",
+      "scenario": "Someone waiting months for a residence decision delays employment because they believe the permit must come first.",
+      "audience": "people with a residence application in progress",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "The three document types a NISS request needs, and the proofs of a merely pending residence application that are accepted.",
+      "anchorFact": {
+        "claim": "A foreign person requesting a NISS must present three types of document: identification, proof of work situation, and proof of the residence authorisation; the residence proof accepted includes the comprovativo of the residence authorisation request itself, the comprovativo of the request for a CPLP residence visa, and the comprovativo of the request for a CPLP residence authorisation certificate.",
+        "kind": "procedure",
+        "namedThing": "NISS",
+        "verifyAt": "https://www.gov.pt/guias/como-pedir-o-nif-e-o-niss-para-pessoas-estrangeiras-em-portugal",
+        "volatility": "volatile"
+      },
+      "notObvious": "The receipt of the application counts as the residence proof, which decouples getting a social security number from the wait for a decision.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/como-pedir-o-nif-e-o-niss-para-pessoas-estrangeiras-em-portugal",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "immigration-a-social-security-number-under-international-protection",
+      "pillar": "immigration_residency",
+      "valueClass": "insider",
+      "title": "The documents that get a social security number under protection",
+      "userQuestion": "Can someone under international protection get a NISS without a normal residence permit?",
+      "scenario": "A person under international protection is turned away or does not try, holding documents that the rules explicitly accept.",
+      "audience": "people under international protection in Portugal",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "The provisional and receipt-based documents accepted in place of a standard identification document for a NISS request.",
+      "anchorFact": {
+        "claim": "People covered by international protection, which does not include temporary protection for people from Ukraine, or without another identification document, may request a NISS presenting an Autorização de Residência Provisória, the receipt proving the ARP request or its renewal, a refugee or subsidiary protection residence title, the receipt of concession or of renewal of such a title, or a declaration of international protection.",
+        "kind": "artefact",
+        "namedThing": "Autorização de Residência Provisória",
+        "verifyAt": "https://www.gov.pt/guias/como-pedir-o-nif-e-o-niss-para-pessoas-estrangeiras-em-portugal",
+        "volatility": "volatile"
+      },
+      "notObvious": "Receipts of a request count as documents in their own right here, which is what makes the number reachable before any title is issued.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/como-pedir-o-nif-e-o-niss-para-pessoas-estrangeiras-em-portugal",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "identity-a-child-needs-a-tax-number-before-any-income",
+      "pillar": "identity_access",
+      "valueClass": "edge_case",
+      "title": "A child needs a tax number long before they earn anything",
+      "userQuestion": "Why would a child need a NIF?",
+      "scenario": "Parents skip getting a NIF for a young child and cannot attach the year's health and education spending to their own return.",
+      "audience": "parents of children in Portugal",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "Why a child needs a tax number, and the document that replaces a passport for one without.",
+      "anchorFact": {
+        "claim": "For children and young people the NIF is needed so that health and education expenses can be included by the parents in their IRS declaration, and a child without a passport can obtain a NIF on presentation of a document proving the birth.",
+        "kind": "procedure",
+        "namedThing": "NIF",
+        "verifyAt": "https://www.gov.pt/guias/como-pedir-o-nif-e-o-niss-para-pessoas-estrangeiras-em-portugal",
+        "volatility": "stable"
+      },
+      "notObvious": "The number is what links a child's invoices to a parent's return, so a year without it is a year of deductions that cannot be claimed.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/como-pedir-o-nif-e-o-niss-para-pessoas-estrangeiras-em-portugal",
+        "authority": "gov.pt"
+      }
     }
   ]
 }
