@@ -7693,6 +7693,56 @@
         "canonicalUrl": "https://diariodarepublica.pt/dr/lexionario/termo/caucao-renda",
         "authority": "Diário da República / Código do IRS"
       }
+    },
+    {
+      "id": "social-security-grandparents-leave-for-a-teenage-parent",
+      "pillar": "social_security",
+      "valueClass": "edge_case",
+      "title": "The thirty days a grandparent gets when the parent is under sixteen",
+      "userQuestion": "Is there any leave for grandparents after a birth?",
+      "scenario": "A working grandparent raising a grandchild for a very young parent takes unpaid time off, unaware a paid leave exists for exactly this case.",
+      "audience": "working grandparents of a new baby",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The circumstance that opens grandparents' leave, how the days can be split, what it pays, and the contribution record it needs.",
+      "anchorFact": {
+        "claim": "Where one of the parents is under 16 years old, working grandparents who live with the baby have the right to leave for up to 30 consecutive days after the birth, which both grandparents may not take at the same time but may divide between them as they wish; the subsídio para assistência a neto pays 100 per cent of reference remuneration, requires a guarantee period of 6 calendar months with registered remuneration at the date of incapacity, and must be requested within 6 months of the first day of incapacity.",
+        "kind": "figure",
+        "namedThing": "subsídio para assistência a neto",
+        "verifyAt": "https://www.seg-social.pt/subsidio-para-assistencia-a-neto",
+        "volatility": "stable"
+      },
+      "notObvious": "The trigger is the parent's age rather than the grandparent's role, which is why families in exactly this situation never think to look for it.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/subsidio-para-assistencia-a-neto",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "social-security-what-suspends-a-social-insertion-income",
+      "pillar": "social_security",
+      "valueClass": "costly_mistake",
+      "title": "The changes you have ten days to report or lose the payment",
+      "userQuestion": "What can stop my rendimento social de inserção?",
+      "scenario": "A household whose income or composition changes says nothing, and the benefit is suspended for the silence rather than for the change.",
+      "audience": "households receiving social insertion income",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The four situations that suspend the benefit, the ten working days to report a change, and the deadline to sign the insertion contract.",
+      "anchorFact": {
+        "claim": "RSI is suspended where the holder refuses without justification to sign the contrato de inserção, unjustifiably misses or refuses an action included in it, unjustifiably breaches it by refusing suitable employment, socially necessary work, socially useful activity or professional training, or where 30 days pass after failing to notify the managing entity of changes affecting the right, which must be communicated within 10 working days; the contrato de inserção must be signed within 45 days of the benefit being granted.",
+        "kind": "deadline",
+        "namedThing": "contrato de inserção",
+        "verifyAt": "https://www.seg-social.pt/rendimento-social-de-insercao",
+        "volatility": "stable"
+      },
+      "notObvious": "Two of the four triggers are about not answering rather than not qualifying, and the reporting window is ten working days from the change itself.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/rendimento-social-de-insercao",
+        "authority": "Instituto da Segurança Social"
+      }
     }
   ]
 }
