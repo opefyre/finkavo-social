@@ -18,3 +18,8 @@ tmp/
 secrets/
 *.pem
 *.key
+
+# Generated from plans/brief-bank.json at deploy time; the window start is
+# environment-specific, so committing it pins a stale date.
+plans/finkavo-90-day-plan.json
+plans/finkavo-reserve.json

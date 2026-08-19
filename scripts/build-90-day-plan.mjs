@@ -38,6 +38,9 @@ const argOf = (name, fallback) => {
 };
 
 const iso = date => date.toISOString().slice(0, 10);
+// Default the window to today in Lisbon, matching the editorial timezone. Using UTC here
+// would start the plan a day early during the summer offset.
+const lisbonToday = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Lisbon" }).format(new Date());
 const addDays = (date, count) => {
   const next = new Date(date);
   next.setUTCDate(next.getUTCDate() + count);
@@ -97,7 +100,7 @@ function toPlanRow({ brief, date, slotIndex, occurrence, timing, reserve, fallba
 const bank = JSON.parse(await readFile(new URL("../plans/brief-bank.json", import.meta.url), "utf8"));
 const calendar = JSON.parse(await readFile(new URL("../config/official-calendar-2026-2027.json", import.meta.url), "utf8"));
 
-const start = new Date(`${argOf("start", iso(new Date()))}T00:00:00Z`);
+const start = new Date(`${argOf("start", lisbonToday())}T00:00:00Z`);
 const days = Number(argOf("days", "90"));
 
 const calendarByDate = new Map();
