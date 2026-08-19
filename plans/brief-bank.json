@@ -7418,6 +7418,81 @@
         "canonicalUrl": "https://www.gov.pt/servicos/pedir-um-visto-de-residencia-para-fixacao-de-residencia-de-reformados-religiosos-e-pessoas-que-vivem-de-rendimentos-proprios",
         "authority": "gov.pt / AIMA"
       }
+    },
+    {
+      "id": "education-three-kilometres-and-the-council-pays-the-pass",
+      "pillar": "education_children",
+      "valueClass": "threshold",
+      "title": "Three kilometres from school, and the council pays the fare",
+      "userQuestion": "Who pays for getting a child to school when it is far away?",
+      "scenario": "A family buys a monthly pass all year for a journey the municipality was obliged to cover.",
+      "audience": "families living far from their child's school",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The distance that triggers free school transport, who organises it, and the extra duty where a council has no secondary school.",
+      "anchorFact": {
+        "claim": "Students in pre-school, basic and secondary education who live more than 3 km from the establishment they attend are entitled to free school transport passes; the câmara municipal of the student's area organises access, requisitions the passes from the operators, pays the monthly invoices and contracts special circuits, and is also responsible for supporting transport to secondary education within compulsory schooling where the household's council has no secondary offer.",
+        "kind": "figure",
+        "namedThing": "transporte escolar",
+        "verifyAt": "https://www.dge.mec.pt/transportes-escolares",
+        "volatility": "stable"
+      },
+      "notObvious": "The obligation sits with the council where the student lives, not with the school, which is why families ask at the wrong counter.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www.dge.mec.pt/transportes-escolares",
+        "authority": "Direção-Geral da Educação"
+      }
+    },
+    {
+      "id": "health-urgent-care-does-not-wait-for-your-paperwork",
+      "pillar": "health_family",
+      "valueClass": "insider",
+      "title": "A temporary patient number for someone here under ninety days",
+      "userQuestion": "Can I see a doctor before my residence paperwork exists?",
+      "scenario": "Someone newly arrived and unwell avoids the health service entirely, assuming they will be turned away or billed at full price.",
+      "audience": "people in Portugal without legal residence yet",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The right to be seen regardless of status, and the free temporary patient number for people here under ninety days.",
+      "anchorFact": {
+        "claim": "Any foreign person who feels ill or needs health care has the right to be attended at a health centre or hospital whether living in or travelling through Portugal; a foreign person with legal residence can obtain a número de utente, assigned the first time they attend a public health unit, and someone without permanent legal residence who has been in Portugal for less than 90 days can arrange a provisional registration free of charge by contacting Linha SNS 24 on 808 24 24 24.",
+        "kind": "procedure",
+        "namedThing": "número de utente",
+        "verifyAt": "https://www.gov.pt/guias/migrantes-cuidados-de-saude-em-portugal",
+        "volatility": "stable"
+      },
+      "notObvious": "The provisional number is arranged by phone rather than at a counter, which is the step that turns being seen once into being registered.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/migrantes-cuidados-de-saude-em-portugal",
+        "authority": "gov.pt / SNS"
+      }
+    },
+    {
+      "id": "identity-a-tax-notification-lands-whether-you-open-it",
+      "pillar": "identity_access",
+      "valueClass": "edge_case",
+      "title": "A tax notice counts as delivered on the fifteenth day",
+      "userQuestion": "If I never open the electronic mailbox, does the notification still count?",
+      "scenario": "Someone signs up for electronic notifications, stops checking, and loses an appeal window that ran while the message sat unread.",
+      "audience": "people signed up for electronic tax notifications",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "When an electronic notification and an electronic citation are legally considered made, and how the count starts.",
+      "anchorFact": {
+        "claim": "Notifications placed in the caixa postal eletrónica are considered effective on the 15th day after the record of availability in the recipient's electronic postal box, with the 15 days counting only from the first working day after availability, while citations placed there are considered effective on the 5th day after that record; registration in viaCTT is free using the Cartão de Cidadão or Chave Móvel Digital and alerts can be sent by email or SMS.",
+        "kind": "deadline",
+        "namedThing": "caixa postal eletrónica",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00259.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Opening the message is irrelevant to the deadline, and citations are treated as delivered three times faster than notifications.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00259.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
