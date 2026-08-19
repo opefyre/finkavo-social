@@ -2158,6 +2158,273 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Atividade_profissional/Fatura_e_recibo/Paginas/default.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "irs-health-and-education-deduction-caps",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "What health and education expenses are actually worth on your IRS",
+      "userQuestion": "How much of my health and school spending comes back on IRS?",
+      "scenario": "A family keeps every receipt expecting proportional relief and is surprised by how little the final deduction is.",
+      "audience": "families claiming health and education expenses",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The percentage and the euro ceiling for each category, and the housing top-up that lifts the education cap.",
+      "anchorFact": {
+        "claim": "IRS allows a dedução à coleta of 15% of health expenses of any household member up to a global limit of 1,000 euros, and 30% of education and training expenses up to a global limit of 800 euros, rising to 1,000 euros where the difference relates to student rental payments.",
+        "kind": "figure",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00061.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The percentage and the cap bind separately, so beyond a certain spend extra receipts change nothing. Knowing where that point is changes what is worth chasing.",
+      "journeyStage": "first_tax_year",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00061.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-rent-deduction-and-income-ceiling",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "The income line that decides your rent deduction and overall cap",
+      "userQuestion": "Can I deduct my rent, and does my income limit what I get back?",
+      "scenario": "A tenant on a modest income assumes deductions work the same for everyone and never checks whether a global ceiling applies to them.",
+      "audience": "tenants claiming a rent deduction",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The rent deduction limit for permanent housing, and the collectable-income figure below which the overall deduction ceiling does not bite.",
+      "anchorFact": {
+        "claim": "For permanent housing rent, taxpayers with collectable income equal to or below 8,059 euros have a dedução à coleta limit of 1,000 euros, and for that same income level the sum of deductions across health, education, property charges, alimony, invoicing, nursing homes and tax benefits has no overall ceiling.",
+        "kind": "figure",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00061.aspx",
+        "volatility": "annual",
+        "namedThing": "dedução à coleta"
+      },
+      "notObvious": "Lower incomes escape the global cap entirely, which is the opposite of what most people assume about tax relief.",
+      "journeyStage": "first_tax_year",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00061.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "employment-holiday-pay-due-before-the-holiday",
+      "pillar": "employment",
+      "valueClass": "deadline_action",
+      "title": "Holiday pay is due before the holiday starts, not with the month",
+      "userQuestion": "When is my employer supposed to pay the subsídio de férias?",
+      "scenario": "An employee takes leave and the holiday subsidy appears in the following month's payslip, or not at all, and they assume that is normal.",
+      "audience": "employees taking annual leave",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "What the Código do Trabalho requires on timing, and how it works when leave is split across the year.",
+      "anchorFact": {
+        "claim": "Under artigo 264 of the Código do Trabalho the subsídio de férias must be paid before the holiday period begins, and proportionally where leave is taken in separate periods, unless the parties stipulate otherwise.",
+        "kind": "instrument",
+        "verifyAt": "https://diariodarepublica.pt/dr/lexionario/termo/subsidio-ferias",
+        "volatility": "stable"
+      },
+      "notObvious": "The default is payment in advance of the leave, so an employer paying afterwards is departing from the rule rather than following it.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/lexionario/termo/subsidio-ferias",
+        "authority": "Diário da República"
+      }
+    },
+    {
+      "id": "employment-duodecimos-are-optional-subsidies-are-not",
+      "pillar": "employment",
+      "valueClass": "edge_case",
+      "title": "Monthly instalments of the subsidies are optional; the subsidies are not",
+      "userQuestion": "Can my employer just fold the holiday and Christmas subsidies into my salary?",
+      "scenario": "An employee sees a higher monthly wage with no separate subsidy and cannot tell whether they are being paid in instalments or simply not paid.",
+      "audience": "employees paid in duodécimos",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "Whether instalment payment is lawful, what the temporary regime changed, and the part of the entitlement that cannot be given away.",
+      "anchorFact": {
+        "claim": "The parties may agree to pay the subsídio de Natal and subsídio de férias other than as a single payment, for example in duodécimos with the monthly salary, but the Código do Trabalho provisions creating both subsidies are imperative and cannot be set aside by agreement; the temporary regime imposing duodécimos no longer applies.",
+        "kind": "instrument",
+        "verifyAt": "https://www.act.gov.pt/(pt-PT)/Itens/Noticias/Paginas/Regimetempor%C3%A1riodepagamentodossubs%C3%ADdiosdeNataledeF%C3%A9riasemduod%C3%A9cimosdeixadevigorar.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Instalments are a payment method, never a reduction. A salary that quietly absorbs the subsidies without agreement is not the same thing.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://www.act.gov.pt/(pt-PT)/Itens/Noticias/Paginas/Regimetempor%C3%A1riodepagamentodossubs%C3%ADdiosdeNataledeF%C3%A9riasemduod%C3%A9cimosdeixadevigorar.aspx",
+        "authority": "ACT"
+      }
+    },
+    {
+      "id": "social-security-pension-age-falls-with-a-long-career",
+      "pillar": "social_security",
+      "valueClass": "threshold",
+      "title": "A long contribution career lowers your pension age",
+      "userQuestion": "Do I have to wait until the standard age if I started working young?",
+      "scenario": "Someone who began contributing in their teens assumes the headline retirement age applies to them like everyone else.",
+      "audience": "workers with long contribution careers",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The normal access age, and how many months it drops for each year of career beyond forty.",
+      "anchorFact": {
+        "claim": "The normal age of access to the pensão de velhice is 66 years and 9 months in 2026, and for each year of contribution career beyond 40 years the access age decreases by 4 months, counting contributions in the general regime, bonuses and contributions to other social protection regimes.",
+        "kind": "figure",
+        "verifyAt": "https://www.gov.pt/servicos/requerer-a-pensao-de-velhice",
+        "volatility": "annual"
+      },
+      "notObvious": "The reduction is automatic arithmetic on a career length people rarely total up, and it can bring retirement forward by years without any penalty.",
+      "journeyStage": "long_term_residence",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/requerer-a-pensao-de-velhice",
+        "authority": "gov.pt / Segurança Social"
+      }
+    },
+    {
+      "id": "social-security-early-retirement-penalty-is-permanent",
+      "pillar": "social_security",
+      "valueClass": "costly_mistake",
+      "title": "What retiring early costs per month of anticipation",
+      "userQuestion": "How much smaller is my pension if I retire before the normal age?",
+      "scenario": "Someone weighing early retirement is told there is a penalty but not how it is calculated or that it does not disappear later.",
+      "audience": "workers considering early retirement",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The monthly reduction factor, the second factor that can stack on top of it, and the routes that avoid a penalty entirely.",
+      "anchorFact": {
+        "claim": "Early retirement applies a reduction factor of 0.5% for each month remaining until the legally fixed age, in some situations increased by the fator de sustentabilidade in force that year, while routes such as long-term unemployment, age flexibilisation and very long careers have their own conditions.",
+        "kind": "figure",
+        "verifyAt": "https://www.gov.pt/guias/entrar-na-reforma",
+        "volatility": "annual"
+      },
+      "notObvious": "Half a percent a month compounds into a permanent cut for the rest of the pension, and the sustainability factor on top is the part that is never quoted.",
+      "journeyStage": "long_term_residence",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/entrar-na-reforma",
+        "authority": "gov.pt / Segurança Social"
+      }
+    },
+    {
+      "id": "health-medicine-copayment-tiers-and-exceptions",
+      "pillar": "health_family",
+      "valueClass": "threshold",
+      "title": "Why two prescriptions from the same doctor cost very different amounts",
+      "userQuestion": "What decides how much the state pays towards my medicines?",
+      "scenario": "A patient collecting several prescriptions finds wildly different prices and assumes it is the pharmacy's pricing.",
+      "audience": "patients collecting prescribed medicines",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "What sets the state's share, the regulation that fixes the tiers, and the conditions that raise the rate above the standard one.",
+      "anchorFact": {
+        "claim": "Under the general regime the State pays a percentage of the medicine price according to escalões de comparticipação set by pharmacotherapeutic classification in Portaria 195-D/2015, and the rate is increased under exceptional regimes for defined conditions or patient groups, applying in community pharmacies and SNS hospital pharmaceutical services.",
+        "kind": "instrument",
+        "verifyAt": "https://www.infarmed.pt/web/infarmed/legislacao/legislacao-farmaceutica-compilada/titulo-iv-comparticipacoes",
+        "volatility": "annual"
+      },
+      "notObvious": "The tier follows the drug's therapeutic class, not its price, and the exceptional regimes tied to a diagnosis are what most patients never think to ask about.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.infarmed.pt/web/infarmed/legislacao/legislacao-farmaceutica-compilada/titulo-iv-comparticipacoes",
+        "authority": "INFARMED"
+      }
+    },
+    {
+      "id": "education-higher-education-application-phases",
+      "pillar": "education_children",
+      "valueClass": "deadline_action",
+      "title": "The three phases of the national higher education competition",
+      "userQuestion": "When do we apply for public university, and what happens if we miss the first round?",
+      "scenario": "A family focuses entirely on exam results and discovers the application window is short and already closing.",
+      "audience": "families applying to public higher education",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "How the competition is structured, the first-phase window and results date, and the earlier deadline for two specific groups.",
+      "anchorFact": {
+        "claim": "The concurso nacional de acesso runs at the end of the school year in three phases under an annually approved calendar; first-phase applications ran 20 July to 6 August in 2026, closing on 27 July for candidates substituting entrance exams with foreign exams and for the priority emigrant contingent, with first-phase results published on 23 August.",
+        "kind": "deadline",
+        "verifyAt": "https://www.dges.gov.pt/pt/pagina/prazos-de-candidatura",
+        "volatility": "annual",
+        "namedThing": "concurso nacional de acesso"
+      },
+      "notObvious": "Two groups have a window a full ten days shorter than everyone else, and missing a phase means competing for whatever places remain.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://www.dges.gov.pt/pt/pagina/prazos-de-candidatura",
+        "authority": "DGES"
+      }
+    },
+    {
+      "id": "education-entrance-exams-required-per-course",
+      "pillar": "education_children",
+      "valueClass": "threshold",
+      "title": "How many entrance exams a university course can demand",
+      "userQuestion": "How many provas de ingresso does my child need for the course they want?",
+      "scenario": "A student picks secondary school subjects without checking what the target courses actually require, and finds a needed exam missing.",
+      "audience": "secondary students choosing exam subjects",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The range of entrance exams a course may require, what they are in practice, and the extra requirement some courses add.",
+      "anchorFact": {
+        "claim": "Access through the concurso nacional requires demonstrating capacity via provas de ingresso, realised as national secondary school final exams, with the number required for each course being between one and three, and some courses additionally requiring pré-requisitos.",
+        "kind": "artefact",
+        "namedThing": "provas de ingresso",
+        "verifyAt": "https://www.dges.gov.pt/pt/pagina/informacao-geral-publico",
+        "volatility": "annual"
+      },
+      "notObvious": "The choice is made years earlier when picking subjects, and the pré-requisitos on some courses are a separate hurdle nobody mentions until late.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://www.dges.gov.pt/pt/pagina/informacao-geral-publico",
+        "authority": "DGES"
+      }
+    },
+    {
+      "id": "housing-imi-exemption-income-and-vpt-tests",
+      "pillar": "housing_property",
+      "valueClass": "threshold",
+      "title": "The two tests that exempt a permanent home from IMI",
+      "userQuestion": "Could my household be exempt from IMI altogether?",
+      "scenario": "A low-income household pays IMI every year without ever checking whether a permanent-housing exemption applies to them.",
+      "audience": "low-income households owning their home",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The household income multiple and the total property value multiple that must both be met, expressed against the IAS.",
+      "anchorFact": {
+        "claim": "Under artigo 11-A of the CIMI, rustic and urban buildings used as the taxpayer's own permanent housing are exempt from IMI where total gross household income does not exceed 2.3 times the IAS and the combined VPT of all household properties does not exceed 10 times the annual IAS.",
+        "kind": "instrument",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimi/Pages/cimi11a.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "Both tests are expressed as multiples of the IAS rather than cash figures, so households never recognise themselves in the rule even when they qualify.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimi/Pages/cimi11a.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "housing-temporary-imi-exemption-limits",
+      "pillar": "housing_property",
+      "valueClass": "edge_case",
+      "title": "The three-year IMI exemption and what disqualifies you from it",
+      "userQuestion": "How long does the IMI exemption on a new home last?",
+      "scenario": "A buyer hears about an IMI holiday on a new permanent home but not how long it runs, what it covers, or what blocks it.",
+      "audience": "buyers of a new permanent home",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The maximum duration, whether garages and storage are included, and the debt condition that rules a household out.",
+      "anchorFact": {
+        "claim": "The temporary IMI exemption has a maximum duration of 3 years and cannot be requested by households with debts to the State; garages, storage rooms and pantries enjoy the same 3-year exemption under artigo 46 number 5 of the Estatuto dos Benefícios Fiscais, and assessment is suspended while an exemption request is undecided.",
+        "kind": "instrument",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00488.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "A single outstanding debt to the State disqualifies the whole household, and the dependencies only qualify through a separate provision most people never see.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00488.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
