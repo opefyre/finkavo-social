@@ -10418,6 +10418,81 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs31.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "irs-the-income-that-never-enters-your-return",
+      "pillar": "irs",
+      "valueClass": "insider",
+      "title": "Income that never enters an IRS return at all",
+      "userQuestion": "Do I have to declare compensation, prizes or a scholarship?",
+      "scenario": "Someone declares an injury settlement or a student's summer earnings as income and pays tax that was never due.",
+      "audience": "people who received compensation, prizes or grants",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The categories excluded from IRS entirely, including the student earnings limit and the caps on sports grants and self-consumption energy.",
+      "anchorFact": {
+        "claim": "Under artigo 12 of the Código do IRS the tax does not apply to indemnities for bodily injury, illness or death, to literary, artistic or scientific prizes where no copyright is transferred and the award is by public competition, to maintenance subsidies and extraordinary health and education support from social security centres and charitable institutions, to work income of dependent students up to 5 times the annual IAS, to sports training grants up to 2,375 euros a year, and to surplus energy sales from self-consumption units capped at 1,000 euros a year.",
+        "kind": "figure",
+        "namedThing": "exclusões de tributação",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs12.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "A student in the household can earn up to five times the annual IAS entirely outside the tax, which is far more than families assume before they stop them working.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs12.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-the-company-car-that-turns-into-taxable-pay",
+      "pillar": "irs",
+      "valueClass": "edge_case",
+      "title": "The written agreement that makes a company car taxable",
+      "userQuestion": "Is using the company car privately taxed as income?",
+      "scenario": "An employer and employee sign an agreement attributing a car to the worker without realising it is exactly what creates the taxable benefit.",
+      "audience": "employees with the use of a company vehicle",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "What turns private use of a company car into category A income, and the two allowances taxed only above their legal limits.",
+      "anchorFact": {
+        "claim": "Under artigo 2 of the Código do IRS private use of a company vehicle becomes category A income where there is a written agreement between the worker or member of a corporate body and the employer attributing that vehicle to them; ajudas de custo and allowances for use of one's own vehicle are taxed only in the part exceeding the legal limits or where the legal conditions are not met, and the legal limits in this article are those fixed annually for State employees.",
+        "kind": "instrument",
+        "namedThing": "ajudas de custo",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs2.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The trigger is the written attribution rather than the driving, so the paperwork creates the tax rather than recording it.",
+      "journeyStage": "in_employment",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs2.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-severance-taxed-unless-you-stay-away",
+      "pillar": "irs",
+      "valueClass": "costly_mistake",
+      "title": "Severance relief lost by going back within two years",
+      "userQuestion": "Is my termination payment taxed?",
+      "scenario": "Someone takes a severance package with partial relief and rejoins the same employer months later, losing the exemption.",
+      "audience": "people receiving a termination payment",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "How termination compensation is taxed, the exemption based on average pay and years of service, and the twenty-four months that can undo it.",
+      "anchorFact": {
+        "claim": "Under artigo 2 of the Código do IRS indemnities resulting from the constitution, extinction or modification of a legal relationship are generally taxable as category A income, with a partial exemption calculated from average pay multiplied by the years of service, which does not apply where a new professional relationship begins within 24 months.",
+        "kind": "instrument",
+        "namedThing": "indemnizações",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs2.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The relief is retrospectively conditional on what you do next, so accepting work too soon turns an exempt payment into taxable income after the fact.",
+      "journeyStage": "leaving_a_job",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs2.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
