@@ -1418,6 +1418,155 @@
         "canonicalUrl": "https://irn.justica.gov.pt/Servicos/Cidadao/Casamento/Organizar-o-casamento",
         "authority": "IRN"
       }
+    },
+    {
+      "id": "health-consulta-de-recurso-without-a-family-doctor",
+      "pillar": "health_family",
+      "valueClass": "insider",
+      "title": "The appointment you can book without a family doctor",
+      "userQuestion": "I have no family doctor assigned — can I still get an appointment?",
+      "scenario": "Someone registered at a health centre but on the waiting list for a doctor assumes primary care is closed to them and goes to A&E instead.",
+      "audience": "patients registered without an assigned family doctor",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The appointment type reserved for people without an assigned doctor, and the absence period that also entitles you to it.",
+      "anchorFact": {
+        "claim": "A consulta de recurso or reforço is intended for patients registered at a health centre who have no assigned family doctor, and can also be booked by patients whose family doctor is absent for a period longer than 120 days.",
+        "kind": "artefact",
+        "namedThing": "consulta de recurso",
+        "verifyAt": "https://www.sns.gov.pt/reforma-faq/acesso-%E2%80%A2-atribuicao-de-medico-de-familia-6/",
+        "volatility": "stable"
+      },
+      "notObvious": "Being on the waiting list is treated as having no access at all, which pushes people into emergency departments for primary care.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.sns.gov.pt/reforma-faq/acesso-%E2%80%A2-atribuicao-de-medico-de-familia-6/",
+        "authority": "Serviço Nacional de Saúde"
+      }
+    },
+    {
+      "id": "health-primary-care-exempt-from-user-fees",
+      "pillar": "health_family",
+      "valueClass": "threshold",
+      "title": "Primary care and its prescribed tests carry no user fee",
+      "userQuestion": "Do I pay a fee for a health centre appointment and the tests it prescribes?",
+      "scenario": "A patient avoids booking a health centre appointment or filling a test request because they are budgeting for fees that no longer apply.",
+      "audience": "patients using primary care",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "Which appointments and tests are free of taxas moderadoras, and where a fee can still arise.",
+      "anchorFact": {
+        "claim": "Consultations and all complementary diagnostic and therapeutic examinations prescribed within the primary health care network are exempt from payment of taxas moderadoras.",
+        "kind": "artefact",
+        "namedThing": "taxas moderadoras",
+        "verifyAt": "https://www.gov.pt/guias/migrantes-cuidados-de-saude-em-portugal",
+        "volatility": "annual"
+      },
+      "notObvious": "The exemption extends to the tests the appointment prescribes, not just the appointment, which is the part that actually deters people.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/migrantes-cuidados-de-saude-em-portugal",
+        "authority": "gov.pt / SNS"
+      }
+    },
+    {
+      "id": "consumer-withdrawal-refund-includes-delivery",
+      "pillar": "daily_life_consumer",
+      "valueClass": "edge_case",
+      "title": "A 14-day cancellation must refund the delivery cost too",
+      "userQuestion": "If I return an online order within 14 days, do I get the shipping back?",
+      "scenario": "A shopper cancels an online order inside the window and the seller refunds only the item price, keeping the original delivery charge.",
+      "audience": "people returning distance or doorstep purchases",
+      "risk": "low",
+      "volatility": "stable",
+      "promise": "The 14-day window, the purchases it covers, and the fact that the refund legally includes what you paid for delivery.",
+      "anchorFact": {
+        "claim": "The direito de livre resolução lets a consumer cancel without giving a reason within 14 days of a distance or off-premises purchase, and the seller must refund all amounts paid by the consumer including the cost of delivering the goods.",
+        "kind": "deadline",
+        "namedThing": "livre resolução",
+        "verifyAt": "https://www.consumidor.gov.pt/centro-europeu-consumidor-portugal3/consumidor/compras-online/direito-ao-arrependimento",
+        "volatility": "stable"
+      },
+      "notObvious": "Sellers routinely withhold the outbound delivery charge and most people accept it. The refund obligation explicitly covers it.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.consumidor.gov.pt/centro-europeu-consumidor-portugal3/consumidor/compras-online/direito-ao-arrependimento",
+        "authority": "Centro Europeu do Consumidor / DGC"
+      }
+    },
+    {
+      "id": "consumer-legal-warranty-length-and-used-goods",
+      "pillar": "daily_life_consumer",
+      "valueClass": "threshold",
+      "title": "How long the legal guarantee lasts, and when it can be shorter",
+      "userQuestion": "How long am I covered if something I bought breaks?",
+      "scenario": "A buyer is told by a shop that the guarantee expired after a year, or is offered a paid extended warranty that may duplicate a legal right.",
+      "audience": "buyers of goods in Portugal",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The legal guarantee period for consumer goods, the one case where a shorter term is lawful, and how a commercial guarantee differs.",
+      "anchorFact": {
+        "claim": "Under Decreto-Lei 84/2021 the legal guarantee period for the sale of consumer goods is 2 years, used movable goods may be sold with a 1 year guarantee where seller and buyer agree, and a seller may offer a longer commercial guarantee on its own terms.",
+        "kind": "instrument",
+        "verifyAt": "https://www.gov.pt/guias/garantia-de-produtos-comprados-em-portugal",
+        "volatility": "stable"
+      },
+      "notObvious": "The one-year figure is real but only for used goods by agreement, and it gets quoted at people buying new. Separating legal from commercial guarantee is what stops an unnecessary purchase.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/garantia-de-produtos-comprados-em-portugal",
+        "authority": "gov.pt / Direção-Geral do Consumidor"
+      }
+    },
+    {
+      "id": "education-prova-escolar-deadline-and-recovery",
+      "pillar": "education_children",
+      "valueClass": "deadline_action",
+      "title": "Missing the July school-proof deadline does not lose the allowance",
+      "userQuestion": "I missed the prova escolar deadline — is the family allowance gone?",
+      "scenario": "A parent of a teenager realises in September that the school proof was never submitted and the allowance has stopped arriving.",
+      "audience": "parents of children aged 16 and over receiving abono",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The 31 July deadline, what suspension in September actually means, and the later window that restores the payments retroactively.",
+      "anchorFact": {
+        "claim": "The prova escolar must be submitted every year by 31 July, or in the month before turning 16; missing it suspends abono de família and the study grant from the start of the school year in September, but submitting between 1 August and 31 December resumes the benefit and pays the suspended amounts retroactively.",
+        "kind": "deadline",
+        "namedThing": "prova escolar",
+        "verifyAt": "https://www2.gov.pt/servicos/pedir-abono-de-familia-para-criancas-e-jovens-prova-escolar",
+        "volatility": "annual"
+      },
+      "notObvious": "Suspension reads as loss, so families stop chasing it. The recovery window and the retroactive payment are the part nobody mentions.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/pedir-abono-de-familia-para-criancas-e-jovens-prova-escolar",
+        "authority": "gov.pt / Segurança Social"
+      }
+    },
+    {
+      "id": "education-late-abono-claim-is-not-backdated",
+      "pillar": "education_children",
+      "valueClass": "costly_mistake",
+      "title": "A late family allowance claim starts from the month you apply",
+      "userQuestion": "If I apply for abono de família late, do I get the missed months?",
+      "scenario": "Parents who did not know they qualified apply months after a birth or a move and expect the entitlement to be backdated.",
+      "audience": "families claiming abono de família for the first time",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "What late application costs you, the income check that happens automatically, and the reassessment you can now request online.",
+      "anchorFact": {
+        "claim": "Where abono de família is not requested within the specified period, entitlement runs only from the month following submission of the request, and the household income bracket is confirmed automatically each year between Segurança Social and the Autoridade Tributária.",
+        "kind": "deadline",
+        "namedThing": "abono de família",
+        "verifyAt": "https://www2.gov.pt/servicos/requerer-o-abono-de-familia-para-criancas-e-jovens",
+        "volatility": "annual"
+      },
+      "notObvious": "Nothing is backdated, so a delay is a permanent loss of those months, and the automatic income check means the bracket can drift without anyone telling you.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/requerer-o-abono-de-familia-para-criancas-e-jovens",
+        "authority": "gov.pt / Segurança Social"
+      }
     }
   ]
 }

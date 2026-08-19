@@ -17,10 +17,10 @@ export const PILLAR_TERMS = {
   housing_property: ["arrendamento", "IMI", "AIMI", "IMT", "imóvel", "caderneta predial", "certidão permanente", "registo predial", "Imposto do Selo", "habitação própria permanente", "VPT"],
   banking_money: ["Banco de Portugal", "SEPA", "conta bancária", "IBAN", "serviços mínimos bancários", "IAS", "MB WAY", "transferência a crédito", "débito direto"],
   employment: ["contrato de trabalho", "Código do Trabalho", "salário", "férias", "feriado", "período experimental", "aviso prévio", "subsídio de desemprego", "prazo de garantia"],
-  health_family: ["SNS", "centro de saúde", "médico de família", "número de utente", "taxas moderadoras", "insuficiência económica", "IAS"],
+  health_family: ["SNS", "centro de saúde", "médico de família", "número de utente", "taxas moderadoras", "insuficiência económica", "IAS", "consulta de recurso", "SNS 24"],
   driving_transport: ["IMT", "carta de condução", "IUC", "veículo", "troca de carta", "título de condução"],
-  education_children: ["matrícula escolar", "educação", "equivalência", "reconhecimento", "Direção-Geral da Educação", "Portal das Matrículas", "ASE"],
-  daily_life_consumer: ["ePortugal", "Livro de Reclamações", "ANACOM", "energia", "arbitragem de consumo", "fidelização", "ANACOM"],
+  education_children: ["matrícula escolar", "educação", "equivalência", "reconhecimento", "Direção-Geral da Educação", "Portal das Matrículas", "ASE", "abono de família", "prova escolar"],
+  daily_life_consumer: ["ePortugal", "Livro de Reclamações", "ANACOM", "energia", "arbitragem de consumo", "fidelização", "ANACOM", "livre resolução", "garantia"],
 };
 
 const INSTRUMENT_PATTERN =
