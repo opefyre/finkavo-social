@@ -845,12 +845,12 @@
       "volatility": "annual",
       "promise": "The price up to which the exemption is total, the band where it applies only partially, and the point where it stops entirely.",
       "anchorFact": {
-        "claim": "For a first purchase of habitação própria permanente by a buyer under 35, IMT and Imposto do Selo exemption is total up to a published price ceiling and applies only up to that ceiling for purchases in the band above it, ceasing entirely above the upper limit.",
+        "claim": "For a first purchase of a home for habitação própria e permanente by a buyer aged 35 or under, IMT and Imposto do Selo exemption is total up to 316,772 euros; between 316,772 and 633,453 euros the exemption applies only up to 316,772 euros with tax due on the excess; and above 633,453 euros no exemption can be requested.",
         "kind": "figure",
         "verifyAt": "https://www.gov.pt/servicos/pedir-isencao-imt-e-is",
         "volatility": "annual"
       },
-      "notObvious": "The partial band is what actually decides an offer price, and it is routinely reported as a single all-or-nothing number.",
+      "notObvious": "The middle band is not a cliff. The exemption survives on the first 316,772 euros, so a purchase just over the line loses far less than buyers assume.",
       "journeyStage": "renting_buying_moving",
       "source": {
         "canonicalUrl": "https://www.gov.pt/servicos/pedir-isencao-imt-e-is",
@@ -2293,12 +2293,12 @@
       "volatility": "annual",
       "promise": "The monthly reduction factor, the second factor that can stack on top of it, and the routes that avoid a penalty entirely.",
       "anchorFact": {
-        "claim": "Early retirement applies a reduction factor of 0.5% for each month remaining until the legally fixed age, in some situations increased by the fator de sustentabilidade in force that year, while routes such as long-term unemployment, age flexibilisation and very long careers have their own conditions.",
+        "claim": "Early retirement applies a reduction factor of 0.5 per cent for each month remaining until the legally fixed age, in some situations increased by the fator de sustentabilidade in force that year, which in 2026 reduces the pension by 17.63 per cent for anyone retiring before the legal age, while routes such as long-term unemployment, age flexibilisation and very long careers have their own conditions.",
         "kind": "figure",
         "verifyAt": "https://www.gov.pt/guias/entrar-na-reforma",
         "volatility": "annual"
       },
-      "notObvious": "Half a percent a month compounds into a permanent cut for the rest of the pension, and the sustainability factor on top is the part that is never quoted.",
+      "notObvious": "There are two separate cuts, not one. The monthly penalty is what people budget for; the sustainability factor is a second reduction on top of it, and both are permanent.",
       "journeyStage": "long_term_residence",
       "source": {
         "canonicalUrl": "https://www.gov.pt/guias/entrar-na-reforma",
@@ -3595,7 +3595,7 @@
       "volatility": "annual",
       "promise": "When the certificate becomes mandatory, what adverts must display, and the registration fee range for homes.",
       "anchorFact": {
-        "claim": "A valid certificado energético is mandatory to present when entering into a purchase, lease or rental contract for any building, and since 1 December 2013 any advertisement for sale or letting must state the energy classification from the certificate or pre-certificate; the registration fee for residential properties ranges from 28 to 65 euros plus the qualified expert's fee and VAT.",
+        "claim": "A valid certificado energético is mandatory to present when entering into a purchase, lease or rental contract for any building, and since 1 December 2013 any advertisement for sale or letting must state the energy classification from the certificate or pre-certificate; the registration fee for residential properties ranges from 28 to 65 euros plus the qualified expert's fee and VAT; failure to comply is punishable by a coima of 500 to 5,000 euros under the Decreto-Lei n.º 102/2021.",
         "kind": "deadline",
         "namedThing": "certificado energético",
         "verifyAt": "https://www2.gov.pt/cidadaos-europeus-viajar-viver-e-fazer-negocios-em-portugal/viver-em-portugal/compra-e-venda-de-imoveis-em-portugal-cidadaos-europeus-",
@@ -5767,6 +5767,31 @@
       "source": {
         "canonicalUrl": "https://www.seg-social.pt/pedido-cartao-europeu-seguro-doenca",
         "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "housing-long-lease-must-be-reported-in-february",
+      "pillar": "housing_property",
+      "valueClass": "deadline_action",
+      "title": "The February report that keeps a long lease's tax rate",
+      "userQuestion": "Do I have to tell Finanças how long my rental contract runs?",
+      "scenario": "A landlord on a long contract never reports its duration and is taxed at the standard rate instead of the reduced one.",
+      "audience": "landlords with contracts of two years or more",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "Which contracts must be reported, what has to be declared about them, and the February date the report is due.",
+      "anchorFact": {
+        "claim": "An owner with arrendamento contracts for long-duration permanent housing, meaning a duration of 2 years or more, must communicate the duration of those contracts and any cessations to the Autoridade Tributária by 15 February, which in 2026 fell on 16 February.",
+        "kind": "deadline",
+        "namedThing": "arrendamento",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/prazos/Paginas/default.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "Cessations are reported on the same date as durations, so ending a long lease quietly creates a February obligation of its own.",
+      "journeyStage": "renting_out",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/prazos/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
       }
     }
   ]
