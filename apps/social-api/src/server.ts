@@ -1,6 +1,7 @@
 import http from "node:http";
 import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { readFile } from "node:fs/promises";
+import { spawn } from "node:child_process";
 import path from "node:path";
 import postgres from "postgres";
 import { z } from "zod";
@@ -14,7 +15,7 @@ import { retryDecision } from "./retry-policy.js";
 import { expandCalendar, loadEditorialCalendar, selectDailyMix } from "./planner.js";
 import { assertEnglishUserCopy, validateSocialDraft } from "./draft-quality.js";
 import { composeInstagramCaption } from "./caption.js";
-import { loadAnnualPlan, rowsForDate } from "./annual-plan.js";
+import { loadAnnualPlan, rowsForDate, invalidatePlanCache } from "./annual-plan.js";
 import { findFactCard } from "./fact-cards.js";
 import { authenticatedReviewer } from "./access-auth.js";
 import { findDuplicate, type DuplicateCandidate } from "./duplicate.js";
@@ -653,6 +654,27 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.headers.authorization !== `Bearer ${apiToken}`) return send(res, 401, { error: "Unauthorized" });
+
+    // Rebuilds the rolling window from the brief bank so "today" is always inside the
+    // plan. Without this the window silently ages out and daily planning starts
+    // rejecting the current date. The builder is the single source of layout rules, so
+    // it is invoked rather than reimplemented here.
+    if (req.method === "POST" && url.pathname === "/v1/planning/rebuild") {
+      const projectRoot = new URL("../../../", import.meta.url).pathname;
+      const built = await new Promise<{ code: number; output: string }>(resolve => {
+        const child = spawn(process.execPath, ["scripts/build-90-day-plan.mjs", "--days", "90"], { cwd: projectRoot });
+        let output = "";
+        child.stdout.on("data", chunk => { output += String(chunk); });
+        child.stderr.on("data", chunk => { output += String(chunk); });
+        child.on("close", code => resolve({ code: code ?? 1, output }));
+        child.on("error", error => resolve({ code: 1, output: String(error) }));
+      });
+      if (built.code !== 0) return send(res, 500, { error: "Plan rebuild failed", output: built.output.slice(0, 800) });
+      invalidatePlanCache();
+      const plan = await loadAnnualPlan();
+      await sql`INSERT INTO social_event (event_type, payload) VALUES ('planning.rebuilt', ${sql.json({ window: plan.window, rows: plan.rows.length })})`;
+      return send(res, 200, { window: plan.window, rows: plan.rows.length, output: built.output.trim().split("\n").slice(0, 6) });
+    }
 
     if (req.method === "POST" && url.pathname === "/v1/planning/sync") {
       const config = await loadEditorialCalendar();
