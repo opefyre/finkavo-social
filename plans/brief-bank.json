@@ -9268,6 +9268,56 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00037.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "housing-the-resale-exemption-with-a-three-year-clock",
+      "pillar": "housing_property",
+      "valueClass": "edge_case",
+      "title": "The buy-to-resell exemption that expires in three years",
+      "userQuestion": "Can a property bought for resale escape the transfer tax?",
+      "scenario": "A trader buys under the resale exemption, holds the property past three years, and the exemption falls away.",
+      "audience": "people buying property to resell",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The four conditions for the resale exemption, the deadline to resell, and the land that never qualifies.",
+      "anchorFact": {
+        "claim": "IMT exemption on a purchase for resale requires that the acquirer is an IRS or IRC taxpayer, is registered for the activity of buying and selling property, normally and habitually carries on the resale business, and resells the property acquired with the exemption within 3 years of the acquisition; land for construction does not qualify for the exemptions.",
+        "kind": "figure",
+        "namedThing": "isenção de IMT",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00017.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Building land is carved out entirely, so the exemption that works for a flat does not follow the plot it might have been built on.",
+      "journeyStage": "buying_a_home",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00017.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "citizenship-paying-inheritance-stamp-duty-over-five-years",
+      "pillar": "citizenship_civil",
+      "valueClass": "deadline_action",
+      "title": "Stamp duty on an inheritance can be spread over five years",
+      "userQuestion": "Do we have to pay the inheritance stamp duty in one go?",
+      "scenario": "A family sells an inherited asset to raise the tax in one payment, not knowing it can be spread across ten half-yearly instalments.",
+      "audience": "heirs facing a stamp duty assessment",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The filing and payment deadlines, the amount above which instalments are available, how many there can be, and the minimum each.",
+      "anchorFact": {
+        "claim": "A gratuitous transmission of movable or immovable property in favour of a natural person must be declared by the end of the 3rd month following the transmission, and the imposto do selo is paid by the end of the 2nd month following notification, in full with a prompt payment discount; where the amount exceeds 1,000 euros it may instead be paid in a maximum of 10 instalments of at least 200 euros each, falling every 6 months, with a suitable guarantee required for movable property, and no tax below 10 euros is charged.",
+        "kind": "deadline",
+        "namedThing": "imposto do selo",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00032.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Ten half-yearly instalments is five years, which is a very different problem from the single payment most families brace for.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00032.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
