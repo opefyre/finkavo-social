@@ -7243,6 +7243,81 @@
         "canonicalUrl": "https://anacom.pt/render.jsp?contentId=1843131",
         "authority": "ANACOM"
       }
+    },
+    {
+      "id": "irs-when-a-late-refund-starts-earning-you-interest",
+      "pillar": "irs",
+      "valueClass": "deadline_action",
+      "title": "The date after which a late refund owes you interest",
+      "userQuestion": "My IRS refund has not arrived. Is there a deadline they have to meet?",
+      "scenario": "A taxpayer waits into the autumn assuming refunds simply take as long as they take.",
+      "audience": "taxpayers waiting for an IRS refund",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The date refunds on returns filed on time must be issued by, the alternative clock when assessment is late, and the interest owed for missing it.",
+      "anchorFact": {
+        "claim": "An IRS reembolso resulting from an assessment based on a declaration submitted within the legal deadline must be issued by 31 August, and where the assessment is not completed by 31 July the payment deadline is 30 days from notification; juros indemnizatórios are due when the legal deadline for the refund is not met, under artigo 43 of the Lei Geral Tributária.",
+        "kind": "deadline",
+        "namedThing": "reembolso",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-01006.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "Interest is owed automatically for the delay itself, which turns a vague wait into a dated claim you can point at.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-01006.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-instalments-without-a-guarantee-under-five-thousand",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "Splitting a tax bill without putting up a guarantee",
+      "userQuestion": "Can I pay an IRS bill in instalments without a bank guarantee?",
+      "scenario": "Someone facing a bill they cannot pay at once assumes instalments require a guarantee they cannot obtain, and defaults instead.",
+      "audience": "taxpayers who cannot pay a bill in full",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The two ways to avoid the guarantee, the maximum number of instalments, the minimum each must be, and the fifteen days to ask.",
+      "anchorFact": {
+        "claim": "A guarantee is waived for payment in instalments where the debt is 5,000 euros or less for an individual, or where the number of instalments requested is 12 or fewer; debts may be spread over up to 36 monthly instalments, none of which may be less than a quarter of the unidade de conta at 25.50 euros, and the request must be submitted electronically on the Portal das Finanças within 15 days after the payment deadline on the collection note.",
+        "kind": "figure",
+        "namedThing": "pagamento em prestações",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00552.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "Twelve instalments or fewer waives the guarantee at any amount, so the size of the debt is only one of two doors.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00552.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-alternating-residence-must-be-declared-by-march",
+      "pillar": "irs",
+      "valueClass": "deadline_action",
+      "title": "The March declaration that splits a child's deduction",
+      "userQuestion": "We share custody. How do the child deductions get divided?",
+      "scenario": "Separated parents assume the custody agreement is enough and never file the annual communication, so the split defaults against one of them.",
+      "audience": "separated parents sharing custody",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The deduction for a young dependent in alternating residence, and the annual communication deadline that makes the agreed split apply.",
+      "anchorFact": {
+        "claim": "For a dependent aged 6 or under with an Acordo de Regulação das Responsabilidades Parentais and a valid communication of residência alternada to the Autoridade Tributária, the deduction is 450 euros for each taxpayer; where parental responsibilities are exercised jointly by taxpayers in different households, the expense percentage set in the agreement applies only if it is validly communicated on the Portal das Finanças, for 2026 by 2 March, and the communication must be repeated every year.",
+        "kind": "figure",
+        "namedThing": "residência alternada",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/Deducoes_beneficios_taxas/Paginas/default.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The communication is annual rather than permanent, so a split agreed once quietly stops applying the first year nobody files it.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/Deducoes_beneficios_taxas/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
