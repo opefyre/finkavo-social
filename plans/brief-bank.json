@@ -4111,16 +4111,15 @@
       "volatility": "annual",
       "promise": "The two age-based free passes and the exact month each one stops, plus the discounts for pensioners and disability.",
       "anchorFact": {
-        "claim": "The sub 18+TP pass is free for children and young people aged 4 to 18 and valid until the last day of the month they turn 19, the sub 23+TP pass covers those over 18 until the last day of the month they turn 24, a 50% discount applies to beneficiaries of the solidarity supplement, social integration income and citizens with incapacity of 60% or more, and a 25% discount applies to pensioners whose monthly pension income is at or below 1.2 times the IAS.",
-        "kind": "figure",
-        "namedThing": "passe",
-        "verifyAt": "https://imt-ip.pt/sites/IMTT/Portugues/Tarifas/PassesGratuitos-JovensEstudantes/Paginas/PassesGratuitos-JovensEstudantes.aspx",
+        "claim": "Under the consolidated Portaria on free youth passes, the sub 18+TP pass is free for children and young people aged 4 to 18 and valid until the last day of the month they turn 19, the sub 23+TP pass covers those over 18 until the last day of the month they turn 24, a 50% discount applies to beneficiaries of the solidarity supplement, social integration income and citizens with incapacity of 60% or more, and a 25% discount applies to pensioners whose monthly pension income is at or below 1.2 times the IAS.",
+        "kind": "instrument",
+        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/portaria/2024-836267747",
         "volatility": "annual"
       },
       "notObvious": "Both passes run to the end of the month of a birthday rather than the birthday itself, and the free pass follows age rather than being a student.",
       "journeyStage": "bringing_family",
       "source": {
-        "canonicalUrl": "https://imt-ip.pt/sites/IMTT/Portugues/Tarifas/PassesGratuitos-JovensEstudantes/Paginas/PassesGratuitos-JovensEstudantes.aspx",
+        "canonicalUrl": "https://www.imt-ip.pt/sites/IMTT/Portugues/Tarifas/PassesGratuitos-JovensEstudantes/Paginas/PassesGratuitos-JovensEstudantes.aspx",
         "authority": "IMT"
       }
     },
