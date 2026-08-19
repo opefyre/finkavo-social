@@ -7193,6 +7193,56 @@
         "canonicalUrl": "https://www.dgert.gov.pt/faq-alteracoes-a-legislacao-laboral-e-ao-codigo-contributivo",
         "authority": "DGERT"
       }
+    },
+    {
+      "id": "employment-whistleblower-channel-and-its-two-clocks",
+      "pillar": "employment",
+      "valueClass": "deadline_action",
+      "title": "Seven days to acknowledge, three months to answer a disclosure",
+      "userQuestion": "If I report wrongdoing at work, does anyone have to respond?",
+      "scenario": "Someone reports an irregularity internally, hears nothing for months, and assumes silence is the end of the matter.",
+      "audience": "workers considering reporting wrongdoing",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Who counts as a protected whistleblower, the firms that must have an internal channel, and the two deadlines that follow a report.",
+      "anchorFact": {
+        "claim": "Under Lei n.º 93/2021 the protected denunciante includes private, social and public sector workers, former workers, service providers, subcontractors, suppliers and people under their supervision, shareholders, members of statutory bodies, volunteers and interns whether paid or not; companies with at least 50 workers must set up internal reporting channels, the reporter must be notified of receipt within 7 days, and within a maximum of 3 months from receipt they must be told the measures planned or adopted and the reasoning behind them.",
+        "kind": "instrument",
+        "namedThing": "denunciante",
+        "verifyAt": "https://justica.gov.pt/Regime-Geral-de-Protecao-de-Denunciantes-de-Infracoes",
+        "volatility": "stable"
+      },
+      "notObvious": "Interns, volunteers and former employees are inside the protection, which is the group most likely to assume it does not cover them.",
+      "journeyStage": "in_employment",
+      "source": {
+        "canonicalUrl": "https://justica.gov.pt/Regime-Geral-de-Protecao-de-Denunciantes-de-Infracoes",
+        "authority": "Ministério da Justiça"
+      }
+    },
+    {
+      "id": "consumer-fifteen-working-days-for-an-operator-to-answer",
+      "pillar": "daily_life_consumer",
+      "valueClass": "deadline_action",
+      "title": "Fifteen working days for a written answer from your operator",
+      "userQuestion": "My operator never really answered my complaint. Is that allowed?",
+      "scenario": "A customer is called back, told the matter is closed, and has nothing in writing to escalate with.",
+      "audience": "customers who complained about a telecom service",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The written response an operator owes and by when, the standard it must meet, and what the answer must point you to when it goes against you.",
+      "anchorFact": {
+        "claim": "An operator must answer a complaint submitted through the livro de reclamações in writing within 15 working days of the complaint, in clear and accessible language with complete, concrete and substantiated information; resolving by telephone is allowed only if that written response is still sent, and ANACOM recommends that where the response is unfavourable it include the alternative dispute resolution mechanisms available with their contacts and access conditions.",
+        "kind": "deadline",
+        "namedThing": "livro de reclamações",
+        "verifyAt": "https://anacom.pt/render.jsp?contentId=1843131",
+        "volatility": "stable"
+      },
+      "notObvious": "A phone call does not discharge the duty. The written answer is what starts an arbitration or a small-claims case, which is why getting it matters more than winning the call.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://anacom.pt/render.jsp?contentId=1843131",
+        "authority": "ANACOM"
+      }
     }
   ]
 }
