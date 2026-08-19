@@ -9968,6 +9968,56 @@
         "canonicalUrl": "https://www.gov.pt/guias/como-pedir-o-nif-e-o-niss-para-pessoas-estrangeiras-em-portugal",
         "authority": "gov.pt"
       }
+    },
+    {
+      "id": "health-a-patient-number-is-not-the-same-as-cover",
+      "pillar": "health_family",
+      "valueClass": "edge_case",
+      "title": "Having a patient number is not the same as being covered",
+      "userQuestion": "I have an SNS number, so my treatment is paid for, isn't it?",
+      "scenario": "Someone with a patient number is billed for care because the record is missing details nobody told them to add.",
+      "audience": "foreign residents registered with the SNS",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The four pieces of data that must sit against a patient number before the SNS covers costs, and that exceptions exist.",
+      "anchorFact": {
+        "claim": "Holding an SNS número de utente does not by itself guarantee that the SNS covers the cost of care: the record must also carry an identification document, a Portuguese NIF, a complete address in Portugal and a residence authorisation within its validity, although in some cases provided for by law the SNS may cover costs without those data.",
+        "kind": "procedure",
+        "namedThing": "número de utente",
+        "verifyAt": "https://www.gov.pt/guias/migrantes-cuidados-de-saude-em-portugal",
+        "volatility": "stable"
+      },
+      "notObvious": "An expired residence authorisation on the record is enough to turn covered care into a bill, even though the number itself still works.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/migrantes-cuidados-de-saude-em-portugal",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "health-registering-at-a-second-health-centre-for-a-year",
+      "pillar": "health_family",
+      "valueClass": "insider",
+      "title": "A second health centre registration that lasts twelve months",
+      "userQuestion": "I moved for a year to study. Do I have to give up my family doctor?",
+      "scenario": "A student or posted worker either travels home for every appointment or gives up their original registration entirely.",
+      "audience": "students and workers living temporarily in another council",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The temporary registration available elsewhere, how long it lasts, and what happens to the original one.",
+      "anchorFact": {
+        "claim": "A person living temporarily in a council other than their area of residence for study, work or other reasons may make a temporary registration at another health centre lasting up to 12 months, during which the registration at the original centre is provisionally suspended and is then resumed automatically at the end of that period.",
+        "kind": "deadline",
+        "namedThing": "inscrição temporária",
+        "verifyAt": "https://www.gov.pt/guias/migrantes-cuidados-de-saude-em-portugal",
+        "volatility": "stable"
+      },
+      "notObvious": "The original registration is suspended rather than cancelled and comes back on its own, so using the temporary one costs nothing at home.",
+      "journeyStage": "studying",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/migrantes-cuidados-de-saude-em-portugal",
+        "authority": "gov.pt"
+      }
     }
   ]
 }
