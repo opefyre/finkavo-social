@@ -10743,6 +10743,31 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs83a.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "irs-disability-expenses-deduct-at-a-higher-share",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "Rehabilitation costs deduct at nearly twice the usual share",
+      "userQuestion": "Do education and rehabilitation costs count differently for a disability?",
+      "scenario": "A family claims specialist education and therapy under the ordinary education deduction and loses most of its value.",
+      "audience": "households including a person with a recognised disability",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The share of education and rehabilitation expenses deductible for a person with a disability, and the insurance deduction with its cap against the tax.",
+      "anchorFact": {
+        "claim": "Under artigo 87 of the Código do IRS 30 per cent of the total of education and rehabilitation expenses of a person with a disability is deductible, and 25 per cent of the total of life insurance premiums or mutual association contributions, with that insurance deduction not exceeding 15 per cent of the IRS collection; a person with a disability is one with a permanent degree of incapacity of 60 per cent or more.",
+        "kind": "figure",
+        "namedThing": "despesas de educação e reabilitação",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs87.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "Thirty per cent of the whole expense with no separate ceiling is a very different deduction from the ordinary education one, which is capped in euros.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs87.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
