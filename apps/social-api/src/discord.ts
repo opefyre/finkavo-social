@@ -5,7 +5,12 @@ export async function notifyDiscord(kind: "approval" | "published" | "errors" | 
   const safeDetails = Object.entries(details).filter(([key]) => !/token|secret|key|url/i.test(key)).map(([key, value]) => `**${key}:** ${String(value)}`).join("\n");
   const safeActionUrl = actionUrl && actionUrl.startsWith("https://") ? actionUrl : undefined;
   const response = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ embeds: [{ title, description: safeDetails, url: safeActionUrl, color: kind === "published" ? 0x2f855a : kind === "errors" ? 0xc53030 : kind === "approval" ? 0x175e58 : 0xd69e2e, timestamp: new Date().toISOString() }] }), signal: AbortSignal.timeout(15_000) });
-  if (!response.ok) throw new Error(`Discord webhook failed (${response.status})`);
+  // A bare status is undiagnosable: Discord says exactly which field it rejected and why,
+  // and without that a recurring 400 is just a number in a log.
+  if (!response.ok) {
+    const reason = await response.text().catch(() => "");
+    throw new Error(`Discord webhook failed (${response.status}) for ${kind}: ${reason.slice(0, 300)}`);
+  }
   return true;
 }
 
