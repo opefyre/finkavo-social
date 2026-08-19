@@ -2034,6 +2034,130 @@
         "canonicalUrl": "https://www.erse.pt/consumidores-de-energia/eletricidade/contratarmudar-de-comercializador/",
         "authority": "ERSE"
       }
+    },
+    {
+      "id": "banking-early-repayment-commission-caps",
+      "pillar": "banking_money",
+      "valueClass": "threshold",
+      "title": "The legal ceiling on what early mortgage repayment can cost",
+      "userQuestion": "What can my bank charge if I pay part of my mortgage early?",
+      "scenario": "Someone with savings wants to reduce a mortgage but cannot tell whether the bank's quoted penalty is lawful or negotiable.",
+      "audience": "mortgage holders considering early repayment",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "The maximum commission for each rate type, and why the figure in your contract can be lower but never higher.",
+      "anchorFact": {
+        "claim": "The commission for reembolso antecipado on a crédito à habitação cannot exceed 2% of the capital repaid for a contract in a fixed interest rate period and 0.5% for a variable rate period; these are maxima, so a lower commission or an exemption agreed in the contract prevails.",
+        "kind": "figure",
+        "verifyAt": "https://www.bportugal.pt/page/credito-habitacao-posso-pagar-antecipadamente-parte-ou-totalidade-do-meu-credito",
+        "volatility": "volatile",
+        "namedThing": "reembolso antecipado"
+      },
+      "notObvious": "The suspension of this commission on variable-rate permanent-housing loans ran only to the end of 2025, so the cap is what applies again now and the quoted figure should be checked against it.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://www.bportugal.pt/page/credito-habitacao-posso-pagar-antecipadamente-parte-ou-totalidade-do-meu-credito",
+        "authority": "Banco de Portugal"
+      }
+    },
+    {
+      "id": "banking-early-repayment-free-in-three-situations",
+      "pillar": "banking_money",
+      "valueClass": "edge_case",
+      "title": "Three situations where early repayment carries no commission at all",
+      "userQuestion": "Is there any case where the bank cannot charge me for repaying early?",
+      "scenario": "A household repaying a mortgage after a bereavement, a job loss or a work relocation is quoted the standard penalty and pays it.",
+      "audience": "households repaying a mortgage after a life event",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "The three circumstances in which no commission may be charged, whichever rate type the loan is on.",
+      "anchorFact": {
+        "claim": "Commissions for early repayment of a crédito à habitação cannot be charged where the reason for the repayment is the death, unemployment, or professional relocation of one of the loan holders.",
+        "kind": "artefact",
+        "namedThing": "crédito à habitação",
+        "verifyAt": "https://www.bportugal.pt/page/credito-habitacao-posso-pagar-antecipadamente-parte-ou-totalidade-do-meu-credito",
+        "volatility": "volatile"
+      },
+      "notObvious": "These exemptions are not offered at the counter and apply exactly when a household is least able to absorb an avoidable charge.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.bportugal.pt/page/credito-habitacao-posso-pagar-antecipadamente-parte-ou-totalidade-do-meu-credito",
+        "authority": "Banco de Portugal"
+      }
+    },
+    {
+      "id": "driving-ownership-registration-60-day-window",
+      "pillar": "driving_transport",
+      "valueClass": "deadline_action",
+      "title": "Sixty days to register a change of vehicle ownership",
+      "userQuestion": "How long do I have to put a bought or inherited car in my name?",
+      "scenario": "A private sale completes with a handshake and paperwork drifts, leaving the vehicle registered to someone who no longer has it.",
+      "audience": "people who bought or inherited a vehicle",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The 60-day legal window, the transfers it covers beyond a sale, and what the previous owner can do if you miss it.",
+      "anchorFact": {
+        "claim": "A new owner must complete the registo de propriedade within a legal period of 60 days, covering transfer by sale, inheritance, donation, long-term rental, seizure or reservation of ownership; registering later incurs a coima, and the former owner may request seizure of the vehicle where ownership was not regularised.",
+        "kind": "deadline",
+        "namedThing": "registo de propriedade",
+        "verifyAt": "https://www.gov.pt/guias/comprar-registar-e-vender-um-veiculo-em-portugal",
+        "volatility": "stable"
+      },
+      "notObvious": "The seller is not merely inconvenienced: they keep the fines and the IUC, and they hold a real remedy that can have the vehicle seized.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/comprar-registar-e-vender-um-veiculo-em-portugal",
+        "authority": "gov.pt / IRN"
+      }
+    },
+    {
+      "id": "freelance-invoice-issuing-deadline",
+      "pillar": "freelance_business",
+      "valueClass": "deadline_action",
+      "title": "An invoice is due by the fifth working day, not when you get paid",
+      "userQuestion": "When do I actually have to issue the invoice for work I have done?",
+      "scenario": "A freelancer waits for the client to pay before issuing anything, treating the invoice as a receipt for money received.",
+      "audience": "freelancers issuing invoices in Portugal",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The statutory issuing deadline, what starts the clock, and how a receipt differs from the invoice.",
+      "anchorFact": {
+        "claim": "Under artigo 36 of the CIVA an invoice must be issued no later than the 5th working day following the moment the tax becomes due, and for global invoices processing cannot exceed five working days from the end of the period they relate to; the receipt separately evidences payment and attaches to the invoice when paid.",
+        "kind": "instrument",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Atividade_profissional/Fatura_e_recibo/Paginas/default.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The obligation attaches to the work becoming taxable, not to payment arriving, so a slow-paying client does not postpone the deadline.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Atividade_profissional/Fatura_e_recibo/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "freelance-monthly-invoice-communication-exemption",
+      "pillar": "freelance_business",
+      "valueClass": "insider",
+      "title": "The monthly invoice report you can avoid entirely",
+      "userQuestion": "Do I have to report my invoices to Finanças every month?",
+      "scenario": "A freelancer uses external invoicing software and sets a monthly reminder to submit invoice data, unaware the obligation disappears with a different issuing route.",
+      "audience": "freelancers choosing how to issue invoices",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The monthly reporting deadline, and the two issuing routes that exempt you from it completely.",
+      "anchorFact": {
+        "claim": "Elements of invoices issued in the previous month, or their non-existence, must be communicated by the 5th day of the following month, but this obligation does not apply to those using the invoice and receipt issuing functionality in the Portal das Finanças or the ATGO app.",
+        "kind": "deadline",
+        "namedThing": "fatura",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Atividade_profissional/Fatura_e_recibo/Paginas/default.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Choosing where you issue invoices silently decides whether you carry a monthly filing obligation for the rest of your activity.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Atividade_profissional/Fatura_e_recibo/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
