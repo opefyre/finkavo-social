@@ -60,8 +60,8 @@ const ANCHOR_KINDS = {
   // a citable legal instrument
   instrument: {
     // (?:s|es)? so that "artigos", "leis" and "decretos" count as citations too.
-    test: claim => /\b(artigo|article|modelo|anexo|lei|decreto|portaria|c[óo]digo|regulamento|tabela)(?:s|es)?\b/i.test(claim) || /\b(CIVA|RITI|CPPT|CIRS|CIRC|CIMI|CIMT|RGPD|LGT|EBF)\b/.test(claim),
-    requirement: "a citable legal instrument (artigo, lei, decreto, código, modelo, anexo…)",
+    test: claim => /\b(artigo|article|modelo|anexo|lei|decreto|portaria|despacho|aviso|c[óo]digo|regulamento|tabela|verba)(?:s|es)?\b/i.test(claim) || /\b(CIVA|RITI|CPPT|CIRS|CIRC|CIMI|CIMT|RGPD|LGT|EBF)\b/.test(claim),
+    requirement: "a citable legal instrument (artigo, lei, decreto, despacho, portaria, código, modelo, anexo…)",
   },
   // a specific official document, form or account type the reader can ask for by name
   artefact: { needsNamedThing: true, requirement: "anchorFact.namedThing, quoted verbatim in the claim" },

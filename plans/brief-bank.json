@@ -8218,6 +8218,56 @@
         "canonicalUrl": "https://www.sns24.gov.pt/servico/cheques-dentista/",
         "authority": "SNS 24"
       }
+    },
+    {
+      "id": "health-the-hundred-and-twenty-days-a-referral-has",
+      "pillar": "health_family",
+      "valueClass": "threshold",
+      "title": "A hundred and twenty days, and what the hospital owes you after",
+      "userQuestion": "How long can I be left waiting for a first specialist appointment?",
+      "scenario": "A patient waits months on a referral with no idea there is a legal ceiling, or what the hospital must do once it passes.",
+      "audience": "people waiting for a specialist appointment",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The maximum waiting time for a first specialist consultation, where the clock starts, and the hospital's duty once it cannot meet it.",
+      "anchorFact": {
+        "claim": "The tempos máximos de resposta garantidos set a maximum of 120 consecutive days for a first hospital specialty consultation, counted from registration of the request made by the attending physician through SIGA SNS and without prejudice to shorter times for higher priority assigned at triage; where the time cannot be met the user has the right to be informed and to be referred to another SNS unit or to an entity with an agreement or convention, with an alternative service of comparable quality assured within the appropriate timeframe.",
+        "kind": "deadline",
+        "namedThing": "TMRG",
+        "verifyAt": "https://www.sns24.gov.pt/guia/direitos-e-deveres-do-utente/tempos-maximos-de-resposta-garantidos-tmrg-no-acesso-a-cuidados-de-saude-no-servico-nacional-de-saude/",
+        "volatility": "stable"
+      },
+      "notObvious": "Breaching the limit creates a duty to move you rather than a longer queue, and the hospital is supposed to tell you that itself.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.sns24.gov.pt/guia/direitos-e-deveres-do-utente/tempos-maximos-de-resposta-garantidos-tmrg-no-acesso-a-cuidados-de-saude-no-servico-nacional-de-saude/",
+        "authority": "SNS 24"
+      }
+    },
+    {
+      "id": "health-you-can-choose-which-hospital-you-are-sent-to",
+      "pillar": "health_family",
+      "valueClass": "insider",
+      "title": "Choosing the hospital your referral goes to",
+      "userQuestion": "Do I have to go to the hospital my area is assigned to?",
+      "scenario": "A patient accepts a referral to a hospital with a long queue when another with a shorter one takes the same specialty.",
+      "audience": "people being referred to a specialist",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The free-circulation rule that lets you pick the hospital, who decides it with you, and the published information the choice is based on.",
+      "anchorFact": {
+        "claim": "Under Livre Acesso e Circulação, approved by Despacho n.º 5911-B/2016, a user together with the family doctor responsible for the referral may choose any SNS hospital unit where the specialty consultation they need exists, and the referral is carried out in the user's interest on criteria of geographic proximity and average response times, which are published and accessible through the SNS portal.",
+        "kind": "instrument",
+        "namedThing": "Livre Acesso e Circulação",
+        "verifyAt": "https://www.sns.gov.pt/cidadao/siga-sns-sistema-integrado-de-gestao-do-acesso-no-servico-nacional-de-saude/",
+        "volatility": "stable"
+      },
+      "notObvious": "Average waiting times per hospital are published, so the choice can be made on numbers rather than on which hospital is nearest.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.sns.gov.pt/cidadao/siga-sns-sistema-integrado-de-gestao-do-acesso-no-servico-nacional-de-saude/",
+        "authority": "Serviço Nacional de Saúde"
+      }
     }
   ]
 }
