@@ -306,6 +306,45 @@ async function ingestOfficialDocument(canonicalUrl: string, authority: string) {
   }
 }
 
+// The reserve is what a held slot falls back on, and every reader of
+// social_reserve_evidence required a row that nothing in the codebase ever wrote. The
+// table was read in four places and inserted into in none, so the only rows present were
+// hand-seeded ones for long-replaced cards: a rebuilt reserve was inert on arrival and
+// every held slot stayed held. This fetches each card's cited source and records it.
+async function verifyReserveEvidence(limit = 40) {
+  const cards = await loadEvergreenReserve();
+  const byUrl = new Map<string, (typeof cards)[number]>();
+  for (const card of cards) if (!byUrl.has(card.sourcePolicy.canonicalUrl)) byUrl.set(card.sourcePolicy.canonicalUrl, card);
+  const current = await sql`
+    SELECT DISTINCT canonical_url AS url FROM social_reserve_evidence
+    WHERE available = true AND document_id IS NOT NULL AND verified_at > now() - INTERVAL '30 days'
+  `;
+  const fresh = new Set(current.map(row => String(row.url)));
+  const pending = [...byUrl.values()].filter(card => !fresh.has(card.sourcePolicy.canonicalUrl)).slice(0, limit);
+  const unreachable: string[] = [];
+  let verified = 0;
+  for (const card of pending) {
+    const canonicalUrl = card.sourcePolicy.canonicalUrl;
+    const authority = card.sourcePolicy.requiredAuthority || "Official authority";
+    const document = await ingestOfficialDocument(canonicalUrl, authority);
+    if (!document) { unreachable.push(canonicalUrl); continue; }
+    const documentId = String(document.id);
+    const [meta] = await sql`SELECT title, content_hash FROM document WHERE id = ${documentId}`;
+    const [body] = await sql`SELECT string_agg(text, chr(10) ORDER BY chunk_index) AS text FROM chunk WHERE document_id = ${documentId}`;
+    const visible = String(body?.text ?? "");
+    if (visible.length < 400) { unreachable.push(canonicalUrl); continue; }
+    await sql`
+      INSERT INTO social_reserve_evidence (canonical_url, authority, title, original_lang, content_hash, visible_text, document_id, fetched_at, verified_at, available)
+      VALUES (${canonicalUrl}, ${authority}, ${String(meta?.title ?? canonicalUrl)}, 'pt', ${String(meta?.content_hash ?? "")}, ${visible}, ${documentId}, now(), now(), true)
+      ON CONFLICT (canonical_url, content_hash) DO UPDATE SET
+        verified_at = now(), available = true, document_id = excluded.document_id, visible_text = excluded.visible_text, title = excluded.title
+    `;
+    verified += 1;
+  }
+  await sql`INSERT INTO social_event (event_type, payload) VALUES ('reserve.evidence_verified', ${sql.json({ cards: cards.length, sources: byUrl.size, attempted: pending.length, verified, unreachable })})`;
+  return { cards: cards.length, sources: byUrl.size, attempted: pending.length, verified, unreachable };
+}
+
 async function fetchViaRenderer(url: string): Promise<{ title: string; text: string; finalUrl: string; links: string[] } | null> {
   const base = process.env.RENDERER_BASE_URL || "http://127.0.0.1:4310";
   const rendererToken = process.env.RENDERER_API_TOKEN;
@@ -969,6 +1008,10 @@ const server = http.createServer(async (req, res) => {
       return send(res,200,{total:cards.length,eligible:eligible.length,held:cards.length-eligible.length,cards:eligible});
     }
 
+    if(req.method==="POST"&&url.pathname==="/v1/reserve/verify"){
+      return send(res, 200, await verifyReserveEvidence(z.object({limit:z.number().int().min(1).max(200).default(40)}).parse(await readJson(req)).limit));
+    }
+
     if(req.method==="POST"&&url.pathname==="/v1/reserve/replace-held"){
       const {date}=ReportSchema.parse(await readJson(req));const day=date||lisbonDate(new Date());const heldSlots=await sql`SELECT * FROM social_editorial_plan_slot s WHERE s.publish_date=${day} AND s.plan_version=(SELECT max(current_slot.plan_version) FROM social_editorial_plan_slot current_slot WHERE current_slot.publish_date=s.publish_date) AND s.status='held' ORDER BY s.slot_number`;
       const cards=await loadEvergreenReserve();const urls=[...new Set(cards.map(card=>card.sourcePolicy.canonicalUrl))];const evidence=await sql`SELECT DISTINCT ON (canonical_url) canonical_url AS "canonicalUrl",verified_at AS "verifiedAt",document_id,title,authority,content_hash,visible_text FROM social_reserve_evidence WHERE canonical_url IN ${sql(urls)} AND available=true AND document_id IS NOT NULL ORDER BY canonical_url,verified_at DESC`;const recent=await sql`SELECT subject_family AS "subjectFamily",user_question AS "userQuestion",audience,content_intent AS "contentIntent",created_at AS "usedAt" FROM social_post WHERE created_at>now()-INTERVAL '90 days' AND status NOT IN ('blocked','rejected','failed')`;let eligible=eligibleReserveCards(cards,evidence.map(row=>({canonicalUrl:String(row.canonicalUrl),verifiedAt:String(row.verifiedAt),visibleText:String(row.visible_text)})),recent.map(row=>({subjectFamily:String(row.subjectFamily||""),userQuestion:String(row.userQuestion||""),audience:String(row.audience||""),contentIntent:String(row.contentIntent||""),usedAt:String(row.usedAt)})));const replacements=[];
@@ -1240,10 +1283,12 @@ const server = http.createServer(async (req, res) => {
       let checked: z.infer<typeof DraftSchema> | null = null;
       let model = "";
       let lastGenerationError = "";
-      if (evidenceSources.some(source=>source.deterministicFactCard===true)) {
-        checked=simpleDraft(String(selectedConcept.topic),evidenceSources.flatMap(source=>source.excerpts as string[]));
-        model="deterministic-fact-card-v1";
-      }
+      // A fact-card source used to skip the model outright and ship simpleDraft(). That
+      // guaranteed a blocked post: the mechanical draft never carries a real caption or
+      // standalone value, so the pre-Discord gate rejected every one and the slot was
+      // spent for nothing. The model runs first now and simpleDraft() waits underneath as
+      // the fallback. Accuracy is not what was protecting these posts anyway — the
+      // verbatim-quote and evidence-reliability checks below apply to model output too.
       for (let attempt = 1; !checked && attempt <= 3; attempt++) {
         try {
           const generated = await generateDraft({
@@ -1282,6 +1327,10 @@ const server = http.createServer(async (req, res) => {
         } catch (error) {
           lastGenerationError = error instanceof Error ? error.message : "Generation validation failed";
         }
+      }
+      if (!checked && evidenceSources.some(source=>source.deterministicFactCard===true)) {
+        checked=simpleDraft(String(selectedConcept.topic),evidenceSources.flatMap(source=>source.excerpts as string[]));
+        model="deterministic-fact-card-v1";
       }
       if (!checked) {
         // Distinguish "this topic cannot produce a good post" from "the provider was
@@ -2032,6 +2081,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     if(req.method==="POST"&&url.pathname==="/v1/maintenance/weekly"){
+      await verifyReserveEvidence().catch(()=>null);
       ReportSchema.parse(await readJson(req));const today=lisbonDate(new Date());const end=addLisbonDays(today,13);const plan=await loadAnnualPlan();
       let researched=0;for(let offset=0;offset<14;offset++){const day=addLisbonDays(today,offset);const headers={authorization:`Bearer ${apiToken}`,'content-type':'application/json'};const planned=await fetch(`http://127.0.0.1:${port}/v1/planning/daily`,{method:'POST',headers,body:JSON.stringify({date:day,capacity:5})});if(!planned.ok)continue;const evidenceRun=await fetch(`http://127.0.0.1:${port}/v1/evidence/research`,{method:'POST',headers,body:JSON.stringify({date:day})});if(evidenceRun.ok){const body=await evidenceRun.json() as {results?:unknown[]};researched+=body.results?.length||0;}}
       const upcoming=plan.rows.filter(row=>row.date>=today&&row.date<=end);const identities=new Set<string>();const duplicateIdentities:string[]=[];

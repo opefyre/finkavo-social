@@ -11,23 +11,19 @@
 // be corroborated from one. They stay for breadth of signal, but the Portuguese outlets
 // below publish real article URLs, which is what corroboration actually needs.
 export const DISCOVERY_FEEDS = [
-  "https://news.google.com/rss/search?q=%28AIMA%20OR%20%22Portal%20das%20Finan%C3%A7as%22%20OR%20%22Seguran%C3%A7a%20Social%22%20OR%20gov.pt%29%20Portugal%20when%3A4h&hl=pt-PT&gl=PT&ceid=PT%3Apt-150",
-  "https://news.google.com/rss/search?q=Portugal%20%28immigration%20OR%20tax%20OR%20housing%20OR%20employment%20OR%20public%20services%20OR%20scam%29%20when%3A4h&hl=en&gl=PT&ceid=PT%3Aen",
-  "https://news.google.com/rss/search?q=Portugal%20%28national%20emergency%20OR%20major%20disruption%20OR%20strike%20OR%20wildfire%20OR%20flood%29%20when%3A4h&hl=en&gl=PT&ceid=PT%3Aen",
+  // Google News is gone. Its RSS hands back news.google.com redirect wrappers rather
+  // than articles: fetching one returns half a megabyte of script with no link, and
+  // opening it in the renderer lands on consent.google.com. Two thirds of everything
+  // collected arrived that way and none of it could ever be corroborated, so it was
+  // volume without a single usable item.
+  //
+  // These outlets publish real article URLs, which is what corroboration needs.
   "https://www.rtp.pt/noticias/rss/pais",
   "https://www.rtp.pt/noticias/rss/economia",
-  // Portuguese outlets with direct article links.
-  "https://feeds.publico.pt/rss/politica",
-  "https://feeds.publico.pt/rss/economia",
   "https://observador.pt/seccao/economia/feed/",
   "https://observador.pt/seccao/politica/feed/",
   "https://eco.sapo.pt/feed/",
   "https://www.dinheirovivo.pt/feed/",
-  "https://www.jn.pt/rss/",
-  // Official announcement channels. These are on official domains, so a change here is
-  // evidence in its own right rather than a story that needs corroborating.
-  "https://www.gov.pt/rss/noticias",
-  "https://www.seg-social.pt/noticias?p_p_id=101_INSTANCE_kBZtOMZgstp3&p_p_lifecycle=2&p_p_resource_id=rss",
 ];
 
 export const MONITORED_CANONICAL_URLS = [

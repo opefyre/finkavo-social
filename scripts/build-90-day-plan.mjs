@@ -125,10 +125,12 @@ const pool = [...bank.briefs];
 // the previous system ended up with 77 blocked concepts against 3 ready ones. The share
 // is taken from the pillars with the most briefs so coverage stays broad.
 // A 90-day window at five a day needs all 450 briefs placed, so holding a share back
-// leaves the window short by exactly that share. The plan is rebuilt on a rolling basis,
-// which is what now absorbs dropped or unverifiable briefs; reserve cards are still
-// emitted from whatever a shorter window does not consume.
-const reserveShare = Number(argOf("reserve-share", "0"));
+// leaves the window short by exactly that share. Zero was the wrong end of that trade.
+// A slot whose concept blocks has nothing to swap in, and the day simply publishes four
+// instead of five — while the horizon length it bought is invisible, because the plan is
+// rebuilt on a rolling basis and always extends. The cushion protects the daily count;
+// the extra six days protected nothing.
+const reserveShare = Number(argOf("reserve-share", "0.07"));
 const reserveTarget = Math.min(pool.length, Math.max(0, Math.round(pool.length * reserveShare)));
 const heldBack = new Set();
 if (reserveTarget > 0) {
