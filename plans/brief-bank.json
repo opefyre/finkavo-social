@@ -8718,6 +8718,56 @@
         "canonicalUrl": "https://www.gov.pt/guias/apoio-a-familia/apoio-social-para-idosos",
         "authority": "gov.pt / Instituto da Segurança Social"
       }
+    },
+    {
+      "id": "social-security-disability-support-runs-to-twenty-four",
+      "pillar": "social_security",
+      "valueClass": "threshold",
+      "title": "Two child benefits that keep paying until twenty-four",
+      "userQuestion": "Do the child benefits for a disabled child stop at eighteen?",
+      "scenario": "A family stops claiming when the child leaves school age, unaware two separate payments run several years longer.",
+      "audience": "families of a child or young person with a disability",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The age both the family allowance top-up and the special education subsidy run to, and the conditions attached to each.",
+      "anchorFact": {
+        "claim": "The bonificação do abono de família is an increase on the family allowance for children and young people with a disability aged under 24, requiring the child to live dependent on the beneficiary and not exercise professional activity or the household to be in economic need; the subsídio de educação especial is granted to children and young people up to 24 with a permanent reduction of physical, motor, organic, sensory or intellectual capacity who attend special education establishments, need individual support from a specialist technician, or attend a creche or kindergarten for social integration.",
+        "kind": "figure",
+        "namedThing": "bonificação do abono de família",
+        "verifyAt": "https://www.gov.pt/guias/apoio-a-familia/pessoas-com-deficiencia",
+        "volatility": "stable"
+      },
+      "notObvious": "Both run to twenty-four rather than to eighteen, and the special education subsidy also covers a mainstream nursery attended for integration.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/apoio-a-familia/pessoas-com-deficiencia",
+        "authority": "gov.pt / Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "social-security-buy-the-wheelchair-after-the-approval",
+      "pillar": "social_security",
+      "valueClass": "costly_mistake",
+      "title": "Buying the equipment before approval loses the funding",
+      "userQuestion": "Can I buy the wheelchair now and claim it back later?",
+      "scenario": "A family buys urgently needed equipment while the application is pending and finds the purchase falls outside the scheme.",
+      "audience": "people applying for disability equipment funding",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "What the support products scheme covers, the notification deadline, and the order in which buying and approval must happen.",
+      "anchorFact": {
+        "claim": "A produto de apoio is any device, equipment, instrument, technology or software produced or available to prevent, compensate, monitor, relieve or neutralise a disability, such as prostheses, wheelchairs, articulated beds, lifting platforms, hearing aids and support bars; funding is requested through the Sistema de Atribuição de Produtos de Apoio at any Segurança Social counter, the applicant is notified by letter within 60 days, and the products may only be bought after the request is approved and the funding received, except in the cases where reimbursement can be requested.",
+        "kind": "deadline",
+        "namedThing": "produtos de apoio",
+        "verifyAt": "https://www.gov.pt/guias/apoio-a-familia/pessoas-com-deficiencia",
+        "volatility": "stable"
+      },
+      "notObvious": "The sequence is the rule: approval and money first, purchase second, with reimbursement only in defined exceptions.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/apoio-a-familia/pessoas-com-deficiencia",
+        "authority": "gov.pt / Instituto da Segurança Social"
+      }
     }
   ]
 }
