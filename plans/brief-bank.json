@@ -3826,6 +3826,155 @@
         "canonicalUrl": "https://www.gov.pt/servicos/apresentar-reclamacao-queixa-sobre-a-protecao-de-dados-pessoais",
         "authority": "gov.pt / CNPD"
       }
+    },
+    {
+      "id": "social-security-survivor-pension-for-unmarried-partners",
+      "pillar": "social_security",
+      "valueClass": "edge_case",
+      "title": "Survivor pension for an unmarried partner, and the condition that blocks it",
+      "userQuestion": "Can I claim a survivor pension if we were never married?",
+      "scenario": "A bereaved partner assumes only spouses qualify, or applies without the declaration that proves the relationship.",
+      "audience": "unmarried partners of a deceased contributor",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The two-year cohabitation requirement, the marital status that disqualifies, and the declaration that proves it.",
+      "anchorFact": {
+        "claim": "A person in união de facto is entitled to a pensão de sobrevivência where they lived with the deceased for more than 2 years, but only if neither the deceased beneficiary nor the applicant was married, and the relationship is proven with the Declaração da Situação de União de Facto, form RP 5083.",
+        "kind": "artefact",
+        "namedThing": "pensão de sobrevivência",
+        "verifyAt": "https://www.seg-social.pt/pensao-de-sobrevivencia",
+        "volatility": "stable"
+      },
+      "notObvious": "An unresolved earlier marriage on either side defeats the claim entirely, which is the condition that surprises long-term partners.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/pensao-de-sobrevivencia",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "social-security-survivor-pension-duration",
+      "pillar": "social_security",
+      "valueClass": "threshold",
+      "title": "Whether a survivor pension lasts five years or for life",
+      "userQuestion": "How long will a survivor pension be paid for?",
+      "scenario": "A widowed claimant plans around a permanent income without knowing an age threshold decides whether it is time-limited.",
+      "audience": "claimants of a survivor pension",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The age at the date of death that makes the pension indefinite, the five-year limit below it, and the contribution minimum behind any claim.",
+      "anchorFact": {
+        "claim": "A pensão de sobrevivência is paid for 5 years where the survivor was under 35 at the date of death, and without time limit where they were 35 or over, reach that age while entitled, or are totally and permanently incapable of any work; the deceased must have contributed for at least 36 months in the general regime or 72 months under voluntary social insurance.",
+        "kind": "figure",
+        "verifyAt": "https://www.seg-social.pt/pensao-de-sobrevivencia",
+        "volatility": "stable"
+      },
+      "notObvious": "Turning 35 while still receiving the pension converts it to indefinite, so the five-year limit is not always final.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/pensao-de-sobrevivencia",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "social-security-solidarity-supplement-income-limits",
+      "pillar": "social_security",
+      "valueClass": "threshold",
+      "title": "The income ceilings for the solidarity supplement for older people",
+      "userQuestion": "Could a low pension qualify for the older people's supplement?",
+      "scenario": "A pensioner on a small income never applies, assuming any pension at all rules them out.",
+      "audience": "pensioners on a low income",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The single and couple income ceilings, the reference value behind the monthly maximum, and the pensions that qualify or disqualify.",
+      "anchorFact": {
+        "claim": "The Complemento Solidário para Idosos requires receipt of an old-age, survivor or invalidity pension but not the Prestação Social para a Inclusão, with annual income at or below 7,568 euros for a single person and, for those married or in união de facto over two years, the applicant at or below 7,568 euros and the couple at or below 13,244 euros; the annual reference value of 7,568 euros sets a monthly maximum of 630.67 euros and the request is free with a response within one month.",
+        "kind": "figure",
+        "namedThing": "complemento solidário para idosos",
+        "verifyAt": "https://www2.gov.pt/servicos/pedir-o-complemento-solidario-para-idosos",
+        "volatility": "annual"
+      },
+      "notObvious": "Receiving a pension is a condition rather than a disqualifier, which is the inverse of what most people assume about means-tested support.",
+      "journeyStage": "long_term_residence",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/pedir-o-complemento-solidario-para-idosos",
+        "authority": "gov.pt / Segurança Social"
+      }
+    },
+    {
+      "id": "citizenship-death-must-be-reported-within-three-months",
+      "pillar": "citizenship_civil",
+      "valueClass": "deadline_action",
+      "title": "Reporting a death to Finanças by the end of the third month",
+      "userQuestion": "What has to be done with Finanças after a family member dies?",
+      "scenario": "A grieving family deals with the funeral and the bank, and misses a tax filing deadline nobody mentioned.",
+      "audience": "families handling an estate",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The filing deadline, who is legally responsible for making it, and the documents it requires.",
+      "anchorFact": {
+        "claim": "The death communication and Imposto do Selo participation must be made at a Finanças counter within a period ending at the end of the 3rd month following the month of death, by the cabeça de casal, who is normally the surviving spouse where they are an heir or entitled to half the couple's assets, attaching the NIF Herança Indivisa form, identification of the cabeça de casal, deceased and all heirs, and the death certificate.",
+        "kind": "deadline",
+        "namedThing": "cabeça de casal",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Dados_pessoais_familia/Familia/Obito/Paginas/default.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The obligation falls on one named person rather than the family collectively, and the three-month clock starts from the month of death, not the funeral.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Dados_pessoais_familia/Familia/Obito/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "citizenship-inheritance-stamp-duty-exemptions",
+      "pillar": "citizenship_civil",
+      "valueClass": "threshold",
+      "title": "Who pays stamp duty on an inheritance and who does not",
+      "userQuestion": "Will we pay tax on what we inherit?",
+      "scenario": "Heirs brace for a large tax bill on a family home, or overlook a small charge that does still apply to them.",
+      "audience": "heirs of a Portuguese estate",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The relatives exempt from stamp duty, the small rate that still applies to property, and the rate where no exemption exists.",
+      "anchorFact": {
+        "claim": "Spouses or partners in união de facto, descendants and ascendants in the direct line are exempt from Imposto do Selo on gratuitous transmissions, except that a transmission of property rights carries 0.8% on the value of the immovable property, while where no exemption applies the rate on transmission of assets on death is 10%.",
+        "kind": "figure",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Dados_pessoais_familia/Familia/Obito/Paginas/default.aspx",
+        "volatility": "annual",
+        "namedThing": "Imposto do Selo"
+      },
+      "notObvious": "Close family are exempt from the headline 10% but not from the 0.8% on real estate, which is the charge that surprises people who were told inheritance is untaxed.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Dados_pessoais_familia/Familia/Obito/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "citizenship-heir-qualification-cost-and-timing",
+      "pillar": "citizenship_civil",
+      "valueClass": "decision",
+      "title": "What formally establishing the heirs costs, with and without the estate",
+      "userQuestion": "How much does it cost to sort out who inherits and register the assets?",
+      "scenario": "A family delays the estate because they fear unbounded legal costs, without knowing the fixed registry prices.",
+      "audience": "families settling an estate",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "The price of the simple qualification, the version including division and registration, the surcharges, and the timing to aim for.",
+      "anchorFact": {
+        "claim": "A simple habilitação de herdeiros costs 150 euros, with 50 euros added where the titleholders are married to each other and between 10 and 25 euros for IRN database searches, while habilitação with partilha and registration costs 425 euros; appointments are scheduled for the seven working days after the request, additional documents are due 5 working days before, and the process should begin by the end of the third month after the death.",
+        "kind": "figure",
+        "namedThing": "habilitação de herdeiros",
+        "verifyAt": "https://www2.gov.pt/servicos/fazer-a-habilitacao-de-herdeiros-heranca",
+        "volatility": "annual"
+      },
+      "notObvious": "Doing the division and registration in the same appointment costs less than doing them separately later, and the timing lines up with the tax deadline.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/fazer-a-habilitacao-de-herdeiros-heranca",
+        "authority": "gov.pt / IRN"
+      }
     }
   ]
 }
