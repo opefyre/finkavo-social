@@ -6568,6 +6568,56 @@
         "canonicalUrl": "https://www.seg-social.pt/fundo-de-garantia-salarial",
         "authority": "Instituto da Segurança Social"
       }
+    },
+    {
+      "id": "irs-the-guarantee-that-expires-while-you-wait",
+      "pillar": "irs",
+      "valueClass": "edge_case",
+      "title": "The guarantee that expires if the decision takes too long",
+      "userQuestion": "I posted a guarantee to pause a tax execution. Does it just sit there?",
+      "scenario": "A taxpayer ties up money or a bank guarantee for years without realising it should have lapsed once the deadlines passed.",
+      "audience": "taxpayers contesting a tax debt",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "What suspends a tax execution, and the two waiting periods after which the guarantee lapses by itself.",
+      "anchorFact": {
+        "claim": "A tax execution is suspended where an adequate guarantee and a request are presented together stating the nature of the debt, the period concerned, the entity that issued the act and the intention to challenge; the garantia expires automatically if the reclamação graciosa is not decided within 1 year, or if no first-instance decision is issued in the impugnação judicial or opposition within 4 years.",
+        "kind": "deadline",
+        "namedThing": "garantia",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00171.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Expiry is automatic on the calendar rather than on request, so a guarantee still in place after those periods is one nobody has released.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00171.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-two-thirds-of-your-pay-cannot-be-seized",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "Two thirds of net pay is out of reach of a seizure",
+      "userQuestion": "How much of my salary can actually be taken for a debt?",
+      "scenario": "Someone facing enforcement expects to lose their whole wage and makes decisions, or hides income, on that assumption.",
+      "audience": "people facing enforcement over a debt",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The protected share of wages and periodic payments, and the fraction a seizure can actually reach.",
+      "anchorFact": {
+        "claim": "Under artigo 738 of the Código de Processo Civil two thirds of the net part of wages, salaries and periodic payments are not susceptible to seizure, so a penhora may reach only 1 third of the net amount.",
+        "kind": "instrument",
+        "namedThing": "penhora",
+        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2013-34580575-185432915",
+        "volatility": "stable"
+      },
+      "notObvious": "The protection is on the net figure and applies to periodic payments generally, not only to an employment salary.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2013-34580575-185432915",
+        "authority": "Diário da República / Código de Processo Civil"
+      }
     }
   ]
 }
