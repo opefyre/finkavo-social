@@ -5868,6 +5868,56 @@
         "canonicalUrl": "https://www.anacom.pt/render.jsp?contentId=1827940",
         "authority": "ANACOM"
       }
+    },
+    {
+      "id": "consumer-electricity-cannot-be-cut-on-a-friday",
+      "pillar": "daily_life_consumer",
+      "valueClass": "edge_case",
+      "title": "The days of the week the power cannot be cut off",
+      "userQuestion": "Can my supplier cut the electricity whenever it wants?",
+      "scenario": "A household expecting to be cut off before a long weekend panics, or is cut off on a day the rules do not allow and never challenges it.",
+      "audience": "domestic electricity customers behind on a bill",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The written notice required before a cut, the longer notice for social tariff customers, and the days a cut may not happen on.",
+      "anchorFact": {
+        "claim": "Before interrupting supply the electricity supplier must send written notice 20 days in advance, extended to 20 business days for customers on the social tariff, stating the causes of the cut, how it can be avoided and the costs of the cut and of restoring supply; for customers on normal low voltage, including domestic consumers, the cut may not take place on Fridays, on the eve of holidays, on holidays or at weekends.",
+        "kind": "figure",
+        "namedThing": "corte do fornecimento",
+        "verifyAt": "https://www.erse.pt/consumidores-de-energia/eletricidade/o-que-devo-saber-sobre-o-corte-do-fornecimento/",
+        "volatility": "stable"
+      },
+      "notObvious": "The banned days exist so nobody is left without power over a weekend with no one to call, which also means a cut on one of them is challengeable.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.erse.pt/consumidores-de-energia/eletricidade/o-que-devo-saber-sobre-o-corte-do-fornecimento/",
+        "authority": "ERSE"
+      }
+    },
+    {
+      "id": "consumer-power-is-reduced-before-it-is-cut",
+      "pillar": "daily_life_consumer",
+      "valueClass": "insider",
+      "title": "The step down to 1.15 kVA before the supply ends",
+      "userQuestion": "Is there anything between missing a payment and losing the electricity?",
+      "scenario": "A household sees the power weaken, assumes a fault, and misses the twenty days it has left before supply stops.",
+      "audience": "domestic electricity customers in arrears",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The reduction stage that comes before disconnection, the notice it requires, and the clock it starts.",
+      "anchorFact": {
+        "claim": "For electricity customers in normal low voltage, and where there is access to the installation, supply may only be interrupted for non-payment after the contracted power has been reduced to 1.15 kVA; the reduction must be communicated in writing with at least 5 days' notice, and interruption may then follow 20 days from the date of the reduction.",
+        "kind": "figure",
+        "namedThing": "corte do fornecimento",
+        "verifyAt": "https://www.erse.pt/consumidores-de-energia/eletricidade/o-que-devo-saber-sobre-o-corte-do-fornecimento/",
+        "volatility": "stable"
+      },
+      "notObvious": "The weak supply is the warning, not a fault. It is a twenty-day window that most households spend calling the electrician instead of the supplier.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.erse.pt/consumidores-de-energia/eletricidade/o-que-devo-saber-sobre-o-corte-do-fornecimento/",
+        "authority": "ERSE"
+      }
     }
   ]
 }
