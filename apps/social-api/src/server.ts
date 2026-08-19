@@ -1136,6 +1136,19 @@ const server = http.createServer(async (req, res) => {
         }
       }
       if (!checked) {
+        // Distinguish "this topic cannot produce a good post" from "the provider was
+        // busy". Blocking the concept is an editorial verdict: it retires the topic and
+        // holds its slot for the day. A rate limit or network fault says nothing about
+        // the topic, and treating it as one silently retired five perfectly good briefs
+        // the first time the free-tier token ceiling was hit.
+        const infrastructural = /rate limit|token\/rate|Request too large|tokens per minute|ECONNRESET|ETIMEDOUT|fetch failed|AbortError|timed out|returned no structured output|5\d\d\)/i
+          .test(lastGenerationError ?? "");
+        if (infrastructural) {
+          await sql`INSERT INTO social_event (event_type, payload) VALUES ('generation.deferred', ${sql.json({ documentId, conceptId: selectedConcept.id, planSlotId: selectedConcept.plan_slot_id, error: lastGenerationError })})`;
+          // 503 so the caller retries this concept on the next cycle instead of counting
+          // it as a content failure and reaching for a replacement brief.
+          return send(res, 503, { error: "Generation provider unavailable; the concept remains planned", detail: lastGenerationError, retryable: true });
+        }
         await sql.begin(async tx=>{await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE id=${selectedConcept.id}`;if(selectedConcept.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${selectedConcept.plan_slot_id}`;await tx`INSERT INTO social_event (event_type, payload) VALUES ('generation.failed', ${tx.json({ documentId,conceptId:selectedConcept.id,planSlotId:selectedConcept.plan_slot_id,error: lastGenerationError })})`;});
         return send(res, 422, { error: "Structured generation failed after the initial attempt and two targeted repairs", detail: lastGenerationError });
       }
@@ -1226,6 +1239,14 @@ const server = http.createServer(async (req, res) => {
           attemptsUsed++;
           const generated = await internalApi("POST", "/v1/generate", { conceptId: concept.id });
           attempts.push({ round, stage: "generation", conceptId: concept.id, topic: concept.topic || null, ok: generated.ok, status: generated.status, error: generated.ok ? null : String(generated.result.detail || generated.result.error || "generation failed") });
+          // A provider outage is not an editorial attempt. Refunding it keeps the daily
+          // budget meaningful: it should measure how many topics we tried, not how many
+          // times the free tier was busy. The concept stays planned for the next cycle.
+          if (generated.status === 503) {
+            await sql`DELETE FROM social_event WHERE event_type='generation.candidate_attempted' AND payload->>'day'=${day} AND payload->>'conceptId'=${String(concept.id)} AND payload->>'attemptNumber'=${String(attemptsUsed)}`;
+            attemptsUsed--;
+            continue;
+          }
           const postId=generated.ok&&generated.result.post&&typeof generated.result.post==='object'?String((generated.result.post as Record<string,unknown>).id||''):'';
           if(postId){const reviewed=await internalApi("POST",`/v1/posts/${postId}/request-review`,{expiresInMinutes:180});reviews.push({postId,ok:reviewed.ok,status:reviewed.status,error:reviewed.ok?null:String(reviewed.result.error||"review request failed")});if(!reviewed.ok)await sql.begin(async tx=>{await tx`UPDATE social_post SET status='failed',updated_at=now() WHERE id=${postId} AND status='draft'`;const concepts=await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE topic=${String(concept.topic||"")} AND planned_for=${day} RETURNING plan_slot_id`;for(const row of concepts)if(row.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${row.plan_slot_id}`;await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${postId},'review.handoff_failed',${tx.json({conceptId:concept.id,error:String(reviewed.result.error||"review request failed")})})`;});}
         }
