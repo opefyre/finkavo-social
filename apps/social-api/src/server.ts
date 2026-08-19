@@ -249,6 +249,28 @@ setBufferCallObserver(({ kind, status, quota }) => {
   }
 });
 
+
+// Reads a page through the renderer's Chromium so client-rendered and bot-guarded
+// official sites remain usable as evidence.
+async function fetchViaRenderer(url: string): Promise<{ title: string; text: string } | null> {
+  const base = process.env.RENDERER_BASE_URL || "http://127.0.0.1:4310";
+  const rendererToken = process.env.RENDERER_API_TOKEN;
+  if (!rendererToken) return null;
+  try {
+    const response = await fetch(`${base.replace(/\/$/, "")}/fetch-text`, {
+      method: "POST",
+      headers: { authorization: `Bearer ${rendererToken}`, "content-type": "application/json" },
+      body: JSON.stringify({ url }),
+      signal: AbortSignal.timeout(70_000),
+    });
+    if (!response.ok) return null;
+    const page = await response.json() as { title?: string; text?: string };
+    return { title: String(page.title ?? ""), text: String(page.text ?? "") };
+  } catch {
+    return null;
+  }
+}
+
 async function reconcileBufferPublish(job: Record<string, any>) {
   const channelId = process.env.BUFFER_CHANNEL_ID;
   if (!channelId) throw new BufferError("BUFFER_CHANNEL_ID is not configured", "CHANNEL_NOT_CONFIGURED", false);
@@ -678,10 +700,26 @@ const server = http.createServer(async (req, res) => {
           if (fresh) { results.push({ url: canonicalUrl, state: "fresh" }); continue; }
         }
         const page = await fetchPage(canonicalUrl);
-        const text = page.html ? visibleText(page.html) : "";
-        // A page that fetched but yielded almost no text is unusable as evidence and must
-        // not be stored as if it were, or every brief citing it verifies against nothing.
-        if (page.status < 200 || page.status >= 400 || text.length < 400) {
+        let text = page.html ? visibleText(page.html) : "";
+        let title = page.html ? pageTitle(page.html, canonicalUrl) : canonicalUrl;
+        let via = "http";
+
+        // Many Portuguese official sites render client-side or refuse non-browser
+        // clients, so a plain fetch returns 200 with no text, or 403. The renderer
+        // already runs Chromium for carousels; reuse it to read those pages rather than
+        // discarding perfectly good official sources.
+        if (page.status === 403 || page.status === 0 || text.length < 400) {
+          const rendered = await fetchViaRenderer(canonicalUrl);
+          if (rendered && rendered.text.length > text.length) {
+            text = rendered.text;
+            title = rendered.title || title;
+            via = "chromium";
+          }
+        }
+
+        // A page that fetched but still yielded almost no text is unusable as evidence
+        // and must not be stored as if it were, or briefs citing it verify against nothing.
+        if (text.length < 400) {
           results.push({ url: canonicalUrl, state: "unusable", status: page.status, length: text.length, error: page.error });
           continue;
         }
@@ -689,7 +727,7 @@ const server = http.createServer(async (req, res) => {
         const [document] = await sql`
           INSERT INTO document (source_tier, source_url, source_authority, title, original_lang, content_hash,
                                 fetched_at, last_verified_at, freshness_confidence, last_upstream_check_at, verified_still_available)
-          VALUES ('official', ${canonicalUrl}, ${authority}, ${pageTitle(page.html, canonicalUrl)}, 'pt', ${contentHash},
+          VALUES ('official', ${canonicalUrl}, ${authority}, ${title}, 'pt', ${contentHash},
                   now(), now(), 'fresh', now(), true)
           ON CONFLICT (source_url) DO UPDATE SET
             title=excluded.title, content_hash=excluded.content_hash, last_verified_at=now(),
@@ -702,7 +740,7 @@ const server = http.createServer(async (req, res) => {
           await sql`INSERT INTO chunk (document_id, chunk_index, text, token_count, lang, content_hash)
                     VALUES (${document.id}, ${index}, ${chunk}, ${Math.ceil(chunk.length / 4)}, 'pt', ${hash(chunk)})`;
         }
-        results.push({ url: canonicalUrl, state: "ingested", chunks: chunks.length, characters: text.length });
+        results.push({ url: canonicalUrl, state: "ingested", via, chunks: chunks.length, characters: text.length });
       }
       const ingested = results.filter(r => r.state === "ingested").length;
       const unusable = results.filter(r => r.state === "unusable").length;
