@@ -9143,6 +9143,56 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00358.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "irs-moving-to-a-low-tax-country-keeps-you-resident",
+      "pillar": "irs",
+      "valueClass": "costly_mistake",
+      "title": "Moving to a low-tax country keeps you resident for five years",
+      "userQuestion": "If I move abroad to a low-tax country, when do I stop being taxed here?",
+      "scenario": "Someone relocates to a favourable tax jurisdiction, stops filing in Portugal, and is treated as resident here for years afterwards.",
+      "audience": "Portuguese citizens emigrating to low-tax jurisdictions",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The rule that keeps Portuguese citizens tax resident after moving to a favourable jurisdiction, and how long it runs.",
+      "anchorFact": {
+        "claim": "Portuguese citizens who change residence to a country, territory or region with a clearly more favourable tax regime continue to be treated as resident in Portuguese territory in the year of the change and in the 4 following years, alongside the ordinary tests of remaining more than 183 days consecutive or interpolated in any 12-month period or holding a habitation with the intention of occupying it as habitual residence.",
+        "kind": "figure",
+        "namedThing": "residência fiscal",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00063.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "It attaches to citizenship and destination rather than to days, so leaving properly is not enough when the destination is on the list.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00063.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-who-still-counts-as-a-dependant-at-twenty-five",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "An adult child can still be a dependant at twenty-five",
+      "userQuestion": "Until what age can I include my child on my IRS?",
+      "scenario": "A parent drops an adult child from the household as soon as they turn eighteen or take a small job, losing deductions they still qualified for.",
+      "audience": "parents of adult children in education or low-paid work",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The age and income test for adult dependants, the exception with no age limit, and the February date the household is fixed on.",
+      "anchorFact": {
+        "claim": "The IRS agregado familiar includes as dependants unemancipated minors and those under guardianship, adults up to 25 years old whose income does not exceed the minimum wage, adults of any age permanently unable to work, and civil godchildren meeting the same age and income conditions; the household must be reported by 15 February each year and reflects the position on 31 December of the previous year.",
+        "kind": "figure",
+        "namedThing": "agregado familiar",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00063.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The income test is against the minimum wage rather than against nothing, so a child with a small job is usually still a dependant.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00063.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
