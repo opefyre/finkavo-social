@@ -6443,6 +6443,56 @@
         "canonicalUrl": "https://www.consumidor.asf.com.pt/pt/seguros/seguro-de-sa%C3%BAde",
         "authority": "Autoridade de Supervisão de Seguros e Fundos de Pensões"
       }
+    },
+    {
+      "id": "citizenship-inheriting-debts-beyond-what-you-receive",
+      "pillar": "citizenship_civil",
+      "valueClass": "costly_mistake",
+      "title": "Accepting an inheritance plainly can cost more than it gives",
+      "userQuestion": "Can I inherit debts that are larger than the estate?",
+      "scenario": "An heir signs for a modest inheritance without checking the debts and ends up answering for them out of their own assets.",
+      "audience": "people named as heirs",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The two protective ways to take an inheritance, the exposure of taking it plainly, and the form a refusal must take.",
+      "anchorFact": {
+        "claim": "An heir who suspects an inheritance is in deficit should repudiate it or accept it a benefício de inventário, since otherwise they risk answering with their own assets and beyond the value of the assets received; repúdio is a unilateral formal legal act that must be made by escritura pública where the estate includes immovable property, and the right to accept or repudiate may be exercised within 10 years.",
+        "kind": "figure",
+        "namedThing": "benefício de inventário",
+        "verifyAt": "https://diariodarepublica.pt/dr/lexionario/termo/repudio-da-heranca-ou-legado",
+        "volatility": "stable"
+      },
+      "notObvious": "The protection is in how you accept, not whether you accept, and the difference is a single phrase in the document.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/lexionario/termo/repudio-da-heranca-ou-legado",
+        "authority": "Diário da República / Código Civil"
+      }
+    },
+    {
+      "id": "citizenship-two-thirds-of-an-estate-is-not-yours-to-give",
+      "pillar": "citizenship_civil",
+      "valueClass": "threshold",
+      "title": "The two-thirds of an estate a will cannot touch",
+      "userQuestion": "How much of my estate can I actually leave to whoever I want?",
+      "scenario": "Someone writes a will leaving everything to one person and creates a dispute the law will resolve against them.",
+      "audience": "people making a will",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The protected share when a spouse and children inherit together, what is left freely disposable, and what goes into the calculation.",
+      "anchorFact": {
+        "claim": "Where a spouse and children concur, the legítima is two thirds of the inheritance, leaving one third as the quota disponível, and the calculation of both takes into account the value of the assets in the deceased's patrimony at the date of death, the value of donated assets, expenses subject to collation and the debts of the inheritance.",
+        "kind": "figure",
+        "namedThing": "legítima",
+        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/1966-34509075-50016575",
+        "volatility": "stable"
+      },
+      "notObvious": "Lifetime gifts are added back before the share is worked out, so giving assets away early does not enlarge the part a will can direct.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/1966-34509075-50016575",
+        "authority": "Diário da República / Código Civil"
+      }
     }
   ]
 }
