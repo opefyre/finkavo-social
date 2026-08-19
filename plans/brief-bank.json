@@ -2963,6 +2963,179 @@
         "canonicalUrl": "https://www.autenticacao.gov.pt/cmd-assinatura",
         "authority": "Autenticação.gov"
       }
+    },
+    {
+      "id": "driving-compulsory-insurance-minimum-capital",
+      "pillar": "driving_transport",
+      "valueClass": "threshold",
+      "title": "The minimum cover a Portuguese car policy must carry",
+      "userQuestion": "How much cover does compulsory car insurance actually provide?",
+      "scenario": "A driver comparing cheap policies cannot tell what the legal floor is, or whether a cheaper policy cuts below it.",
+      "audience": "drivers buying or comparing car insurance",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "The separate legal minimums for bodily injury and material damage, and how often they are revised.",
+      "anchorFact": {
+        "claim": "The compulsory minimum capital for motor civil liability insurance was updated to 6,450,000 euros for bodily injuries and 1,300,000 euros for material damages, and these values are revised every five years.",
+        "kind": "figure",
+        "namedThing": "seguro automóvel",
+        "verifyAt": "https://www.consumidor.asf.com.pt/pt/seguro-autom%C3%B3vel-1",
+        "volatility": "annual"
+      },
+      "notObvious": "Every lawful policy carries the same floor, so a cheaper premium is not buying less compulsory cover, which changes what price comparison actually means.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.consumidor.asf.com.pt/pt/seguro-autom%C3%B3vel-1",
+        "authority": "ASF"
+      }
+    },
+    {
+      "id": "driving-friendly-declaration-speeds-the-claim",
+      "pillar": "driving_transport",
+      "valueClass": "deadline_action",
+      "title": "The accident form that halves the insurer's response time",
+      "userQuestion": "Is it worth filling in the declaração amigável after a minor accident?",
+      "scenario": "Two drivers exchange details informally after a bump and skip the joint form, then wait months for a decision on liability.",
+      "audience": "drivers involved in a road accident",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "What the joint declaration triggers, and the response deadlines with and without it.",
+      "anchorFact": {
+        "claim": "Where both drivers agree on how the accident occurred they should complete and sign the declaração amigável and deliver it to their insurers, which activates the IDS direct indemnification system; the insurer must communicate its liability decision within a maximum of 30 business days for material damage only, reduced to 15 days with a declaração amigável, or 45 days where there are bodily injuries.",
+        "kind": "deadline",
+        "namedThing": "declaração amigável",
+        "verifyAt": "https://www.gov.pt/guias/cobertura-de-seguro-automovel-em-portugal",
+        "volatility": "stable"
+      },
+      "notObvious": "The same accident resolves in half the time purely because a shared form was signed at the roadside.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/cobertura-de-seguro-automovel-em-portugal",
+        "authority": "gov.pt / ASF"
+      }
+    },
+    {
+      "id": "health-insurance-waiting-periods-and-disclosure",
+      "pillar": "health_family",
+      "valueClass": "threshold",
+      "title": "The waiting period limit on pre-existing conditions",
+      "userQuestion": "Will my health insurance cover a condition I already have?",
+      "scenario": "Someone buying health cover omits an existing condition to avoid exclusions, or assumes a declared one is excluded forever.",
+      "audience": "people buying private health insurance",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The maximum waiting period for pre-existing conditions, and what happens if you do not declare one.",
+      "anchorFact": {
+        "claim": "A health insurance contract may set a período de carência of no more than 1 year for cover of pre-existing conditions, and where the policyholder does not inform the insurer of pre-existing illnesses those illnesses are not guaranteed and the insurer may annul the contract.",
+        "kind": "figure",
+        "verifyAt": "https://www.consumidor.asf.com.pt/pt/seguros/seguro-de-sa%C3%BAde",
+        "volatility": "stable"
+      },
+      "notObvious": "Declaring a condition costs at most a year of waiting; concealing it can void the entire policy, so the incentive runs the opposite way to instinct.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.consumidor.asf.com.pt/pt/seguros/seguro-de-sa%C3%BAde",
+        "authority": "ASF"
+      }
+    },
+    {
+      "id": "health-insurance-protection-after-non-renewal",
+      "pillar": "health_family",
+      "valueClass": "edge_case",
+      "title": "Cover that survives your health policy ending",
+      "userQuestion": "If my insurer does not renew my health policy, am I left with nothing?",
+      "scenario": "A policyholder who fell ill during the contract is not renewed and assumes treatment already under way stops being covered.",
+      "audience": "policyholders whose health cover was not renewed",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The two-year protection for illness that appeared during the contract, and the trap of taking a new policy with the same insurer.",
+      "anchorFact": {
+        "claim": "Where a health contract or cover is not renewed and the risk is not proportionally covered by a later contract, the insurer may not for the following two years, and until the sum insured in the last period is exhausted, refuse benefits arising from illness manifested or other covered facts occurring during the contract; a replacement contract with the same insurer is a new contract, so new waiting periods apply.",
+        "kind": "deadline",
+        "namedThing": "seguro de saúde",
+        "verifyAt": "https://www.consumidor.asf.com.pt/pt/seguros/seguro-de-sa%C3%BAde",
+        "volatility": "stable"
+      },
+      "notObvious": "Switching to a fresh policy with the same insurer can forfeit this protection, because the law treats it as a new contract rather than a continuation.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.consumidor.asf.com.pt/pt/seguros/seguro-de-sa%C3%BAde",
+        "authority": "ASF"
+      }
+    },
+    {
+      "id": "irs-rental-income-rate-depends-on-use",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "Residential and commercial rent are taxed at different rates",
+      "userQuestion": "What rate applies to the rent I receive?",
+      "scenario": "A landlord with both a flat and a shop applies one rate to everything, or budgets using an outdated figure.",
+      "audience": "landlords receiving rental income",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The autonomous rate for residential letting, the different rate for non-residential, and where the choice to aggregate sits.",
+      "anchorFact": {
+        "claim": "The autonomous rate on rendimentos prediais from residential letting was reduced from 28% to 25%, while rental income from non-residential letting such as commercial premises remains subject to 28%.",
+        "kind": "figure",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Prediais/Paginas/default.aspx",
+        "volatility": "annual",
+        "namedThing": "rendimentos prediais"
+      },
+      "notObvious": "The rate now turns on what the tenant uses the property for, so a single landlord can owe two different rates in the same year.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Prediais/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "housing-which-landlord-costs-are-deductible",
+      "pillar": "housing_property",
+      "valueClass": "edge_case",
+      "title": "Which landlord expenses actually reduce the tax on rent",
+      "userQuestion": "Can I deduct the new sofa and the mortgage interest from my rental income?",
+      "scenario": "A landlord totals every cost of running the property and finds a large part of it disallowed at assessment.",
+      "audience": "landlords declaring rental income",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The costs that are deductible against gross rent, and the four categories that are specifically excluded.",
+      "anchorFact": {
+        "claim": "Under the Código do IRS, from gross categoria F income the taxpayer deducts all expenses actually incurred and paid to obtain or guarantee that income, including conservation and maintenance, condominium charges, rent insurance, and municipal taxes and fees, but excluding financial charges, depreciation, furniture, appliances and comfort or decoration items, and the AIMI.",
+        "kind": "instrument",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Prediais/Paginas/default.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "Mortgage interest and furnishings are the two costs landlords most expect to deduct, and both are explicitly excluded.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Prediais/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "housing-porta-65-young-rent-support",
+      "pillar": "housing_property",
+      "valueClass": "deadline_action",
+      "title": "The rent subsidy for under-36s and when you can apply",
+      "userQuestion": "Is there state help with rent for young people, and when do applications open?",
+      "scenario": "A young renter hears about Porta 65 but not the age limits, the ownership conditions, or that applications run in fixed periods.",
+      "audience": "renters under 36",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "The age range including the couple exception, the disqualifying conditions, the four application windows and the decision time.",
+      "anchorFact": {
+        "claim": "Porta 65-Jovem is open to applicants aged 18 to 35, with one member of a couple allowed to be 36 while the other is at most 35, requires permanent residence and tax address at the rented property and no ownership of another home or other public housing support, runs four application periods a year of at least 15 days each in April, September and December, and applications are analysed within 45 days.",
+        "kind": "deadline",
+        "namedThing": "Porta 65",
+        "verifyAt": "https://www.gov.pt/servicos/candidatar-se-ao-porta-65-jovem",
+        "volatility": "annual"
+      },
+      "notObvious": "The tax address condition catches people who never moved their domicílio fiscal to the rented flat, which quietly disqualifies an otherwise valid application.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/candidatar-se-ao-porta-65-jovem",
+        "authority": "gov.pt / IHRU"
+      }
     }
   ]
 }
