@@ -6493,6 +6493,81 @@
         "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/1966-34509075-50016575",
         "authority": "Diário da República / Código Civil"
       }
+    },
+    {
+      "id": "employment-two-clocks-after-a-workplace-accident",
+      "pillar": "employment",
+      "valueClass": "deadline_action",
+      "title": "Two days to tell your boss, one day for them to tell the insurer",
+      "userQuestion": "What has to happen, and how fast, after an accident at work?",
+      "scenario": "A worker mentions a minor injury in passing, nothing is filed, and the claim is contested weeks later when it turns out to be serious.",
+      "audience": "workers injured on the job",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The worker's reporting window, the employer's separate window to notify the insurer, and the rule for fatal accidents.",
+      "anchorFact": {
+        "claim": "After a workplace accident the worker, personally or through someone else, must report it in writing or verbally to their superior within 2 business days, and the employer as policyholder must notify the insurer within 24 hours of learning of the accident, reporting fatal accidents to the insurer immediately.",
+        "kind": "deadline",
+        "namedThing": "acidente de trabalho",
+        "verifyAt": "https://portal.act.gov.pt/Pages/Acidentes_trabalho.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Two separate clocks run from two different events, so a worker who reported on time can still be left uncovered by an employer who did not.",
+      "journeyStage": "in_employment",
+      "source": {
+        "canonicalUrl": "https://portal.act.gov.pt/Pages/Acidentes_trabalho.aspx",
+        "authority": "Autoridade para as Condições do Trabalho"
+      }
+    },
+    {
+      "id": "employment-who-represents-you-in-an-accident-dispute",
+      "pillar": "employment",
+      "valueClass": "insider",
+      "title": "The prosecutor who represents injured workers for free",
+      "userQuestion": "The insurer says it was not a work accident. Do I need to hire a lawyer?",
+      "scenario": "A worker whose accident is disputed drops the claim on the assumption that fighting an insurer means legal fees they cannot afford.",
+      "audience": "workers whose accident claim is disputed",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Who defends and represents work accident victims, which court it sits in, and how to reach it.",
+      "anchorFact": {
+        "claim": "Where there is a dispute about whether an event constitutes an acidente de trabalho, the injured worker should contact the Ministério Público of the labour court for their area of residence, which is the entity responsible for defending and representing victims of work accidents.",
+        "kind": "procedure",
+        "namedThing": "Ministério Público",
+        "verifyAt": "https://www.consumidor.asf.com.pt/pt/seguros/seguro-de-acidentes-de-trabalho",
+        "volatility": "stable"
+      },
+      "notObvious": "Representation in these cases is a public function rather than a service you buy, which changes the calculation for anyone who assumed the insurer had the deeper pockets.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.consumidor.asf.com.pt/pt/seguros/seguro-de-acidentes-de-trabalho",
+        "authority": "Autoridade de Supervisão de Seguros e Fundos de Pensões"
+      }
+    },
+    {
+      "id": "employment-wage-guarantee-fund-one-year-window",
+      "pillar": "employment",
+      "valueClass": "deadline_action",
+      "title": "One year to claim the wages an insolvent employer never paid",
+      "userQuestion": "My employer went under owing me pay. Is that money simply lost?",
+      "scenario": "A worker joins the insolvency queue, hears nothing for eighteen months, and misses the separate fund that would have paid part of it.",
+      "audience": "workers owed pay by a failing employer",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The three situations that open the fund, the one-year claim window, and the monthly and overall caps on what it pays.",
+      "anchorFact": {
+        "claim": "The Fundo de Garantia Salarial covers employer debts to employees where there is an insolvency judgment, a court order appointing a provisional judicial administrator in a Processo Especial de Revitalização, or acceptance of a company recovery request by IAPMEI; the claim must be submitted to Segurança Social within 1 year from the day following contract termination, and the fund pays a maximum of 6 months' pay with a monthly ceiling of 3 times the minimum wage.",
+        "kind": "deadline",
+        "namedThing": "Fundo de Garantia Salarial",
+        "verifyAt": "https://www.seg-social.pt/fundo-de-garantia-salarial",
+        "volatility": "annual"
+      },
+      "notObvious": "The year runs from the end of the contract, not from the insolvency ruling, so waiting for the court to finish is how the window is usually missed.",
+      "journeyStage": "leaving_a_job",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/fundo-de-garantia-salarial",
+        "authority": "Instituto da Segurança Social"
+      }
     }
   ]
 }
