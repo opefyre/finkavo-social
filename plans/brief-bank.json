@@ -10018,6 +10018,81 @@
         "canonicalUrl": "https://www.gov.pt/guias/migrantes-cuidados-de-saude-em-portugal",
         "authority": "gov.pt"
       }
+    },
+    {
+      "id": "freelance-the-two-hundred-thousand-accounting-line",
+      "pillar": "freelance_business",
+      "valueClass": "threshold",
+      "title": "The income line that forces organised accounting",
+      "userQuestion": "At what point do I need a certified accountant?",
+      "scenario": "A growing freelancer keeps filing alone past the point where organised accounting became compulsory.",
+      "audience": "freelancers and small companies approaching the threshold",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The estimated income above which organised accounting is compulsory, that it can be chosen below it, and who must then file the declarations.",
+      "anchorFact": {
+        "claim": "Organised accounting is compulsory where estimated annual income exceeds 200 thousand euros, and a person expecting less may still opt for it; where there is no organised accounting the start, alteration and cessation declarations are delivered by the independent worker, the company or the fiscal representative, while where there is organised accounting they must be delivered by the certified accountant.",
+        "kind": "figure",
+        "namedThing": "contabilidade organizada",
+        "verifyAt": "https://www.gov.pt/guias/imposto-sobre-valor-acrescentado-iva-em-portugal",
+        "volatility": "annual"
+      },
+      "notObvious": "Crossing the line changes who is allowed to file, not just how the books are kept, so the accountant becomes a legal requirement rather than a convenience.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/imposto-sobre-valor-acrescentado-iva-em-portugal",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "freelance-fifteen-days-to-report-a-change-of-activity",
+      "pillar": "freelance_business",
+      "valueClass": "deadline_action",
+      "title": "Fifteen days to report a change, and who is exempt",
+      "userQuestion": "Do I have to tell Finanças every time something about my business changes?",
+      "scenario": "A business changes its address or object and reports it months later, or reports something the commercial registry already communicated.",
+      "audience": "freelancers and company owners",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The fifteen-day window for a change declaration, the fifteen days after commercial registration for a start declaration, and the changes registered companies never have to report twice.",
+      "anchorFact": {
+        "claim": "A declaração de alterações de atividade must be delivered within a maximum of 15 days from the day the change occurred, and companies registered at a conservatória do registo comercial must deliver the start of activity declaration within a maximum of 15 days after that registration; companies on the commercial register are exempt from declaring to the Autoridade Tributária changes such as registration itself, changes to legal nature, firm, name, registered office or main establishment, capital and object, appointment and cessation of management and supervisory bodies, mergers and demergers, and dissolution.",
+        "kind": "deadline",
+        "namedThing": "declaração de alterações",
+        "verifyAt": "https://www.gov.pt/guias/imposto-sobre-valor-acrescentado-iva-em-portugal",
+        "volatility": "stable"
+      },
+      "notObvious": "Registered companies are exempt from reporting most changes twice, so the fifteen-day duty bites hardest on sole traders who have no registry doing it for them.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/imposto-sobre-valor-acrescentado-iva-em-portugal",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "iva-when-a-fiscal-representative-is-optional-and-when-not",
+      "pillar": "iva",
+      "valueClass": "decision",
+      "title": "When a fiscal representative is a choice and when it is not",
+      "userQuestion": "Do I need someone in Portugal to file for my business?",
+      "scenario": "A trader based elsewhere in the EU appoints and pays a representative they were never obliged to have, or one based outside the EU skips a mandatory appointment.",
+      "audience": "traders based outside Portugal",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Where the representative is optional, where it is compulsory, and the line between the two.",
+      "anchorFact": {
+        "claim": "Independent workers or companies without a fixed address in Portugal but with a fixed address in another European Union member state may deliver the declaração de início de atividade through a representative with a tax address in Portugal, while independent workers or companies without a fixed address in Portugal or in a European Union member state are obliged to appoint a representante fiscal in Portugal.",
+        "kind": "procedure",
+        "namedThing": "representante fiscal",
+        "verifyAt": "https://www.gov.pt/guias/imposto-sobre-valor-acrescentado-iva-em-portugal",
+        "volatility": "stable"
+      },
+      "notObvious": "Being established anywhere in the EU turns the representative from an obligation into an option, which is a real saving for EU-based traders who assume otherwise.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/imposto-sobre-valor-acrescentado-iva-em-portugal",
+        "authority": "gov.pt"
+      }
     }
   ]
 }
