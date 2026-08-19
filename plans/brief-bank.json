@@ -4744,6 +4744,106 @@
         "canonicalUrl": "https://www.seg-social.pt/ptss/pssd/menu/pagamentos-dividas/situacao-contributiva/declaracao-situacao-contributiva",
         "authority": "Instituto da Segurança Social"
       }
+    },
+    {
+      "id": "consumer-neighbour-noise-can-be-stopped-at-night",
+      "pillar": "daily_life_consumer",
+      "valueClass": "insider",
+      "title": "Neighbour noise between 23:00 and 07:00 can be stopped on the spot",
+      "userQuestion": "Can the police actually do anything about a noisy neighbour at night?",
+      "scenario": "Someone kept awake by a party assumes police will not intervene in a private dispute and endures it.",
+      "audience": "people disturbed by neighbour noise",
+      "risk": "low",
+      "volatility": "stable",
+      "promise": "The night-time window in which noise can be halted immediately, and the written route for anything outside it.",
+      "anchorFact": {
+        "claim": "Under the Regulamento Geral do Ruído, neighbourhood noise is not subject to the legally established acoustic requirements, but where it occurs between 23:00 and 07:00 it can be stopped immediately at the request of the disturbed party through intervention by any police authority; outside that window a written complaint goes to the licensing or supervising entity, or through the iFAMA platform.",
+        "kind": "instrument",
+        "namedThing": "ruído",
+        "verifyAt": "https://www2.gov.pt/fichas-tecnicas-fiscalizacao/ruido",
+        "volatility": "stable"
+      },
+      "notObvious": "Neighbour noise sits outside the technical noise limits entirely, so the night-time immediate-halt power is the only fast remedy and it is time-bounded.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/fichas-tecnicas-fiscalizacao/ruido",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "consumer-pet-registration-120-day-deadline",
+      "pillar": "daily_life_consumer",
+      "valueClass": "deadline_action",
+      "title": "Four months to microchip and register a new pet",
+      "userQuestion": "By when must I register a puppy or kitten?",
+      "scenario": "A new owner waits until the first vaccination appointment or the animal is fully grown, past the registration deadline.",
+      "audience": "owners of a new dog, cat or ferret",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The deadline from birth, who may implant the chip, and the separate parish licence that is easy to forget.",
+      "anchorFact": {
+        "claim": "All dogs, cats and ferrets must be marked with a transponder and registered in the SIAC, animals born after 25 October 2019 must be marked and registered within 120 days of birth, identification may only be performed by a veterinarian, and failure to register the transponder or the mandatory prophylaxis is a contraordenação.",
+        "kind": "deadline",
+        "namedThing": "SIAC",
+        "verifyAt": "https://www.dgav.pt/animais/conteudo/animais-de-companhia/identificacao-registo-e-movimentacao-animal/caes-e-gatos/1-registo-no-sistema-de-informacao-de-animais-de-companhia-siac/",
+        "volatility": "stable"
+      },
+      "notObvious": "The clock runs from the animal's birth rather than from when you acquired it, so a pet adopted at three months leaves very little time.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.dgav.pt/animais/conteudo/animais-de-companhia/identificacao-registo-e-movimentacao-animal/caes-e-gatos/1-registo-no-sistema-de-informacao-de-animais-de-companhia-siac/",
+        "authority": "DGAV"
+      }
+    },
+    {
+      "id": "consumer-dog-licence-is-separate-from-the-chip",
+      "pillar": "daily_life_consumer",
+      "valueClass": "edge_case",
+      "title": "Registering the microchip does not licence the dog",
+      "userQuestion": "Is the SIAC registration the same as licensing my dog?",
+      "scenario": "An owner completes the microchip registration and assumes all legal obligations are met, until a licence check.",
+      "audience": "dog owners who have completed SIAC registration",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The second obligation at the parish council, and the penalty for skipping it.",
+      "anchorFact": {
+        "claim": "Beyond SIAC registration, dogs are subject to licenciamento at the junta de freguesia, and failure to comply with the licensing obligation constitutes a contraordenação.",
+        "kind": "artefact",
+        "namedThing": "SIAC",
+        "verifyAt": "https://www.dgav.pt/animais/conteudo/animais-de-companhia/identificacao-registo-e-movimentacao-animal/caes-e-gatos/2-licenciamento-na-junta-de-freguesia/",
+        "volatility": "stable"
+      },
+      "notObvious": "Two separate registers with two separate authorities, and completing the national one gives no notice that the parish one is outstanding.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.dgav.pt/animais/conteudo/animais-de-companhia/identificacao-registo-e-movimentacao-animal/caes-e-gatos/2-licenciamento-na-junta-de-freguesia/",
+        "authority": "DGAV"
+      }
+    },
+    {
+      "id": "immigration-foreign-residents-can-vote-locally",
+      "pillar": "immigration_residency",
+      "valueClass": "edge_case",
+      "title": "Which foreign residents can vote in Portuguese local elections",
+      "userQuestion": "Can I vote in local elections as a foreign resident?",
+      "scenario": "A long-term foreign resident assumes voting is only for citizens and never registers.",
+      "audience": "foreign residents in Portugal",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The nationalities that qualify, the residence periods some require, where to register, and the cut-off before an election.",
+      "anchorFact": {
+        "claim": "Local election voting is open to Portuguese citizens, Brazilian citizens with equal political rights status, EU nationals aged 17 or over registered in Portugal, and nationals of Brazil without that status, Cape Verde, Argentina, Chile, Colombia, Iceland, Norway, New Zealand, Peru, the United Kingdom, Uruguay or Venezuela resident in Portugal for more than two or three years depending on the country; registration is at the junta de freguesia of the address on the residence title, and recenseamento is suspended from the 60th day before an election.",
+        "kind": "artefact",
+        "namedThing": "recenseamento eleitoral",
+        "verifyAt": "https://www.cne.pt/faq2/95/5",
+        "volatility": "stable"
+      },
+      "notObvious": "There is no general registration deadline, only a sixty-day cut-off before each election, so registering the month before is already too late.",
+      "journeyStage": "long_term_residence",
+      "source": {
+        "canonicalUrl": "https://www.cne.pt/faq2/95/5",
+        "authority": "Comissão Nacional de Eleições"
+      }
     }
   ]
 }

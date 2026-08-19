@@ -20,7 +20,7 @@ export const PILLAR_TERMS = {
   health_family: ["SNS", "centro de saúde", "médico de família", "número de utente", "taxas moderadoras", "insuficiência económica", "IAS", "consulta de recurso", "SNS 24", "atestado multiuso", "licença parental", "subsídio parental", "comparticipação", "regime excecional", "receita sem papel", "seguro de saúde", "período de carência", "ADSE", "regime convencionado"],
   driving_transport: ["IMT", "carta de condução", "IUC", "veículo", "passe", "Circula PT", "troca de carta", "título de condução", "inspeção periódica", "IPO", "registo de propriedade", "ISV", "DAV", "contraordenação", "revalidação", "atestado médico", "seguro automóvel", "declaração amigável"],
   education_children: ["matrícula escolar", "educação", "equivalência", "reconhecimento", "Direção-Geral da Educação", "Portal das Matrículas", "ASE", "abono de família", "prova escolar", "concurso nacional de acesso", "provas de ingresso", "creche", "manuais escolares", "reconhecimento", "Reconhecimento Automático", "bolsa de estudo", "ação social"],
-  daily_life_consumer: ["ePortugal", "Livro de Reclamações", "ANACOM", "energia", "arbitragem de consumo", "fidelização", "ANACOM", "livre resolução", "garantia", "comercializador", "ERSE", "tarifa social", "serviços públicos essenciais", "prescrição", "ANAC", "direitos dos passageiros", "RGPD", "CNPD"],
+  daily_life_consumer: ["ePortugal", "Livro de Reclamações", "ANACOM", "energia", "arbitragem de consumo", "fidelização", "ANACOM", "livre resolução", "garantia", "comercializador", "ERSE", "tarifa social", "serviços públicos essenciais", "prescrição", "ANAC", "direitos dos passageiros", "RGPD", "CNPD", "ruído", "SIAC", "recenseamento eleitoral"],
 };
 
 const INSTRUMENT_PATTERN =
