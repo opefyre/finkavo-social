@@ -5618,6 +5618,106 @@
         "canonicalUrl": "https://www.asf.com.pt/pt/w/seguro-de-acidentes-de-trabalho-de-trabalhadores-independentes",
         "authority": "Autoridade de Supervisão de Seguros e Fundos de Pensões"
       }
+    },
+    {
+      "id": "employment-untaken-training-hours-become-a-credit",
+      "pillar": "employment",
+      "valueClass": "insider",
+      "title": "Forty hours of training a year, and what unused hours turn into",
+      "userQuestion": "My employer never gave me any training. Does that matter?",
+      "scenario": "A worker treats missed training as the employer's oversight rather than an entitlement accumulating in their name.",
+      "audience": "employees on permanent contracts",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The annual training minimum, what happens to hours the employer does not deliver, and the notice needed to spend them yourself.",
+      "anchorFact": {
+        "claim": "The law establishes a right to a minimum of 40 hours of annual formação contínua for indefinite-term employment contracts, and hours the employer does not provide are converted into an equal number of training hour credits usable on the worker's own initiative with at least 10 days' notice to the employer, expiring 3 years after they were created.",
+        "kind": "figure",
+        "namedThing": "formação contínua",
+        "verifyAt": "https://diariodarepublica.pt/dr/lexionario/termo/dever-formacao-continua-direito-trabalho",
+        "volatility": "stable"
+      },
+      "notObvious": "The hours do not simply disappear. They become a balance with a three-year expiry that the worker, not the employer, decides how to spend.",
+      "journeyStage": "in_employment",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/lexionario/termo/dever-formacao-continua-direito-trabalho",
+        "authority": "Diário da República / Código do Trabalho"
+      }
+    },
+    {
+      "id": "employment-training-credits-are-paid-on-termination",
+      "pillar": "employment",
+      "valueClass": "insider",
+      "title": "The training hours an employer pays for on the way out",
+      "userQuestion": "Is there anything owed to me at the end of a contract besides holiday pay?",
+      "scenario": "A worker signs off on a final settlement that quietly omits years of undelivered training.",
+      "audience": "employees whose contract is ending",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Why undelivered training becomes money at termination, and the official simulator that puts a figure on it.",
+      "anchorFact": {
+        "claim": "Training hours not provided by the employer are converted into training hour credits that confer on the worker the right to the corresponding remuneration, and the Autoridade para as Condições do Trabalho publishes a simulator to calculate the amounts due under the right to formação contínua when a contract terminates.",
+        "kind": "artefact",
+        "namedThing": "formação contínua",
+        "verifyAt": "https://diariodarepublica.pt/dr/lexionario/termo/dever-formacao-continua-direito-trabalho",
+        "volatility": "stable"
+      },
+      "notObvious": "There is a public calculator for this, which means the amount is checkable before signing anything rather than argued about afterwards.",
+      "journeyStage": "leaving_a_job",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/lexionario/termo/dever-formacao-continua-direito-trabalho",
+        "authority": "Diário da República / Código do Trabalho"
+      }
+    },
+    {
+      "id": "employment-silence-grants-flexible-hours-for-parents",
+      "pillar": "employment",
+      "valueClass": "insider",
+      "title": "Twenty days of employer silence grants the flexible schedule",
+      "userQuestion": "My employer never answered my request for flexible hours. What now?",
+      "scenario": "A parent whose request went unanswered assumes it was ignored and keeps working the old schedule.",
+      "audience": "parents of children under 12",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The narrow grounds for refusal, the twenty-day clock, and what an employer's silence legally amounts to.",
+      "anchorFact": {
+        "claim": "An employer may refuse horário flexível for a worker with a child under 12 only on grounds of imperious operating requirements or the impossibility of replacing an indispensable worker, must communicate an intention to refuse within 20 days of receiving the request, and a failure to communicate within that period or to submit the process in the legal term implies acceptance of the request in the exact terms in which it was made.",
+        "kind": "deadline",
+        "namedThing": "horário flexível",
+        "verifyAt": "https://www.gov.pt/servicos/trabalho-com-horario-flexivel-parecer-previo-a-recusa",
+        "volatility": "stable"
+      },
+      "notObvious": "Silence is not a refusal, it is an approval, and it approves the schedule exactly as the parent wrote it.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/trabalho-com-horario-flexivel-parecer-previo-a-recusa",
+        "authority": "gov.pt / CITE"
+      }
+    },
+    {
+      "id": "irs-two-ways-to-become-tax-resident",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "A home in Portugal can make you tax resident without the days",
+      "userQuestion": "How many days in Portugal make me resident for tax?",
+      "scenario": "Someone counts days carefully to stay under the limit while keeping a home here, and is treated as resident anyway.",
+      "audience": "people splitting time between countries",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The two independent residency tests, the reporting window once either is met, and the penalty for an out-of-date address.",
+      "anchorFact": {
+        "claim": "Under artigo 16 of the Código do IRS a person is resident where they remain more than 183 days, consecutive or interpolated, in any 12-month period beginning or ending in the year in question, or where they hold a habitation in conditions suggesting a current intention to keep and occupy it as habitual residence; once either is verified the residence must be reported within 60 days, and an out-of-date tax address can carry fines up to 375 euros.",
+        "kind": "figure",
+        "namedThing": "residência fiscal",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs16.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The two tests are alternatives rather than a combined score, so keeping a home here can settle the question no matter how the days fall.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Residir_em_Portugal/Alteracao_nao_residente_para_residente/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
