@@ -51,7 +51,8 @@ const ANCHOR_KINDS = {
   },
   // a citable legal instrument
   instrument: {
-    test: claim => /\b(artigo|article|modelo|anexo|lei|decreto|portaria|c[óo]digo|regulamento|CIVA|RITI|CPPT|CIRS|CIRC|CIMI|CIMT)\b/i.test(claim),
+    // (?:s|es)? so that "artigos", "leis" and "decretos" count as citations too.
+    test: claim => /\b(artigo|article|modelo|anexo|lei|decreto|portaria|c[óo]digo|regulamento)(?:s|es)?\b/i.test(claim) || /\b(CIVA|RITI|CPPT|CIRS|CIRC|CIMI|CIMT|RGPD|LGT|EBF)\b/.test(claim),
     requirement: "a citable legal instrument (artigo, lei, decreto, código, modelo, anexo…)",
   },
   // a specific official document, form or account type the reader can ask for by name
