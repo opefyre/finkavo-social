@@ -10618,6 +10618,31 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs84.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "irs-single-parents-deduct-a-larger-share-of-everyday-spending",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "Single-parent households deduct a bigger share of everyday spending",
+      "userQuestion": "How much of ordinary household spending comes back on IRS?",
+      "scenario": "A single parent asks for invoices with their NIF at the same rate as everyone else, unaware their household deducts a higher share up to a higher ceiling.",
+      "audience": "households claiming general family expenses",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The share of general family expenses deductible and the ceiling, the higher figures for single-parent households, and the February communication that conditions both.",
+      "anchorFact": {
+        "claim": "Under artigo 78-B of the Código do IRS 35 per cent of the amount borne by any member of the household on general family expenses is deductible, with an annual ceiling of 250 euros for each taxpayer, rising to 45 per cent with an overall limit of 335 euros for single-parent households; the deduction applies to invoices from any sector other than those covered by artigos 78-C to 78-E, provided they are communicated to the Autoridade Tributária by the end of February following the year of issue.",
+        "kind": "figure",
+        "namedThing": "despesas gerais familiares",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs78b.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "A single-parent household gets ten percentage points more and a higher ceiling, which is the sort of difference nobody is told at the till.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs78b.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
