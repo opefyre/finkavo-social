@@ -10493,6 +10493,81 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs2.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "health-you-only-ever-apply-once-for-fee-exemption",
+      "pillar": "health_family",
+      "valueClass": "insider",
+      "title": "The fee exemption request that is made once and only once",
+      "userQuestion": "Should I reapply for the SNS fee exemption every year?",
+      "scenario": "Someone refused one year never applies again, not knowing the single request is reassessed automatically for the rest of their life.",
+      "audience": "people who applied or were refused SNS fee exemption",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The one-time nature of the request, the assessment deadline, the window to correct a mistake, and the route to challenge a refusal.",
+      "anchorFact": {
+        "claim": "The request for exemption from taxas moderadoras on grounds of insuficiência económica can only be made once, after which the situation is reassessed annually, so a person refused in one year is still assessed the next; the request can be made at any time and is validated or refused within 10 working days of submission, it can be corrected or deleted within 24 hours of submission and not afterwards, and a person who disagrees with the Autoridade Tributária's decision may complain through the Taxas moderadoras service on the SNS 24 portal.",
+        "kind": "deadline",
+        "namedThing": "taxas moderadoras",
+        "verifyAt": "https://www.sns24.gov.pt/servico/taxas-moderadoras/",
+        "volatility": "stable"
+      },
+      "notObvious": "A refusal is not the end of it: the same request keeps being reassessed every year, which is why applying once while ineligible is still worth doing.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.sns24.gov.pt/servico/taxas-moderadoras/",
+        "authority": "SNS 24"
+      }
+    },
+    {
+      "id": "health-priority-attendance-at-sixty-per-cent",
+      "pillar": "health_family",
+      "valueClass": "threshold",
+      "title": "The incapacity level that gives priority at the counter",
+      "userQuestion": "Does a recognised disability give priority in health services?",
+      "scenario": "Someone entitled to priority queues normally for years because nobody mentions the entitlement or the level it attaches to.",
+      "audience": "people with a recognised degree of incapacity",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The incapacity level that gives priority attendance, the comparison it depends on, and the situation where it does not apply.",
+      "anchorFact": {
+        "claim": "Under the patient rights regime, where patients present clinical pictures of identical gravity and complexity, priority of attendance must be given to people with a disability or incapacity of 60 per cent or more, except in situations of in-person attendance carried out by prior appointment.",
+        "kind": "figure",
+        "namedThing": "direito ao atendimento",
+        "verifyAt": "https://www.sns24.gov.pt/guia/direitos-e-deveres-do-utente/",
+        "volatility": "stable"
+      },
+      "notObvious": "Priority is between patients of comparable clinical urgency rather than over sicker ones, which is why it operates at the counter rather than in triage.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.sns24.gov.pt/guia/direitos-e-deveres-do-utente/",
+        "authority": "SNS 24"
+      }
+    },
+    {
+      "id": "health-the-right-to-have-someone-with-you",
+      "pillar": "health_family",
+      "valueClass": "insider",
+      "title": "The right to be accompanied that must be told to you on admission",
+      "userQuestion": "Can I have someone with me in a health service?",
+      "scenario": "A patient is separated from the person who came with them and does not know the service was required to tell them about the right on admission.",
+      "audience": "patients using SNS services",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The right to be accompanied by a person of your choosing, the duty to inform you of it, and the right to withdraw consent at any moment.",
+      "anchorFact": {
+        "claim": "In Serviço Nacional de Saúde services everyone is recognised and guaranteed the direito ao acompanhamento, the right to be accompanied by a person of their own choosing, and that information must be provided on admission to the service; separately, consent to or refusal of care must be declared freely and in an informed way and the patient may revoke consent at any moment during the provision of care.",
+        "kind": "procedure",
+        "namedThing": "direito ao acompanhamento",
+        "verifyAt": "https://www.sns24.gov.pt/guia/direitos-e-deveres-do-utente/",
+        "volatility": "stable"
+      },
+      "notObvious": "Being told about the right is itself part of the right, so a service that never mentioned it has already fallen short.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.sns24.gov.pt/guia/direitos-e-deveres-do-utente/",
+        "authority": "SNS 24"
+      }
     }
   ]
 }
