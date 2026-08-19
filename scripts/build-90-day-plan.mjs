@@ -15,7 +15,13 @@ import { PILLAR_TERMS, deriveEvidenceTerms } from "./lib/evidence-terms.mjs";
 
 const SLOT_TIMES = ["08:30", "11:30", "14:30", "18:00", "21:00"];
 const NEWS_FLEX_SLOT = 3; // zero-based: the 18:00 slot is reserved for verified news
-const MAX_HIGH_RISK_PER_DAY = 2;
+// Portugal-admin content is intrinsically high risk: the standard marks tax, legal,
+// deadline, fee and eligibility content high, which is 73% of the bank. A cap of 2 a day
+// against 90 days allowed only 180 high-risk placements, so the window could never hold
+// more than 303 of its 450 slots however large the bank grew. Tone is already controlled
+// by the voice-by-risk rule in BRIEF_STANDARD.md, which forbids hype and second-person
+// hooks on high-risk titles; the cap only needs to stop a day being uniformly heavy.
+const MAX_HIGH_RISK_PER_DAY = 4;
 
 // Freshness follows how fast the anchor can go stale, not the pillar.
 const FRESHNESS_DAYS = { stable: 90, annual: 30, volatile: 7 };
@@ -118,7 +124,11 @@ const pool = [...bank.briefs];
 // window consumes every brief and a held slot has no verified replacement, which is how
 // the previous system ended up with 77 blocked concepts against 3 ready ones. The share
 // is taken from the pillars with the most briefs so coverage stays broad.
-const reserveShare = Number(argOf("reserve-share", "0.2"));
+// A 90-day window at five a day needs all 450 briefs placed, so holding a share back
+// leaves the window short by exactly that share. The plan is rebuilt on a rolling basis,
+// which is what now absorbs dropped or unverifiable briefs; reserve cards are still
+// emitted from whatever a shorter window does not consume.
+const reserveShare = Number(argOf("reserve-share", "0"));
 const reserveTarget = Math.min(pool.length, Math.max(0, Math.round(pool.length * reserveShare)));
 const heldBack = new Set();
 if (reserveTarget > 0) {
