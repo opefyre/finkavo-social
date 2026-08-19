@@ -8443,6 +8443,56 @@
         "canonicalUrl": "https://aima.gov.pt/pt/trabalhar/autorizacao-de-residencia-para-exercicio-de-atividade-profissional-subordinada-com-dispensa-de-visto-de-residencia-art-88-o-n-o-",
         "authority": "AIMA"
       }
+    },
+    {
+      "id": "banking-thirty-days-to-decide-and-seven-you-cannot-sign",
+      "pillar": "banking_money",
+      "valueClass": "deadline_action",
+      "title": "Thirty days to compare, and seven when you cannot sign",
+      "userQuestion": "Can a bank rush me into signing a mortgage offer?",
+      "scenario": "A buyer under pressure from a seller signs the first proposal the week it arrives, believing the rate will be withdrawn.",
+      "audience": "people comparing mortgage offers",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The minimum validity of a mortgage proposal, the reflection period during which it cannot be signed, and who the information sheet must go to.",
+      "anchorFact": {
+        "claim": "A contractual proposal for a home loan has a minimum validity of 30 days so the customer can compare offers, and the customer and any guarantor have a minimum reflection period of 7 days from the presentation of the proposal during which the credit contract cannot be concluded; the Ficha de Informação Normalizada Europeia must be delivered to both the banking customer and the guarantor.",
+        "kind": "deadline",
+        "namedThing": "Ficha de Informação Normalizada Europeia",
+        "verifyAt": "https://clientebancario.bportugal.pt/en/how-enter-home-loan-agreements",
+        "volatility": "stable"
+      },
+      "notObvious": "The seven days are a prohibition on the bank rather than an option for you, so an offer that expires inside them was never validly pressed.",
+      "journeyStage": "buying_a_home",
+      "source": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/en/how-enter-home-loan-agreements",
+        "authority": "Banco de Portugal"
+      }
+    },
+    {
+      "id": "banking-reusing-a-recent-property-valuation",
+      "pillar": "banking_money",
+      "valueClass": "insider",
+      "title": "The valuation you can reuse instead of paying twice",
+      "userQuestion": "Do I have to pay for a new property valuation to move my mortgage?",
+      "scenario": "Someone shopping a mortgage to another bank pays for a fresh valuation months after the last one, on a property that has not changed.",
+      "audience": "people transferring or renegotiating a mortgage",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "Your right to see the valuation report, the age of report a bank must accept, and what a refusal costs the bank.",
+      "anchorFact": {
+        "claim": "Credit institutions must make the property avaliação report available to the customer within 10 days of receiving it from the appraiser, and a bank customer may ask the institution to use an assessment report issued less than 6 months ago provided it was prepared by a registered property appraiser; where the institution refuses such a report it may not charge the customer new commissions or expenses related to the property assessment.",
+        "kind": "figure",
+        "namedThing": "avaliação",
+        "verifyAt": "https://clientebancario.bportugal.pt/en/how-repay-and-transfer",
+        "volatility": "stable"
+      },
+      "notObvious": "A bank that insists on its own valuer has to absorb the cost, which turns the six-month report into a bargaining chip rather than a formality.",
+      "journeyStage": "buying_a_home",
+      "source": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/en/how-repay-and-transfer",
+        "authority": "Banco de Portugal"
+      }
     }
   ]
 }
