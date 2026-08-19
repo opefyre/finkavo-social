@@ -9118,6 +9118,31 @@
         "canonicalUrl": "https://www.dges.gov.pt/pt/pagina/propinas",
         "authority": "Direção-Geral do Ensino Superior"
       }
+    },
+    {
+      "id": "housing-renovation-before-the-first-tenant-still-counts",
+      "pillar": "housing_property",
+      "valueClass": "edge_case",
+      "title": "Work done before the first tenant can still be deducted",
+      "userQuestion": "Can I deduct the renovation I did before letting the flat?",
+      "scenario": "An owner renovates, then lets, and writes off the cost as pre-rental spending that arrived too early to claim.",
+      "audience": "landlords who renovated before letting",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The window before a letting starts in which conservation and maintenance costs remain deductible against rent.",
+      "anchorFact": {
+        "claim": "Costs incurred in the 24 months before the start of the letting for conservation and maintenance work are deductible against categoria F income, alongside the expenses actually incurred and paid to obtain or guarantee the income of each property including rent insurance.",
+        "kind": "figure",
+        "namedThing": "categoria F",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00358.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The clock runs backwards from the first tenancy rather than forwards from the invoice, so work done two years early is still inside it.",
+      "journeyStage": "renting_out",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00358.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
