@@ -7618,6 +7618,56 @@
         "canonicalUrl": "https://www.consumidor.asf.com.pt/pt/seguros/seguro-de-habita%c3%a7%c3%a3o",
         "authority": "Autoridade de Supervisão de Seguros e Fundos de Pensões"
       }
+    },
+    {
+      "id": "employment-part-time-parents-get-first-refusal-on-full-time",
+      "pillar": "employment",
+      "valueClass": "insider",
+      "title": "Going part-time for a child, and the way back to full time",
+      "userQuestion": "If I reduce my hours for a child, can I get full time back later?",
+      "scenario": "A parent refuses part-time work fearing it is a one-way door out of a full-time career.",
+      "audience": "parents considering reduced hours",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "How part-time pay is set, how the hours are arranged, how long the arrangement can run, and the preference for returning to full time.",
+      "anchorFact": {
+        "claim": "Pay for a worker on trabalho a tempo parcial may not be lower than the fraction of a comparable full-time worker's pay matching the agreed working period; the normal period is half that of a comparable full-time role and, at the worker's request, is worked daily in the morning or the afternoon or on 3 days a week; the arrangement can be extended to 2 years, or 3 for a third or subsequent child, or 4 where the child has a disability or chronic illness, and part-time workers are given preference on equal terms when full-time vacancies are filled.",
+        "kind": "figure",
+        "namedThing": "trabalho a tempo parcial",
+        "verifyAt": "https://diariodarepublica.pt/dr/lexionario/termo/trabalho-tempo-parcial",
+        "volatility": "stable"
+      },
+      "notObvious": "The return route is written into the law as a preference on full-time vacancies, which is what makes the reduction temporary rather than a career decision.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/lexionario/termo/trabalho-tempo-parcial",
+        "authority": "Diário da República / Código do Trabalho"
+      }
+    },
+    {
+      "id": "employment-remote-work-agreements-renew-themselves",
+      "pillar": "employment",
+      "valueClass": "deadline_action",
+      "title": "A remote work agreement renews unless someone says otherwise",
+      "userQuestion": "How long does a teleworking agreement last?",
+      "scenario": "A worker or employer assumes a six-month remote arrangement simply ends, and it silently renews for another six.",
+      "audience": "people working under a teleworking agreement",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The written agreement teleworking requires, the cap on a fixed term, the automatic renewal, and the fifteen days to stop it.",
+      "anchorFact": {
+        "claim": "Teletrabalho depends on a written agreement under artigo 166 of the Código do Trabalho; the agreement may be for a determinate or indeterminate duration, a determinate duration may not exceed 6 months and renews automatically for equal periods unless one of the parties declares in writing, up to 15 days before it ends, that it does not want renewal; as a rule the employer must provide the equipment and systems needed for the work and for worker-employer interaction.",
+        "kind": "deadline",
+        "namedThing": "teletrabalho",
+        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475-46737975",
+        "volatility": "stable"
+      },
+      "notObvious": "Silence renews it, so ending a remote arrangement takes a written notice fifteen days out rather than simply letting the term run down.",
+      "journeyStage": "in_employment",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475-46737975",
+        "authority": "Diário da República / Código do Trabalho"
+      }
     }
   ]
 }
