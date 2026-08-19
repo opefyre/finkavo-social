@@ -21,7 +21,7 @@ import { authenticatedReviewer } from "./access-auth.js";
 import { findDuplicate, type DuplicateCandidate } from "./duplicate.js";
 import { editorialIdentity } from "./editorial-identity.js";
 import { eligibleReserveCards, loadEvergreenReserve } from "./evergreen-reserve.js";
-import { collectDiscoveries, collectOfficialPages } from "./collectors.js";
+import { collectDiscoveries, collectOfficialPages, fetchPage, visibleText, pageTitle, chunkText } from "./collectors.js";
 import { sourceSupportsNewsTopic } from "./news-evidence.js";
 import { editorialScore } from "./editorial-score.js";
 import { boardPage } from "./board.js";
@@ -659,6 +659,57 @@ const server = http.createServer(async (req, res) => {
     // plan. Without this the window silently ages out and daily planning starts
     // rejecting the current date. The builder is the single source of layout rules, so
     // it is invoked rather than reimplemented here.
+    // Ingests every canonical source referenced by the brief bank into the local corpus.
+    //
+    // Evidence research matches against `document`/`chunk` and requires the brief's own
+    // canonical URL to be present, so a brief whose source was never ingested is held no
+    // matter how good it is. This keeps the corpus in step with the bank; without it,
+    // adding a brief silently produces a held slot.
+    if (req.method === "POST" && url.pathname === "/v1/corpus/ingest-briefs") {
+      const bankRaw = await readFile(new URL("../../../plans/brief-bank.json", import.meta.url), "utf8");
+      const bank = JSON.parse(bankRaw) as { briefs: Array<{ source: { canonicalUrl: string; authority: string } }> };
+      const targets = [...new Map(bank.briefs.map(b => [b.source.canonicalUrl, b.source.authority])).entries()];
+      const force = Boolean((await readJson(req).catch(() => ({})) as { force?: boolean }).force);
+
+      const results: Array<Record<string, unknown>> = [];
+      for (const [canonicalUrl, authority] of targets) {
+        if (!force) {
+          const [fresh] = await sql`SELECT id FROM document WHERE source_url=${canonicalUrl} AND verified_still_available=true AND last_verified_at > now() - INTERVAL '24 hours'`;
+          if (fresh) { results.push({ url: canonicalUrl, state: "fresh" }); continue; }
+        }
+        const page = await fetchPage(canonicalUrl);
+        const text = page.html ? visibleText(page.html) : "";
+        // A page that fetched but yielded almost no text is unusable as evidence and must
+        // not be stored as if it were, or every brief citing it verifies against nothing.
+        if (page.status < 200 || page.status >= 400 || text.length < 400) {
+          results.push({ url: canonicalUrl, state: "unusable", status: page.status, length: text.length, error: page.error });
+          continue;
+        }
+        const contentHash = hash(text);
+        const [document] = await sql`
+          INSERT INTO document (source_tier, source_url, source_authority, title, original_lang, content_hash,
+                                fetched_at, last_verified_at, freshness_confidence, last_upstream_check_at, verified_still_available)
+          VALUES ('official', ${canonicalUrl}, ${authority}, ${pageTitle(page.html, canonicalUrl)}, 'pt', ${contentHash},
+                  now(), now(), 'fresh', now(), true)
+          ON CONFLICT (source_url) DO UPDATE SET
+            title=excluded.title, content_hash=excluded.content_hash, last_verified_at=now(),
+            freshness_confidence='fresh', last_upstream_check_at=now(), verified_still_available=true
+          RETURNING id
+        `;
+        const chunks = chunkText(text);
+        await sql`DELETE FROM chunk WHERE document_id=${document.id}`;
+        for (const [index, chunk] of chunks.entries()) {
+          await sql`INSERT INTO chunk (document_id, chunk_index, text, token_count, lang, content_hash)
+                    VALUES (${document.id}, ${index}, ${chunk}, ${Math.ceil(chunk.length / 4)}, 'pt', ${hash(chunk)})`;
+        }
+        results.push({ url: canonicalUrl, state: "ingested", chunks: chunks.length, characters: text.length });
+      }
+      const ingested = results.filter(r => r.state === "ingested").length;
+      const unusable = results.filter(r => r.state === "unusable").length;
+      await sql`INSERT INTO social_event (event_type, payload) VALUES ('corpus.briefs_ingested', ${sql.json({ targets: targets.length, ingested, unusable })})`;
+      return send(res, 200, { targets: targets.length, ingested, unusable, results });
+    }
+
     if (req.method === "POST" && url.pathname === "/v1/planning/rebuild") {
       const projectRoot = new URL("../../../", import.meta.url).pathname;
       const built = await new Promise<{ code: number; output: string }>(resolve => {
