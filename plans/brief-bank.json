@@ -10093,6 +10093,81 @@
         "canonicalUrl": "https://www.gov.pt/guias/imposto-sobre-valor-acrescentado-iva-em-portugal",
         "authority": "gov.pt"
       }
+    },
+    {
+      "id": "irs-foreign-income-is-declared-before-foreign-tax",
+      "pillar": "irs",
+      "valueClass": "edge_case",
+      "title": "Foreign income is declared gross, then the tax is credited back",
+      "userQuestion": "Do I declare what I received from abroad or what I earned before their tax?",
+      "scenario": "A resident declares the net amount that landed in their account and loses the credit for the tax already paid abroad.",
+      "audience": "residents with income from abroad",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The annex foreign income goes in, whether to declare gross or net, and how tax paid abroad is credited.",
+      "anchorFact": {
+        "claim": "A resident must declare all foreign-source income in Anexo J of the Modelo 3, reporting gross income before the tax paid abroad, and the foreign tax is then taken into account as a credit for international double taxation in the final calculation under artigo 81 of the Código do IRS; the amount to indicate is the tax actually paid abroad rather than merely withheld.",
+        "kind": "instrument",
+        "namedThing": "Anexo J",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00653.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Declaring the net figure looks honest and costs you the credit twice over, because the relief is calculated from the gross.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00653.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-the-certificate-a-treaty-claim-needs",
+      "pillar": "irs",
+      "valueClass": "insider",
+      "title": "The certificate a double taxation claim actually needs",
+      "userQuestion": "How do I prove I am taxed in the other country under the treaty?",
+      "scenario": "Someone claims treaty relief with payslips and foreign assessments and is refused for lacking the one document that counts.",
+      "audience": "people taxed in two countries",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The specific certificate a treaty claim requires and what it must expressly mention.",
+      "anchorFact": {
+        "claim": "To rely on a double taxation convention the person should present a certificado de residência fiscal issued by the tax authority of the country or jurisdiction of tax residence, expressly mentioning the convention to avoid international double taxation concluded with Portugal.",
+        "kind": "artefact",
+        "namedThing": "certificado de residência fiscal",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00653.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "A general residence certificate is not enough: it has to name the convention, which is why claims fail on a document people believe they already have.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00653.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-declaring-a-foreign-bank-account",
+      "pillar": "irs",
+      "valueClass": "deadline_action",
+      "title": "The foreign account you have to list, and the extension if the tax is late",
+      "userQuestion": "Do I have to tell Finanças about my bank account abroad?",
+      "scenario": "A resident with an account abroad files without listing it, or files late while waiting for a foreign tax assessment that never arrives in time.",
+      "audience": "residents holding accounts or income abroad",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Where a foreign account is declared and with which identifiers, the sixty days to update a fiscal address abroad, and the form that buys time when a foreign assessment is pending.",
+      "anchorFact": {
+        "claim": "Foreign financial accounts must be declared in Anexo J, quadro 11, using the IBAN and BIC codes; a person moving abroad has 60 days to update their fiscal address, and where the foreign tax assessment is still pending the Modelo 49 allows the filing to be extended until the end of the year.",
+        "kind": "deadline",
+        "namedThing": "Anexo J",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00653.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "There is a named form for the case where the other country has not assessed you yet, which turns a missed deadline into a routine extension.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00653.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
