@@ -4098,6 +4098,106 @@
         "canonicalUrl": "https://www2.gov.pt/servicos/requerer-o-subsidio-de-apoio-ao-cuidador-informal-principal",
         "authority": "gov.pt / Segurança Social"
       }
+    },
+    {
+      "id": "driving-free-transport-passes-by-age",
+      "pillar": "driving_transport",
+      "valueClass": "threshold",
+      "title": "The ages that make a public transport pass free",
+      "userQuestion": "Is my child's or my own transport pass free?",
+      "scenario": "A family keeps paying for a monthly pass, or a student assumes the free pass ended when they left school.",
+      "audience": "students and young people using public transport",
+      "risk": "low",
+      "volatility": "annual",
+      "promise": "The two age-based free passes and the exact month each one stops, plus the discounts for pensioners and disability.",
+      "anchorFact": {
+        "claim": "The sub 18+TP pass is free for children and young people aged 4 to 18 and valid until the last day of the month they turn 19, the sub 23+TP pass covers those over 18 until the last day of the month they turn 24, a 50% discount applies to beneficiaries of the solidarity supplement, social integration income and citizens with incapacity of 60% or more, and a 25% discount applies to pensioners whose monthly pension income is at or below 1.2 times the IAS.",
+        "kind": "figure",
+        "namedThing": "passe",
+        "verifyAt": "https://imt-ip.pt/sites/IMTT/Portugues/Tarifas/PassesGratuitos-JovensEstudantes/Paginas/PassesGratuitos-JovensEstudantes.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "Both passes run to the end of the month of a birthday rather than the birthday itself, and the free pass follows age rather than being a student.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://imt-ip.pt/sites/IMTT/Portugues/Tarifas/PassesGratuitos-JovensEstudantes/Paginas/PassesGratuitos-JovensEstudantes.aspx",
+        "authority": "IMT"
+      }
+    },
+    {
+      "id": "education-study-grant-application-windows",
+      "pillar": "education_children",
+      "valueClass": "deadline_action",
+      "title": "The study grant window, and the late route that still pays",
+      "userQuestion": "Have we missed the deadline to apply for a higher education grant?",
+      "scenario": "A family enrolling late assumes the grant window has closed and does not apply at all.",
+      "audience": "higher education students applying for a grant",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The main application window, the twenty-working-day rule for late enrolment, and the later window that still pays proportionally.",
+      "anchorFact": {
+        "claim": "For 2026/2027 the bolsa de estudo application runs from 14 August to 2 October, a student enrolling before 2 October has 20 working days to apply even if that runs past the date, and applications between 3 October and 31 May are still accepted with the grant paid proportionally.",
+        "kind": "deadline",
+        "namedThing": "bolsa de estudo",
+        "verifyAt": "https://www.dges.gov.pt/pt/pagina/prazos-de-candidatura",
+        "volatility": "annual"
+      },
+      "notObvious": "A late application still pays a proportional grant, so giving up after the main deadline forfeits money that was still available.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://www.dges.gov.pt/pt/pagina/prazos-de-candidatura",
+        "authority": "DGES"
+      }
+    },
+    {
+      "id": "housing-imt-jovem-prior-ownership-rule",
+      "pillar": "housing_property",
+      "valueClass": "edge_case",
+      "title": "The past property share that can disqualify you from IMT Jovem",
+      "userQuestion": "I once inherited part of a house — does that block the under-35 exemption?",
+      "scenario": "A first-time buyer who once held a fraction of a family property assumes they still count as a first-time buyer.",
+      "audience": "under-35 buyers with a past property interest",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "How any prior share of residential property affects the exemption, the three-year rule that restores it, and what happens when only one of a couple qualifies.",
+      "anchorFact": {
+        "claim": "IMT Jovem does not apply where a person already owns any part of residential property however acquired, but where that share was sold and more than three years elapse between the sale and the acquisition of the permanent home the right to exemption returns; where only one member of a couple meets the conditions the exemption applies only to the 50% that person acquires.",
+        "kind": "artefact",
+        "namedThing": "IMT Jovem",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/IMT_Jovem/Pages/default.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "An inherited fraction counts as ownership, and the three-year clock runs from the sale, so timing a purchase can restore an exemption people assume is permanently lost.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/IMT_Jovem/Pages/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "housing-public-guarantee-for-young-buyers",
+      "pillar": "housing_property",
+      "valueClass": "threshold",
+      "title": "The state guarantee that covers a young buyer's missing deposit",
+      "userQuestion": "Can I buy without a deposit if I am under 35?",
+      "scenario": "A young buyer with income but no savings assumes the deposit requirement is absolute and stops looking.",
+      "audience": "under-35 buyers without a deposit",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "How much of the loan the State guarantees, the purchase price ceiling, the income and ownership conditions, and how long the scheme runs.",
+      "anchorFact": {
+        "claim": "The garantia pública gives a personal State guarantee of up to 15% of the initially contracted capital so that borrowers aged 18 to 35 with tax domicile in Portugal can obtain 100% financing, requires income up to the 8th IRS bracket, no property ownership, no prior public guarantee and no debts to Finanças or Segurança Social, applies to transactions up to 450,000 euros, lasts 10 years, and covers credit contracts formalised up to 31 December 2026.",
+        "kind": "figure",
+        "namedThing": "garantia pública",
+        "verifyAt": "https://www2.gov.pt/-/7929gne_texto",
+        "volatility": "volatile"
+      },
+      "notObvious": "The bank's own risk and effort-rate limits still apply, so the guarantee removes the deposit barrier without removing the affordability test.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/-/7929gne_texto",
+        "authority": "gov.pt"
+      }
     }
   ]
 }
