@@ -6018,6 +6018,56 @@
         "canonicalUrl": "https://www.gov.pt/servicos/cancelar-o-cartao-de-cidadao",
         "authority": "gov.pt / Instituto dos Registos e do Notariado"
       }
+    },
+    {
+      "id": "driving-isv-exemption-on-moving-to-portugal",
+      "pillar": "driving_transport",
+      "valueClass": "deadline_action",
+      "title": "Twelve months to claim the car tax exemption for moving here",
+      "userQuestion": "Can I bring my car when I move to Portugal without paying ISV?",
+      "scenario": "Someone moves, settles in, deals with the car a year and a half later, and pays full ISV on a vehicle that would have come in free.",
+      "audience": "people moving to Portugal with a vehicle",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The exemption for transferring residence, the twelve-month deadline, the one-vehicle limit, and the only channel that accepts the request.",
+      "anchorFact": {
+        "claim": "A person transferring their legal residence from another Member State or a third country to Portugal may request ISV exemption for a vehicle brought with them up to 12 months from the date of the residence transfer, each person may request the exemption for only 1 vehicle, and requests are submitted exclusively through the Portal das Finanças by electronic transmission of the Declaração Aduaneira de Veículo.",
+        "kind": "deadline",
+        "namedThing": "ISV",
+        "verifyAt": "https://info-aduaneiro.portaldasfinancas.gov.pt/pt/informacao_aduaneira/Veiculos/isencao_res/Pages/faq-isv-isen-res.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The clock starts at the residence transfer, not at the car's arrival, so a vehicle shipped late can be inside its own deadlines and outside this one.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://info-aduaneiro.portaldasfinancas.gov.pt/pt/informacao_aduaneira/Veiculos/isencao_res/Pages/faq-isv-isen-res.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "driving-isv-never-falls-below-one-hundred-euros",
+      "pillar": "driving_transport",
+      "valueClass": "threshold",
+      "title": "The hundred euros of car tax a clean engine cannot avoid",
+      "userQuestion": "Can a low-emission car end up with no ISV at all?",
+      "scenario": "An importer of a low-emission vehicle calculates a negative environmental component and budgets for zero tax.",
+      "audience": "people importing a low-emission vehicle",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "How the two ISV components interact when one is negative, and the floor the total cannot go below.",
+      "anchorFact": {
+        "claim": "ISV on passenger vehicles combines a cilindrada component and an environmental component from Tabela A, and where the environmental component produces a negative value it is deducted from the cilindrada component, with the total tax payable never being less than 100 euros.",
+        "kind": "figure",
+        "namedThing": "ISV",
+        "verifyAt": "https://info-aduaneiro.portaldasfinancas.gov.pt/pt/informacao_aduaneira/Veiculos/regularizacao/Pages/faq-isv-06.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "A negative environmental component is a discount on the other half of the bill, not a refund, and the floor stops it reaching zero.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info-aduaneiro.portaldasfinancas.gov.pt/pt/informacao_aduaneira/Veiculos/regularizacao/Pages/faq-isv-06.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
