@@ -10168,6 +10168,56 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00653.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "driving-letting-a-licence-lapse-costs-an-exam",
+      "pillar": "driving_transport",
+      "valueClass": "costly_mistake",
+      "title": "Two years lapsed and the licence needs an exam again",
+      "userQuestion": "What happens if I let my driving licence expire?",
+      "scenario": "A driver puts off revalidation, assumes it is a formality whenever they get round to it, and ends up back in a test centre.",
+      "audience": "drivers whose licence is expiring",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The window to revalidate, the fee and the reduced fee, and the two lapse thresholds that add an exam and then training.",
+      "anchorFact": {
+        "claim": "Revalidation must be requested in the 6 months before the licence expires and costs 30 euros, reduced to 15 euros for applicants aged 70 or over with a 10 per cent discount available online; driving with an expired licence is an infraction, a delay beyond 2 years makes a special practical exam mandatory, and beyond 5 years mandatory training and testing applies.",
+        "kind": "figure",
+        "namedThing": "revalidação",
+        "verifyAt": "https://www.imt-ip.pt/condutores/informacoes-gerais/quero-ser-condutor/revalidacao-da-carta-de-conducao/",
+        "volatility": "annual"
+      },
+      "notObvious": "The penalty escalates in steps rather than as a fine, so the cost of forgetting is measured in exams and courses instead of euros.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.imt-ip.pt/condutores/informacoes-gerais/quero-ser-condutor/revalidacao-da-carta-de-conducao/",
+        "authority": "Instituto da Mobilidade e dos Transportes"
+      }
+    },
+    {
+      "id": "driving-the-inspection-schedule-changes-twice",
+      "pillar": "driving_transport",
+      "valueClass": "threshold",
+      "title": "Four years, then two, then every year",
+      "userQuestion": "How often does my car actually need inspecting?",
+      "scenario": "An owner books inspections on the wrong rhythm and either pays for one too early or misses the year the frequency changed.",
+      "audience": "owners of light passenger vehicles",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The three phases of the inspection schedule for a light passenger car, and the different rhythm heavy vehicles follow.",
+      "anchorFact": {
+        "claim": "A light passenger vehicle has its first periodic inspection 4 years after the date of first registration, then every 2 years until the vehicle reaches 8 years old, and annually after that; heavy passenger and heavy goods vehicles are first inspected 1 year after first registration and then annually, with heavy passenger vehicles moving to every 6 months from the 8th year, and a re-inspection costs half the applicable fee.",
+        "kind": "figure",
+        "namedThing": "inspeção periódica",
+        "verifyAt": "https://www.imt-ip.pt/veiculos/inspecao-de-veiculos/tipos-de-inspecoes/",
+        "volatility": "stable"
+      },
+      "notObvious": "The frequency changes twice in a car's life, at four years and at eight, which is when owners most often lose track of the date.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.imt-ip.pt/veiculos/inspecao-de-veiculos/tipos-de-inspecoes/",
+        "authority": "Instituto da Mobilidade e dos Transportes"
+      }
     }
   ]
 }
