@@ -62,8 +62,11 @@ const estimateTokens = (text: string) => Math.ceil(text.length / CHARS_PER_TOKEN
  * floor rather than zero: if the input is so large that nothing fits, the request should
  * fail loudly as a 413 rather than silently ask for a truncated, schema-invalid object.
  */
-function completionBudget(request: { instructions: string; input: string; maxCompletionTokens?: number }): number {
-  const used = estimateTokens(request.instructions) + estimateTokens(request.input);
+function completionBudget(request: { instructions: string; input: string; schema?: unknown; maxCompletionTokens?: number }): number {
+  // The JSON schema is sent with the request and counts against the same window; at
+  // ~2100 characters it is not a rounding error.
+  const schemaTokens = request.schema ? estimateTokens(JSON.stringify(request.schema)) : 0;
+  const used = estimateTokens(request.instructions) + estimateTokens(request.input) + schemaTokens;
   const available = TOKENS_PER_MINUTE - used - SAFETY_MARGIN;
   const ceiling = request.maxCompletionTokens ?? Number(process.env.LLM_MAX_TOKENS ?? 5_000);
   return Math.max(MIN_COMPLETION_TOKENS, Math.min(ceiling, available));
