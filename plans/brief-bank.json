@@ -5518,6 +5518,56 @@
         "canonicalUrl": "https://www.ersar.pt/pt_consumidor_tarifas-dos-servicos_tarifarios-para-familias-numerosas.html",
         "authority": "ERSAR"
       }
+    },
+    {
+      "id": "freelance-unemployment-cover-for-single-client-workers",
+      "pillar": "freelance_business",
+      "valueClass": "insider",
+      "title": "The unemployment benefit that exists for one-client freelancers",
+      "userQuestion": "If my only client drops me, is there anything like unemployment benefit?",
+      "scenario": "A freelancer whose sole contracting entity ends the arrangement assumes independent workers have no unemployment cover and never applies.",
+      "audience": "freelancers working mainly for one client",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Who the subsídio por cessação de atividade is for, the contribution record it needs, and the two moments economic dependence is tested at.",
+      "anchorFact": {
+        "claim": "The subsídio por cessação de atividade is paid to independent workers economically dependent on a single entidade contratante and requires cumulatively an involuntary end to the contract, 360 days of economically dependent independent activity with contributions actually paid in the 24 months immediately before the cessation, economic dependence both in the previous civil year and at the date of cessation, and registration at the centro de emprego for the area of residence.",
+        "kind": "figure",
+        "namedThing": "entidade contratante",
+        "verifyAt": "https://www.gov.pt/servicos/obter-informacoes-sobre-o-subsidio-por-cessacao-de-atividade",
+        "volatility": "stable"
+      },
+      "notObvious": "Dependence is tested twice, at two different dates, so a freelancer who diversified in the final months can fall out of cover exactly when they lose the client.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/obter-informacoes-sobre-o-subsidio-por-cessacao-de-atividade",
+        "authority": "gov.pt / Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "freelance-late-cessation-claim-shortens-not-cancels",
+      "pillar": "freelance_business",
+      "valueClass": "deadline_action",
+      "title": "Ninety days to claim, and what a late claim really costs",
+      "userQuestion": "I missed the deadline for the cessation benefit. Is it gone?",
+      "scenario": "A freelancer who applies four months late assumes the claim is void, or applies without realising the delay is being deducted.",
+      "audience": "freelancers who lost their contracting entity",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The claim window, and the day-for-day rule that applies when you file after it.",
+      "anchorFact": {
+        "claim": "The subsídio por cessação de atividade must be claimed within 90 consecutive days from the date of unemployment caused by the end of the service contract, and a claim delivered after those 90 days but still within the legal grant period reduces the grant period by the time corresponding to the delay.",
+        "kind": "deadline",
+        "namedThing": "cessação de atividade",
+        "verifyAt": "https://www.gov.pt/servicos/obter-informacoes-sobre-o-subsidio-por-cessacao-de-atividade",
+        "volatility": "stable"
+      },
+      "notObvious": "Lateness is priced, not punished: every day of delay is one fewer day of benefit, so applying immediately is worth money even when you are already late.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/obter-informacoes-sobre-o-subsidio-por-cessacao-de-atividade",
+        "authority": "gov.pt / Instituto da Segurança Social"
+      }
     }
   ]
 }
