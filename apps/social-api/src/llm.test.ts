@@ -66,6 +66,30 @@ describe("free-tier pacing", () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
+  it("refuses a request the day's allowance cannot cover, and says so", async () => {
+    // The per-minute window is wide open here; only the daily ceiling is in the way,
+    // which is the failure that used to arrive as an unexplained afternoon of no drafts.
+    const fetchMock = respondWith(4_000);
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    const { generateStructured, llmDailyBudget, LlmRateLimitError } = await freshClient({
+      ...BASE_ENV, LLM_TOKENS_PER_MINUTE: "40000", LLM_TOKENS_PER_DAY: "11000",
+    });
+
+    // Each call reserves the completion ceiling it might need (~5050) before sending,
+    // then settles to the 4000 actually used, so the day is charged what was spent.
+    await generateStructured(REQUEST);
+    expect(llmDailyBudget().spent).toBe(4_000);
+
+    await generateStructured(REQUEST);
+    expect(llmDailyBudget().spent).toBe(8_000);
+
+    // A third would have to reserve past 11000, so it never reaches the provider.
+    await expect(generateStructured(REQUEST)).rejects.toThrow(/token day is spent/);
+    await expect(generateStructured(REQUEST)).rejects.toBeInstanceOf(LlmRateLimitError);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(llmDailyBudget().remaining).toBe(3_000);
+  });
+
   it("backs every caller off when the provider returns a long retry-after", async () => {
     const fetchMock = vi.fn(async () => new Response("rate limited", {
       status: 429,

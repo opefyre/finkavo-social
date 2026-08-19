@@ -72,12 +72,21 @@ const estimateTokens = (text: string) => Math.ceil(text.length / CHARS_PER_TOKEN
 // raised as a rate-limit error instead, which the server already treats as a deferral:
 // the concept keeps its repair attempts and is picked up on the next tick.
 const REQUESTS_PER_MINUTE = Number(process.env.LLM_REQUESTS_PER_MINUTE ?? 25);
+// The per-minute window is not the real ceiling. The free tier also caps tokens per day
+// — 200,000, against requests that reserve about 6,900 each, so roughly 29 attempts for
+// the whole day. Running into that wall unannounced is what left an afternoon with no
+// drafts and no explanation. Tracked here so the limit is refused deliberately, with the
+// same deferral every other pacing decision uses, rather than discovered as a 429.
+const TOKENS_PER_DAY = Number(process.env.LLM_TOKENS_PER_DAY ?? 200_000);
+const DAY_MS = 24 * 60 * 60 * 1000;
 const PACING_MAX_INLINE_WAIT_MS = Number(process.env.LLM_MAX_INLINE_WAIT_MS ?? 45_000);
 const PACING_MIN_GAP_MS = Number(process.env.LLM_MIN_GAP_MS ?? 1_200);
 const WINDOW_MS = 60_000;
 
 type Spend = { at: number; tokens: number };
 let spends: Spend[] = [];
+/** Same records, kept for a day rather than a minute, for the daily ceiling. */
+let dailySpends: Spend[] = [];
 let lastCallAt = 0;
 /** Set when the provider itself tells us to back off; no request goes out before it. */
 let providerBlockedUntil = 0;
@@ -85,6 +94,11 @@ let providerBlockedUntil = 0;
 let gate: Promise<unknown> = Promise.resolve();
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+function dailyTokens(now: number) {
+  dailySpends = dailySpends.filter(spend => now - spend.at < DAY_MS);
+  return dailySpends.reduce((total, spend) => total + spend.tokens, 0);
+}
 
 function windowState(now: number) {
   spends = spends.filter(spend => now - spend.at < WINDOW_MS);
@@ -98,6 +112,12 @@ function windowState(now: number) {
 /** Milliseconds until this request fits the window, or 0 if it fits now. */
 function waitFor(estimated: number, now: number): number {
   if (now < providerBlockedUntil) return providerBlockedUntil - now;
+  // A day's allowance cannot be waited out inside a request, so exhausting it is
+  // reported rather than slept on: the oldest spend has to age a full day to free room.
+  if (dailyTokens(now) + estimated > TOKENS_PER_DAY) {
+    const oldest = dailySpends.length ? dailySpends[0].at : now;
+    return Math.max(WINDOW_MS, DAY_MS - (now - oldest));
+  }
   const { tokens, requests, oldest } = windowState(now);
   const overTokens = tokens + estimated > TOKENS_PER_MINUTE - SAFETY_MARGIN;
   const overRequests = requests + 1 > REQUESTS_PER_MINUTE;
@@ -121,8 +141,17 @@ async function reserve(estimated: number): Promise<(actual: number | null) => vo
       const wait = waitFor(estimated, now);
       if (wait === 0) break;
       if (wait > PACING_MAX_INLINE_WAIT_MS) {
+        // Naming which of the two is holding the request matters when reading the logs:
+        // a provider back-off is the tier refusing us for minutes, while a full local
+        // window clears within the minute.
+        const spentToday = dailyTokens(now);
+        const reason = now < providerBlockedUntil
+          ? `the provider asked for a ${Math.ceil((providerBlockedUntil - now) / 1000)}s back-off`
+          : spentToday + estimated > TOKENS_PER_DAY
+            ? `the ${TOKENS_PER_DAY}-token day is spent (${spentToday} used)`
+            : `the ${TOKENS_PER_MINUTE}-token minute is full`;
         throw new LlmRateLimitError(
-          `paced locally: the ${TOKENS_PER_MINUTE}-token minute needs ${Math.ceil(wait / 1000)}s before this request fits`,
+          `paced locally: rate limit deferred this request because ${reason}`,
           Math.ceil(wait / 1000),
         );
       }
@@ -132,6 +161,7 @@ async function reserve(estimated: number): Promise<(actual: number | null) => vo
     lastCallAt = at;
     const spend: Spend = { at, tokens: estimated };
     spends.push(spend);
+    dailySpends.push(spend);
     return spend;
   });
   // Keep the queue intact even when this caller gives up, so the next one still waits.
@@ -140,6 +170,13 @@ async function reserve(estimated: number): Promise<(actual: number | null) => vo
   return (actual: number | null) => {
     if (actual !== null && Number.isFinite(actual)) spend.tokens = actual;
   };
+}
+
+/** What the day has left, for health reporting. */
+export function llmDailyBudget() {
+  const now = Date.now();
+  const spent = dailyTokens(now);
+  return { limit: TOKENS_PER_DAY, spent, remaining: Math.max(0, TOKENS_PER_DAY - spent), blockedUntil: providerBlockedUntil > now ? new Date(providerBlockedUntil).toISOString() : null };
 }
 
 /** Called when the provider returns a pacing signal, so every caller backs off, not one. */

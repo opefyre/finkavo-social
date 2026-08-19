@@ -7,6 +7,7 @@ import postgres from "postgres";
 import { z } from "zod";
 import { DraftSchema } from "./contracts.js";
 import { generateDraft } from "./openai.js";
+import { LlmRateLimitError, llmDailyBudget } from "./llm.js";
 import { createBufferMediaUrl, createUploadUrl, uploadRenderedObject, verifyUploadedObject, type RenderFileInput } from "./storage.js";
 import { BufferError, createScheduledPost, deletePost as deleteBufferPost, findMatchingScheduledPost, getPost as getBufferPost, setBufferCallObserver } from "./buffer.js";
 import { notifyDiscord, notifyDiscordReview } from "./discord.js";
@@ -1334,6 +1335,10 @@ const server = http.createServer(async (req, res) => {
       let model = "";
       let lastGenerationError = "";
       const reviewerNotes = String(selectedConcept.revision_feedback ?? "").trim();
+      // Matching on the message text alone was fragile: local pacing says nothing a
+      // rate-limit regex recognises, so a deferred request was read as an editorial
+      // failure and retired a perfectly good brief. The type is the reliable signal.
+      let lastErrorWasPacing = false;
       // A fact-card source used to skip the model outright and ship simpleDraft(). That
       // guaranteed a blocked post: the mechanical draft never carries a real caption or
       // standalone value, so the pre-Discord gate rejected every one and the slot was
@@ -1381,11 +1386,8 @@ const server = http.createServer(async (req, res) => {
           break;
         } catch (error) {
           lastGenerationError = error instanceof Error ? error.message : "Generation validation failed";
+          lastErrorWasPacing = error instanceof LlmRateLimitError;
         }
-      }
-      if (!checked && evidenceSources.some(source=>source.deterministicFactCard===true)) {
-        checked=simpleDraft(String(selectedConcept.topic),evidenceSources.flatMap(source=>source.excerpts as string[]));
-        model="deterministic-fact-card-v1";
       }
       if (!checked) {
         // Distinguish "this topic cannot produce a good post" from "the provider was
@@ -1393,14 +1395,21 @@ const server = http.createServer(async (req, res) => {
         // holds its slot for the day. A rate limit or network fault says nothing about
         // the topic, and treating it as one silently retired five perfectly good briefs
         // the first time the free-tier token ceiling was hit.
-        const infrastructural = /rate limit|token\/rate|Request too large|tokens per minute|ECONNRESET|ETIMEDOUT|fetch failed|AbortError|timed out|returned no structured output|5\d\d\)/i
-          .test(lastGenerationError ?? "");
+        const infrastructural = lastErrorWasPacing
+          || /rate limit|token\/rate|paced locally|Request too large|tokens per minute|ECONNRESET|ETIMEDOUT|fetch failed|AbortError|timed out|returned no structured output|5\d\d\)/i
+            .test(lastGenerationError ?? "");
         if (infrastructural) {
           await sql`INSERT INTO social_event (event_type, payload) VALUES ('generation.deferred', ${sql.json({ documentId, conceptId: selectedConcept.id, planSlotId: selectedConcept.plan_slot_id, error: lastGenerationError })})`;
           // 503 so the caller retries this concept on the next cycle instead of counting
           // it as a content failure and reaching for a replacement brief.
           return send(res, 503, { error: "Generation provider unavailable; the concept remains planned", detail: lastGenerationError, retryable: true });
         }
+        if (evidenceSources.some(source=>source.deterministicFactCard===true)) {
+          checked=simpleDraft(String(selectedConcept.topic),evidenceSources.flatMap(source=>source.excerpts as string[]));
+          model="deterministic-fact-card-v1";
+        }
+      }
+      if (!checked) {
         await sql.begin(async tx=>{await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE id=${selectedConcept.id}`;if(selectedConcept.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${selectedConcept.plan_slot_id}`;await tx`INSERT INTO social_event (event_type, payload) VALUES ('generation.failed', ${tx.json({ documentId,conceptId:selectedConcept.id,planSlotId:selectedConcept.plan_slot_id,error: lastGenerationError })})`;});
         return send(res, 422, { error: "Structured generation failed after the initial attempt and two targeted repairs", detail: lastGenerationError });
       }
@@ -2122,7 +2131,10 @@ const server = http.createServer(async (req, res) => {
       `;
       const [planning] = await sql`SELECT count(*) FILTER (WHERE status='blocked') AS blocked_concepts, count(*) FILTER (WHERE status IN ('eligible','planned')) AS ready_concepts FROM social_post_concept`;
       const publishQueue = await sql`SELECT status,count(*) AS count FROM social_publish_job GROUP BY status ORDER BY status`;
-      return send(res, 200, { counts, planning, upcomingDeadlines, renderer, oldestQueuedRender: oldest?.oldest_job || null, publishQueue, bufferHandoffHours, bufferQueueSoftLimit, healthy: renderer ? Date.now() - new Date(renderer.last_seen_at as string).getTime() < 5 * 60_000 : false });
+      return send(res, 200, {
+        // A day with no drafts is usually the free tier's daily token ceiling rather
+        // than anything wrong, so the remaining allowance is reported alongside the queue.
+        llm: llmDailyBudget(), counts, planning, upcomingDeadlines, renderer, oldestQueuedRender: oldest?.oldest_job || null, publishQueue, bufferHandoffHours, bufferQueueSoftLimit, healthy: renderer ? Date.now() - new Date(renderer.last_seen_at as string).getTime() < 5 * 60_000 : false });
     }
 
     if(req.method==="POST"&&url.pathname==="/v1/reports/daily"){
