@@ -10293,6 +10293,81 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/iva9.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "housing-the-longer-the-lease-the-lower-the-tax",
+      "pillar": "housing_property",
+      "valueClass": "threshold",
+      "title": "Four rental tax rates, decided by the length of the lease",
+      "userQuestion": "How much tax do I pay on rent, and can I lower it?",
+      "scenario": "A landlord signs one-year contracts by habit and pays the top rate on rent for years.",
+      "audience": "landlords letting for housing",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The standard autonomous rate on residential rent and the three reduced rates that longer contracts unlock.",
+      "anchorFact": {
+        "claim": "Under artigo 72 of the Código do IRS residential rental income is taxed at an autonomous rate of 25 per cent, reduced to 15 per cent for contracts of 5 to 10 years, 10 per cent for contracts of 10 to 20 years and 5 per cent for contracts of 20 years or more.",
+        "kind": "figure",
+        "namedThing": "taxa autónoma",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs72.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The rate falls by twenty points across the range, so contract length is worth more to a landlord's return than most rent increases.",
+      "journeyStage": "renting_out",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs72.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-the-thirty-five-per-cent-rate-for-tax-havens",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "The thirty-five per cent rate attached to certain jurisdictions",
+      "userQuestion": "Why is my foreign investment income taxed more heavily?",
+      "scenario": "Someone holds an account or security through a low-tax jurisdiction and is taxed at a penalty rate they did not expect.",
+      "audience": "people with investments held abroad",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The penalty rate for income from clearly more favourable tax regimes, and the ordinary rates it sits against.",
+      "anchorFact": {
+        "claim": "Under artigo 72 of the Código do IRS an autonomous rate of 35 per cent applies to capital income and gains from entities domiciled in jurisdictions with a clearly more favourable tax regime, against 28 per cent on non-residents' gains from the operations listed in artigo 10 and 25 per cent for non-residents with a permanent establishment.",
+        "kind": "figure",
+        "namedThing": "taxa autónoma",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs72.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The higher rate follows where the paying entity is domiciled rather than where you are, so the choice of platform can cost seven points.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs72.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-crypto-held-a-year-leaves-the-gain-untaxed",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "Three hundred and sixty-five days that change a crypto gain",
+      "userQuestion": "Is a gain on cryptoassets taxed in Portugal?",
+      "scenario": "Someone sells a holding just short of a year and pays tax that waiting a few more days would have avoided.",
+      "audience": "people holding cryptoassets",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "The holding period that excludes a cryptoasset gain from taxation, and the aggregation that becomes compulsory below it.",
+      "anchorFact": {
+        "claim": "Under artigo 10 of the Código do IRS gains on cryptoassets held for 365 days or more are excluded from taxation, and under artigo 72 the balance between gains and losses on assets held for a period of less than 365 days must be aggregated rather than taxed autonomously.",
+        "kind": "figure",
+        "namedThing": "criptoativos",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs10.aspx",
+        "volatility": "volatile"
+      },
+      "notObvious": "Below the year the gain is not merely taxed, it is forced into aggregation with your other income, which can push the whole return into a higher bracket.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs10.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
