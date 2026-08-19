@@ -4296,6 +4296,106 @@
         "canonicalUrl": "https://www.infarmed.pt/web/infarmed/regimes-excecionais-de-comparticipacao",
         "authority": "INFARMED"
       }
+    },
+    {
+      "id": "employment-bereavement-and-marriage-leave-days",
+      "pillar": "employment",
+      "valueClass": "threshold",
+      "title": "The days of leave owed for a marriage or a death in the family",
+      "userQuestion": "How many days off am I entitled to when a close relative dies?",
+      "scenario": "A grieving employee takes what the employer offers, or uses holiday, without knowing the statutory entitlement by relationship.",
+      "audience": "employees facing a bereavement or marrying",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The consecutive days for marriage, and the three bereavement bands by closeness of relationship.",
+      "anchorFact": {
+        "claim": "Under the Código do Trabalho a worker has 15 consecutive days of justified leave for marriage, and for bereavement up to 20 consecutive days for the death of a spouse not separated, child or stepchild, up to 5 consecutive days for a first-degree relative or in-law in the direct line not covered above, and up to 2 consecutive days for another relative or in-law in the direct line or second degree of the collateral line.",
+        "kind": "figure",
+        "namedThing": "faltas justificadas",
+        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475-213560868",
+        "volatility": "stable"
+      },
+      "notObvious": "The days are consecutive calendar days including weekends, and the twenty-day band for a child or spouse is far longer than most employers volunteer.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475-213560868",
+        "authority": "Diário da República"
+      }
+    },
+    {
+      "id": "employment-working-student-weekly-hours",
+      "pillar": "employment",
+      "valueClass": "threshold",
+      "title": "The weekly hours a working student can take without losing pay",
+      "userQuestion": "What can I ask my employer for if I am studying while working?",
+      "scenario": "An employee studying part-time uses holiday for classes and exams, unaware of a statutory time allowance.",
+      "audience": "employees studying alongside work",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The flexible schedule obligation, the weekly hours released when flexibility is impossible, and the exam absences that count as justified.",
+      "anchorFact": {
+        "claim": "Employers must draw up specific working schedules for a trabalhador-estudante flexible enough for class attendance, and where a flexible regime is not possible the worker is released for up to 6 hours a week without loss of pay or other benefit if the school timetable requires it; absences strictly needed to travel to and sit assessments are justified.",
+        "kind": "figure",
+        "namedThing": "trabalhador-estudante",
+        "verifyAt": "https://www.dges.gov.pt/pt/pagina/estatuto-do-trabalhador-estudante",
+        "volatility": "stable"
+      },
+      "notObvious": "The six hours are a fallback when flexible scheduling fails, not the default, so the first entitlement to ask for is the adjusted schedule itself.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://www.dges.gov.pt/pt/pagina/estatuto-do-trabalhador-estudante",
+        "authority": "DGES"
+      }
+    },
+    {
+      "id": "social-security-rsi-asset-ceiling-and-contract",
+      "pillar": "social_security",
+      "valueClass": "threshold",
+      "title": "The asset ceiling and the contract behind the social insertion income",
+      "userQuestion": "What disqualifies a household from the social insertion income?",
+      "scenario": "A household in severe hardship does not apply, assuming any savings or property rules them out entirely.",
+      "audience": "households in severe financial hardship",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The movable asset ceiling expressed against the IAS, the 45-day insertion contract, and how the payment is calculated per household member.",
+      "anchorFact": {
+        "claim": "Rendimento Social de Inserção requires movable assets not above 60 times the IAS, published as 30,555.60 euros, registration with the employment centre where unemployed and availability for work or training; a contrato de inserção must be signed within 45 days of the award, the benefit is paid for 12 months and renewable, and the amount is the gap between the household reference value and its income, at 100% of the RSI value for the claimant, 70% per other adult and 50% per minor.",
+        "kind": "figure",
+        "namedThing": "rendimento social de inserção",
+        "verifyAt": "https://www.seg-social.pt/rendimento-social-de-insercao",
+        "volatility": "annual"
+      },
+      "notObvious": "The ceiling is on movable assets rather than all property, and the 45-day insertion contract is a condition of keeping the award rather than a formality.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/rendimento-social-de-insercao",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "consumer-social-energy-tariff-is-automatic",
+      "pillar": "daily_life_consumer",
+      "valueClass": "insider",
+      "title": "The energy discount that is applied without you asking",
+      "userQuestion": "Do I have to apply for the social energy tariff?",
+      "scenario": "A household on a low income never applies, assuming a form is required, and pays full price for years.",
+      "audience": "low-income households paying energy bills",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "That recognition is automatic through data matching, the contracted power limit, the income route that needs no social benefit, and the window to opt out.",
+      "anchorFact": {
+        "claim": "The tarifa social for electricity and natural gas has been assigned by automatic recognition since 1 July 2016, applied by suppliers without any customer request, requiring a domestic supply contract in the person's name for permanent housing with contracted power at or below 6.9 kVA and receipt of a qualifying social benefit, or alternatively a household annual income at or below 6,272.64 euros increased by 50% for each member without income; beneficiaries have 30 days to oppose the automatic assignment.",
+        "kind": "figure",
+        "namedThing": "tarifa social",
+        "verifyAt": "https://www.dgeg.gov.pt/pt/areas-transversais/politicas-de-protecao-ao-consumidor-de-energia/tarifa-social-de-energia/quais-as-condicoes-de-atribuicao-da-tarifa-social-de-energia/",
+        "volatility": "annual"
+      },
+      "notObvious": "The income route works without receiving any social benefit at all, and because assignment is automatic the usual failure is a contract in the wrong name rather than a missing application.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.dgeg.gov.pt/pt/areas-transversais/politicas-de-protecao-ao-consumidor-de-energia/tarifa-social-de-energia/quais-as-condicoes-de-atribuicao-da-tarifa-social-de-energia/",
+        "authority": "DGEG"
+      }
     }
   ]
 }
