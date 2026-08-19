@@ -1,0 +1,419 @@
+{
+  "version": 1,
+  "standard": "plans/BRIEF_STANDARD.md",
+  "note": "Authored briefs. anchorFact.claim is a claim to verify against anchorFact.verifyAt at generation time, never a fact to publish from this file.",
+  "briefs": [
+    {
+      "id": "identity-fiscal-representative-avoided-by-enotifications",
+      "pillar": "identity_access",
+      "valueClass": "insider",
+      "title": "How to end the fiscal representative obligation with electronic notifications",
+      "userQuestion": "Do I still need to pay someone to be my fiscal representative in Portugal?",
+      "scenario": "A non-EU resident has been quoted an annual fee by a firm offering to act as their fiscal representative, and assumes it is mandatory.",
+      "audience": "non-EU nationals with a Portuguese NIF",
+      "promise": "How to drop the paid representative by adhering to electronic notifications yourself, and the one condition that keeps the obligation in place.",
+      "anchorFact": {
+        "claim": "Decreto-Lei 44/2022 and artigo 38-A of the CPPT exempt a non-resident taxpayer from appointing a fiscal representative when they adhere to a dematerialised notification channel, including the Portal das Finanças electronic notifications and citations service.",
+        "kind": "instrument",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Dados_pessoais_familia/Dados_pessoais/Notificacoes_e_citacoes_eletronicas/Paginas/default.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Most pages state the representative requirement as absolute and stop there. The adherence route is the part that saves real money every year.",
+      "journeyStage": "first_30_days",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Dados_pessoais_familia/Dados_pessoais/Notificacoes_e_citacoes_eletronicas/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      },
+      "risk": "high",
+      "volatility": "stable"
+    },
+    {
+      "id": "identity-financas-password-address-deadlock",
+      "pillar": "identity_access",
+      "valueClass": "costly_mistake",
+      "title": "The Finanças lockout that traps people who moved",
+      "userQuestion": "My Portal das Finanças password letter goes to an address I left. How do I get back in?",
+      "scenario": "Someone registered a NIF using a temporary or lawyer's address, has since moved, and now cannot log in because the new password is posted to the old address — and changing the address requires logging in.",
+      "audience": "residents locked out of Portal das Finanças",
+      "promise": "The three ways to break the circular dependency, and which one works without an in-person appointment.",
+      "anchorFact": {
+        "claim": "A replacement Portal das Finanças password is posted to the taxpayer's registered address, but the registered address can be changed online by authenticating with Chave Móvel Digital instead, which breaks the dependency on receiving that letter.",
+        "kind": "procedure",
+        "namedThing": "Chave Móvel Digital",
+        "verifyAt": "https://www2.gov.pt/servicos/ativar-a-chave-movel-digital",
+        "volatility": "stable"
+      },
+      "notObvious": "The circular dependency is the actual problem people hit, and it is never covered by posts that just say 'request a new password'.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.autenticacao.gov.pt/cmd-pedido-chave",
+        "authority": "Autenticação.gov"
+      },
+      "risk": "medium",
+      "volatility": "stable"
+    },
+    {
+      "id": "housing-imi-instalment-thresholds",
+      "pillar": "housing_property",
+      "valueClass": "threshold",
+      "title": "The two thresholds that decide how many IMI instalments you get",
+      "userQuestion": "Why did my neighbour pay IMI in one go and I have three instalments?",
+      "scenario": "A first-time property owner receives an IMI notice in May and does not understand why the amount is split, or whether they can choose.",
+      "audience": "property owners receiving their first IMI notice",
+      "promise": "The two euro thresholds that decide how many instalments you get, the months they fall in, and when paying early is allowed.",
+      "anchorFact": {
+        "claim": "IMI is paid in a single instalment up to a lower euro threshold, in two instalments between the lower and upper thresholds, and in three instalments above the upper threshold, in the months set by the annual fiscal calendar.",
+        "kind": "figure",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The split is presented as arbitrary in most explanations; naming the exact thresholds lets a reader predict their own bill before it arrives.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      },
+      "risk": "high",
+      "volatility": "annual"
+    },
+    {
+      "id": "banking-minimum-services-account-fee-cap",
+      "pillar": "banking_money",
+      "valueClass": "insider",
+      "title": "The capped-fee bank account branches will not offer you",
+      "userQuestion": "Is there a Portuguese bank account with a legally limited annual fee?",
+      "scenario": "Someone paying monthly account maintenance fees discovers their balance is being eaten by charges and assumes all Portuguese accounts work that way.",
+      "audience": "residents paying bank account maintenance fees",
+      "promise": "What the minimum banking services account includes, the legal cap on its annual cost, and the conditions that disqualify you.",
+      "anchorFact": {
+        "claim": "Credit institutions may not charge, annually and in total, more than 1% of the value of the IAS for a conta de serviços mínimos bancários, and the account may only be opened by someone who holds no other current account, subject to listed exceptions.",
+        "kind": "figure",
+        "verifyAt": "https://clientebancario.bportugal.pt/pt-pt/o-que-sao",
+        "volatility": "annual"
+      },
+      "notObvious": "Banks are not obliged to advertise it and rarely do. This is a concrete recurring saving that almost no Portugal-admin account posts about.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/pt-pt/o-que-sao",
+        "authority": "Banco de Portugal"
+      },
+      "risk": "medium",
+      "volatility": "annual"
+    },
+    {
+      "id": "social-security-first-year-exemption-window",
+      "pillar": "social_security",
+      "valueClass": "threshold",
+      "title": "The first-year Segurança Social exemption for new independent workers",
+      "userQuestion": "When do my Social Security contributions actually start after opening activity?",
+      "scenario": "Someone opened freelance activity a few months ago, has been invoicing, and is bracing for a contribution bill they may not owe yet.",
+      "audience": "newly registered independent workers",
+      "promise": "When the exemption window opens, exactly what ends it, and which quarterly declaration you must still submit during it.",
+      "anchorFact": {
+        "claim": "A first-time independent worker benefits from a defined initial exemption period from contributions, but the quarterly declaration obligation is separate from the payment obligation.",
+        "kind": "deadline",
+        "verifyAt": "https://www.seg-social.pt/trabalhadores-independentes",
+        "volatility": "annual"
+      },
+      "notObvious": "The declaration-versus-payment split is where people get caught — they skip the declaration because they were told they owe nothing.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/trabalhadores-independentes",
+        "authority": "Instituto da Segurança Social"
+      },
+      "risk": "high",
+      "volatility": "annual"
+    },
+    {
+      "id": "iva-artigo-53-ceiling-mid-year-crossing",
+      "pillar": "iva",
+      "valueClass": "scenario",
+      "title": "When IVA starts applying after you cross the Artigo 53 ceiling",
+      "userQuestion": "I went over the Artigo 53 turnover limit mid-year — do I start charging IVA now?",
+      "scenario": "A freelancer under the IVA exemption realises in autumn that invoicing has passed the annual ceiling, and is about to start adding IVA to invoices immediately out of caution.",
+      "audience": "freelancers exempt under Artigo 53",
+      "promise": "Why you keep invoicing exempt until 31 December, the 15-business-day January window you cannot miss, and the exact date IVA starts applying.",
+      "anchorFact": {
+        "claim": "Under artigo 53 of the CIVA, exceeding the annual turnover ceiling in a calendar year obliges the taxpayer to submit a declaracao de alteracoes within 15 business days of the last day of that year, and normal IVA taxation applies from 1 January of the following year rather than from the moment the ceiling was crossed.",
+        "kind": "instrument",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/artigo-53-o-do-civa.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "Almost every post states the ceiling figure. The counterintuitive part is that crossing it changes nothing until January, and the real risk is missing a 15-business-day window most people never hear about.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/artigo-53-o-do-civa.aspx",
+        "authority": "Autoridade Tributaria e Aduaneira"
+      },
+      "risk": "high",
+      "volatility": "annual"
+    },
+    {
+      "id": "immigration-aima-proof-of-address-without-lease",
+      "pillar": "immigration_residency",
+      "valueClass": "scenario",
+      "title": "Proof of address accepted by AIMA when the lease is not in your name",
+      "userQuestion": "AIMA wants proof of address but I sublet and have no contract — what is accepted?",
+      "scenario": "An applicant sharing a flat has no registered lease, no utility bill in their name, and an AIMA appointment approaching.",
+      "audience": "residence applicants without a registered lease",
+      "promise": "Which alternative documents are accepted, which one you can obtain from the junta de freguesia, and how long it takes.",
+      "anchorFact": {
+        "claim": "A atestado de residência issued by the junta de freguesia is an accepted proof of residence where a lease or utility bill in the applicant's name is unavailable.",
+        "kind": "artefact",
+        "namedThing": "atestado de residência",
+        "verifyAt": "https://aima.gov.pt/pt",
+        "volatility": "volatile"
+      },
+      "notObvious": "The junta route is the practical answer to the single most common blocking document, and it is buried in municipal pages rather than immigration guides.",
+      "journeyStage": "renewing_status",
+      "source": {
+        "canonicalUrl": "https://aima.gov.pt/pt",
+        "authority": "AIMA"
+      },
+      "risk": "high",
+      "volatility": "volatile"
+    },
+    {
+      "id": "irs-jovem-year-counting-trap",
+      "pillar": "irs",
+      "valueClass": "edge_case",
+      "title": "How the 10 IRS Jovem years are counted, including low-income years",
+      "userQuestion": "Does a year where I earned almost nothing still use up one of my IRS Jovem years?",
+      "scenario": "A young worker had one part-time or partial year of income and wants to know whether claiming the benefit then was a mistake.",
+      "audience": "young workers eligible for IRS Jovem",
+      "promise": "How the 10 eligible years are counted, whether a low-income year burns one of them, and the annual income ceiling the exemption stops at.",
+      "anchorFact": {
+        "claim": "IRS Jovem applies for up to 10 years of income with exemption percentages that step down across year bands (100%, then 75%, 50% and 25%), capped at a maximum exempt income set as a multiple of the IAS; each year in which the benefit is claimed consumes one of the 10.",
+        "kind": "figure",
+        "verifyAt": "https://www.gov.pt/servicos/pedir-o-irs-jovem",
+        "volatility": "annual"
+      },
+      "notObvious": "Posts list the percentages. The consumable-year mechanic is what changes a real decision about when to start claiming.",
+      "journeyStage": "first_tax_year",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/pedir-o-irs-jovem",
+        "authority": "gov.pt / Autoridade Tributária e Aduaneira"
+      },
+      "risk": "high",
+      "volatility": "annual"
+    },
+    {
+      "id": "employment-holiday-falls-on-rest-day",
+      "pillar": "employment",
+      "valueClass": "edge_case",
+      "title": "The public holiday that lands on your day off",
+      "userQuestion": "A public holiday fell on a Saturday — do I get anything for it?",
+      "scenario": "An employee notices a holiday fell on a non-working day and hears conflicting claims about compensation days from colleagues.",
+      "audience": "employees on fixed weekly schedules",
+      "promise": "What the Código do Trabalho actually entitles you to, and the one situation where a compensating rest day is owed.",
+      "anchorFact": {
+        "claim": "The Código do Trabalho governs entitlement when a mandatory public holiday coincides with a weekly rest day, and compensation is not automatic in all cases.",
+        "kind": "instrument",
+        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475",
+        "volatility": "stable"
+      },
+      "notObvious": "This is argued about in every workplace every year and is usually answered wrongly from hearsay rather than from the consolidated law.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475",
+        "authority": "Diário da República"
+      },
+      "risk": "medium",
+      "volatility": "stable"
+    },
+    {
+      "id": "health-sns-without-residence-permit",
+      "pillar": "health_family",
+      "valueClass": "edge_case",
+      "title": "Registering with the SNS while a residence application is pending",
+      "userQuestion": "Can I register with the SNS while my AIMA process is still pending?",
+      "scenario": "Someone with a pending residence application needs a família doctor or a prescription and has been turned away at a centro de saúde.",
+      "audience": "residents with a pending immigration process",
+      "promise": "The legal basis for registering without a residence permit, the documents that substitute for it, and what to say at the desk.",
+      "anchorFact": {
+        "claim": "Access to the Serviço Nacional de Saúde is not conditional on holding a residence permit; registration at a centro de saúde is available on proof of residence in the area.",
+        "kind": "procedure",
+        "namedThing": "centro de saúde",
+        "verifyAt": "https://www.sns24.gov.pt/servico/inscrever-se-num-centro-de-saude/",
+        "volatility": "stable"
+      },
+      "notObvious": "People are routinely refused at the counter and accept it. Knowing the basis and the substitute documents is the difference between care and no care.",
+      "journeyStage": "first_30_days",
+      "source": {
+        "canonicalUrl": "https://www.sns24.gov.pt/servico/inscrever-se-num-centro-de-saude/",
+        "authority": "SNS 24"
+      },
+      "risk": "high",
+      "volatility": "stable"
+    },
+    {
+      "id": "driving-exchange-licence-deadline-after-residence",
+      "pillar": "driving_transport",
+      "valueClass": "deadline_action",
+      "title": "How long you have to exchange a foreign driving licence after becoming resident",
+      "userQuestion": "How long do I have to exchange my foreign driving licence once I become resident?",
+      "scenario": "A new resident is still driving on a licence from their home country and has heard different deadlines from different people.",
+      "audience": "new residents holding a foreign driving licence",
+      "promise": "When the exchange window opens and closes, what happens if you miss it, and which licences are exempt.",
+      "anchorFact": {
+        "claim": "IMT sets a deadline for exchanging a foreign driving licence after establishing residence, after which driving on the original licence is no longer valid and a practical exam may be required.",
+        "kind": "deadline",
+        "verifyAt": "https://www.imt-ip.pt/sites/IMTT/Portugues/Condutores/TrocaCartas/Paginas/TrocaCartas.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The consequence of missing the window — losing the straight exchange and facing an exam — is the part that changes behaviour, and it is rarely stated.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.imt-ip.pt/sites/IMTT/Portugues/Condutores/TrocaCartas/Paginas/TrocaCartas.aspx",
+        "authority": "IMT"
+      },
+      "risk": "high",
+      "volatility": "annual"
+    },
+    {
+      "id": "consumer-livro-reclamacoes-what-actually-happens",
+      "pillar": "daily_life_consumer",
+      "valueClass": "decision",
+      "title": "Complaints book or regulator: which one gets a result",
+      "userQuestion": "I filed in the Livro de Reclamações and nothing happened. What actually forces a response?",
+      "scenario": "A consumer has submitted an electronic complaint weeks ago, received no resolution, and does not know the escalation path.",
+      "audience": "consumers with an unresolved complaint",
+      "promise": "What the complaints book legally obliges, which sector regulator can actually decide your case, and when arbitration is free.",
+      "anchorFact": {
+        "claim": "An entry in the Livro de Reclamações Eletrónico is forwarded to the competent regulator, but resolution of the individual dispute generally requires consumer arbitration or the sector regulator's own complaint route.",
+        "kind": "artefact",
+        "namedThing": "Livro de Reclamações Eletrónico",
+        "verifyAt": "https://www.livroreclamacoes.pt/",
+        "volatility": "stable"
+      },
+      "notObvious": "The complaints book is universally recommended and widely misunderstood as a resolution mechanism. Naming the escalation that works is the value.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.livroreclamacoes.pt/",
+        "authority": "Direção-Geral do Consumidor"
+      },
+      "risk": "low",
+      "volatility": "stable"
+    },
+    {
+      "id": "freelance-ato-isolado-25k-ceiling",
+      "pillar": "freelance_business",
+      "valueClass": "threshold",
+      "title": "The ato isolado limit and when you must open activity instead",
+      "userQuestion": "Can I invoice one client without opening activity at Finanças?",
+      "scenario": "Someone doing a single piece of paid work in Portugal wants to invoice it legally without committing to the ongoing obligations of registered freelance activity.",
+      "audience": "people invoicing occasional work in Portugal",
+      "promise": "The euro ceiling and the one-payment-per-year rule that together decide whether an ato isolado is allowed, and what triggers full registration.",
+      "anchorFact": {
+        "claim": "An ato isolado may be used where a person receives payment only once in a civil year for a sale or service and the amount does not exceed 25,000 euros; issuing more than one receipt or exceeding that amount in the same civil year obliges the person to open activity at Finanças.",
+        "kind": "figure",
+        "verifyAt": "https://www2.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes",
+        "volatility": "annual"
+      },
+      "notObvious": "The rule has two conditions, not one. People remember the euro ceiling and forget that a second invoice in the same year breaks it regardless of amount.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes",
+        "authority": "gov.pt"
+      },
+      "risk": "high",
+      "volatility": "annual"
+    },
+    {
+      "id": "freelance-first-year-obligations-calendar",
+      "pillar": "freelance_business",
+      "valueClass": "scenario",
+      "title": "What a new independent worker owes in the first year, and when",
+      "userQuestion": "I opened activity in March — what do I actually have to file before next January?",
+      "scenario": "A freelancer who registered part-way through the year does not know which obligations start immediately, which are quarterly, and which only arrive with the next IRS season.",
+      "audience": "independent workers who opened activity mid-year",
+      "promise": "The separate Finanças and Segurança Social calendars laid over one year, and which of them starts before you have earned anything.",
+      "anchorFact": {
+        "claim": "An independent worker has distinct quarterly and annual obligations to Financas and to Seguranca Social, with the quarterly declaracao trimestral and the annual IRS declaration falling on different deadlines set by each authority.",
+        "kind": "deadline",
+        "verifyAt": "https://www2.gov.pt/pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "volatility": "annual"
+      },
+      "notObvious": "The two authorities are almost always explained separately. Seeing both calendars on one timeline is what stops a missed quarterly declaration in the first year.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "authority": "gov.pt"
+      },
+      "risk": "high",
+      "volatility": "annual"
+    },
+    {
+      "id": "citizenship-residence-years-requirement-change",
+      "pillar": "citizenship_civil",
+      "valueClass": "deadline_action",
+      "title": "How the residence-years requirement for Portuguese nationality changed",
+      "userQuestion": "Do I still qualify for nationality after five years of legal residence?",
+      "scenario": "Someone approaching five years of legal residence has been planning a naturalisation application and has seen conflicting reports that the required period has been extended.",
+      "audience": "long-term residents planning a naturalisation application",
+      "promise": "The residence period currently required, how it differs for CPLP nationals, and which rule applies to an application already submitted.",
+      "anchorFact": {
+        "claim": "Naturalisation by legal residence requires a minimum period of legal residence in Portuguese territory, and legislative changes have proposed differentiated periods for CPLP nationals and other nationals; the period in force and its transitional application must be confirmed against the current published rule.",
+        "kind": "deadline",
+        "verifyAt": "https://justica.gov.pt/Como-obter-nacionalidade-portuguesa/Reside-legalmente-em-Portugal-ha-pelo-menos-5-anos",
+        "volatility": "volatile"
+      },
+      "notObvious": "This is actively changing and most published guides still state the old period. The transitional question, which rule binds an application already filed, is what people actually need and nobody answers.",
+      "journeyStage": "long_term_residence",
+      "source": {
+        "canonicalUrl": "https://justica.gov.pt/Como-obter-nacionalidade-portuguesa/Reside-legalmente-em-Portugal-ha-pelo-menos-5-anos",
+        "authority": "Ministério da Justiça / IRN"
+      },
+      "risk": "high",
+      "volatility": "volatile"
+    },
+    {
+      "id": "citizenship-language-requirement-and-exemptions",
+      "pillar": "citizenship_civil",
+      "valueClass": "edge_case",
+      "title": "The Portuguese language requirement for naturalisation, and who is exempt",
+      "userQuestion": "Do I have to sit a Portuguese exam to apply for nationality?",
+      "scenario": "An applicant who speaks conversational Portuguese but has no certificate is unsure whether a formal exam result is mandatory or whether schooling or nationality of origin can substitute.",
+      "audience": "naturalisation applicants without a language certificate",
+      "promise": "What counts as sufficient knowledge of Portuguese, which documents are accepted instead of an exam, and who is exempt entirely.",
+      "anchorFact": {
+        "claim": "Naturalisation requires sufficient knowledge of the Portuguese language under the Lei da Nacionalidade (Lei 37/81) and the Regulamento da Nacionalidade Portuguesa, which may be demonstrated by a recognised certificate or by alternative accepted evidence such as schooling completed in Portuguese.",
+        "kind": "instrument",
+        "verifyAt": "https://www.gov.pt/servicos/pedir-a-nacionalidade-portuguesa",
+        "volatility": "stable"
+      },
+      "notObvious": "People book and pay for an exam they may not need. The accepted substitutes are the valuable part and are buried in the regulation rather than the service page.",
+      "journeyStage": "long_term_residence",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/pedir-a-nacionalidade-portuguesa",
+        "authority": "gov.pt / IRN"
+      },
+      "risk": "high",
+      "volatility": "stable"
+    },
+    {
+      "id": "education-equivalence-goes-to-the-school",
+      "pillar": "education_children",
+      "valueClass": "insider",
+      "title": "Why the equivalence request goes to the school, not the ministry",
+      "userQuestion": "Where do I actually submit my child's foreign school certificate for equivalence?",
+      "scenario": "A family that has just moved contacts the education ministry directly about recognising a foreign school year and is left waiting, having missed the enrolment window.",
+      "audience": "families enrolling a child with foreign school records",
+      "promise": "Which body decides equivalence for which qualifications, why the request starts at the school of residence, and what the school forwards on your behalf.",
+      "anchorFact": {
+        "claim": "Under Decreto-Lei 227/2005 the equivalence of foreign basic and secondary qualifications is requested at the school the applicant intends to attend or in the area of residence; schools grant equivalence for qualifications covered by the applicable despachos, and only other cases are forwarded to the Direcao-Geral da Educacao for decision.",
+        "kind": "instrument",
+        "verifyAt": "https://www.dge.mec.pt/equivalencias-estrangeiras",
+        "volatility": "stable"
+      },
+      "notObvious": "Families reasonably assume a national body handles national recognition. Knowing the school is both the entry point and the decision-maker in most cases saves weeks against an enrolment deadline.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://www.dge.mec.pt/equivalencias-estrangeiras",
+        "authority": "Direção-Geral da Educação"
+      },
+      "risk": "medium",
+      "volatility": "stable"
+    }
+  ]
+}

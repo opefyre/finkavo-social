@@ -1,4 +1,5 @@
 import { DraftSchema, draftJsonSchema, type Draft } from "./contracts.js";
+import { generateStructured } from "./llm.js";
 
 type Candidate = {
   title: string;
@@ -12,17 +13,20 @@ type Candidate = {
 };
 
 export async function generateDraft(candidate: Candidate): Promise<{ draft: Draft; model: string }> {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) throw new Error("OPENAI_API_KEY is not configured");
-  const model = process.env.OPENAI_MODEL || "gpt-5-mini";
-  const response = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model,
-      instructions: [
+  const { text, model } = await generateStructured({
+    schemaName: "finkavo_social_draft",
+    schema: draftJsonSchema,
+    input: JSON.stringify(candidate),
+    instructions: [
+        // English-only leads the prompt and is restated at the end: open-weight models
+        // reliably drift into Portuguese when the evidence excerpts are Portuguese, which
+        // burns repair attempts on a failure the language gate would catch anyway.
+        "WRITE EVERY USER-FACING FIELD IN ENGLISH. The evidence is usually Portuguese; the post never is.",
         "You create concise, practical, English-language carousel posts for Finkavo, a Portugal personal-finance product.",
         "All user-facing output fields must be written in English, even when the evidence is Portuguese. Keep exact evidenceQuote values in their original source language.",
+        // Hard limits are stated explicitly because a schema maxLength is not reliably
+        // enforced by every provider, and an over-length body only fails later at render.
+        "Hard character limits, which the renderer enforces and cannot wrap: slide title 82, slide body 300, each list item 110, highlight 70, eyebrow 40, altText 300, hook 180, callToAction 80. Write within them; never exceed one and never truncate mid-sentence to fit.",
         "Use only the supplied source excerpts. Do not introduce dates, thresholds, eligibility rules, rates, or legal claims absent from them.",
         "The editorial topic is predetermined. Sources are evidence for that topic; never replace it with a subject chosen from an arbitrary excerpt.",
         "Every slide and caption paragraph must directly serve the predetermined topic. Omit adjacent procedures, deadlines, registrations, or background facts merely because they appear in the evidence bundle.",
@@ -49,22 +53,8 @@ export async function generateDraft(candidate: Candidate): Promise<{ draft: Draf
         "Alt text must describe only the text, layout type, and approved icon actually requested in the structured slide. Do not invent photos, crossed-out symbols, people, charts, or illustrations that the template will not render.",
         "Use cover as the first slide and summary as the final slide. Bullets and steps need 2-5 complete items; other slide types must have a complete body. Do not place unused copy in fields the chosen slide type will ignore.",
         "Slide copy is a clean English paraphrase of supported facts, not a raw corpus fragment. Never include Markdown markers, chunk labels such as 'D1', dangling quotation marks, or all-caps emphasis. Every body and list item ends with normal sentence punctuation.",
-      ].join(" "),
-      input: JSON.stringify(candidate),
-      text: {
-        format: {
-          type: "json_schema",
-          name: "finkavo_social_draft",
-          strict: true,
-          schema: draftJsonSchema,
-        },
-      },
-    }),
-    signal: AbortSignal.timeout(90_000),
+        "Final reminder: topic, category, hook, caption, callToAction, hashtags, searchKeywords, and every slide eyebrow, title, body, item, highlight and altText must be in English. Only evidenceQuote keeps its original language.",
+    ].join(" "),
   });
-  if (!response.ok) throw new Error(`OpenAI request failed (${response.status})`);
-  const result = await response.json() as { output_text?: string; output?: Array<{ content?: Array<{ type?: string; text?: string }> }> };
-  const text = result.output_text ?? result.output?.flatMap((item) => item.content ?? []).find((item) => item.type === "output_text")?.text;
-  if (!text) throw new Error("OpenAI returned no structured output");
   return { draft: DraftSchema.parse(JSON.parse(text)), model };
 }
