@@ -176,7 +176,7 @@
     {
       "id": "irs-jovem-year-counting-trap",
       "pillar": "irs",
-      "valueClass": "edge_case",
+      "valueClass": "threshold",
       "title": "How the 10 IRS Jovem years are counted, including low-income years",
       "userQuestion": "Does a year where I earned almost nothing still use up one of my IRS Jovem years?",
       "scenario": "A young worker had one part-time or partial year of income and wants to know whether claiming the benefit then was a mistake.",
@@ -250,21 +250,22 @@
       "id": "driving-exchange-licence-deadline-after-residence",
       "pillar": "driving_transport",
       "valueClass": "deadline_action",
-      "title": "How long you have to exchange a foreign driving licence after becoming resident",
+      "title": "The 90-day point where a foreign licence stops being valid to drive on",
       "userQuestion": "How long do I have to exchange my foreign driving licence once I become resident?",
       "scenario": "A new resident is still driving on a licence from their home country and has heard different deadlines from different people.",
       "audience": "new residents holding a foreign driving licence",
-      "promise": "When the exchange window opens and closes, what happens if you miss it, and which licences are exempt.",
+      "promise": "The 90-day driving window, the two-year exchange window that outlives it, and the gap where you may still exchange but may not drive.",
       "anchorFact": {
-        "claim": "IMT sets a deadline for exchanging a foreign driving licence after establishing residence, after which driving on the original licence is no longer valid and a practical exam may be required.",
+        "claim": "After establishing residence a driver may continue driving on a foreign título de condução for up to 90 days while submitting the exchange request to IMT; from 90 days up to two years the exchange can still be requested, but driving on the foreign licence is no longer permitted.",
         "kind": "deadline",
-        "verifyAt": "https://www.imt-ip.pt/sites/IMTT/Portugues/Condutores/TrocaCartas/Paginas/TrocaCartas.aspx",
+        "namedThing": "título de condução",
+        "verifyAt": "https://www.imt-ip.pt/condutores/reconhecimento/troca-de-titulo-de-conducao-estrangeiro/",
         "volatility": "annual"
       },
-      "notObvious": "The consequence of missing the window — losing the straight exchange and facing an exam — is the part that changes behaviour, and it is rarely stated.",
+      "notObvious": "Two different clocks run at once, and the one that stops you driving expires long before the one that lets you exchange. Almost every guide mentions only a single deadline.",
       "journeyStage": "first_90_days",
       "source": {
-        "canonicalUrl": "https://www.imt-ip.pt/sites/IMTT/Portugues/Condutores/TrocaCartas/Paginas/TrocaCartas.aspx",
+        "canonicalUrl": "https://www.imt-ip.pt/condutores/reconhecimento/troca-de-titulo-de-conducao-estrangeiro/",
         "authority": "IMT"
       },
       "risk": "high",
@@ -329,10 +330,11 @@
       "audience": "independent workers who opened activity mid-year",
       "promise": "The separate Finanças and Segurança Social calendars laid over one year, and which of them starts before you have earned anything.",
       "anchorFact": {
-        "claim": "An independent worker has distinct quarterly and annual obligations to Financas and to Seguranca Social, with the quarterly declaracao trimestral and the annual IRS declaration falling on different deadlines set by each authority.",
+        "claim": "An independent worker has distinct quarterly and annual obligations to Finanças and to Segurança Social, with the quarterly declaração trimestral and the annual IRS declaration falling on different deadlines set by each authority.",
         "kind": "deadline",
         "verifyAt": "https://www2.gov.pt/pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
-        "volatility": "annual"
+        "volatility": "annual",
+        "namedThing": "declaração trimestral"
       },
       "notObvious": "The two authorities are almost always explained separately. Seeing both calendars on one timeline is what stops a missed quarterly declaration in the first year.",
       "journeyStage": "first_freelance_activity",
@@ -353,10 +355,11 @@
       "audience": "long-term residents planning a naturalisation application",
       "promise": "The residence period currently required, how it differs for CPLP nationals, and which rule applies to an application already submitted.",
       "anchorFact": {
-        "claim": "Naturalisation by legal residence requires a minimum period of legal residence in Portuguese territory, and legislative changes have proposed differentiated periods for CPLP nationals and other nationals; the period in force and its transitional application must be confirmed against the current published rule.",
+        "claim": "Naturalisation by legal residence under the Lei da Nacionalidade (Lei 37/81) requires a minimum period of legal residence in Portuguese territory, and legislative changes have proposed differentiated periods for CPLP nationals and other nationals; the period in force and its transitional application must be confirmed against the current published rule.",
         "kind": "deadline",
         "verifyAt": "https://justica.gov.pt/Como-obter-nacionalidade-portuguesa/Reside-legalmente-em-Portugal-ha-pelo-menos-5-anos",
-        "volatility": "volatile"
+        "volatility": "volatile",
+        "namedThing": "naturalização"
       },
       "notObvious": "This is actively changing and most published guides still state the old period. The transitional question, which rule binds an application already filed, is what people actually need and nobody answers.",
       "journeyStage": "long_term_residence",
@@ -414,6 +417,469 @@
       },
       "risk": "medium",
       "volatility": "stable"
+    },
+    {
+      "id": "irs-efatura-validation-window",
+      "pillar": "irs",
+      "valueClass": "deadline_action",
+      "title": "The February e-Fatura window that decides your IRS deductions",
+      "userQuestion": "What is the last day I can fix my e-Fatura invoices for this year's IRS?",
+      "scenario": "Someone assumes deductions can be corrected when they file in April, and discovers the invoice classification closed months earlier.",
+      "audience": "employees and freelancers claiming IRS deductions",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The February cut-off for classifying invoices, what happens when it lands on a weekend, and why filing season is too late to fix it.",
+      "anchorFact": {
+        "claim": "Invoices from the previous year must be consulted, registered or confirmed in e-Fatura by the end of February, with the deadline moving to the next working day when it falls on a weekend.",
+        "kind": "deadline",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/prazos/Paginas/default.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The deduction deadline is two months before the filing deadline. People conflate the two and lose deductions they already paid for.",
+      "journeyStage": "first_tax_year",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/prazos/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-contest-deductions-march-window",
+      "pillar": "irs",
+      "valueClass": "edge_case",
+      "title": "The March window for disputing your calculated IRS deductions",
+      "userQuestion": "My IRS deduction totals look wrong — can I still challenge them?",
+      "scenario": "A taxpayer checks their deduction summary in March, finds a category lower than expected, and assumes nothing can be done until filing.",
+      "audience": "taxpayers whose deduction totals look wrong",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The separate March deadline for contesting the computed deductions, and which figures it covers.",
+      "anchorFact": {
+        "claim": "Computed IRS deductions can be consulted and contested until 31 March, a deadline distinct from the February e-Fatura invoice classification window.",
+        "kind": "deadline",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/prazos/Paginas/default.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "Two different March-adjacent deadlines exist and almost every guide mentions only one. Missing the second means accepting a wrong figure.",
+      "journeyStage": "first_tax_year",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/prazos/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-modelo3-filing-window",
+      "pillar": "irs",
+      "valueClass": "deadline_action",
+      "title": "The Modelo 3 filing window applies to every income type",
+      "userQuestion": "Is the IRS filing deadline different for employees and freelancers?",
+      "scenario": "A freelancer has heard that self-employment income has a later or earlier filing date than employment income and is unsure which applies.",
+      "audience": "people filing personal income tax",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The single filing window that covers all categories, and what changes if you file late.",
+      "anchorFact": {
+        "claim": "The Modelo 3 declaration for the previous year's income is submitted between 1 April and 30 June, the same window regardless of income category.",
+        "kind": "deadline",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/Modelo_3/Paginas/default.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The separate-deadlines belief is widespread and causes people to wait past June. Stating that one window covers all categories removes the confusion.",
+      "journeyStage": "first_tax_year",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/Modelo_3/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "social-security-minimum-contribution-with-no-income",
+      "pillar": "social_security",
+      "valueClass": "threshold",
+      "title": "The minimum Segurança Social contribution when you invoiced nothing",
+      "userQuestion": "I had no income this quarter — do I still owe Segurança Social anything?",
+      "scenario": "A freelancer with an empty quarter submits a zero declaration and is surprised by a contribution bill anyway.",
+      "audience": "independent workers with a low or empty quarter",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The floor that applies when relevant income is zero, and the euro figure the contribution cannot fall below.",
+      "anchorFact": {
+        "claim": "Where an independent worker has no income, or the contributions due would be under 20 euros, a minimum contribution base is fixed so that the contribution corresponds to that 20 euro amount.",
+        "kind": "figure",
+        "verifyAt": "https://www.seg-social.pt/trabalhadores-independentes",
+        "volatility": "annual"
+      },
+      "notObvious": "A zero-income quarter is widely assumed to mean a zero bill. The floor is the surprise that generates debt notices.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/trabalhadores-independentes",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "social-security-rate-differs-by-legal-form",
+      "pillar": "social_security",
+      "valueClass": "decision",
+      "title": "Why some independent workers pay 21.4% and others 25.2%",
+      "userQuestion": "Why is my Segurança Social rate higher than another freelancer's?",
+      "scenario": "Two people doing similar work compare contribution bills and find materially different rates, without knowing the legal form is what separates them.",
+      "audience": "freelancers choosing a legal form",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "Which contribution rate attaches to which legal form, and what that difference costs over a year.",
+      "anchorFact": {
+        "claim": "The contribution rate for independent workers is 21.4%, while the rate for empresários em nome individual, holders of an estabelecimento individual de responsabilidade limitada and their spouses is 25.2%.",
+        "kind": "figure",
+        "verifyAt": "https://www.seg-social.pt/trabalhadores-independentes",
+        "volatility": "annual",
+        "namedThing": "empresários em nome individual"
+      },
+      "notObvious": "The rate is almost always quoted as a single number. The higher rate attached to a different legal form is a real, avoidable annual cost.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/trabalhadores-independentes",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "social-security-quarterly-declaration-months",
+      "pillar": "social_security",
+      "valueClass": "deadline_action",
+      "title": "The four months the declaração trimestral is actually due",
+      "userQuestion": "Which months do I have to file the Segurança Social quarterly declaration?",
+      "scenario": "A newly registered freelancer knows a quarterly declaration exists but not which months it falls in, and misses the first one.",
+      "audience": "independent workers filing quarterly",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The four filing months, the three-month income period each one covers, and how that sets your contribution for the next quarter.",
+      "anchorFact": {
+        "claim": "The declaração trimestral is submitted by the last day of January, April, July and October, covering income obtained in the three immediately preceding months, and the monthly contribution base corresponds to one third of the relevant income for that period.",
+        "kind": "deadline",
+        "verifyAt": "https://www.seg-social.pt/ptss/pssd/noticias/trabalhadores-independentes-entrega-declaracao-trimestral",
+        "volatility": "stable"
+      },
+      "notObvious": "The declaration months and the income months are offset, which is exactly what people get wrong on their first filing.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/ptss/pssd/noticias/trabalhadores-independentes-entrega-declaracao-trimestral",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "housing-modelo-44-exempt-landlords",
+      "pillar": "housing_property",
+      "valueClass": "edge_case",
+      "title": "The landlords exempt from electronic rent receipts still owe Modelo 44",
+      "userQuestion": "I do not issue electronic rent receipts — do I still have to declare the rent?",
+      "scenario": "A landlord over 65, or with a rural contract, correctly stops issuing recibos de renda eletrónicos and assumes the reporting obligation ends with it.",
+      "audience": "landlords exempt from electronic rent receipts",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "Who the exemption covers, the annual declaration that replaces the receipts, and the February deadline for it.",
+      "anchorFact": {
+        "claim": "Landlords exempt from issuing electronic rent receipts, including those aged 65 or over on 31 December of the previous year and those with rural contracts, must instead submit the Modelo 44 annual rent declaration by the end of February.",
+        "kind": "instrument",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00358.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The exemption is well known and the replacement obligation is not, so people who correctly stop issuing receipts silently acquire a missed filing.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00358.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "immigration-renewal-30-days-before-expiry",
+      "pillar": "immigration_residency",
+      "valueClass": "deadline_action",
+      "title": "Residence permit renewal must be requested before the permit expires",
+      "userQuestion": "How early do I have to apply to renew my residence permit?",
+      "scenario": "A resident whose permit expires soon has been waiting for a reminder, having relied on the automatic extensions that applied in previous years.",
+      "audience": "holders of a temporary residence permit",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "The advance window for requesting renewal, that automatic extensions have ended, and the tax and contribution status checked before it is granted.",
+      "anchorFact": {
+        "claim": "Renewal of a temporary autorização de residência must be requested up to 30 days before its validity expires, applicants must have their contributory and tax situation regularised, and the previous automatic extensions of expired permits have ended.",
+        "kind": "deadline",
+        "verifyAt": "https://www2.gov.pt/servicos/renovar-a-autorizacao-de-residencia",
+        "volatility": "volatile",
+        "namedThing": "autorização de residência"
+      },
+      "notObvious": "Years of blanket automatic extensions trained people to wait. The end of that regime is the single most consequential change for existing residents.",
+      "journeyStage": "renewing_status",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/renovar-a-autorizacao-de-residencia",
+        "authority": "AIMA / gov.pt"
+      }
+    },
+    {
+      "id": "employment-experimental-period-length-by-role",
+      "pillar": "employment",
+      "valueClass": "threshold",
+      "title": "How long a período experimental lasts for your kind of role",
+      "userQuestion": "How long is my probation period supposed to be?",
+      "scenario": "A new hire is told they are on probation but never told for how long, and cannot tell whether the length in their contract is lawful.",
+      "audience": "employees starting a new contract",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The three statutory lengths for open-ended contracts, the shorter ones for fixed-term contracts, and which bracket your role falls in.",
+      "anchorFact": {
+        "claim": "Under the Código do Trabalho the período experimental for an indefinite-term contract is 90 days generally, 180 days for roles of technical complexity or high responsibility, and 240 days for management and senior posts, while fixed-term contracts have 30 or 15 days depending on duration.",
+        "kind": "figure",
+        "verifyAt": "https://diariodarepublica.pt/dr/lexionario/termo/periodo-experimental",
+        "volatility": "stable"
+      },
+      "notObvious": "Employers often state a single number. Knowing which bracket the role legally falls in is what tells you whether the contract is correct.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/lexionario/termo/periodo-experimental",
+        "authority": "Diário da República"
+      }
+    },
+    {
+      "id": "employment-experimental-period-notice-asymmetry",
+      "pillar": "employment",
+      "valueClass": "edge_case",
+      "title": "Notice during probation runs one way, not both",
+      "userQuestion": "Can I leave during my probation period without giving notice?",
+      "scenario": "An employee wants to leave a job inside probation and assumes they owe the same notice the employer would owe them.",
+      "audience": "employees leaving inside probation",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "Why the worker owes no notice at all, the notice the employer owes after 60 and 120 days, and the compensation for skipping it.",
+      "anchorFact": {
+        "claim": "Under the Código do Trabalho, during the período experimental the worker may terminate without prior aviso prévio, without just cause and without compensation, while the employer must give 7 days' notice once it has lasted more than 60 days and 30 days once it has lasted more than 120 days, paying compensation equal to any missing notice.",
+        "kind": "instrument",
+        "verifyAt": "https://diariodarepublica.pt/dr/lexionario/termo/periodo-experimental",
+        "volatility": "stable"
+      },
+      "notObvious": "The obligation is asymmetric, and people assume symmetry. It changes both how you resign and what you are owed if dismissed.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/lexionario/termo/periodo-experimental",
+        "authority": "Diário da República"
+      }
+    },
+    {
+      "id": "health-taxas-moderadoras-income-threshold",
+      "pillar": "health_family",
+      "valueClass": "threshold",
+      "title": "The household income limit for SNS fee exemption",
+      "userQuestion": "What income makes my household exempt from SNS taxas moderadoras?",
+      "scenario": "A household on a modest income keeps paying user fees at the health centre, unaware there is a defined income ceiling for exemption.",
+      "audience": "households on a low or modest income",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The exact monthly household income ceiling, how it is derived from the IAS, and why it changes every year.",
+      "anchorFact": {
+        "claim": "Exemption from taxas moderadoras for insuficiência económica applies to households whose average monthly income does not exceed 1.5 times the IAS, which the published figures put at 805.70 euros for 2026 against an IAS of 537.13 euros.",
+        "kind": "figure",
+        "verifyAt": "https://www.gov.pt/servicos/pedir-a-isencao-de-taxas-moderadoras-por-insuficiencia-economica",
+        "volatility": "annual"
+      },
+      "notObvious": "The ceiling is expressed as a multiple of the IAS rather than a headline number, so people never learn the figure that actually applies to them.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/pedir-a-isencao-de-taxas-moderadoras-por-insuficiencia-economica",
+        "authority": "gov.pt / SNS"
+      }
+    },
+    {
+      "id": "health-exemption-reassessed-automatically",
+      "pillar": "health_family",
+      "valueClass": "insider",
+      "title": "SNS fee exemption renews itself, but only if you filed IRS",
+      "userQuestion": "Do I have to reapply for my SNS fee exemption every year?",
+      "scenario": "Someone granted an exemption last year is unsure whether to reapply, and does not realise the renewal is computed from their tax return.",
+      "audience": "patients already granted a fee exemption",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "The automatic annual reassessment date, the data it is based on, and the one thing that silently ends the exemption.",
+      "anchorFact": {
+        "claim": "Insuficiência económica for taxas moderadoras is reassessed automatically each year by 30 September using income declared to the Autoridade Tributária, so no renewal request is needed and the exemption is recorded against the utente record.",
+        "kind": "deadline",
+        "namedThing": "taxas moderadoras",
+        "verifyAt": "https://www.gov.pt/servicos/pedir-a-isencao-de-taxas-moderadoras-por-insuficiencia-economica",
+        "volatility": "annual"
+      },
+      "notObvious": "Because the reassessment reads the tax return, not filing IRS can quietly remove an exemption nobody told you was conditional on it.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/pedir-a-isencao-de-taxas-moderadoras-por-insuficiencia-economica",
+        "authority": "gov.pt / SNS"
+      }
+    },
+    {
+      "id": "consumer-fidelizacao-maximum-and-alternatives",
+      "pillar": "daily_life_consumer",
+      "valueClass": "threshold",
+      "title": "The 24-month cap on telecom lock-in, and the tariffs operators must also offer",
+      "userQuestion": "Can my telecoms operator lock me in for longer than two years?",
+      "scenario": "A customer signing for internet and mobile is presented with a single long lock-in offer and assumes no alternative exists.",
+      "audience": "people signing a telecoms contract",
+      "risk": "low",
+      "volatility": "stable",
+      "promise": "The legal maximum lock-in, the shorter and no-lock-in tariffs operators are obliged to make available, and when they may re-lock you.",
+      "anchorFact": {
+        "claim": "The maximum fidelização period for telecoms contracts is 24 months, and operators must make available tariffs with no fidelização as well as 6-month and 12-month options for each offer, with additional lock-in only on subsidised equipment or identified promotional conditions and express written consent.",
+        "kind": "figure",
+        "verifyAt": "https://www.anacom.pt/render.jsp?contentId=1390691",
+        "volatility": "stable"
+      },
+      "notObvious": "The obligation to also offer 6-month, 12-month and no-lock-in versions of the same tariff is the part nobody is told at the point of sale.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.anacom.pt/render.jsp?contentId=1390691",
+        "authority": "ANACOM"
+      }
+    },
+    {
+      "id": "consumer-14-day-withdrawal-and-exit-cost-disclosure",
+      "pillar": "daily_life_consumer",
+      "valueClass": "insider",
+      "title": "Two things your operator must tell you when you ask to leave",
+      "userQuestion": "How much will it cost me to cancel my telecoms contract early?",
+      "scenario": "A customer wanting to switch provider cannot get a straight answer about the remaining lock-in or the penalty to exit.",
+      "audience": "customers trying to leave a telecoms contract",
+      "risk": "low",
+      "volatility": "stable",
+      "promise": "The 14-day no-questions withdrawal window, and the two facts the operator must disclose on request before you decide.",
+      "anchorFact": {
+        "claim": "A consumer may cancel a telecoms contract within 14 consecutive days of signing at no cost and without giving a reason, and operators must inform consumers on request how long remains of the contract and what early cancellation would cost.",
+        "kind": "deadline",
+        "namedThing": "fidelização",
+        "verifyAt": "https://www.anacom.pt/render.jsp?contentId=1750359",
+        "volatility": "stable"
+      },
+      "notObvious": "The disclosure duty turns a vague retention conversation into a number the operator is obliged to give you.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.anacom.pt/render.jsp?contentId=1750359",
+        "authority": "ANACOM"
+      }
+    },
+    {
+      "id": "driving-exam-required-by-country-of-issue",
+      "pillar": "driving_transport",
+      "valueClass": "edge_case",
+      "title": "When exchanging a foreign licence requires sitting a driving test",
+      "userQuestion": "Will I have to take a Portuguese driving test to exchange my licence?",
+      "scenario": "A resident from outside the EU assumes the exchange is a paperwork formality and has not budgeted time or money for an examination.",
+      "audience": "residents exchanging a non-EU driving licence",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "What decides whether a test is required, the fee involved, and the discount for applying online.",
+      "anchorFact": {
+        "claim": "Whether a driving test is required to exchange a foreign título de condução depends on whether the issuing country adheres to the international road traffic conventions or holds a bilateral agreement with Portugal, with the published exchange fee at 30 euros and a 10% reduction for online submission.",
+        "kind": "figure",
+        "verifyAt": "https://www.gov.pt/servicos/trocar-carta-de-conducao-estrangeira-por-portuguesa",
+        "volatility": "annual"
+      },
+      "notObvious": "The requirement turns entirely on the issuing country's treaty status, which is checkable in advance but never mentioned alongside the exchange instructions.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/trocar-carta-de-conducao-estrangeira-por-portuguesa",
+        "authority": "gov.pt / IMT"
+      }
+    },
+    {
+      "id": "identity-cmd-activation-route-differs-for-foreigners",
+      "pillar": "identity_access",
+      "valueClass": "edge_case",
+      "title": "Activating Chave Móvel Digital without a Cartão de Cidadão",
+      "userQuestion": "Can I activate Chave Móvel Digital with a residence permit instead of a citizen card?",
+      "scenario": "A foreign resident tries to activate CMD online, the flow only accepts a citizen card, and they conclude CMD is unavailable to them.",
+      "audience": "foreign residents without a Cartão de Cidadão",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "Which identity documents CMD accepts, why the online route rejects you, and where activation actually has to happen.",
+      "anchorFact": {
+        "claim": "Chave Móvel Digital can be activated by a foreign person using a passport, título de residência or residence card, but online activation through autenticacao.gov, the Portal das Finanças and the gov.pt app is available only to holders of a Portuguese Cartão de Cidadão.",
+        "kind": "artefact",
+        "namedThing": "título de residência",
+        "verifyAt": "https://www.gov.pt/servicos/ativar-a-chave-movel-digital",
+        "volatility": "stable"
+      },
+      "notObvious": "The online route silently excludes exactly the people most likely to need CMD, and the eligibility page does not present that as the reason activation failed.",
+      "journeyStage": "first_30_days",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/ativar-a-chave-movel-digital",
+        "authority": "gov.pt / Autenticação.gov"
+      }
+    },
+    {
+      "id": "identity-cmd-one-phone-number-per-person",
+      "pillar": "identity_access",
+      "valueClass": "insider",
+      "title": "Every Chave Móvel Digital needs its own phone number",
+      "userQuestion": "Can I use my phone number for my child's or partner's Chave Móvel Digital?",
+      "scenario": "A parent setting up CMD for a child, or a couple sharing one handset, tries to reuse the same number and the second activation fails without a clear reason.",
+      "audience": "families setting up CMD for more than one person",
+      "risk": "low",
+      "volatility": "stable",
+      "promise": "Why a number cannot be shared, what that means for a child's CMD, and how to plan it before you start.",
+      "anchorFact": {
+        "claim": "Chave Móvel Digital binds one mobile phone number to one identity document, and each Chave Móvel Digital requires its own unique phone number even when it is being set up for a child or another family member.",
+        "kind": "artefact",
+        "namedThing": "Chave Móvel Digital",
+        "verifyAt": "https://www.autenticacao.gov.pt/cmd-pedido-chave",
+        "volatility": "stable"
+      },
+      "notObvious": "Households routinely discover this only after the second activation fails, having already used their only spare number.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://www.autenticacao.gov.pt/cmd-pedido-chave",
+        "authority": "Autenticação.gov"
+      }
+    },
+    {
+      "id": "housing-imt-is-exemption-under-35-ceilings",
+      "pillar": "housing_property",
+      "valueClass": "threshold",
+      "title": "The purchase-price ceilings for the under-35 IMT and Stamp Duty exemption",
+      "userQuestion": "Up to what price is a first home exempt from IMT for buyers under 35?",
+      "scenario": "A first-time buyer under 35 is comparing properties and does not know at what price the exemption stops applying in full.",
+      "audience": "first-time buyers under 35",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The price up to which the exemption is total, the band where it applies only partially, and the point where it stops entirely.",
+      "anchorFact": {
+        "claim": "For a first purchase of habitação própria permanente by a buyer under 35, IMT and Imposto do Selo exemption is total up to a published price ceiling and applies only up to that ceiling for purchases in the band above it, ceasing entirely above the upper limit.",
+        "kind": "figure",
+        "verifyAt": "https://www.gov.pt/servicos/pedir-isencao-imt-e-is",
+        "volatility": "annual"
+      },
+      "notObvious": "The partial band is what actually decides an offer price, and it is routinely reported as a single all-or-nothing number.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/pedir-isencao-imt-e-is",
+        "authority": "gov.pt / Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "housing-imt-exemption-must-precede-the-deed",
+      "pillar": "housing_property",
+      "valueClass": "costly_mistake",
+      "title": "The IMT exemption has to be requested before the deed, not after",
+      "userQuestion": "I completed the purchase before claiming the IMT exemption — can I still get it?",
+      "scenario": "A buyer signs the escritura assuming the exemption is applied automatically or can be reclaimed later, and finds the tax already settled.",
+      "audience": "buyers claiming an IMT exemption",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "When the request must be made, where to make it, and why completing first is the expensive order to do it in.",
+      "anchorFact": {
+        "claim": "A request for IMT exemption must be made before the purchase and the escritura, either online on the Portal das Finanças or at a Serviço de Finanças counter, because IMT is settled ahead of the deed.",
+        "kind": "procedure",
+        "namedThing": "escritura",
+        "verifyAt": "https://www.gov.pt/servicos/pedir-isencao-imt-e-is",
+        "volatility": "stable"
+      },
+      "notObvious": "Ordering is the whole risk. Nothing in the buying process prompts you, and the cost of getting the sequence wrong is the full tax.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/pedir-isencao-imt-e-is",
+        "authority": "gov.pt / Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }

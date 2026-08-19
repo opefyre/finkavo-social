@@ -3,6 +3,7 @@
 // Exits non-zero on any violation so the bank cannot regress into templated filler.
 
 import { readFile } from "node:fs/promises";
+import { deriveEvidenceTerms } from "./lib/evidence-terms.mjs";
 
 const PILLARS = new Set([
   "identity_access", "immigration_residency", "citizenship_civil", "freelance_business",
@@ -183,6 +184,15 @@ for (const brief of briefs) {
   // high-risk content must be anchored to a primary authority, not a portal landing page
   if (brief.risk === "high" && source.canonicalUrl && /^https:\/\/[^/]+\/?$/.test(source.canonicalUrl)) {
     warn(id, `high-risk brief points at a bare domain '${source.canonicalUrl}' — needs a deep link to the page that answers it`);
+  }
+
+  // --- evidence terms must be derivable, not guessed ------------------------
+  // Run the same derivation the plan builder uses, so an underivable brief fails here at
+  // authoring time rather than blowing up the layout later.
+  try {
+    deriveEvidenceTerms(brief);
+  } catch (error) {
+    fail(id, String(error.message ?? error));
   }
 
   // --- identity uniqueness --------------------------------------------------
