@@ -4396,6 +4396,106 @@
         "canonicalUrl": "https://www.dgeg.gov.pt/pt/areas-transversais/politicas-de-protecao-ao-consumidor-de-energia/tarifa-social-de-energia/quais-as-condicoes-de-atribuicao-da-tarifa-social-de-energia/",
         "authority": "DGEG"
       }
+    },
+    {
+      "id": "driving-imported-car-can-drop-an-iuc-category",
+      "pillar": "driving_transport",
+      "valueClass": "edge_case",
+      "title": "An imported car first registered abroad before July 2007 pays less IUC",
+      "userQuestion": "Why is the IUC on my imported car higher than on an identical Portuguese one?",
+      "scenario": "An owner of a car imported from another EU state pays category B IUC on a vehicle whose original registration predates the category change.",
+      "audience": "owners of cars imported from the EU",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The rule that moves such vehicles to the older, cheaper category, and the registration dates that decide it.",
+      "anchorFact": {
+        "claim": "Since 1 January 2020 vehicles previously taxed in IUC category B that were registered in Portugal on or after 1 July 2007 but had a first registration in an EU or EEA country before that date are taxed in category A, which generally reduces the tax due.",
+        "kind": "deadline",
+        "namedThing": "IUC",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/destaques/Paginas/IUC_Veiculos_importados.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The category follows the original foreign registration date rather than the Portuguese one, and the correction is not applied automatically to every affected vehicle.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/destaques/Paginas/IUC_Veiculos_importados.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "driving-isv-age-reduction-only-covers-engine-part",
+      "pillar": "driving_transport",
+      "valueClass": "threshold",
+      "title": "Why the age discount on imported car tax is smaller than expected",
+      "userQuestion": "How much does the age of an imported car reduce the vehicle tax?",
+      "scenario": "A buyer estimates ISV using the age reduction against the whole tax and is caught out by a much larger bill.",
+      "audience": "people importing a used car from the EU",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The two components ISV is built from, and which one the age reduction actually applies to.",
+      "anchorFact": {
+        "claim": "ISV on passenger cars is the sum of a cilindrada component and an environmental component from Tabela A, and for vehicles with definitive registrations from other EU Member States the Tabela D age reduction percentages apply only to the cilindrada component, so the CO2 environmental component is taxed in full without any age reduction.",
+        "kind": "instrument",
+        "namedThing": "ISV",
+        "verifyAt": "https://info-aduaneiro.portaldasfinancas.gov.pt/pt/informacao_aduaneira/Veiculos/regularizacao/Pages/faq-isv-06.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "Applying the age discount to the whole tax understates the bill badly, because the environmental half never benefits from it.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://info-aduaneiro.portaldasfinancas.gov.pt/pt/informacao_aduaneira/Veiculos/regularizacao/Pages/faq-isv-06.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "driving-traffic-fine-voluntary-payment-window",
+      "pillar": "driving_transport",
+      "valueClass": "deadline_action",
+      "title": "The fifteen working days that cut a traffic fine by a fifth",
+      "userQuestion": "Is it cheaper to just pay a traffic fine straight away?",
+      "scenario": "A driver leaves the notice on the counter for a few weeks, then pays the full amount plus costs.",
+      "audience": "drivers who have received a traffic fine notice",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The window for the reduced payment, the reduction it gives, when costs start being added, and the separate window to contest.",
+      "anchorFact": {
+        "claim": "Voluntary payment of a road traffic coima must be made within 15 working days of notification of the auto and reduces the amount by 20% of the minimum coima applicable, paying within that window and filing no defence avoids costs, while voluntary payment remains possible after 15 working days until the administrative decision but with costs due.",
+        "kind": "deadline",
+        "namedThing": "contraordenação",
+        "verifyAt": "https://ansr.pt/contraordenacoes",
+        "volatility": "stable"
+      },
+      "notObvious": "Paying late is not simply paying the same amount later: the reduction disappears and process costs attach on top.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://ansr.pt/contraordenacoes",
+        "authority": "ANSR"
+      }
+    },
+    {
+      "id": "driving-imported-vehicle-two-clocks",
+      "pillar": "driving_transport",
+      "valueClass": "deadline_action",
+      "title": "The two clocks that start when an imported car enters Portugal",
+      "userQuestion": "How long do I have to register a car I brought in from another country?",
+      "scenario": "An owner drives on foreign plates for months, unaware that two separate deadlines started the day the car arrived.",
+      "audience": "people importing a vehicle into Portugal",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The customs declaration deadline, the separate driving and registration window it opens, and the inspection certificate's own validity.",
+      "anchorFact": {
+        "claim": "After a vehicle enters Portugal the Declaração Aduaneira de Veículo must be submitted within 20 working days, the vehicle may then be driven for 60 consecutive days on the DAV alone and the registration request must be made within those 60 days, and the model 112 inspection certificate issued by a CITV is valid for 90 working days.",
+        "kind": "deadline",
+        "namedThing": "DAV",
+        "verifyAt": "https://www2.gov.pt/servicos/pedir-atribuicao-de-matricula-para-um-veiculo",
+        "volatility": "stable"
+      },
+      "notObvious": "Three different periods run at once in working days and consecutive days, and missing the twenty-day customs step invalidates the sixty-day driving allowance that depends on it.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/pedir-atribuicao-de-matricula-para-um-veiculo",
+        "authority": "gov.pt / IMT"
+      }
     }
   ]
 }
