@@ -10768,6 +10768,31 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs87.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "iva-getting-back-the-tax-on-an-invoice-nobody-paid",
+      "pillar": "iva",
+      "valueClass": "insider",
+      "title": "Getting back the IVA on an invoice the client never paid",
+      "userQuestion": "I paid IVA on an invoice that was never settled. Is it gone?",
+      "scenario": "A small supplier writes off an unpaid invoice and absorbs the IVA they already handed over on it.",
+      "audience": "businesses carrying unpaid invoices",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The credit sizes that allow bad debt regularisation, the six months for the smallest, and the notification the customer must receive.",
+      "anchorFact": {
+        "claim": "Under artigo 78 of the Código do IVA tax on unpaid credits may be regularised where the credit including IVA is under 750 euros and payment has been overdue more than 6 months with the debtor an individual or an entity carrying out only exempt operations, or where a credit between 750 and 8,000 euros including IVA is supported by an execution record with proceedings suspended or ended for want of attachable assets, or by a formal notice in an injunction or a court judgment; recovery requires documentary evidence of collection attempts and certification, and the supplier must notify the customer identifying the invoices, the credit and tax amounts, the process and the regularisation period.",
+        "kind": "instrument",
+        "namedThing": "regularização",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/iva78.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Under 750 euros only the six months and the type of debtor matter, so the smallest unpaid invoices are the easiest to reclaim and the ones most often written off.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/iva78.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
