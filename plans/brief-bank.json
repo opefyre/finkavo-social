@@ -7893,6 +7893,56 @@
         "canonicalUrl": "https://ansr.pt/contraordenacoes",
         "authority": "Autoridade Nacional de Segurança Rodoviária"
       }
+    },
+    {
+      "id": "banking-the-three-years-that-clear-remaining-debt",
+      "pillar": "banking_money",
+      "valueClass": "insider",
+      "title": "The three years that can clear what an insolvency leaves behind",
+      "userQuestion": "Do debts survive a personal insolvency forever?",
+      "scenario": "Someone carries unpayable debt for years rather than filing, believing insolvency only liquidates what they have and leaves the rest owing.",
+      "audience": "individuals with unpayable debt",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The mechanism that discharges remaining debt, the period it now runs for, and the duties that must be met throughout it.",
+      "anchorFact": {
+        "claim": "The exoneração do passivo restante allows an individual debtor's remaining liabilities to be discharged after a period of cessão of available income, reduced by the 2022 amendment to the Código da Insolvência e da Recuperação de Empresas from 5 years to 3 years following the closure of the insolvency process; during the cession period the debtor must not conceal or dissimulate income by any means, must inform the court and the fiduciário of their income and assets in the form and time requested, and must hold paid work and not abandon it without legitimate reason.",
+        "kind": "instrument",
+        "namedThing": "exoneração do passivo restante",
+        "verifyAt": "https://diariodarepublica.pt/dr/lexionario/termo/exoneracao-passivo-restante",
+        "volatility": "stable"
+      },
+      "notObvious": "The discharge is earned by three years of disclosure and work rather than granted at the end of the case, which is why the obligations during the period decide the outcome.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/lexionario/termo/exoneracao-passivo-restante",
+        "authority": "Diário da República / CIRE"
+      }
+    },
+    {
+      "id": "citizenship-who-appoints-and-replaces-a-legal-aid-lawyer",
+      "pillar": "citizenship_civil",
+      "valueClass": "insider",
+      "title": "Who appoints your legal aid lawyer, and who replaces them",
+      "userQuestion": "My appointed lawyer is not working out. Who do I speak to?",
+      "scenario": "Someone unhappy with an appointed lawyer complains to the court or to Segurança Social, neither of which can change the appointment.",
+      "audience": "people with an appointed legal aid lawyer",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Which body appoints the lawyer, who pays them, the decision deadline on the aid request, and where a replacement is asked for.",
+      "anchorFact": {
+        "claim": "In the modality of appointment and payment of a lawyer's fees the Ordem dos Advogados appoints the patrono and the Ministério da Justiça pays them; the applicant receives a decision on the proteção jurídica request within 30 days, a period suspended where a hearing of interested parties is held until the reply deadline ends, and all matters relating to the appointment and specifically the replacement of the lawyer must be addressed to the Ordem dos Advogados under artigos 30 to 32 of Lei n.º 34/2004.",
+        "kind": "instrument",
+        "namedThing": "Ordem dos Advogados",
+        "verifyAt": "https://www.seg-social.pt/protecao-juridica",
+        "volatility": "stable"
+      },
+      "notObvious": "Three different institutions each own one piece of this, and the one that grants the aid is not the one that can change the lawyer.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/protecao-juridica",
+        "authority": "Instituto da Segurança Social"
+      }
     }
   ]
 }
