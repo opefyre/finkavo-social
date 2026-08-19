@@ -5631,7 +5631,7 @@
       "volatility": "stable",
       "promise": "The narrow grounds for refusal, the twenty-day clock, and what an employer's silence legally amounts to.",
       "anchorFact": {
-        "claim": "An employer may refuse horário flexível for a worker with a child under 12 only on grounds of imperious operating requirements or the impossibility of replacing an indispensable worker, must communicate an intention to refuse within 20 days of receiving the request, and a failure to communicate within that period or to submit the process in the legal term implies acceptance of the request in the exact terms in which it was made.",
+        "claim": "An employer may refuse horário flexível for a worker with a child under 12 only on grounds of imperious operating requirements or the impossibility of replacing an indispensable worker, must communicate an intention to refuse within 20 days of receiving the request, and a failure to communicate within that period or to submit the process in the legal term implies acceptance of the request in the exact terms in which it was made; to benefit from these arrangements the worker must send a written request to the employer 30 days in advance.",
         "kind": "deadline",
         "namedThing": "horário flexível",
         "verifyAt": "https://www.gov.pt/servicos/trabalho-com-horario-flexivel-parecer-previo-a-recusa",
@@ -9766,6 +9766,106 @@
       "journeyStage": "running_a_business",
       "source": {
         "canonicalUrl": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/apoios-e-encerramento-da-atividade",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "employment-four-hours-a-quarter-for-the-childs-school",
+      "pillar": "employment",
+      "valueClass": "insider",
+      "title": "Four hours a quarter to go to your child's school",
+      "userQuestion": "Can I take time off work for a parents' meeting?",
+      "scenario": "A parent takes unpaid time or uses holiday for a school meeting that the law already provides time off for.",
+      "audience": "working parents of children under twelve",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The specific school-visit entitlement and how often it can be used, alongside the halved hours and flexible schedule available to either parent.",
+      "anchorFact": {
+        "claim": "A worker with a child under 12 may be absent for up to 4 hours once per quarter to go to the child's school, and may also have the normal working period reduced by half, exercised by either parent or by both in successive periods, or work a flexible schedule, exercised by either parent or by both.",
+        "kind": "figure",
+        "namedThing": "dispensa para deslocação à escola",
+        "verifyAt": "https://www.gov.pt/guias/ter-uma-crianca/dispensas-e-faltas-ao-trabalho-dos-pais",
+        "volatility": "stable"
+      },
+      "notObvious": "It is a standalone entitlement rather than part of the family leave allowance, so using it costs nothing from the days kept for illness.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/ter-uma-crianca/dispensas-e-faltas-ao-trabalho-dos-pais",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "employment-ten-days-notice-for-a-feeding-dispensation",
+      "pillar": "employment",
+      "valueClass": "deadline_action",
+      "title": "Ten days' notice, and what changes after the first year",
+      "userQuestion": "What do I have to tell my employer to get the feeding breaks?",
+      "scenario": "A parent returns from leave expecting the daily dispensation to start immediately and finds it needed notice, or loses it at the child's first birthday.",
+      "audience": "parents returning to work with a baby",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The notice the dispensation requires, the document needed to continue past the child's first year, and the shift patterns a breastfeeding mother is exempt from.",
+      "anchorFact": {
+        "claim": "Parents must communicate the feeding dispensation to the employer 10 days before it starts, and where the mother continues breastfeeding after the child's first year a medical certificate must be presented to keep it; a mother who is breastfeeding is exempt from night work, overtime, banco de horas, concentrated schedules and the adaptability regime.",
+        "kind": "deadline",
+        "namedThing": "dispensa para amamentação",
+        "verifyAt": "https://www.gov.pt/guias/ter-uma-crianca/dispensas-e-faltas-ao-trabalho-dos-pais",
+        "volatility": "stable"
+      },
+      "notObvious": "The exemption from night work and flexible-hours regimes follows the breastfeeding rather than the child's age, so it lasts exactly as long as the certificate does.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/ter-uma-crianca/dispensas-e-faltas-ao-trabalho-dos-pais",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "employment-leave-that-stretches-to-four-years",
+      "pillar": "employment",
+      "valueClass": "threshold",
+      "title": "Leave that can stretch to four years for a disabled child",
+      "userQuestion": "How much time can I take to care for a child with a disability?",
+      "scenario": "A parent resigns to care for a child with a chronic illness, not knowing a leave of up to four years exists.",
+      "audience": "parents of a child with a disability or chronic illness",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The weekly reduction available in the first year, the leave that can extend to four years at any age, and the telework right and its condition.",
+      "anchorFact": {
+        "claim": "Parents of a child with a disability or chronic illness may, while the child is under 1 year old, reduce the normal weekly working period by 5 hours or opt for a flexible schedule or part-time work, and regardless of the child's age may take leave of up to 6 months extendable up to 4 years to assist the child; parents of a child with a disability, chronic illness or oncological disease have the right to telework where possible, provided the parent lives in the same house as the child.",
+        "kind": "figure",
+        "namedThing": "licença para assistência a filho",
+        "verifyAt": "https://www.gov.pt/guias/ter-uma-crianca/dispensas-e-faltas-ao-trabalho-dos-pais",
+        "volatility": "stable"
+      },
+      "notObvious": "Four years of protected leave is an alternative to resigning, and it does not depend on the child being young.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/ter-uma-crianca/dispensas-e-faltas-ao-trabalho-dos-pais",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "employment-adoption-appointments-count-as-work",
+      "pillar": "employment",
+      "valueClass": "insider",
+      "title": "Adoption appointments count as time worked, without a limit",
+      "userQuestion": "Do I have to use holiday for adoption assessment appointments?",
+      "scenario": "Prospective adopters ration annual leave across a long assessment process that the law already covers.",
+      "audience": "people going through adoption or fostering",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The dispensation for adoption and fostering appointments, that it counts as work, and that it has no cap.",
+      "anchorFact": {
+        "claim": "Parents in adoption or acolhimento familiar processes are entitled to dispensation from work to attend Segurança Social services or to receive Segurança Social technicians assessing adoption candidates, the dispensation counts as effective provision of work, and there is no limit on the number of times it may be used.",
+        "kind": "procedure",
+        "namedThing": "acolhimento familiar",
+        "verifyAt": "https://www.gov.pt/guias/ter-uma-crianca/dispensas-e-faltas-ao-trabalho-dos-pais",
+        "volatility": "stable"
+      },
+      "notObvious": "Counting as work means it is paid and does not touch holiday, and the absence of a cap is what makes a long assessment survivable.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/ter-uma-crianca/dispensas-e-faltas-ao-trabalho-dos-pais",
         "authority": "gov.pt"
       }
     }
