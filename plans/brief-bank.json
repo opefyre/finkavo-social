@@ -7818,6 +7818,56 @@
         "canonicalUrl": "https://info-aduaneiro.portaldasfinancas.gov.pt/pt/informacao_aduaneira/viajantes/isencao_bagagem_pterceiro/Pages/faq-isencao-iva.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "housing-innovations-need-two-thirds-of-the-building",
+      "pillar": "housing_property",
+      "valueClass": "threshold",
+      "title": "Two thirds of the building to approve an improvement",
+      "userQuestion": "What majority does the condominium need to approve works?",
+      "scenario": "A committee pushes through a lift or a new entrance on a show of hands and the decision is challenged months into the work.",
+      "audience": "condominium owners voting on works",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The majority an improvement requires, how it is measured, and the budgets the administrator must table first.",
+      "anchorFact": {
+        "claim": "Works that constitute inovações depend on approval by a majority of condóminos representing two thirds of the total value of the building, the same threshold that allows the regulations to distribute common-interest service costs equally or in proportion to use, and when the assembly deliberates on conservation works or innovations the administrator must present at least 3 budgets from different sources unless the regulations or the assembly decide otherwise.",
+        "kind": "figure",
+        "namedThing": "inovações",
+        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2022-177392492",
+        "volatility": "stable"
+      },
+      "notObvious": "The majority is measured in building value rather than in heads, so a few large fractions can carry or block a vote the show of hands appeared to settle.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2022-177392492",
+        "authority": "Diário da República / Código Civil"
+      }
+    },
+    {
+      "id": "housing-changing-what-a-fraction-may-be-used-for",
+      "pillar": "housing_property",
+      "valueClass": "edge_case",
+      "title": "Changing what a flat may legally be used for needs everyone",
+      "userQuestion": "Can I turn my ground-floor flat into a shop, or my shop into a home?",
+      "scenario": "An owner converts a fraction to a different use, and the condominium points to the constitutive title that says otherwise.",
+      "audience": "owners wanting to change a property's use",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Why the permitted use is fixed in the constitutive title, the consent needed to change it, and the narrow route around a refusal.",
+      "anchorFact": {
+        "claim": "Under the Código Civil the purpose a fração autónoma is destined for forms part of the condominium's real statute in the título constitutivo, so changing it depends on the consent of all condóminos formalised by escritura pública; a lack of agreement to alter the title as to common parts can be made up judicially only where the votes of those not consenting represent less than 1 tenth of the invested capital and the change does not alter the conditions of use, the relative value or the purpose of their fractions.",
+        "kind": "instrument",
+        "namedThing": "título constitutivo",
+        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/1966-34509075-49925475",
+        "volatility": "stable"
+      },
+      "notObvious": "Unanimity is the rule and the judicial override is narrow, so the permitted use written into the title is closer to permanent than owners expect.",
+      "journeyStage": "buying_a_home",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/1966-34509075-49925475",
+        "authority": "Diário da República / Código Civil"
+      }
     }
   ]
 }
