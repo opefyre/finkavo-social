@@ -267,6 +267,8 @@ export function announcementLinks(pageUrl: string, links: string[]): string[] {
     if (base && !path.startsWith(base + "/")) continue;
     if (/\.(pdf|jpg|png|zip|xlsx?|docx?)$/i.test(path)) continue;
     if (/(contactos|acessibilidade|privacidade|cookies|mapa-do-site|login|pesquisa|rss)/i.test(path)) continue;
+    // Notice boards paginate, and page 2 of a list is not an announcement.
+    if (/\/(page|pagina)[:/-]?\d+$/i.test(path) || /^\d+$/.test(path.split("/").filter(Boolean).slice(-1)[0] ?? "")) continue;
     out.add(parsed.toString());
   }
   return [...out];
