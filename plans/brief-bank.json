@@ -6868,6 +6868,31 @@
         "canonicalUrl": "https://www.dges.gov.pt/pt/pagina/calendario-concurso-nacional-de-acesso-0",
         "authority": "Direção-Geral do Ensino Superior"
       }
+    },
+    {
+      "id": "citizenship-when-a-child-needs-permission-to-leave",
+      "pillar": "citizenship_civil",
+      "valueClass": "edge_case",
+      "title": "Travelling abroad with one parent needs no letter",
+      "userQuestion": "Do I need the other parent's written permission to take our child abroad?",
+      "scenario": "A separated parent cancels a trip, or pays a notary, over a document the law does not require in their situation.",
+      "audience": "parents travelling abroad with a child",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The situation that actually triggers the authorisation requirement, the form it must take, and how long a consular one lasts.",
+      "anchorFact": {
+        "claim": "Where a minor travels with only one parent, including where the parents are unmarried, divorced, judicially separated or the marriage was annulled, no authorisation is required provided responsabilidade parental is exercised jointly and the other parent does not object; authorisation is required where the minor leaves the country unaccompanied by both parents, must be in a written and dated document with the signature of the holder of parental responsibility legally certified by a notary, lawyer, solicitador or a Portuguese embassy or consulate, granting accompanying powers to identified third parties, and a consular authorisation is valid for 1 year.",
+        "kind": "procedure",
+        "namedThing": "responsabilidade parental",
+        "verifyAt": "https://www2.gov.pt/servicos/dar-autorizacao-de-saida-de-menor-do-territorio-nacional",
+        "volatility": "stable"
+      },
+      "notObvious": "The trigger is travelling without both parents, not travelling without one, so the common single-parent holiday needs nothing unless the other parent has formally objected.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/dar-autorizacao-de-saida-de-menor-do-territorio-nacional",
+        "authority": "gov.pt / Ministério da Justiça"
+      }
     }
   ]
 }
