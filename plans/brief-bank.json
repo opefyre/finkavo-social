@@ -3432,6 +3432,131 @@
         "canonicalUrl": "https://www2.gov.pt/pt/servicos/pedir-o-divorcio-por-mutuo-consentimento",
         "authority": "gov.pt / IRN"
       }
+    },
+    {
+      "id": "iva-cash-accounting-regime-eligibility",
+      "pillar": "iva",
+      "valueClass": "threshold",
+      "title": "Paying IVA only once the client has actually paid you",
+      "userQuestion": "Can I avoid handing over IVA before my client pays the invoice?",
+      "scenario": "A small business funds IVA out of its own cash for months because clients pay late, unaware an alternative regime exists.",
+      "audience": "businesses with slow-paying clients",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The turnover ceiling to join the cash regime, the lock-in before you can leave, and the wait before rejoining.",
+      "anchorFact": {
+        "claim": "The regime de caixa do IVA requires turnover in the year before the request of 2,000,000 euros or less, the option for the general exigibility regime can only be exercised after 2 consecutive calendar years under the cash regime, rejoining requires 2 consecutive calendar years since the previous option ended, and acceptance is not automatic but subject to validation.",
+        "kind": "figure",
+        "namedThing": "regime de caixa",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00324.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "It shifts when IVA becomes payable rather than how much, which is a cash-flow lever most small businesses never learn they have.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00324.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-ifici-replaced-non-habitual-resident",
+      "pillar": "irs",
+      "valueClass": "deadline_action",
+      "title": "The regime that replaced non-habitual resident, and its January deadline",
+      "userQuestion": "Is the non-habitual resident scheme still available to new arrivals?",
+      "scenario": "Someone moving to Portugal plans around NHR guidance still circulating online and misses the registration window for what replaced it.",
+      "audience": "new tax residents in eligible professions",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "What replaced NHR, the five-year absence and profession conditions, the 15 January registration deadline, and what late registration costs you.",
+      "anchorFact": {
+        "claim": "The IFICI incentive replaced the residente não habitual regime and requires not having been tax resident in Portugal in the previous five years, exercising an activity covered by artigo 58-A of the EBF, and not having benefited from NHR or IFICI before; registration must be requested by 15 January of the year following becoming resident, runs for 10 consecutive years, and late registration takes effect only from the year it is made for the remaining period.",
+        "kind": "deadline",
+        "namedThing": "IFICI",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-01018.aspx",
+        "volatility": "volatile"
+      },
+      "notObvious": "Registering late does not shift the ten-year clock, it shortens it, so a missed January costs a full year of the benefit rather than delaying it.",
+      "journeyStage": "before_moving",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-01018.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "immigration-eu-citizens-must-register-after-three-months",
+      "pillar": "immigration_residency",
+      "valueClass": "deadline_action",
+      "title": "EU citizens have a registration deadline too",
+      "userQuestion": "Do I need to register anywhere if I am an EU citizen living in Portugal?",
+      "scenario": "An EU national assumes free movement means no paperwork and never registers, then cannot prove lawful residence when it matters.",
+      "audience": "EU, EEA and Swiss citizens staying beyond three months",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Where the certificate is requested, the thirty-day window after three months, the cost, and how long it lasts.",
+      "anchorFact": {
+        "claim": "An EU, EEA or Swiss national staying longer than three months must request the certificado de registo at the câmara municipal of their area of residence within 30 days after the first three months in national territory; it costs 15 euros, or 7.50 euros for children under 6, and is valid for 5 years.",
+        "kind": "deadline",
+        "namedThing": "certificado de registo",
+        "verifyAt": "https://www2.gov.pt/pt/servicos/pedir-o-certificado-de-registo-para-cidadao-da-ue/eee/suica",
+        "volatility": "stable"
+      },
+      "notObvious": "It is the town hall, not the immigration agency, and the deadline runs from the three-month mark rather than from arrival.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/pt/servicos/pedir-o-certificado-de-registo-para-cidadao-da-ue/eee/suica",
+        "authority": "gov.pt / AIMA"
+      }
+    },
+    {
+      "id": "immigration-eu-registration-requires-a-declaration",
+      "pillar": "immigration_residency",
+      "valueClass": "edge_case",
+      "title": "What EU citizens must declare to get the registration certificate",
+      "userQuestion": "What proof do I need to register as an EU citizen in Portugal?",
+      "scenario": "An EU national arrives at the câmara municipal expecting to show contracts and payslips, or assumes nothing at all is required.",
+      "audience": "EU citizens preparing to register",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The declaration on honour that substitutes for documentary proof, and the two alternative grounds it can rest on.",
+      "anchorFact": {
+        "claim": "The certificado de registo requires a valid identity card or passport plus a declaration on honour either that the person exercises subordinate or independent professional activity in Portugal, or that they have sufficient resources for themselves and their family together with health insurance where their country of origin requires it of Portuguese citizens.",
+        "kind": "artefact",
+        "namedThing": "certificado de registo",
+        "verifyAt": "https://www2.gov.pt/pt/servicos/pedir-o-certificado-de-registo-para-cidadao-da-ue/eee/suica",
+        "volatility": "stable"
+      },
+      "notObvious": "A declaration on honour replaces documentary proof, which makes the process far lighter than people prepare for.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/pt/servicos/pedir-o-certificado-de-registo-para-cidadao-da-ue/eee/suica",
+        "authority": "gov.pt / AIMA"
+      }
+    },
+    {
+      "id": "health-adse-reimbursement-six-month-window",
+      "pillar": "health_family",
+      "valueClass": "deadline_action",
+      "title": "Six months to claim back a health expense from ADSE",
+      "userQuestion": "How long do I have to submit an ADSE reimbursement?",
+      "scenario": "A public sector beneficiary collects receipts through the year and submits them all at once, past the window for the earliest ones.",
+      "audience": "ADSE beneficiaries claiming reimbursements",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The claim deadline from the date of care, what a late claim requires, and who can submit versus who can be paid.",
+      "anchorFact": {
+        "claim": "A reimbursement request to ADSE must be made within 6 months after the healthcare act or service was provided; a request after that period requires documents justifying the delay, and while anyone may submit on the beneficiary's behalf only the beneficiary holder or legal representative can receive the reimbursement.",
+        "kind": "deadline",
+        "namedThing": "ADSE",
+        "verifyAt": "https://www2.gov.pt/servicos/pedir-o-reembolso-de-despesas-de-saude-a-adse",
+        "volatility": "stable"
+      },
+      "notObvious": "The clock runs from the date of care rather than the date of the invoice or payment, which is what catches people batching claims annually.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/pedir-o-reembolso-de-despesas-de-saude-a-adse",
+        "authority": "gov.pt / ADSE"
+      }
     }
   ]
 }
