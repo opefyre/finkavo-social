@@ -1666,6 +1666,153 @@
         "canonicalUrl": "https://www.gov.pt/guias/imposto-sobre-o-rendimento-das-pessoas-singulares-irs-em-portugal",
         "authority": "gov.pt / Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "driving-ipo-due-on-your-registration-date",
+      "pillar": "driving_transport",
+      "valueClass": "deadline_action",
+      "title": "Vehicle inspection is due on your registration date, not year-end",
+      "userQuestion": "By when does my car have to pass inspection this year?",
+      "scenario": "An owner waits for a reminder that never comes and discovers the inspection was due months earlier, tied to a date they never noted.",
+      "audience": "vehicle owners due for inspection",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The exact day your inspection falls due, the three-month window you can use before it, and why nobody writes to remind you.",
+      "anchorFact": {
+        "claim": "A vehicle must complete its inspeção periódica obrigatória by the day and month of its first registration in the years it is due, and the inspection may be carried out during the 3 months preceding that date.",
+        "kind": "deadline",
+        "namedThing": "inspeção periódica",
+        "verifyAt": "https://www.gov.pt/servicos/levar-o-carro-a-inspecao",
+        "volatility": "stable"
+      },
+      "notObvious": "Both IUC and inspection hang off the first-registration date rather than the calendar year, and neither sends a reminder.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/levar-o-carro-a-inspecao",
+        "authority": "gov.pt / IMT"
+      }
+    },
+    {
+      "id": "freelance-simplified-regime-expense-justification",
+      "pillar": "freelance_business",
+      "valueClass": "threshold",
+      "title": "The 15% of income you must justify under the simplified regime",
+      "userQuestion": "If the simplified regime assumes my expenses, why do I still need receipts?",
+      "scenario": "A freelancer chooses the simplified regime believing expenses are ignored entirely, keeps no receipts, and loses part of the deduction at assessment.",
+      "audience": "freelancers taxed under the simplified regime",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "Which coefficient applies to your income, the share of turnover you must still justify, and what counts automatically without any receipt.",
+      "anchorFact": {
+        "claim": "Under the regime simplificado a coeficiente is applied to gross income, 0.75 for service provision and 0.35 for services not covered elsewhere, and taxpayers on those coefficients must justify expenses equal to 15% of annual gross income to obtain the full deduction; an amount of 8.54 times the IAS, or contributions where higher, is considered automatically.",
+        "kind": "figure",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs31.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The regime is sold as expense-free. The 15% justification requirement is the catch, and the automatic 8.54 x IAS is the part that reduces how much you actually need.",
+      "journeyStage": "first_tax_year",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs31.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "citizenship-citizen-card-validity-by-age",
+      "pillar": "citizenship_civil",
+      "valueClass": "threshold",
+      "title": "How long a Cartão de Cidadão lasts and when you can renew it",
+      "userQuestion": "When can I start renewing my citizen card?",
+      "scenario": "Someone with a card expiring soon does not know whether they can renew now or must wait, and misses the PIN letter that arrives beforehand.",
+      "audience": "Cartão de Cidadão holders approaching expiry",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The validity period for your age bracket, how early renewal opens, and the letter that arrives before expiry.",
+      "anchorFact": {
+        "claim": "A Cartão de Cidadão is valid for a maximum of 5 years under the age of 25 and 10 years from 25, renewal can be requested from 6 months before expiry, and the letter carrying the PIN codes is sent up to 60 days before validity ends.",
+        "kind": "figure",
+        "verifyAt": "https://www.gov.pt/servicos/renovar-o-cartao-de-cidadao",
+        "volatility": "stable"
+      },
+      "notObvious": "The six-month early window and the PIN letter are both unannounced, and a discarded PIN letter is what blocks digital authentication later.",
+      "journeyStage": "long_term_residence",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/renovar-o-cartao-de-cidadao",
+        "authority": "gov.pt / IRN"
+      }
+    },
+    {
+      "id": "citizenship-urgent-card-renewal-worth-it",
+      "pillar": "citizenship_civil",
+      "valueClass": "decision",
+      "title": "Standard, urgent or extremely urgent card renewal",
+      "userQuestion": "Is it worth paying for an urgent citizen card renewal?",
+      "scenario": "Someone needs a card before a trip or an appointment and cannot tell whether the standard service will arrive in time.",
+      "audience": "people renewing a citizen card against a deadline",
+      "risk": "low",
+      "volatility": "annual",
+      "promise": "The realistic wait for standard renewal, the cost of the fastest tier, and the delivery choice that changes the timeline most.",
+      "anchorFact": {
+        "claim": "Cartão de Cidadão renewal takes on average 7 business days, urgent and extremely urgent options exist with the extremely urgent service costing 50 euros for a 5-year card and 53 euros for a 10-year card, and CTT home delivery averages 30 days.",
+        "kind": "figure",
+        "verifyAt": "https://www.gov.pt/servicos/renovar-o-cartao-de-cidadao",
+        "volatility": "annual"
+      },
+      "notObvious": "The delivery method, not the processing tier, is usually what costs the time: paying for urgency and then choosing postal delivery defeats it.",
+      "journeyStage": "long_term_residence",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/renovar-o-cartao-de-cidadao",
+        "authority": "gov.pt / IRN"
+      }
+    },
+    {
+      "id": "immigration-job-seeker-visa-duration",
+      "pillar": "immigration_residency",
+      "valueClass": "deadline_action",
+      "title": "How long the job-seeker visa gives you to find work",
+      "userQuestion": "How much time does the job-seeker visa actually allow?",
+      "scenario": "Someone planning a move on a job-seeker visa is budgeting time and money without knowing the extension or the appointment already built into the visa.",
+      "audience": "people planning to arrive on a job-seeker visa",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "The initial period, the extension available, and the appointment date the visa already carries.",
+      "anchorFact": {
+        "claim": "The visto para procura de trabalho is granted for 120 days and may be extended for a further 60 days, it includes a scheduled appointment with the services responsible for granting residence within the visa's validity, and the decision period on the visa application itself is 60 days.",
+        "kind": "deadline",
+        "namedThing": "visto para procura de trabalho",
+        "verifyAt": "https://aima.gov.pt/pt/trabalhar/autorizacao-de-residencia-para-exercicio-de-atividade-profissional-subordinada-com-visto-para-procura-de-trabalho-art-88-o-n-o7",
+        "volatility": "volatile"
+      },
+      "notObvious": "The built-in appointment is the mechanism that converts the visa into residence, and missing it is not the same as the visa simply expiring.",
+      "journeyStage": "before_moving",
+      "source": {
+        "canonicalUrl": "https://aima.gov.pt/pt/trabalhar/autorizacao-de-residencia-para-exercicio-de-atividade-profissional-subordinada-com-visto-para-procura-de-trabalho-art-88-o-n-o7",
+        "authority": "AIMA"
+      }
+    },
+    {
+      "id": "immigration-job-seeker-visa-expiry-lockout",
+      "pillar": "immigration_residency",
+      "valueClass": "costly_mistake",
+      "title": "Letting a job-seeker visa lapse blocks reapplying for a year",
+      "userQuestion": "What happens if my job-seeker visa runs out before I find a job?",
+      "scenario": "Someone nearing the end of the visa without a signed contract assumes they can leave and simply apply again.",
+      "audience": "job-seeker visa holders without a contract yet",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "What the law requires when the visa expires without employment, and the waiting period before a new application is possible.",
+      "anchorFact": {
+        "claim": "Once the maximum validity of the visto para procura de trabalho is reached without an employment relationship and without a residence permit application started, the holder must leave the country and may only submit a new visa application for this purpose 1 year after the previous visa expired.",
+        "kind": "deadline",
+        "namedThing": "visto para procura de trabalho",
+        "verifyAt": "https://aima.gov.pt/pt/trabalhar/autorizacao-de-residencia-para-exercicio-de-atividade-profissional-subordinada-com-visto-para-procura-de-trabalho-art-88-o-n-o7",
+        "volatility": "volatile"
+      },
+      "notObvious": "The one-year lockout is the consequence nobody plans for, and it turns a near-miss on a job into a lost year.",
+      "journeyStage": "before_moving",
+      "source": {
+        "canonicalUrl": "https://aima.gov.pt/pt/trabalhar/autorizacao-de-residencia-para-exercicio-de-atividade-profissional-subordinada-com-visto-para-procura-de-trabalho-art-88-o-n-o7",
+        "authority": "AIMA"
+      }
     }
   ]
 }

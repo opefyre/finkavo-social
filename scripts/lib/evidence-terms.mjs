@@ -8,9 +8,9 @@
 
 export const PILLAR_TERMS = {
   identity_access: ["NIF", "NISS", "Chave Móvel Digital", "Portal das Finanças", "Segurança Social Direta", "representante fiscal", "notificações eletrónicas", "Cartão de Cidadão", "título de residência"],
-  immigration_residency: ["AIMA", "autorização de residência", "visto", "reagrupamento familiar", "CPLP", "atestado de residência"],
-  citizenship_civil: ["IRN", "cidadania", "nacionalidade", "registo civil", "naturalização", "casamento", "publicações", "convenção antenupcial"],
-  freelance_business: ["trabalhador independente", "abrir atividade", "recibos verdes", "CAE", "ato isolado", "cessação de atividade"],
+  immigration_residency: ["AIMA", "autorização de residência", "visto", "reagrupamento familiar", "CPLP", "atestado de residência", "visto para procura de trabalho"],
+  citizenship_civil: ["IRN", "cidadania", "nacionalidade", "registo civil", "naturalização", "Cartão de Cidadão", "casamento", "publicações", "convenção antenupcial"],
+  freelance_business: ["trabalhador independente", "abrir atividade", "recibos verdes", "CAE", "ato isolado", "cessação de atividade", "regime simplificado", "coeficiente"],
   iva: ["IVA", "CIVA", "artigo 53", "declaração periódica", "VIES", "declaração de alterações", "declaração recapitulativa", "autoliquidação"],
   irs: ["IRS", "Modelo 3", "e-Fatura", "Anexo J", "IRS Automático", "IRS Jovem", "IAS", "taxa liberatória", "Modelo 30", "retenção na fonte"],
   social_security: ["Segurança Social", "declaração trimestral", "contribuições", "NISS", "trabalhador independente"],
@@ -18,7 +18,7 @@ export const PILLAR_TERMS = {
   banking_money: ["Banco de Portugal", "SEPA", "conta bancária", "IBAN", "serviços mínimos bancários", "IAS", "MB WAY", "transferência a crédito", "débito direto", "mudança de conta"],
   employment: ["contrato de trabalho", "Código do Trabalho", "salário", "férias", "feriado", "período experimental", "aviso prévio", "subsídio de desemprego", "prazo de garantia"],
   health_family: ["SNS", "centro de saúde", "médico de família", "número de utente", "taxas moderadoras", "insuficiência económica", "IAS", "consulta de recurso", "SNS 24"],
-  driving_transport: ["IMT", "carta de condução", "IUC", "veículo", "troca de carta", "título de condução"],
+  driving_transport: ["IMT", "carta de condução", "IUC", "veículo", "troca de carta", "título de condução", "inspeção periódica", "IPO"],
   education_children: ["matrícula escolar", "educação", "equivalência", "reconhecimento", "Direção-Geral da Educação", "Portal das Matrículas", "ASE", "abono de família", "prova escolar"],
   daily_life_consumer: ["ePortugal", "Livro de Reclamações", "ANACOM", "energia", "arbitragem de consumo", "fidelização", "ANACOM", "livre resolução", "garantia"],
 };
