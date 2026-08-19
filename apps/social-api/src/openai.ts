@@ -26,7 +26,7 @@ export async function generateDraft(candidate: Candidate): Promise<{ draft: Draf
         "All user-facing output fields must be written in English, even when the evidence is Portuguese. Keep exact evidenceQuote values in their original source language.",
         // Hard limits are stated explicitly because a schema maxLength is not reliably
         // enforced by every provider, and an over-length body only fails later at render.
-        "Hard character limits, which the renderer enforces and cannot wrap: slide title 82, slide body 300, each list item 110, highlight 70, eyebrow 40, altText 300, hook 180, callToAction 80. Write within them; never exceed one and never truncate mid-sentence to fit.",
+        "Hard character limits, which the renderer enforces and cannot wrap: slide title 82, each list item 110, highlight 70, eyebrow 40, altText 300, hook 180, callToAction 80. Slide body is 300 EXCEPT on the cover slide, where the body becomes the cover subtitle and must not exceed 150 characters. Write within these limits; never exceed one and never truncate mid-sentence to fit.",
         "Use only the supplied source excerpts. Do not introduce dates, thresholds, eligibility rules, rates, or legal claims absent from them.",
         "The editorial topic is predetermined. Sources are evidence for that topic; never replace it with a subject chosen from an arbitrary excerpt.",
         "Every slide and caption paragraph must directly serve the predetermined topic. Omit adjacent procedures, deadlines, registrations, or background facts merely because they appear in the evidence bundle.",
