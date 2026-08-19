@@ -8793,6 +8793,56 @@
         "canonicalUrl": "https://www.gov.pt/guias/comunicar-e-cancelar-os-cartoes-perdidos-ou-roubados",
         "authority": "gov.pt"
       }
+    },
+    {
+      "id": "housing-keeping-a-local-lodging-registration-valid",
+      "pillar": "housing_property",
+      "valueClass": "deadline_action",
+      "title": "Ten days to update a short-let registration, every time",
+      "userQuestion": "What keeps a local lodging registration valid once it is granted?",
+      "scenario": "An operator changes the contact details or renews the insurance and never tells the register, leaving the registration technically invalid.",
+      "audience": "people operating a registered short-let",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The ten-day window for updating registered data, when insurance proof must be sent, and the duty to report the end of the activity.",
+      "anchorFact": {
+        "claim": "The holder of an alojamento local establishment must keep all communicated data up to date, updating within 10 days of any change; proof of civil liability insurance must be delivered when the registration number is assigned and before activity begins, and again whenever the insurance is renewed or altered; communicating the cessation of the activity is an obligation of the operator.",
+        "kind": "deadline",
+        "namedThing": "alojamento local",
+        "verifyAt": "https://www.gov.pt/guias/alojamento-local",
+        "volatility": "stable"
+      },
+      "notObvious": "Renewing the insurance creates a filing obligation of its own, so an operator who is fully insured can still be out of compliance.",
+      "journeyStage": "renting_out",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/alojamento-local",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "freelance-proving-your-trade-to-another-eu-country",
+      "pillar": "freelance_business",
+      "valueClass": "insider",
+      "title": "Three different bodies issue proof of your trade abroad",
+      "userQuestion": "How do I prove my Portuguese work experience to another EU country?",
+      "scenario": "Someone moving a trade abroad applies to the wrong body, waits, and is redirected after weeks.",
+      "audience": "people taking a trade or profession to another EU country",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "What the certificate proves, and which of three bodies issues it for your activity code and employment status.",
+      "anchorFact": {
+        "claim": "A comprovativo do exercício de atividade profissional proves entitlement to exercise a professional activity to the competent authorities of other European Union countries, and is issued by the Direção-Geral da Economia for sole traders, independent workers or company partners with activities in CAE 01 to 43, by the Confederação do Comércio e Serviços de Portugal for those in CAE 45 and above, and by the Autoridade para as Condições do Trabalho for employees.",
+        "kind": "artefact",
+        "namedThing": "comprovativo do exercício de atividade profissional",
+        "verifyAt": "https://www.gov.pt/guias/comprovativos-do-exercicio-de-atividade-profissional",
+        "volatility": "stable"
+      },
+      "notObvious": "Which body issues it turns on your activity code and whether you are employed, not on the profession itself.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/comprovativos-do-exercicio-de-atividade-profissional",
+        "authority": "gov.pt"
+      }
     }
   ]
 }
