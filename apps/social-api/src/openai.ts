@@ -12,11 +12,34 @@ type Candidate = {
   repairFeedback?: string;
 };
 
+// Evidence excerpts are corpus chunks, and a chunk can be well over a thousand
+// characters. Three sources with six excerpts each is roughly 5,000 tokens of input,
+// which pushed requests to 13,500 tokens against a free-tier ceiling of 8,000 per minute
+// and failed the whole generation before the model ran. Trimming here rather than at the
+// corpus keeps chunks useful for term matching while giving the model a payload that
+// fits. The excerpts still carry the exact wording claims must quote.
+const MAX_EXCERPTS_PER_SOURCE = 3;
+const MAX_EXCERPT_CHARS = 600;
+
+function trimExcerpts(excerpts: string[] | undefined): string[] {
+  return (excerpts ?? [])
+    .slice(0, MAX_EXCERPTS_PER_SOURCE)
+    .map(excerpt => (excerpt.length > MAX_EXCERPT_CHARS ? `${excerpt.slice(0, MAX_EXCERPT_CHARS).trimEnd()}…` : excerpt));
+}
+
+function withinTokenBudget(candidate: Candidate): Candidate {
+  return {
+    ...candidate,
+    excerpts: trimExcerpts(candidate.excerpts),
+    ...(candidate.sources ? { sources: candidate.sources.slice(0, 3).map(source => ({ ...source, excerpts: trimExcerpts(source.excerpts) })) } : {}),
+  };
+}
+
 export async function generateDraft(candidate: Candidate): Promise<{ draft: Draft; model: string }> {
   const { text, model } = await generateStructured({
     schemaName: "finkavo_social_draft",
     schema: draftJsonSchema,
-    input: JSON.stringify(candidate),
+    input: JSON.stringify(withinTokenBudget(candidate)),
     instructions: [
         // English-only leads the prompt and is restated at the end: open-weight models
         // reliably drift into Portuguese when the evidence excerpts are Portuguese, which
