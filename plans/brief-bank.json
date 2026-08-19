@@ -11143,6 +11143,31 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/lgt/Pages/lgt19.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "irs-getting-a-binding-answer-out-of-the-tax-authority",
+      "pillar": "irs",
+      "valueClass": "insider",
+      "title": "Getting an answer from Finanças that binds them for four years",
+      "userQuestion": "Can I get a ruling I can actually rely on before I act?",
+      "scenario": "Someone acts on a call-centre answer or an accountant's reading, and is assessed years later on a different interpretation.",
+      "audience": "people facing an uncertain tax treatment",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "How a binding ruling is requested, the two response deadlines, how long it binds the authority, and the fee for the fast route.",
+      "anchorFact": {
+        "claim": "Under artigo 68 of the Lei Geral Tributária a taxpayer may request an informação vinculativa electronically on an official form describing the facts whose tax treatment is sought; the authority must answer within a maximum of 150 days, or 75 days in the urgent regime where the request is justified and proposes a legal framework, and it may not act contrary to the ruling except in compliance with a court decision, the ruling remaining valid for 4 years from issue unless circumstances change; the urgent route carries a fee between 25 and 250 unidades de conta, reduced to between 12.5 and 125 for qualifying individuals and small and medium enterprises.",
+        "kind": "instrument",
+        "namedThing": "informação vinculativa",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/lgt/Pages/lgt68.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Individuals and small businesses pay half the urgent fee, which puts a binding four-year answer within reach of people who assume rulings are only for corporations.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/lgt/Pages/lgt68.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
