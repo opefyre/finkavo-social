@@ -6268,6 +6268,56 @@
         "canonicalUrl": "https://www.garantiainfancia.gov.pt/-/-complementa-o-abono-afinal-quem-recebe-a-garantia-para-a-infancia-",
         "authority": "Garantia para a Infância / Instituto da Segurança Social"
       }
+    },
+    {
+      "id": "employment-redundancy-compensation-twelve-days-and-two-caps",
+      "pillar": "employment",
+      "valueClass": "threshold",
+      "title": "Twelve days a year, and the two ceilings on top of it",
+      "userQuestion": "How much is redundancy compensation actually worth?",
+      "scenario": "A worker multiplies years by a monthly salary, expects a large sum, and is surprised twice by caps nobody mentioned.",
+      "audience": "workers facing redundancy",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The days per year of service, the ceiling on the pay used in the calculation, and the ceiling on the total.",
+      "anchorFact": {
+        "claim": "A worker dismissed in a despedimento coletivo, and equally in a dismissal for extinction of the post, is entitled to compensation of 12 days of base remuneration and supplements for each complete year of seniority; the base remuneration and supplements taken into account may not exceed 20 times the retribuição mínima mensal garantida, and the total compensation may not exceed 12 times the worker's monthly base remuneration and supplements or, where the previous limit applies, 240 times the RMMG.",
+        "kind": "figure",
+        "namedThing": "despedimento coletivo",
+        "verifyAt": "https://www.dgert.gov.pt/compensacao-por-despedimento-coletivo-artigo-366-o",
+        "volatility": "annual"
+      },
+      "notObvious": "There are two separate caps, one on the input and one on the output, so a long career at a good salary is limited twice over rather than once.",
+      "journeyStage": "leaving_a_job",
+      "source": {
+        "canonicalUrl": "https://www.dgert.gov.pt/compensacao-por-despedimento-coletivo-artigo-366-o",
+        "authority": "DGERT"
+      }
+    },
+    {
+      "id": "employment-taking-the-payout-ends-the-challenge",
+      "pillar": "employment",
+      "valueClass": "costly_mistake",
+      "title": "Accepting the redundancy money closes the door on contesting it",
+      "userQuestion": "Can I take the compensation now and still dispute the dismissal?",
+      "scenario": "A worker banks the payment to cover the coming month and finds the legal challenge is no longer available.",
+      "audience": "workers who believe their dismissal was unlawful",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Why receiving the compensation forecloses a challenge, and what returning it requires and when.",
+      "anchorFact": {
+        "claim": "To challenge a despedimento coletivo, a dismissal for extinction of the post or a dismissal for unsuitability, the worker must not receive the dismissal compensation, and where it has been received it must be returned in full simultaneously with the opposition to the dismissal.",
+        "kind": "procedure",
+        "namedThing": "despedimento coletivo",
+        "verifyAt": "https://www.dgert.gov.pt/compensacao-por-despedimento-coletivo-artigo-366-o",
+        "volatility": "stable"
+      },
+      "notObvious": "Full return has to happen at the same moment as the challenge, not later, which turns a routine bank transfer into a decision with a deadline.",
+      "journeyStage": "leaving_a_job",
+      "source": {
+        "canonicalUrl": "https://www.dgert.gov.pt/compensacao-por-despedimento-coletivo-artigo-366-o",
+        "authority": "DGERT"
+      }
     }
   ]
 }
