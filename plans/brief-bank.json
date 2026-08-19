@@ -5468,6 +5468,56 @@
         "canonicalUrl": "https://www.gov.pt/guias/casar-ou-viver-em-uniao-de-facto",
         "authority": "gov.pt / Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "consumer-water-social-tariff-depends-on-your-council",
+      "pillar": "daily_life_consumer",
+      "valueClass": "insider",
+      "title": "The water discount your council has to have adopted first",
+      "userQuestion": "Why does the water social tariff work for a friend but not for me?",
+      "scenario": "Someone already receiving the automatic energy discount assumes water works the same way and never asks their supplier.",
+      "audience": "households receiving social supports",
+      "risk": "medium",
+      "volatility": "volatile",
+      "promise": "Which supports trigger the water social tariff, the household income route, and the municipal step that decides whether it exists where you live.",
+      "anchorFact": {
+        "claim": "The water tarifa social is granted automatically to people receiving supports including the complemento solidário para idosos, rendimento social de inserção, subsídio social de desemprego, abono de família, pensão social de invalidez or pensão social de velhice, or whose household has annual income of 5,808 euros or less increased by 50 per cent for each household member, but adherence to this automatic regime is voluntary and depends on a deliberation of the assembleia municipal on a proposal from the câmara municipal.",
+        "kind": "figure",
+        "namedThing": "tarifa social",
+        "verifyAt": "https://www.ersar.pt/pt/consumidor/tarifas-dos-servicos/tarifarios-sociais",
+        "volatility": "volatile"
+      },
+      "notObvious": "Energy is national and automatic; water is decided council by council, so the same household qualifies in one municipality and not the next.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.ersar.pt/pt/consumidor/tarifas-dos-servicos/tarifarios-sociais",
+        "authority": "ERSAR"
+      }
+    },
+    {
+      "id": "consumer-large-household-water-band-widening",
+      "pillar": "daily_life_consumer",
+      "valueClass": "threshold",
+      "title": "Two cubic metres more per person past four",
+      "userQuestion": "Our water bill jumps because we are a big household. Is there anything for that?",
+      "scenario": "A household of six is pushed into expensive consumption bands by size alone and pays a premium the tariff rules were written to remove.",
+      "audience": "households of five or more people",
+      "risk": "medium",
+      "volatility": "volatile",
+      "promise": "The large-family water tariff, how much the cheapest band widens per person, and the registration detail that qualifies you.",
+      "anchorFact": {
+        "claim": "ERSAR's commercial relations regulation obliges entidades gestoras to implement tarifários for famílias numerosas wherever the variable tariff is set by escalões, consisting of widening the first escalão by 2 cubic metres for each member of the household beyond 4, with all residents having their tax domicile at the dwelling served.",
+        "kind": "figure",
+        "namedThing": "entidade gestora",
+        "verifyAt": "https://www.ersar.pt/pt_consumidor_tarifas-dos-servicos_tarifarios-para-familias-numerosas.html",
+        "volatility": "volatile"
+      },
+      "notObvious": "The qualifying test is where everyone's tax address is registered, so a household member who never updated theirs quietly shrinks the allowance.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.ersar.pt/pt_consumidor_tarifas-dos-servicos_tarifarios-para-familias-numerosas.html",
+        "authority": "ERSAR"
+      }
     }
   ]
 }
