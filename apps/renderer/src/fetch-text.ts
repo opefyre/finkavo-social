@@ -48,7 +48,18 @@ export async function fetchRenderedText(url: string, timeoutMs = 45_000): Promis
     const title = (await page.title().catch(() => "")) || url;
     const text = await page.evaluate(() => {
       for (const node of Array.from(document.querySelectorAll("script,style,noscript,nav,header,footer"))) node.remove();
-      return (document.body?.innerText ?? "").replace(/[ \t]+/g, " ").replace(/\n{2,}/g, "\n").trim();
+      const tidy = (value: string) => value.replace(/[ \t]+/g, " ").replace(/\n{2,}/g, "\n").trim();
+
+      const visible = tidy(document.body?.innerText ?? "");
+
+      // Portuguese government pages routinely put the substance inside collapsed
+      // accordions — AIMA's requirement lists are a good example — and innerText skips
+      // anything not currently displayed, yielding a couple of hundred characters of
+      // section headings. textContent includes those nodes, so when the rendered text is
+      // clearly too thin the hidden content is used instead.
+      if (visible.length >= 800) return visible;
+      const full = tidy(document.body?.textContent ?? "");
+      return full.length > visible.length ? full : visible;
     });
 
     return { url, status: response?.status() ?? 0, title: title.slice(0, 300), text, error: null };
