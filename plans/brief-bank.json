@@ -6118,6 +6118,31 @@
         "canonicalUrl": "https://clientebancario.bportugal.pt/en/arrears-prevention",
         "authority": "Banco de Portugal"
       }
+    },
+    {
+      "id": "iva-cash-accounting-opens-only-in-october",
+      "pillar": "iva",
+      "valueClass": "deadline_action",
+      "title": "Paying IVA when the client pays, and the month to ask",
+      "userQuestion": "Can I stop paying IVA on invoices my clients have not settled?",
+      "scenario": "A business carrying IVA on unpaid invoices decides in March to change regime and finds the door does not open until October.",
+      "audience": "businesses waiting on late-paying clients",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The turnover limit for cash accounting, the single month the option can be exercised, when it takes effect, and the waits that apply to rejoining.",
+      "anchorFact": {
+        "claim": "The regime de IVA de caixa requires previous-year turnover of 2,000,000 euros or less, the option may be exercised only during the month of October each year and takes effect on 1 January of the following year, the request is validated rather than granted automatically, and rejoining requires that a previous option ended at least 2 consecutive calendar years earlier, or that 1 year has passed since regularising a tax situation where the regime was terminated for irregularity.",
+        "kind": "deadline",
+        "namedThing": "regime de IVA de caixa",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00324.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "One month a year, effective the following January. Deciding in the month the cash-flow problem bites is already too late by up to eleven months.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00324.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
