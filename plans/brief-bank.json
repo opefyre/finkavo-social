@@ -7993,6 +7993,56 @@
         "canonicalUrl": "https://www.gov.pt/servicos/pedir-o-registo-civil-da-regulacao-das-responsabilidades-parentais",
         "authority": "gov.pt / Instituto dos Registos e do Notariado"
       }
+    },
+    {
+      "id": "health-the-pharmacy-must-offer-you-the-cheaper-three",
+      "pillar": "health_family",
+      "valueClass": "insider",
+      "title": "The three cheapest versions a pharmacy has to stock",
+      "userQuestion": "Am I allowed to ask for a cheaper version of my prescription?",
+      "scenario": "A patient accepts whatever the pharmacy hands over, paying the branded price for a medicine with several cheaper equivalents on the shelf.",
+      "audience": "people collecting a prescription",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "How the reference price is set, what the pharmacy must have in stock, and the right of choice that overrides the default.",
+      "anchorFact": {
+        "claim": "Where generics exist a homogeneous group is created with a preço de referência set as the average of the 5 lowest prices, and it is that reference price rather than the retail price that State comparticipação is calculated on; pharmacies must have available for sale 3 of the 5 lowest-priced medicines, the pharmacist must dispense the cheapest of the three identified except where the patient exercises their right of option, and the patient may choose any medicine with the same active substance as the one on the prescription.",
+        "kind": "figure",
+        "namedThing": "preço de referência",
+        "verifyAt": "https://www.infarmed.pt/web/infarmed/entidades/medicamentos-uso-humano/genericos/guia_dos_genericos",
+        "volatility": "stable"
+      },
+      "notObvious": "The State's share is calculated on the reference price whatever you pick, so choosing a dearer version costs you the whole difference rather than a share of it.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.infarmed.pt/web/infarmed/entidades/medicamentos-uso-humano/genericos/guia_dos_genericos",
+        "authority": "INFARMED"
+      }
+    },
+    {
+      "id": "health-the-five-hundred-euro-ceiling-on-adse-surgery",
+      "pillar": "health_family",
+      "valueClass": "threshold",
+      "title": "The ceiling on what a beneficiary pays for surgery",
+      "userQuestion": "How much can surgery cost me under the ADSE agreed network?",
+      "scenario": "A beneficiary facing an operation compares private quotes without knowing the agreed network caps their own share.",
+      "audience": "ADSE beneficiaries facing surgery",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The cap on a beneficiary's own cost for surgery in the agreed network, and the pricing protection in the free regime.",
+      "anchorFact": {
+        "claim": "A beneficiary bears a maximum cost of 500 euros for any surgery performed under the ADSE regime convencionado, with ADSE assuming all the remaining value; in the regime livre, providers may not charge the beneficiary more than the price of the same act in the agreed table except where the annual limit in the table is exhausted and the beneficiary agrees.",
+        "kind": "figure",
+        "namedThing": "regime convencionado",
+        "verifyAt": "https://www.gov.pt/servicos/pedir-o-reembolso-de-despesas-de-saude-a-adse",
+        "volatility": "annual"
+      },
+      "notObvious": "The free regime is not unpriced either: it is pegged to the agreed table until the annual limit runs out, which is the point at which costs actually open up.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/pedir-o-reembolso-de-despesas-de-saude-a-adse",
+        "authority": "gov.pt / ADSE"
+      }
     }
   ]
 }
