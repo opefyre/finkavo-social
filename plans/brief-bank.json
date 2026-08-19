@@ -7943,6 +7943,56 @@
         "canonicalUrl": "https://www.seg-social.pt/protecao-juridica",
         "authority": "Instituto da Segurança Social"
       }
+    },
+    {
+      "id": "citizenship-maintenance-does-not-stop-at-eighteen",
+      "pillar": "citizenship_civil",
+      "valueClass": "threshold",
+      "title": "Maintenance runs to twenty-five, and stopping it is the payer's job",
+      "userQuestion": "Does child maintenance end when my child turns eighteen?",
+      "scenario": "A paying parent stops on the child's eighteenth birthday, or a student assumes the payments simply end and drops a claim they still hold.",
+      "audience": "separated parents and their adult children",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "What happens to a maintenance order at majority, the age it runs to, the conditions attached, and who has to act to end it.",
+      "anchorFact": {
+        "claim": "Under artigo 1905 of the Código Civil as amended by Lei n.º 122/2015 a maintenance payment set during a child's minority automatically continues after majority until the child completes 25 years of age; parents must provide for the maintenance, security, health and education of adult or emancipated children where professional training was not complete when minority ended, where it is reasonable to require it of the parents, and where the child does not exceed the time normally needed to complete that training, and it falls to the obliged parent to take the initiative to end the obligation and to allege and prove the facts that extinguish it.",
+        "kind": "figure",
+        "namedThing": "pensão de alimentos",
+        "verifyAt": "https://diariodarepublica.pt/dr/jurisprudencia/lei/122-2015-70152049",
+        "volatility": "stable"
+      },
+      "notObvious": "The default after eighteen is that payment continues, and the burden of proving it should stop sits with whoever wants it to stop.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/jurisprudencia/lei/122-2015-70152049",
+        "authority": "Diário da República / Código Civil"
+      }
+    },
+    {
+      "id": "citizenship-parental-arrangements-without-going-to-court",
+      "pillar": "citizenship_civil",
+      "valueClass": "insider",
+      "title": "Agreeing arrangements for children without a court at all",
+      "userQuestion": "Do we have to go to court to arrange custody and maintenance?",
+      "scenario": "Two parents who agree on everything brace for a court process and the costs that come with it.",
+      "audience": "separating parents who agree",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The registry route for parents who agree, what the application must contain, what it can settle, and what it costs.",
+      "anchorFact": {
+        "claim": "Where parents agree they may register the regulação das responsabilidades parentais at a conservatória do registo civil without going to court, on an application signed by both parents or their attorneys accompanied by an agreement on the exercise of parental responsibilities and on maintenance, and the procedure is free; the agreement can set custody, visits, financial responsibilities, education and health, and may determine residência alternada and the percentage of expenses each parent bears where that split is not equal. Where there is no agreement the parents must go to court or ask for family mediation.",
+        "kind": "procedure",
+        "namedThing": "regulação das responsabilidades parentais",
+        "verifyAt": "https://www.gov.pt/servicos/pedir-o-registo-civil-da-regulacao-das-responsabilidades-parentais",
+        "volatility": "stable"
+      },
+      "notObvious": "The registry route costs nothing, which makes agreement itself worth money before anyone instructs a lawyer.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/pedir-o-registo-civil-da-regulacao-das-responsabilidades-parentais",
+        "authority": "gov.pt / Instituto dos Registos e do Notariado"
+      }
     }
   ]
 }
