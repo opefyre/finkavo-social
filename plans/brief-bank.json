@@ -6793,6 +6793,56 @@
         "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/2014-56917875",
         "authority": "Diário da República"
       }
+    },
+    {
+      "id": "housing-landlord-taking-the-flat-back-to-live-in",
+      "pillar": "housing_property",
+      "valueClass": "threshold",
+      "title": "Two years' notice and a year's rent to take a flat back",
+      "userQuestion": "My landlord says they need the flat for themselves. How much notice is that?",
+      "scenario": "A tenant told to leave in a few months accepts it, not knowing the notice for this ground is measured in years and comes with a payment.",
+      "audience": "tenants asked to leave for the owner's own use",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The notice period for this ground, the ownership conditions the landlord must meet, and the indemnity owed to the tenant.",
+      "anchorFact": {
+        "claim": "A landlord ending a lease for their own housing must give the tenant notice of not less than 2 years before the intended date of cessation, must have been owner, co-owner or usufructuary of the building for more than 2 years or have acquired it by succession, must not for more than 1 year have owned a house meeting their own or their first-degree descendants' housing needs in the relevant council area, and must pay the tenant an indemnity equal to 1 year of rent.",
+        "kind": "figure",
+        "namedThing": "denúncia",
+        "verifyAt": "https://www.portaldahabitacao.pt/pt/nrau/home/faqs_nnrau.html",
+        "volatility": "stable"
+      },
+      "notObvious": "Every condition is checkable from public records, and a landlord who bought recently or already owns a suitable home cannot use this ground at all.",
+      "journeyStage": "renting",
+      "source": {
+        "canonicalUrl": "https://www.portaldahabitacao.pt/pt/nrau/home/faqs_nnrau.html",
+        "authority": "Portal da Habitação"
+      }
+    },
+    {
+      "id": "housing-rent-rise-needs-thirty-days-notice-in-writing",
+      "pillar": "housing_property",
+      "valueClass": "deadline_action",
+      "title": "A rent rise that arrives with less than thirty days' notice",
+      "userQuestion": "Can my landlord raise the rent whenever they decide to?",
+      "scenario": "A tenant receives a new rent figure days before it applies and pays it, assuming annual increases work that way.",
+      "audience": "tenants on an ongoing lease",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "Where the annual increase figure comes from, when it is published, and the written notice a landlord must give before applying it.",
+      "anchorFact": {
+        "claim": "Rent is updated annually by applying the coeficiente de atualização set for that year under artigo 24 of Lei 6/2006, which the INE must determine and have published by notice in the Diário da República by 30 October, and the landlord must communicate the coefficient and the resulting new rent in writing with a minimum of 30 days' notice.",
+        "kind": "deadline",
+        "namedThing": "coeficiente de atualização",
+        "verifyAt": "https://www.portaldahabitacao.pt/coeficientes-de-atualizacao-de-rendas",
+        "volatility": "annual"
+      },
+      "notObvious": "The figure is published nationally before any landlord applies it, so a tenant can check the lawful increase before the letter arrives.",
+      "journeyStage": "renting",
+      "source": {
+        "canonicalUrl": "https://www.portaldahabitacao.pt/coeficientes-de-atualizacao-de-rendas",
+        "authority": "Portal da Habitação / INE"
+      }
     }
   ]
 }
