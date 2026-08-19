@@ -9043,6 +9043,81 @@
         "canonicalUrl": "https://www.dges.gov.pt/pt/faq/condicoes-de-acesso-e-ingresso-no-ensino-superior",
         "authority": "Direção-Geral do Ensino Superior"
       }
+    },
+    {
+      "id": "education-working-student-status-survives-redundancy",
+      "pillar": "education_children",
+      "valueClass": "edge_case",
+      "title": "Working-student status that survives losing the job",
+      "userQuestion": "Do I lose my working-student rights if I am made redundant?",
+      "scenario": "A student who loses their job stops claiming the status mid-year and loses the exam and attendance protections with it.",
+      "audience": "people studying while working",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Who counts as a working student, what must be proved to the employer and when, and the two groups the regime extends to.",
+      "anchorFact": {
+        "claim": "A trabalhador-estudante is a worker attending any level of school education, a postgraduate, master's or doctoral course, or a vocational training course or youth occupation programme lasting 6 months or more; keeping the status depends on academic progress in the previous academic year, and the worker must prove their student condition and timetable to the employer and their results at the end of each academic year; the regime also applies to self-employed workers and to a worker holding the status who becomes involuntarily unemployed and registers at a centro de emprego.",
+        "kind": "procedure",
+        "namedThing": "trabalhador-estudante",
+        "verifyAt": "https://www.dges.gov.pt/pt/pagina/estatuto-do-trabalhador-estudante",
+        "volatility": "stable"
+      },
+      "notObvious": "Registering at the employment centre keeps the status alive through unemployment, which is exactly when people assume it lapses.",
+      "journeyStage": "studying",
+      "source": {
+        "canonicalUrl": "https://www.dges.gov.pt/pt/pagina/estatuto-do-trabalhador-estudante",
+        "authority": "Direção-Geral do Ensino Superior"
+      }
+    },
+    {
+      "id": "education-what-working-students-are-not-subject-to",
+      "pillar": "education_children",
+      "valueClass": "insider",
+      "title": "Four academic rules a working student is exempt from",
+      "userQuestion": "Can the university hold me to attendance and subject minimums if I work?",
+      "scenario": "A working student is failed on attendance or blocked by a subject minimum that does not apply to them.",
+      "audience": "students holding working-student status",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The academic requirements the status removes, and the exam season and support hours institutions must try to provide.",
+      "anchorFact": {
+        "claim": "A trabalhador-estudante is not subject to attending a minimum number of subjects, nor to the prescription regime, nor to any provision making academic progress depend on a minimum number of classes attended, nor to limits on the number of exams taken in a resit season; institutions must provide, so far as possible, a special exam season for these students and guarantee support services at establishments with evening timetables.",
+        "kind": "procedure",
+        "namedThing": "trabalhador-estudante",
+        "verifyAt": "https://www.dges.gov.pt/pt/pagina/estatuto-do-trabalhador-estudante",
+        "volatility": "stable"
+      },
+      "notObvious": "Prescription does not apply either, so the rule that forces other students out after repeated failures does not reach a working student.",
+      "journeyStage": "studying",
+      "source": {
+        "canonicalUrl": "https://www.dges.gov.pt/pt/pagina/estatuto-do-trabalhador-estudante",
+        "authority": "Direção-Geral do Ensino Superior"
+      }
+    },
+    {
+      "id": "education-the-cap-on-public-university-tuition",
+      "pillar": "education_children",
+      "valueClass": "threshold",
+      "title": "The ceiling on what a public university may charge",
+      "userQuestion": "How much can a public university charge in tuition?",
+      "scenario": "A family compares course costs without knowing which degrees sit under a legal ceiling and which the institution prices freely.",
+      "audience": "families budgeting for higher education",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "The capped tuition figure and the degrees it covers, and the courses whose fees institutions set themselves.",
+      "anchorFact": {
+        "claim": "In public higher education for the 2025-2026 academic year the maximum propina an institution may set could not exceed the previous year's figure, remaining at 697 euros, and this applies to cursos técnicos superiores profissionais, licenciatura cycles, integrated master's cycles and master's cycles whose combination with a licenciatura is indispensable for access to a profession; fees for other master's cycles and for doctorates are set by the institutions themselves, as are all fees in private higher education.",
+        "kind": "figure",
+        "namedThing": "propina",
+        "verifyAt": "https://www.dges.gov.pt/pt/pagina/propinas",
+        "volatility": "annual"
+      },
+      "notObvious": "The cap covers first degrees and the master's that a profession requires, so the same institution can charge freely for the master's next door.",
+      "journeyStage": "studying",
+      "source": {
+        "canonicalUrl": "https://www.dges.gov.pt/pt/pagina/propinas",
+        "authority": "Direção-Geral do Ensino Superior"
+      }
     }
   ]
 }
