@@ -6618,6 +6618,56 @@
         "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2013-34580575-185432915",
         "authority": "Diário da República / Código de Processo Civil"
       }
+    },
+    {
+      "id": "irs-tax-debts-prescribe-after-eight-years",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "Eight years before a tax debt prescribes, and where the count starts",
+      "userQuestion": "Does an old tax debt ever go away?",
+      "scenario": "Someone assumes an old assessment is dead, or conversely that it is eternal, and never checks which year the clock started in.",
+      "audience": "people carrying an old tax debt",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The prescription period for tax debts and the two different starting points depending on the kind of tax.",
+      "anchorFact": {
+        "claim": "Under artigo 48 of the Lei Geral Tributária tax debts prescribe after 8 years, counted for periodic taxes from the end of the year in which the taxable event occurred, and for taxes of a single obligation from the date the taxable event occurred.",
+        "kind": "instrument",
+        "namedThing": "prescrição",
+        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/1998-34438775-56892389",
+        "volatility": "stable"
+      },
+      "notObvious": "For a periodic tax the count starts at the end of the year rather than at the assessment, which can move the date by well over a year in either direction.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/1998-34438775-56892389",
+        "authority": "Diário da República / Lei Geral Tributária"
+      }
+    },
+    {
+      "id": "social-security-contribution-debts-prescribe-in-five",
+      "pillar": "social_security",
+      "valueClass": "threshold",
+      "title": "Five years on a Segurança Social debt, and what restarts it",
+      "userQuestion": "How long can Segurança Social pursue unpaid contributions?",
+      "scenario": "Someone counts five quiet years and assumes an old contribution debt is gone, without accounting for the letters that reset the clock.",
+      "audience": "people with unpaid Segurança Social contributions",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The prescription period for contributions and quotizações, where it starts, and the kind of step that interrupts it.",
+      "anchorFact": {
+        "claim": "Under the Código dos Regimes Contributivos the obligation to pay quotizações and contribuições prescribes after 5 years counted from the date the obligation should have been met, and prescription is interrupted by any administrative step aimed at assessing or collecting the debt that is carried out with the knowledge of the person responsible for payment.",
+        "kind": "instrument",
+        "namedThing": "prescrição",
+        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34514575-43562575",
+        "volatility": "stable"
+      },
+      "notObvious": "Any collection step you were told about restarts the five years, so the quiet period has to be quiet from their side, not just from yours.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34514575-43562575",
+        "authority": "Diário da República / Código dos Regimes Contributivos"
+      }
     }
   ]
 }
