@@ -6893,6 +6893,56 @@
         "canonicalUrl": "https://www2.gov.pt/servicos/dar-autorizacao-de-saida-de-menor-do-territorio-nacional",
         "authority": "gov.pt / Ministério da Justiça"
       }
+    },
+    {
+      "id": "citizenship-passport-speed-depends-on-the-hour-you-ask",
+      "pillar": "citizenship_civil",
+      "valueClass": "threshold",
+      "title": "The hour of day that decides how fast a passport arrives",
+      "userQuestion": "How quickly can I actually get a Portuguese passport?",
+      "scenario": "Someone books travel assuming the fastest passport service, then applies in the afternoon and loses a day they had counted on.",
+      "audience": "people applying for a Portuguese passport",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "The four delivery speeds, the cut-off times that unlock the quickest ones, and the validity for adults and small children.",
+      "anchorFact": {
+        "claim": "A Portuguese electronic passport is valid for 5 years, or 2 years for minors under 4; delivery is 5 working days for the standard request, 2 working days where the request is made by 17h, and 1 working day where it is made by 11h, and a request made by 11h under the urgent airport service is delivered the same day from 17h15 at Lisbon airport.",
+        "kind": "figure",
+        "namedThing": "passaporte",
+        "verifyAt": "https://www.gov.pt/servicos/pedir-o-passaporte-eletronico-portugues",
+        "volatility": "annual"
+      },
+      "notObvious": "The faster tiers are gated by a clock rather than a fee alone, so the same money bought after 11h buys a slower passport.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/pedir-o-passaporte-eletronico-portugues",
+        "authority": "gov.pt / Instituto dos Registos e do Notariado"
+      }
+    },
+    {
+      "id": "driving-international-permit-only-works-with-the-original",
+      "pillar": "driving_transport",
+      "valueClass": "edge_case",
+      "title": "An international permit is useless on its own",
+      "userQuestion": "Do I need an international driving licence, and what does it actually do?",
+      "scenario": "A traveller leaves the Portuguese licence at home with the international permit in their wallet and cannot legally drive or collect a hire car.",
+      "audience": "people driving outside Europe",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "Where the permit is needed, how long it lasts, what it costs, and the document that must always travel with it.",
+      "anchorFact": {
+        "claim": "The licença internacional de condução allows driving outside the EU and EEA in countries that signed the international road traffic conventions and is often required for hire cars; it is valid for 1 year from issue, or for the shorter remaining validity of the underlying licence, costs 30 euros, can only be requested at an IMT counter where it is issued on the spot, and is only valid when presented together with the national licence that supports it.",
+        "kind": "figure",
+        "namedThing": "licença internacional de condução",
+        "verifyAt": "https://www.imt-ip.pt/condutores/informacoes-gerais/licenca-internacional-de-conducao/",
+        "volatility": "annual"
+      },
+      "notObvious": "It is a translation of your licence rather than a licence, which is why it expires with the original and is worthless without it in your pocket.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.imt-ip.pt/condutores/informacoes-gerais/licenca-internacional-de-conducao/",
+        "authority": "Instituto da Mobilidade e dos Transportes"
+      }
     }
   ]
 }
