@@ -8518,6 +8518,31 @@
         "canonicalUrl": "https://www.fgd.pt/en/amounts-guaranteed",
         "authority": "Fundo de Garantia de Depósitos"
       }
+    },
+    {
+      "id": "driving-the-same-delay-pays-differently-by-mode",
+      "pillar": "driving_transport",
+      "valueClass": "threshold",
+      "title": "The same delay pays differently on a train and a coach",
+      "userQuestion": "How late does my train or coach have to be before I get money back?",
+      "scenario": "A passenger applies one set of thresholds to both modes and either claims too early on a coach or gives up too soon on a train.",
+      "audience": "rail and coach passengers in Portugal",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The delay thresholds and payouts for rail against those for road, and the assistance each triggers.",
+      "anchorFact": {
+        "claim": "On rail a delay of 60 to 119 minutes pays 25 per cent of the ticket price and 120 minutes or more pays 50 per cent, with refund or rerouting guaranteed on overbooking, cancellation or a delay over 60 minutes and free assistance including meals and hotel where needed from 60 minutes; on road transport a departure delay over 90 minutes gives a refund of the amount paid, a delay over 120 minutes pays 50 per cent of the ticket, and cancellation or a departure delay over 90 minutes entitles the passenger to assistance including up to 2 nights of hotel at up to 80 euros per night.",
+        "kind": "figure",
+        "namedThing": "direitos dos passageiros",
+        "verifyAt": "https://www.amt-autoridade.pt/consumidor/direitos-dos-passageiros/direitos-dos-passageiros-no-transporte-ferroviario/",
+        "volatility": "stable"
+      },
+      "notObvious": "Rail starts paying at an hour while road pays nothing until ninety minutes and then refunds rather than compensates, so the same wait is worth different things.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.amt-autoridade.pt/consumidor/direitos-dos-passageiros/direitos-dos-passageiros-no-transporte-ferroviario/",
+        "authority": "Autoridade da Mobilidade e dos Transportes"
+      }
     }
   ]
 }
