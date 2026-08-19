@@ -2817,6 +2817,152 @@
         "canonicalUrl": "https://www.seg-social.pt/ptss/pssd/menu/trabalho/remuneracoes-contribuicoes/carreira-contributiva",
         "authority": "Instituto da Segurança Social"
       }
+    },
+    {
+      "id": "iva-exempt-professions-under-article-9",
+      "pillar": "iva",
+      "valueClass": "edge_case",
+      "title": "The professions that never charge IVA regardless of turnover",
+      "userQuestion": "Do I charge IVA if I am a nurse, therapist or medical professional?",
+      "scenario": "A health professional opening activity assumes the turnover ceiling decides everything and prepares to charge IVA once they pass it.",
+      "audience": "health and paramedical professionals opening activity",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The exemption that attaches to the profession itself rather than to turnover, and who it covers.",
+      "anchorFact": {
+        "claim": "Under alínea 1 of artigo 9 of the CIVA, services provided in the exercise of the professions of doctor, dentist, midwife, nurse and other paramedical professions are exempt from the tax.",
+        "kind": "instrument",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/iva9.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "This exemption is by activity, not by turnover, so crossing the Artigo 53 ceiling does not make these professionals start charging IVA.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/iva9.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "iva-training-exemption-depends-on-certification",
+      "pillar": "iva",
+      "valueClass": "edge_case",
+      "title": "When training services are IVA exempt and when they are not",
+      "userQuestion": "Is the professional training I deliver exempt from IVA?",
+      "scenario": "A trainer invoicing a training company assumes the sector is exempt, or a new training body charges no IVA before it is certified.",
+      "audience": "trainers and training bodies",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "What certification changes, the moment the exemption starts, and why an individual trainer's invoices are treated differently.",
+      "anchorFact": {
+        "claim": "Under alínea 10 of artigo 9 of the CIVA, training bodies recognised as competent in professional training and rehabilitation are exempt on training services from the moment of certification by the competent entity and only in the areas named in the certificate, while services provided by individual trainers, whether to trainees or to training entities, do not fall within that exemption.",
+        "kind": "instrument",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/iva9.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The exemption follows the certificate and its listed areas, so the same course can be exempt for the school and taxable for the freelancer teaching it.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/iva9.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "freelance-organised-accounting-threshold",
+      "pillar": "freelance_business",
+      "valueClass": "threshold",
+      "title": "The turnover figure that forces you into organised accounting",
+      "userQuestion": "At what income do I have to hire an accountant?",
+      "scenario": "A growing freelancer wonders when the simplified regime stops being available and is caught out by a rule based on the previous year.",
+      "audience": "freelancers approaching the accounting threshold",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The euro ceiling, the two ways of exceeding it that end the simplified regime, and the option available below it.",
+      "anchorFact": {
+        "claim": "Category B taxpayers whose gross income did not exceed 200,000 euros in the immediately preceding tax period, and who have not opted for organised accounting, fall under the regime simplificado; the simplified regime ceases when that limit is exceeded in two consecutive years or by more than 25% of it in a single year, and organised accounting can be chosen voluntarily below the threshold.",
+        "kind": "figure",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00315.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "One big year does not automatically end the simplified regime, but exceeding by more than a quarter does immediately, which is the distinction that catches people.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00315.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-automatic-return-eligibility",
+      "pillar": "irs",
+      "valueClass": "edge_case",
+      "title": "Who actually qualifies for the automatic IRS return",
+      "userQuestion": "Why did I not get an automatic IRS declaration this year?",
+      "scenario": "Someone expects the pre-filled return, does not receive one, and does not know whether they must file manually or something is wrong.",
+      "audience": "taxpayers expecting a pre-filled return",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The income types that qualify, the extra conditions for freelance income, and what disqualifies you.",
+      "anchorFact": {
+        "claim": "Automatic IRS is available to taxpayers with category A employment income excluding gratuities not attributed by the employer, category H pension income excluding alimony, income subject to taxa liberatória, or category B income only where taxed under the simplified regime, registered exclusively for activities in the Activities Table and invoiced exclusively through the electronic receipts system.",
+        "kind": "artefact",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00620.aspx",
+        "volatility": "annual",
+        "namedThing": "taxa liberatória"
+      },
+      "notObvious": "Freelancers can qualify, but only if all three narrow conditions hold, so a single invoice issued outside the portal removes it for the year.",
+      "journeyStage": "first_tax_year",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00620.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-automatic-return-becomes-final-on-confirmation",
+      "pillar": "irs",
+      "valueClass": "deadline_action",
+      "title": "An automatic return is not filed until you confirm it",
+      "userQuestion": "If the automatic IRS is already filled in, do I still have to do anything?",
+      "scenario": "A taxpayer sees a complete pre-filled declaration, assumes it submits itself at the deadline, and never confirms it.",
+      "audience": "taxpayers offered an automatic return",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "What confirmation does legally, the window it must happen in, and the household data the pre-fill is built from.",
+      "anchorFact": {
+        "claim": "The automatic IRS declaration becomes definitive on the date the taxpayer confirms its elements, which must occur within the filing period from 1 April to 30 June, after which it is considered delivered for all legal effects; the pre-fill uses household composition reported in the Portal das Finanças by the end of February, or the previous year's composition.",
+        "kind": "deadline",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/IRS_automatico/Paginas/default.aspx",
+        "volatility": "annual",
+        "namedThing": "IRS"
+      },
+      "notObvious": "Pre-filled is not submitted. And the February household deadline quietly decides whose dependants appear on it months before anyone opens the return.",
+      "journeyStage": "first_tax_year",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/IRS_automatico/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "identity-cmd-digital-signature-legal-weight",
+      "pillar": "identity_access",
+      "valueClass": "insider",
+      "title": "Signing a document with Chave Móvel Digital counts as signing by hand",
+      "userQuestion": "Is a digital signature made with CMD legally valid?",
+      "scenario": "Someone printing, signing and scanning contracts assumes a digital signature is informal, or pays for third-party signing software.",
+      "audience": "people signing documents remotely",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The legal standing of a CMD signature, the EU regulation behind it, and the free routes to sign a PDF.",
+      "anchorFact": {
+        "claim": "A digital signature made with Chave Móvel Digital has the same validity as a handwritten signature and is certified under European Union Regulamento 910/2014; a PDF of up to 3MB can be signed directly in a web browser without installing software, and the Autenticação.gov desktop application and the gov.pt mobile app can also sign documents.",
+        "kind": "instrument",
+        "verifyAt": "https://www.autenticacao.gov.pt/cmd-assinatura",
+        "volatility": "stable"
+      },
+      "notObvious": "Print-sign-scan is still the default habit, and the free browser route needs no software at all.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.autenticacao.gov.pt/cmd-assinatura",
+        "authority": "Autenticação.gov"
+      }
     }
   ]
 }

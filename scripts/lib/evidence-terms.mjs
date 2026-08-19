@@ -7,11 +7,11 @@
 // Every match here is word-bounded, and failure is explicit rather than guessed.
 
 export const PILLAR_TERMS = {
-  identity_access: ["NIF", "NISS", "Chave Móvel Digital", "Portal das Finanças", "Segurança Social Direta", "representante fiscal", "notificações eletrónicas", "Cartão de Cidadão", "título de residência", "domicílio fiscal", "morada"],
+  identity_access: ["NIF", "NISS", "Chave Móvel Digital", "Portal das Finanças", "Segurança Social Direta", "representante fiscal", "notificações eletrónicas", "Cartão de Cidadão", "título de residência", "domicílio fiscal", "morada", "assinatura digital"],
   immigration_residency: ["AIMA", "autorização de residência", "visto", "reagrupamento familiar", "CPLP", "atestado de residência", "visto para procura de trabalho"],
   citizenship_civil: ["IRN", "cidadania", "nacionalidade", "registo civil", "naturalização", "Cartão de Cidadão", "casamento", "publicações", "convenção antenupcial", "registo de nascimento"],
-  freelance_business: ["trabalhador independente", "abrir atividade", "recibos verdes", "CAE", "ato isolado", "cessação de atividade", "regime simplificado", "coeficiente", "fatura", "recibo verde"],
-  iva: ["IVA", "CIVA", "artigo 53", "declaração periódica", "VIES", "declaração de alterações", "declaração recapitulativa", "autoliquidação", "taxa reduzida", "taxa intermédia", "Lista I", "Lista II"],
+  freelance_business: ["trabalhador independente", "abrir atividade", "recibos verdes", "CAE", "ato isolado", "cessação de atividade", "regime simplificado", "coeficiente", "fatura", "recibo verde", "contabilidade organizada"],
+  iva: ["IVA", "CIVA", "artigo 53", "declaração periódica", "VIES", "declaração de alterações", "declaração recapitulativa", "autoliquidação", "taxa reduzida", "taxa intermédia", "Lista I", "Lista II", "isenção", "artigo 9"],
   irs: ["IRS", "Modelo 3", "e-Fatura", "Anexo J", "IRS Automático", "IRS Jovem", "IAS", "taxa liberatória", "Modelo 30", "retenção na fonte", "dedução à coleta", "despesas de saúde"],
   social_security: ["Segurança Social", "Segurança Social Direta", "carreira contributiva", "declaração trimestral", "contribuições", "NISS", "trabalhador independente", "subsídio parental", "pensão de velhice", "fator de sustentabilidade"],
   housing_property: ["arrendamento", "IMI", "AIMI", "IMT", "imóvel", "caderneta predial", "certidão permanente", "registo predial", "Imposto do Selo", "habitação própria permanente", "VPT", "oposição à renovação", "NRAU"],
