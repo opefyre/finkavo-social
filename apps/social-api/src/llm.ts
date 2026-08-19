@@ -45,12 +45,37 @@ export function resolveLlmConfig(): LlmConfig {
   };
 }
 
+// Tokens per minute allowed by the provider tier, and the share of it a single request
+// may claim. Groq reserves max_completion_tokens up front, so the request must fit
+// entirely inside one window.
+const TOKENS_PER_MINUTE = Number(process.env.LLM_TOKENS_PER_MINUTE ?? 8_000);
+const SAFETY_MARGIN = 400;
+// Conservative for mixed English/Portuguese with accents and JSON punctuation, which
+// tokenise worse than plain English prose.
+const CHARS_PER_TOKEN = 3.2;
+const MIN_COMPLETION_TOKENS = 2_600;
+
+const estimateTokens = (text: string) => Math.ceil(text.length / CHARS_PER_TOKEN);
+
+/**
+ * Largest completion the provider will accept alongside this input. Falls back to a
+ * floor rather than zero: if the input is so large that nothing fits, the request should
+ * fail loudly as a 413 rather than silently ask for a truncated, schema-invalid object.
+ */
+function completionBudget(request: { instructions: string; input: string; maxCompletionTokens?: number }): number {
+  const used = estimateTokens(request.instructions) + estimateTokens(request.input);
+  const available = TOKENS_PER_MINUTE - used - SAFETY_MARGIN;
+  const ceiling = request.maxCompletionTokens ?? Number(process.env.LLM_MAX_TOKENS ?? 5_000);
+  return Math.max(MIN_COMPLETION_TOKENS, Math.min(ceiling, available));
+}
+
 export type StructuredRequest = {
   instructions: string;
   input: string;
   schemaName: string;
   schema: unknown;
   timeoutMs?: number;
+  maxCompletionTokens?: number;
 };
 
 /**
@@ -112,13 +137,12 @@ async function callProvider(
     body: JSON.stringify({
       model: config.model,
       temperature: 0.2,
-      // Groq's free tier allows 8000 tokens per minute, and max_completion_tokens is
-      // *reserved* against that budget rather than measured after the fact. The system
-      // prompt is roughly 2300 tokens, so anything above ~5500 here is rejected outright
-      // with a 413 before the model runs. Too low is also fatal: gpt-oss spends
-      // completion tokens on reasoning first, and a truncated object makes Groq reject
-      // the whole call with json_validate_failed. 5000 leaves room for both.
-      max_completion_tokens: Number(process.env.LLM_MAX_TOKENS ?? 5_000),
+      // The free tier counts prompt + reserved completion against one 8000-token minute.
+      // A fixed completion ceiling therefore fails as soon as the input grows: once real
+      // evidence excerpts were ingested the same request went from fitting to 13,500
+      // tokens. The ceiling is derived from what the input actually costs so the request
+      // is always inside the window.
+      max_completion_tokens: completionBudget(request),
       reasoning_effort: process.env.LLM_REASONING_EFFORT ?? "low",
       response_format: {
         type: "json_schema",
