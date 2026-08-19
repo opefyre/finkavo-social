@@ -3975,6 +3975,129 @@
         "canonicalUrl": "https://www2.gov.pt/servicos/fazer-a-habilitacao-de-herdeiros-heranca",
         "authority": "gov.pt / IRN"
       }
+    },
+    {
+      "id": "housing-extraordinary-rent-support-effort-rate",
+      "pillar": "housing_property",
+      "valueClass": "threshold",
+      "title": "The effort rate that qualifies a household for rent support",
+      "userQuestion": "Is our rent high enough relative to income to qualify for support?",
+      "scenario": "A household stretched by rent never checks eligibility because the criteria are expressed as a ratio rather than a rent figure.",
+      "audience": "households spending a large share of income on rent",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "The income ceiling, the effort-rate threshold and how to compute it, and the contract date that bounds the scheme.",
+      "anchorFact": {
+        "claim": "The apoio extraordinário à renda created by Decreto-Lei 20-B/2023 applies to primary residence rental contracts concluded by 15 March 2023 where annual income is at or below the top of the sixth IRS bracket and the taxa de esforço on rent is 35% or more, computed by multiplying average monthly income by 0.35 and comparing it with the rent.",
+        "kind": "instrument",
+        "verifyAt": "https://www.portaldahabitacao.pt/apoio-extraordin%C3%A1rio-%C3%A0-renda",
+        "volatility": "volatile"
+      },
+      "notObvious": "The test is a ratio, so a modest rent on a low income can qualify while a large rent on a high income does not, which is the opposite of how people self-assess.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://www.portaldahabitacao.pt/apoio-extraordin%C3%A1rio-%C3%A0-renda",
+        "authority": "Portal da Habitação / IHRU"
+      }
+    },
+    {
+      "id": "social-security-inclusion-benefit-threshold",
+      "pillar": "social_security",
+      "valueClass": "threshold",
+      "title": "The disability percentage that opens the inclusion benefit",
+      "userQuestion": "What degree of disability qualifies for the inclusion benefit?",
+      "scenario": "Someone with a certified disability never applies because they assume the benefit is only for the most severe cases.",
+      "audience": "people with a certified disability",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The qualifying percentage, the residence condition, and the two components the benefit is made of.",
+      "anchorFact": {
+        "claim": "The Prestação Social para a Inclusão is a monthly benefit for Portuguese and foreign nationals with a disability degree of 60% or more who have legal residence in Portugal, and comprises a base component compensating the general additional costs of disability and a complement aimed at combating poverty.",
+        "kind": "figure",
+        "namedThing": "prestação social para a inclusão",
+        "verifyAt": "https://www2.gov.pt/servicos/requerer-a-prestacao-social-para-a-inclusao",
+        "volatility": "annual"
+      },
+      "notObvious": "Sixty percent is a much lower bar than people assume, and the complement is a separate entitlement rather than a larger version of the base.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/requerer-a-prestacao-social-para-a-inclusao",
+        "authority": "gov.pt / Segurança Social"
+      }
+    },
+    {
+      "id": "health-multiuse-certificate-unlocks-benefits",
+      "pillar": "health_family",
+      "valueClass": "insider",
+      "title": "The one certificate that unlocks disability benefits across the system",
+      "userQuestion": "What document do I need to claim disability-related tax and social benefits?",
+      "scenario": "Someone with a long-term condition claims nothing because each scheme seems to need its own proof.",
+      "audience": "people with a long-term disabling condition",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The single certificate the schemes rely on, the threshold it must certify, and the IRS deductions it unlocks.",
+      "anchorFact": {
+        "claim": "The atestado médico de incapacidade multiuso is mandatory for people with disability of 60% or more to access social, economic and fiscal benefits including IRS, IUC, travel costs and prosthetics support, is issued following evaluation by a medical board which sets the degree and validity, and under artigo 87 of the CIRS allows a deduction of four times the IAS per taxpayer with disability and 2.5 times the IAS per disabled dependant or ascendant.",
+        "kind": "instrument",
+        "namedThing": "atestado multiuso",
+        "verifyAt": "https://www.sns24.gov.pt/servico/pedir-o-atestado-medico-de-incapacidade-multiuso/",
+        "volatility": "annual"
+      },
+      "notObvious": "One certificate serves every scheme, so the effort of obtaining it once is what unlocks tax, vehicle and health benefits together.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.sns24.gov.pt/servico/pedir-o-atestado-medico-de-incapacidade-multiuso/",
+        "authority": "SNS 24"
+      }
+    },
+    {
+      "id": "social-security-informal-carer-status-conditions",
+      "pillar": "social_security",
+      "valueClass": "edge_case",
+      "title": "Who can be recognised as a principal informal carer",
+      "userQuestion": "Can I be recognised as my relative's carer if I already have a job?",
+      "scenario": "A family member providing daily care assumes recognition is automatic, or rules themselves out over the relationship degree.",
+      "audience": "family members providing full-time care",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The age band, the cohabitation and no-remuneration conditions, and how wide the family relationship can be.",
+      "anchorFact": {
+        "claim": "Recognition as cuidador informal principal requires being between 18 and legal retirement age, accompanying the cared-for person permanently, living in the same house, receiving no remuneration from work or for the care, being a spouse or partner in união de facto or a relative or in-law up to the 4th degree in the direct or collateral line, and having adequate health conditions to provide care.",
+        "kind": "artefact",
+        "namedThing": "cuidador informal",
+        "verifyAt": "https://www2.gov.pt/servicos/requerer-o-subsidio-de-apoio-ao-cuidador-informal-principal",
+        "volatility": "annual"
+      },
+      "notObvious": "The fourth degree reaches cousins and great-uncles, far wider than people expect, but the no-remuneration condition rules out anyone keeping a job.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/requerer-o-subsidio-de-apoio-ao-cuidador-informal-principal",
+        "authority": "gov.pt / Segurança Social"
+      }
+    },
+    {
+      "id": "social-security-carer-subsidy-income-ceiling",
+      "pillar": "social_security",
+      "valueClass": "threshold",
+      "title": "The household income ceiling for the informal carer subsidy",
+      "userQuestion": "Does recognised carer status come with money?",
+      "scenario": "A recognised carer assumes the status carries an automatic payment, and does not check the separate means test.",
+      "audience": "recognised informal carers",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "That status and subsidy are separate, the household income ceiling expressed against the IAS, and where to apply.",
+      "anchorFact": {
+        "claim": "The subsídio de apoio ao cuidador informal principal is separate from recognition of the status and requires the household's monthly reference income to be below 1.3 times the IAS, published as 698.27 euros, with applications made in Segurança Social Direta under Família by selecting Estatuto do cuidador informal.",
+        "kind": "figure",
+        "verifyAt": "https://www2.gov.pt/servicos/requerer-o-subsidio-de-apoio-ao-cuidador-informal-principal",
+        "volatility": "annual"
+      },
+      "notObvious": "Recognition and payment are two different applications, so carers who obtain the status often never claim the subsidy attached to it.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/requerer-o-subsidio-de-apoio-ao-cuidador-informal-principal",
+        "authority": "gov.pt / Segurança Social"
+      }
     }
   ]
 }
