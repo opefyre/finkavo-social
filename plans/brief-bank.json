@@ -8143,6 +8143,56 @@
         "canonicalUrl": "https://www.gov.pt/servicos/entidade-empregadora-declaracao-mensal-de-remuneracoes-a-seguranca-social",
         "authority": "gov.pt / Instituto da Segurança Social"
       }
+    },
+    {
+      "id": "freelance-three-payments-on-account-before-the-tax-bill",
+      "pillar": "freelance_business",
+      "valueClass": "deadline_action",
+      "title": "Three payments due before the tax return exists",
+      "userQuestion": "Why is Finanças asking me for money in July when I filed in June?",
+      "scenario": "A freelancer treats the annual return as the whole tax year and is caught by three payments on account they had not budgeted for.",
+      "audience": "independent workers with category B income",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The three dates payments on account fall due, and that they run alongside rather than instead of the annual return.",
+      "anchorFact": {
+        "claim": "Under artigo 102 of the Código do IRS taxpayers with category B income must make 3 pagamentos por conta of the tax due, payable by the 20th of July, the 20th of September and the 20th of December.",
+        "kind": "deadline",
+        "namedThing": "pagamentos por conta",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs102.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "These are advances on the current year's tax, not instalments of the bill you just filed, which is why they arrive in a year the return already settled.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs102.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "freelance-the-local-surcharge-on-company-profit",
+      "pillar": "freelance_business",
+      "valueClass": "threshold",
+      "title": "The local surcharge on profit that depends on your council",
+      "userQuestion": "Why does my company pay more tax than the headline IRC rate?",
+      "scenario": "A small company budgets for the national rate and is surprised by a municipal surcharge that varies by where it operates.",
+      "audience": "people running a Portuguese company",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "What the municipal surcharge is charged on, the ceiling on its rate, and the reduced rates and exemptions councils can set.",
+      "anchorFact": {
+        "claim": "The derrama municipal is an accessory tax to IRC applied by municipal resolution on taxable profit corresponding to the proportion of income generated in that municipality by resident entities or permanent establishments in Portuguese territory; the rate set by each municipality may not exceed 1.5 per cent, and municipalities may set reduced rates or exemptions, with roughly 300 municipalities applying it and their rates published by the Autoridade Tributária.",
+        "kind": "figure",
+        "namedThing": "derrama municipal",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/atualidades/instrucoesadmin/Paginas/Oficio_circulado_20288_2026.aspx",
+        "volatility": "volatile"
+      },
+      "notObvious": "It is apportioned to where the income was generated rather than to the registered office, so operating across councils means more than one rate.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/atualidades/instrucoesadmin/Paginas/Oficio_circulado_20288_2026.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
