@@ -1,4 +1,4 @@
-import { DraftSchema, draftJsonSchema, type Draft } from "./contracts.js";
+import { DraftSchema, draftJsonSchema, providerSchema, type Draft } from "./contracts.js";
 import { generateStructured } from "./llm.js";
 
 type Candidate = {
@@ -38,7 +38,7 @@ function withinTokenBudget(candidate: Candidate): Candidate {
 export async function generateDraft(candidate: Candidate): Promise<{ draft: Draft; model: string }> {
   const { text, model } = await generateStructured({
     schemaName: "finkavo_social_draft",
-    schema: draftJsonSchema,
+    schema: providerSchema(draftJsonSchema),
     input: JSON.stringify(withinTokenBudget(candidate)),
     instructions: [
       // Compressed deliberately: the prompt, the JSON schema and the reserved completion

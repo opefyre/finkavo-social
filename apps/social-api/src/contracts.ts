@@ -31,6 +31,29 @@ export const DraftSchema = z.object({
 
 export type Draft = z.infer<typeof DraftSchema>;
 
+/**
+ * Strips length and pattern constraints from a JSON Schema for the provider.
+ *
+ * Groq validates generated JSON against the supplied schema server-side and rejects the
+ * whole call when any constraint fails, so a slide body three characters over its limit
+ * threw away an otherwise good draft and returned nothing to repair. Length is exactly
+ * what the repair loop exists to fix: it can feed back "slide 2 body is 312 of 300" and
+ * get a corrected draft.
+ *
+ * The provider therefore enforces shape — required fields, types, enums, item counts —
+ * while Zod keeps the full contract, including every length the renderer depends on.
+ */
+export function providerSchema(schema: unknown): unknown {
+  if (Array.isArray(schema)) return schema.map(providerSchema);
+  if (!schema || typeof schema !== "object") return schema;
+  const relaxed: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(schema as Record<string, unknown>)) {
+    if (key === "maxLength" || key === "minLength" || key === "pattern") continue;
+    relaxed[key] = providerSchema(value);
+  }
+  return relaxed;
+}
+
 export const draftJsonSchema = {
   type: "object",
   additionalProperties: false,
