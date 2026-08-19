@@ -6208,7 +6208,7 @@
       "anchorFact": {
         "claim": "Textbooks distributed free of charge must be returned at the end of each school year, or at the end of the study cycle for subjects with final exams; their condition is assessed on return and where a textbook is in poor condition the encarregado de educação must cover its cost.",
         "kind": "procedure",
-        "namedThing": "manuais escolares",
+        "namedThing": "encarregado de educação",
         "verifyAt": "https://www.gov.pt/servicos/receber-vouchers-para-manuais-escolares-gratuitos",
         "volatility": "stable"
       },
@@ -6242,6 +6242,31 @@
       "source": {
         "canonicalUrl": "https://www.gov.pt/servicos/receber-vouchers-para-manuais-escolares-gratuitos",
         "authority": "gov.pt / Ministério da Educação"
+      }
+    },
+    {
+      "id": "social-security-child-guarantee-tops-up-the-allowance",
+      "pillar": "social_security",
+      "valueClass": "insider",
+      "title": "The child top-up nobody has to apply for",
+      "userQuestion": "Is there anything beyond abono de família for a low-income household?",
+      "scenario": "A family already receiving family allowance never learns a second payment exists, or waits for a form that does not exist.",
+      "audience": "low-income households receiving family allowance",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The three cumulative conditions for the child guarantee, the income formula behind them, and why no application is needed.",
+      "anchorFact": {
+        "claim": "Entitlement to the garantia para a infância requires cumulatively that the child holds abono de família for crianças e jovens, is under 18, and belongs to a household whose reference income is below 0.35 times the IAS times 14; the amount paid is the difference needed to reach a guaranteed monthly total, it arrives together with the abono de família, and attribution is automatic so the family does not have to request it.",
+        "kind": "figure",
+        "namedThing": "garantia para a infância",
+        "verifyAt": "https://www.garantiainfancia.gov.pt/-/-complementa-o-abono-afinal-quem-recebe-a-garantia-para-a-infancia-",
+        "volatility": "annual"
+      },
+      "notObvious": "It is a top-up to a guaranteed floor rather than a fixed payment, so the amount falls as the allowance rises and reaching the floor is the point.",
+      "journeyStage": "raising_children",
+      "source": {
+        "canonicalUrl": "https://www.garantiainfancia.gov.pt/-/-complementa-o-abono-afinal-quem-recebe-a-garantia-para-a-infancia-",
+        "authority": "Garantia para a Infância / Instituto da Segurança Social"
       }
     }
   ]
