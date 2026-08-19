@@ -10968,6 +10968,56 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs57.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "irs-the-december-extension-you-have-to-ask-for-in-june",
+      "pillar": "irs",
+      "valueClass": "deadline_action",
+      "title": "The December extension that must be claimed by June",
+      "userQuestion": "What if the other country has not taxed me by the filing deadline?",
+      "scenario": "Someone with foreign income waits for a foreign assessment past June and files late, instead of notifying in time and filing in December.",
+      "audience": "residents waiting on a foreign tax assessment",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The ordinary filing window, the extension to December where a foreign credit is undetermined, and the notification that must happen inside the original window.",
+      "anchorFact": {
+        "claim": "Under artigo 60 of the Código do IRS the declaration is delivered from 1 April to 30 June regardless of whether that day is a working day; where the taxpayer has foreign-source income with an international double taxation credit not yet determined by the source state by that deadline, the period extends to 31 December of that year, and the taxpayer must notify the tax authority within the original April to June window specifying the type of income and the source country.",
+        "kind": "deadline",
+        "namedThing": "declaração de rendimentos",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs60.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The extension is not automatic: it is bought with a notification made inside the very window you are trying to move past.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs60.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "housing-thirty-days-to-pay-the-transfer-tax",
+      "pillar": "housing_property",
+      "valueClass": "deadline_action",
+      "title": "Thirty days to pay the transfer tax once it is assessed",
+      "userQuestion": "When exactly does the property transfer tax have to be paid?",
+      "scenario": "A buyer assumes the tax is settled at the deed and lets an assessment sit unpaid past its window.",
+      "audience": "people buying property in Portugal",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The window to pay IMT after assessment, and the different rule where the transfer happens abroad.",
+      "anchorFact": {
+        "claim": "Under artigo 36 of the CIMT the tax must be paid on the day of the liquidação itself or within the following 30 days, and where the transfer takes place abroad the payment must be made during the following month.",
+        "kind": "instrument",
+        "namedThing": "liquidação",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimt/Pages/cimt36.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The clock runs from the assessment rather than from the deed, so a purchase arranged slowly can put the payment deadline before the signing.",
+      "journeyStage": "buying_a_home",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimt/Pages/cimt36.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
