@@ -8393,6 +8393,56 @@
         "canonicalUrl": "https://www.dgaep.gov.pt/stap/infoPage.cfm?objid=ccb9e9aa-5043-4683-b788-42d0f0274f4f",
         "authority": "Direção-Geral da Administração e do Emprego Público"
       }
+    },
+    {
+      "id": "employment-a-foreign-workers-contract-must-be-written",
+      "pillar": "employment",
+      "valueClass": "edge_case",
+      "title": "A foreign worker's contract has rules an ordinary one does not",
+      "userQuestion": "Can I be hired before my residence paperwork is complete?",
+      "scenario": "An employer delays a hire waiting for a social security number, or hands over a verbal arrangement that the law does not allow for this worker.",
+      "audience": "foreign workers and the people hiring them",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The written form and the reference the contract must carry, the copies each side keeps, and the number a contract does not have to wait for.",
+      "anchorFact": {
+        "claim": "A contrato de trabalho with a third-country foreign or stateless worker must be in written form and must reference the work visa or the residence or stay authorisation title, except for citizens of European Economic Area countries or states with reciprocal treatment; it is concluded in duplicate with the employer keeping one copy and the worker the other, and the employer's copy must have attached documentary proof of compliance with the entry and residence obligations; an employer may conclude the contract before the worker has a NISS, which need not appear in the contract and need not be awaited.",
+        "kind": "procedure",
+        "namedThing": "contrato de trabalho",
+        "verifyAt": "https://portal.act.gov.pt/Pages/trabalhador-estrangeiro.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Waiting for the social security number is a self-imposed delay, and the document the employer must attach is proof of your status rather than your NISS.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://portal.act.gov.pt/Pages/trabalhador-estrangeiro.aspx",
+        "authority": "Autoridade para as Condições do Trabalho"
+      }
+    },
+    {
+      "id": "immigration-a-promise-of-work-can-be-enough",
+      "pillar": "immigration_residency",
+      "valueClass": "insider",
+      "title": "A promise of a contract can carry a work residence application",
+      "userQuestion": "Do I need a signed job contract before applying to stay and work?",
+      "scenario": "Someone with a firm job offer waits for a signed contract that the employer will not issue until the paperwork exists, and neither side moves.",
+      "audience": "people applying for a work residence permit",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "The employment evidence the application accepts, the two ways to prove lawful entry, and the criminal record it requires.",
+      "anchorFact": {
+        "claim": "An application for an autorização de residência for subordinate work under artigo 88 accepts a copy of a promessa de contrato de trabalho or a sworn declaration from the employer attesting the employment relationship; lawful entry is proved by a valid visa or by 12 months of social security contributions, and the applicant must produce a criminal record from their country of nationality or from where they lived for more than a year before residing in Portugal, plus a declaration of address and proof of a right to housing.",
+        "kind": "instrument",
+        "namedThing": "promessa de contrato de trabalho",
+        "verifyAt": "https://aima.gov.pt/pt/trabalhar/autorizacao-de-residencia-para-exercicio-de-atividade-profissional-subordinada-com-dispensa-de-visto-de-residencia-art-88-o-n-o-",
+        "volatility": "volatile"
+      },
+      "notObvious": "A promise or even a sworn employer declaration is accepted, which breaks the deadlock where a company will not sign until the permit exists.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://aima.gov.pt/pt/trabalhar/autorizacao-de-residencia-para-exercicio-de-atividade-profissional-subordinada-com-dispensa-de-visto-de-residencia-art-88-o-n-o-",
+        "authority": "AIMA"
+      }
     }
   ]
 }
