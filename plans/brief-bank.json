@@ -7143,6 +7143,56 @@
         "canonicalUrl": "https://www.gov.pt/servicos/trabalhadora-gravida-em-licenca-parental-ou-que-amamenta-parecer-previo-ao-despedimento",
         "authority": "gov.pt / CITE"
       }
+    },
+    {
+      "id": "employment-agency-workers-are-paid-like-the-hosts-staff",
+      "pillar": "employment",
+      "valueClass": "insider",
+      "title": "An agency worker is paid on the host company's terms",
+      "userQuestion": "Should I be paid less than the permanent staff doing the same job?",
+      "scenario": "Someone placed by an agency accepts the agency's own pay scale and never compares it with what the host company pays for identical work.",
+      "audience": "people placed by a temporary work agency",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The agreement that covers an agency worker from day one, and the pay and benefits benchmarked to the host company.",
+      "anchorFact": {
+        "claim": "A worker on trabalho temporário is covered by the collective bargaining regulations applicable to the empresa utilizadora from the first day of work, including provisions on equality and non-discrimination, parental protection and limits on working time, and is entitled to the minimum pay set by law or collective bargaining proportional to the contract's duration plus holidays, holiday bonus and other regular and periodic benefits the user company gives its own workers for identical work.",
+        "kind": "procedure",
+        "namedThing": "empresa utilizadora",
+        "verifyAt": "https://www.dgert.gov.pt/faq-alteracoes-a-legislacao-laboral-e-ao-codigo-contributivo",
+        "volatility": "stable"
+      },
+      "notObvious": "The comparison that matters is with the host company's own staff, not with other agency workers, and it applies from the first day rather than after a qualifying period.",
+      "journeyStage": "in_employment",
+      "source": {
+        "canonicalUrl": "https://www.dgert.gov.pt/faq-alteracoes-a-legislacao-laboral-e-ao-codigo-contributivo",
+        "authority": "DGERT"
+      }
+    },
+    {
+      "id": "employment-an-irregular-placement-becomes-a-permanent-job",
+      "pillar": "employment",
+      "valueClass": "edge_case",
+      "title": "When an irregular placement turns into a permanent contract",
+      "userQuestion": "What happens if the agency placement was not lawful?",
+      "scenario": "An agency worker cycles through renewals covering the same absence for years without asking whether the arrangement is still lawful.",
+      "audience": "long-serving agency workers",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The cap on using agency labour to cover an absence, and the consequence for the agency when the arrangement is irregular.",
+      "anchorFact": {
+        "claim": "Temporary workers may be engaged to substitute an absent or temporarily incapacitated worker, directly or indirectly, for a maximum of 2 years, and where the contrato de utilização between the temporary work agency and the empresa utilizadora is irregular the agency must integrate the worker on an indefinite-term contract.",
+        "kind": "figure",
+        "namedThing": "contrato de utilização",
+        "verifyAt": "https://www.dgert.gov.pt/faq-alteracoes-a-legislacao-laboral-e-ao-codigo-contributivo",
+        "volatility": "stable"
+      },
+      "notObvious": "The remedy falls on the agency rather than the host, which is why workers look at the wrong employer when the placement outlasts its lawful purpose.",
+      "journeyStage": "in_employment",
+      "source": {
+        "canonicalUrl": "https://www.dgert.gov.pt/faq-alteracoes-a-legislacao-laboral-e-ao-codigo-contributivo",
+        "authority": "DGERT"
+      }
     }
   ]
 }
