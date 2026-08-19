@@ -9318,6 +9318,56 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00032.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "iva-the-small-retailer-regime-nobody-mentions",
+      "pillar": "iva",
+      "valueClass": "threshold",
+      "title": "The small retailer regime that taxes purchases, not sales",
+      "userQuestion": "Is there a simpler IVA regime for a small shop?",
+      "scenario": "A small shopkeeper runs full IVA accounting on every sale when a regime built around purchases would apply.",
+      "audience": "individual retailers with small purchase volumes",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "Who qualifies for the small retailer regime, the purchase and service ceilings, how the tax is worked out, and when it is paid.",
+      "anchorFact": {
+        "claim": "Under artigo 60 of the CIVA the regime dos pequenos retalhistas is open to retailers who are individuals, without organised accounting for income tax, with a prior-year purchase volume of 50,000 euros or less, no import, export or intra-community operations, non-exempt services of 250 euros or less a year, and at least 90 per cent of purchases being goods for resale without transformation; the tax is worked out by applying a 25 per cent coefficient to the IVA borne on eligible purchases and deducting IVA on investment goods, and is paid by the 20th of the second month following each quarter on the modelo P2.",
+        "kind": "figure",
+        "namedThing": "regime dos pequenos retalhistas",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-01007.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The test is what the shop buys rather than what it sells, which is why a busy till does not necessarily take you out of it.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-01007.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "iva-the-farmers-flat-rate-compensation",
+      "pillar": "iva",
+      "valueClass": "insider",
+      "title": "The flat rate that compensates farmers who charge no IVA",
+      "userQuestion": "Can a small farm recover any IVA without registering normally?",
+      "scenario": "A smallholder absorbs IVA on inputs with no way to recover it, unaware of a compensation regime designed for exactly that.",
+      "audience": "small agricultural producers",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The turnover limit for the agricultural flat-rate regime, the compensation percentage, and the annual payment date.",
+      "anchorFact": {
+        "claim": "The regime forfetário for agricultural producers is optional and open to those with annual turnover of 10,000 euros or less, without organised accounting, carrying on activities listed in Anexos F and G to the CIVA and with no import or export operations; it pays a compensation of 6 per cent applied to eligible agricultural sales to non-exempt taxable persons, claimed by 31 March each year for the previous year's operations.",
+        "kind": "figure",
+        "namedThing": "regime forfetário",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-01007.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The compensation is claimed from the State once a year rather than charged on invoices, so it is money that only arrives if someone files for it.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-01007.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
