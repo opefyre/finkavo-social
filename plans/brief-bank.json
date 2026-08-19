@@ -9193,6 +9193,81 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00063.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "irs-selling-up-at-sixty-five-without-buying-again",
+      "pillar": "irs",
+      "valueClass": "insider",
+      "title": "Selling a home at sixty-five without buying another",
+      "userQuestion": "Can I avoid the gain tax if I sell and do not buy another home?",
+      "scenario": "A retired owner downsizing out of property assumes the only relief is buying again, and pays tax on the whole gain.",
+      "audience": "retired owners or owners over 65 selling a home",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The alternative to reinvesting in property, who qualifies, the products that count, and the window to do it in.",
+      "anchorFact": {
+        "claim": "Gains on the sale of a home may be excluded from taxation where the seller is demonstrably retired or at least 65 years old and reinvests the proceeds within 6 months in qualifying financial products such as a life insurance contract, a pension fund or a savings account, as an alternative to the reinvestment in another permanent home that carries a 36-month window.",
+        "kind": "figure",
+        "namedThing": "mais-valias",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00566.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The alternative route swaps property for a pension product and shortens the window from thirty-six months to six, so the decision has to be made before the sale, not after.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00566.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "driving-the-disability-car-tax-exemption-and-its-cap",
+      "pillar": "driving_transport",
+      "valueClass": "threshold",
+      "title": "The car tax exemption for disability, and the year to claim it",
+      "userQuestion": "Does a recognised disability exempt my car from the annual tax?",
+      "scenario": "An eligible owner pays the annual tax for years because the exemption had to be claimed in the first one.",
+      "audience": "drivers with a recognised degree of incapacity",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The incapacity level, the emissions limits and value cap that apply, when the request must be made, and whether it renews.",
+      "anchorFact": {
+        "claim": "IUC exemption for a person with a degree of incapacity of 60 per cent or more covers vehicles in categories A and E and category B vehicles with CO2 NEDC up to 180 g/km or CO2 WLTP up to 205 g/km, capped at 240 euros for vehicles acquired after 2 August 2016, with no CO2 restriction for vehicles acquired before that date; it must be requested by the IUC payment deadline in the first year and is then automatically renewed while the conditions remain met.",
+        "kind": "figure",
+        "namedThing": "isenção de IUC",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00037.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "It renews itself once granted but must be claimed in the first year, so the cost of not knowing is repeated annually rather than once.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00037.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "driving-the-classic-car-exemption-has-a-mileage-limit",
+      "pillar": "driving_transport",
+      "valueClass": "edge_case",
+      "title": "The classic car exemption that caps how far you drive",
+      "userQuestion": "Is my thirty-year-old car exempt from the annual tax?",
+      "scenario": "An owner assumes age alone exempts a classic and uses it as an everyday car, breaching a condition they never read.",
+      "audience": "owners of vehicles over thirty years old",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "The four conditions a historic vehicle must meet together, including the annual distance limit, and the electric vehicle exemption alongside it.",
+      "anchorFact": {
+        "claim": "A historic vehicle is exempt from IUC only where it meets all of the conditions together: belonging to categories A, C, D or E, being more than 30 years old, being certified as historic by the competent authorities, and not travelling more than 500 kilometres a year; separately, an exclusively electric vehicle benefits from IUC exemption.",
+        "kind": "figure",
+        "namedThing": "isenção de IUC",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00037.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "Five hundred kilometres a year is roughly one outing a month, which is what makes this an exemption for collections rather than for old cars.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00037.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
