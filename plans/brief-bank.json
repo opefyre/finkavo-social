@@ -8268,6 +8268,31 @@
         "canonicalUrl": "https://www.sns.gov.pt/cidadao/siga-sns-sistema-integrado-de-gestao-do-acesso-no-servico-nacional-de-saude/",
         "authority": "Serviço Nacional de Saúde"
       }
+    },
+    {
+      "id": "citizenship-making-a-public-body-hand-over-a-document",
+      "pillar": "citizenship_civil",
+      "valueClass": "deadline_action",
+      "title": "Ten working days for a public body to answer, and who to tell",
+      "userQuestion": "A public body is ignoring my request for a document. What now?",
+      "scenario": "Someone chases a council or a school for months over a file they are entitled to, with no idea a regulator exists for exactly this.",
+      "audience": "people requesting a document from a public body",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The deadline a body has to answer, the point at which silence becomes a refusal, and the twenty days to complain to the regulator.",
+      "anchorFact": {
+        "claim": "Under artigo 15 of the Lei de Acesso aos Documentos Administrativos a request for access must be answered within 10 working days; where the administration communicates nothing within 35 days the request is considered tacitly rejected, and the requester may complain to the Comissão de Acesso aos Documentos Administrativos within 20 days of a failure to respond, a rejection, partial satisfaction or any other decision limiting access; the request must be in writing with the requester's identification, contact details and signature.",
+        "kind": "deadline",
+        "namedThing": "documentos administrativos",
+        "verifyAt": "https://www.cada.pt/perguntas-frequentes",
+        "volatility": "stable"
+      },
+      "notObvious": "Silence becomes a refusal on a fixed day, which is what starts the twenty-day complaint window rather than leaving you waiting indefinitely.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.cada.pt/perguntas-frequentes",
+        "authority": "Comissão de Acesso aos Documentos Administrativos"
+      }
     }
   ]
 }
