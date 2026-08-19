@@ -7018,6 +7018,31 @@
         "canonicalUrl": "https://clientebancario.bportugal.pt/pt-pt/perguntas-frequentes",
         "authority": "Banco de Portugal"
       }
+    },
+    {
+      "id": "iva-electronic-notifications-do-not-cover-the-vat-representative",
+      "pillar": "iva",
+      "valueClass": "edge_case",
+      "title": "The representative electronic notifications will not save you from",
+      "userQuestion": "I signed up for electronic notifications. Do I still need a fiscal representative?",
+      "scenario": "A self-employed non-resident outside the EU relies on the general exemption, skips the IVA representative, and is non-compliant from the first invoice.",
+      "audience": "self-employed non-residents based outside the EU",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The general exemption from appointing a representative, and the self-employment case where electronic notifications do not remove the obligation.",
+      "anchorFact": {
+        "claim": "Non-residents domiciled in a third country outside the European Union and the EEA states of Norway, Iceland and Liechtenstein who carry on a self-employed activity in Portuguese territory are obliged to designate an IVA representante fiscal, and in that situation subscribing to any of the electronic notification channels does not dispense with the appointment.",
+        "kind": "procedure",
+        "namedThing": "representante fiscal",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/destaques/Paginas/FAQs_Representante_Fiscal_do_Nao_Residente_Notif_eletronicas.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The electronic-notifications exemption is about being contactable, not about IVA, so it leaves the one obligation that actually costs money to comply with.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/destaques/Paginas/FAQs_Representante_Fiscal_do_Nao_Residente_Notif_eletronicas.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
