@@ -110,16 +110,17 @@
       "audience": "newly registered independent workers",
       "promise": "When the exemption window opens, exactly what ends it, and which quarterly declaration you must still submit during it.",
       "anchorFact": {
-        "claim": "A first-time independent worker benefits from a defined initial exemption period from contributions, but the quarterly declaration obligation is separate from the payment obligation.",
+        "claim": "Segurança Social contributions are not compulsory for people who opened independent activity less than 12 months ago, but anyone issuing recibos verdes must still submit a declaração trimestral through Segurança Social Direta by the last day of January, April, July and October.",
         "kind": "deadline",
-        "verifyAt": "https://www.seg-social.pt/trabalhadores-independentes",
-        "volatility": "annual"
+        "verifyAt": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "volatility": "annual",
+        "namedThing": "declaração trimestral"
       },
       "notObvious": "The declaration-versus-payment split is where people get caught — they skip the declaration because they were told they owe nothing.",
       "journeyStage": "first_freelance_activity",
       "source": {
-        "canonicalUrl": "https://www.seg-social.pt/trabalhadores-independentes",
-        "authority": "Instituto da Segurança Social"
+        "canonicalUrl": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "authority": "gov.pt / Instituto da Segurança Social"
       },
       "risk": "high",
       "volatility": "annual"
@@ -134,7 +135,7 @@
       "audience": "freelancers exempt under Artigo 53",
       "promise": "Why you keep invoicing exempt until 31 December, the 15-business-day January window you cannot miss, and the exact date IVA starts applying.",
       "anchorFact": {
-        "claim": "Under artigo 53 of the CIVA, exceeding the annual turnover ceiling in a calendar year obliges the taxpayer to submit a declaracao de alteracoes within 15 business days of the last day of that year, and normal IVA taxation applies from 1 January of the following year rather than from the moment the ceiling was crossed.",
+        "claim": "The artigo 53 do CIVA exemption applies where annual turnover stays below 15,000 euros, and exceeding that ceiling in a calendar year obliges the taxpayer to submit a declaração de alterações on the Portal das Finanças within 15 days of the last day of that year, with the normal IVA regime applying from 1 January of the following year rather than from the moment the ceiling was crossed.",
         "kind": "instrument",
         "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/artigo-53-o-do-civa.aspx",
         "volatility": "annual"
@@ -330,17 +331,17 @@
       "audience": "independent workers who opened activity mid-year",
       "promise": "The separate Finanças and Segurança Social calendars laid over one year, and which of them starts before you have earned anything.",
       "anchorFact": {
-        "claim": "An independent worker has distinct quarterly and annual obligations to Finanças and to Segurança Social, with the quarterly declaração trimestral and the annual IRS declaration falling on different deadlines set by each authority.",
+        "claim": "An independent worker issuing recibos verdes must deliver the quarterly declaração trimestral to Segurança Social through Segurança Social Direta by the last day of January, April, July and October, and that declaration is what the contributions are calculated from, using the income of the preceding 3 months.",
         "kind": "deadline",
-        "verifyAt": "https://www2.gov.pt/pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "verifyAt": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
         "volatility": "annual",
         "namedThing": "declaração trimestral"
       },
       "notObvious": "The two authorities are almost always explained separately. Seeing both calendars on one timeline is what stops a missed quarterly declaration in the first year.",
       "journeyStage": "first_freelance_activity",
       "source": {
-        "canonicalUrl": "https://www2.gov.pt/pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
-        "authority": "gov.pt"
+        "canonicalUrl": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "authority": "gov.pt / Instituto da Segurança Social"
       },
       "risk": "high",
       "volatility": "annual"
@@ -5141,6 +5142,56 @@
       "source": {
         "canonicalUrl": "https://diariodarepublica.pt/dr/lexionario/termo/direito-legal-preferencia",
         "authority": "Diário da República / Código Civil"
+      }
+    },
+    {
+      "id": "freelance-opting-in-before-the-exemption-ends",
+      "pillar": "freelance_business",
+      "valueClass": "decision",
+      "title": "The twelve exempt months that do not count towards a pension",
+      "userQuestion": "Should I start paying Segurança Social before my first year is up?",
+      "scenario": "A new freelancer enjoys a year of no contributions and later finds that year missing from their contribution record and from any benefit entitlement.",
+      "audience": "newly registered independent workers",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "What the first-year exemption costs you, how to waive it, and the declaration through which the request is made.",
+      "anchorFact": {
+        "claim": "Contributions are not compulsory for people who opened independent activity less than 12 months ago, the worker may instead decline the exemption or ask to be brought into the Regime dos Trabalhadores Independentes early through the declaração trimestral, and if they do not contribute those 12 months will not count towards retirement.",
+        "kind": "procedure",
+        "namedThing": "declaração trimestral",
+        "verifyAt": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "volatility": "stable"
+      },
+      "notObvious": "The exemption is a default you can turn down, and turning it down is what buys the year of pension record and benefit eligibility.",
+      "journeyStage": "starting_work",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes",
+        "authority": "gov.pt / Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "identity-cmd-signature-is-a-second-activation",
+      "pillar": "identity_access",
+      "valueClass": "edge_case",
+      "title": "Having Chave Móvel Digital does not mean you can sign yet",
+      "userQuestion": "Why can I log in with CMD but not sign a document?",
+      "scenario": "Someone with a working CMD login reaches a form that requires a signature and discovers at the deadline that signing was never switched on.",
+      "audience": "people using CMD for official services",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "That signing is a separate activation, who can activate it, and that it can be done at any time after the CMD itself.",
+      "anchorFact": {
+        "claim": "The digital signature of the Chave Móvel Digital is activated separately from the CMD: anyone over 16 who holds a Chave Móvel Digital can activate it, either at the moment the CMD is activated or on a later date.",
+        "kind": "procedure",
+        "namedThing": "Chave Móvel Digital",
+        "verifyAt": "https://www.gov.pt/servicos/ativar-a-assinatura-digital-da-chave-movel-digital-cmd-",
+        "volatility": "stable"
+      },
+      "notObvious": "Authentication and signature are two different capabilities behind the same credential, so a working login proves nothing about being able to sign.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/ativar-a-assinatura-digital-da-chave-movel-digital-cmd-",
+        "authority": "gov.pt / AMA"
       }
     }
   ]
