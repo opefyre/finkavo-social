@@ -8768,6 +8768,31 @@
         "canonicalUrl": "https://www.gov.pt/guias/apoio-a-familia/pessoas-com-deficiencia",
         "authority": "gov.pt / Instituto da Segurança Social"
       }
+    },
+    {
+      "id": "identity-telling-the-central-bank-your-documents-are-gone",
+      "pillar": "identity_access",
+      "valueClass": "insider",
+      "title": "The report to the central bank that blocks identity fraud",
+      "userQuestion": "How do I stop someone opening credit with my stolen documents?",
+      "scenario": "Someone cancels the card and reports the theft to the police, then finds months later that credit was taken out in their name.",
+      "audience": "people whose identity documents were lost or stolen",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The four documents you can flag with the Banco de Portugal, what must be attached, and the number that cancels bank cards from abroad.",
+      "anchorFact": {
+        "claim": "To prevent identity theft linked to financial fraud the holder or their representative may notify the Banco de Portugal through an online form for the loss of identification documents, always attaching the police report, covering the Cartão de Cidadão, Bilhete de Identidade, passport and residence authorisation or title; bank cards should be cancelled immediately through the bank or through SIBS on 808 201 251, or on 217 918 780 from abroad.",
+        "kind": "procedure",
+        "namedThing": "Banco de Portugal",
+        "verifyAt": "https://www.gov.pt/guias/comunicar-e-cancelar-os-cartoes-perdidos-ou-roubados",
+        "volatility": "stable"
+      },
+      "notObvious": "Cancelling the cards and filing a police report does not warn the financial system, and the central bank flag is the step that does.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/comunicar-e-cancelar-os-cartoes-perdidos-ou-roubados",
+        "authority": "gov.pt"
+      }
     }
   ]
 }
