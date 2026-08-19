@@ -10668,6 +10668,31 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs78e.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "irs-the-prescription-that-turns-a-purchase-into-a-deduction",
+      "pillar": "irs",
+      "valueClass": "edge_case",
+      "title": "The prescription that turns a purchase into a health deduction",
+      "userQuestion": "Why did some of my pharmacy spending not count as a health expense?",
+      "scenario": "Someone buys a health product taxed at the normal IVA rate without a prescription and finds it excluded from the deduction.",
+      "audience": "people claiming health expenses on IRS",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The percentage and ceiling on health expenses, which purchases qualify automatically, and the document that rescues the rest.",
+      "anchorFact": {
+        "claim": "Under artigo 78-C of the Código do IRS 15 per cent of health expenses is deductible up to an overall limit of 1,000 euros, covering invoices for health services and goods that are IVA exempt or at reduced rates from the human health, pharmacy, medical and orthopaedic and optical retail sectors, together with health insurance premiums or mutual association contributions covering exclusively health risks; services and goods taxed at the normal IVA rate qualify only where duly justified by a medical prescription.",
+        "kind": "figure",
+        "namedThing": "despesas de saúde",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs78c.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The IVA rate on the item decides whether a prescription is needed, so two purchases in the same pharmacy can be treated differently.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs78c.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
