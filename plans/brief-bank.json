@@ -10893,6 +10893,31 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimi/Pages/cimi9.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "iva-who-is-relieved-of-the-periodic-return",
+      "pillar": "iva",
+      "valueClass": "edge_case",
+      "title": "The traders relieved of the periodic return altogether",
+      "userQuestion": "Do I have to file IVA returns if everything I do is exempt?",
+      "scenario": "An association or a trader doing only exempt work files periodic returns for years that were never required of them.",
+      "audience": "associations and traders doing only exempt work",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "Who is exempt from the periodic return and related filings, the revenue limit for exemption from issuing invoices, and the exception that pulls you back in.",
+      "anchorFact": {
+        "claim": "Under artigo 29 of the Código do IVA taxable persons carrying out exclusively exempt operations without the right to deduct are exempt from the periodic declaration, the accounting information filing and the summary maps, unless they must carry out regularisations under artigos 24 or 26; public law entities, non-profit organisations and charitable institutions carrying out exclusively exempt operations with annual revenue under 200,000 euros are also exempt from issuing invoices, and annual accounting information must otherwise be sent electronically by 15 July.",
+        "kind": "instrument",
+        "namedThing": "declaração periódica",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/iva29.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "A single regularisation under one of two named articles cancels the whole relief, which is how organisations discover they were meant to be filing.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/iva29.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
