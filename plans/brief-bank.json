@@ -6693,6 +6693,81 @@
         "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2013-116041830-150903574",
         "authority": "Diário da República / Código da Estrada"
       }
+    },
+    {
+      "id": "social-security-dependency-supplement-two-degrees",
+      "pillar": "social_security",
+      "valueClass": "threshold",
+      "title": "The two degrees of dependency, and what separates them",
+      "userQuestion": "My parent needs daily help. Is there a pension top-up for that?",
+      "scenario": "A family caring for a pensioner who cannot wash or move unaided never applies, or applies under the wrong degree.",
+      "audience": "families caring for a dependent pensioner",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "What each degree of dependency means in practice, and who beyond pensioners can claim the supplement.",
+      "anchorFact": {
+        "claim": "The complemento por dependência is paid monthly to pensioners who need another person's help with basic daily needs, at 2 degrees: the 1st covers people who cannot autonomously perform acts indispensable to basic daily needs such as feeding, moving about or personal hygiene, and the 2nd covers people who meet those conditions and are also bedridden or have severe dementia; beneficiaries of the prestação social para a inclusão and non-pensioner beneficiaries with an illness capable of causing special invalidity may also claim.",
+        "kind": "figure",
+        "namedThing": "complemento por dependência",
+        "verifyAt": "https://www.seg-social.pt/complemento-por-dependencia",
+        "volatility": "annual"
+      },
+      "notObvious": "The second degree is not simply worse than the first, it is the first plus a named condition, so the assessment turns on being bedridden or on a dementia diagnosis.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/complemento-por-dependencia",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "irs-the-certificate-that-unlocks-four-taxes",
+      "pillar": "irs",
+      "valueClass": "insider",
+      "title": "One certificate that reaches four different taxes",
+      "userQuestion": "What do I actually get from a recognised disability, tax-wise?",
+      "scenario": "Someone holding a multi-use certificate uses it for social benefits and never registers it with Finanças, missing years of deductions.",
+      "audience": "people with a recognised degree of incapacity",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The incapacity level that counts as fiscally relevant, the taxes it reaches, the two IRS deductions, and the fifteen days after registering the claim.",
+      "anchorFact": {
+        "claim": "Deficiência fiscalmente relevante is recognised at a grau de incapacidade of 60 per cent or more proven by an atestado médico de incapacidade multiuso and brings benefits under IRS, IUC, ISV and IVA; the request is registered on the Portal das Finanças under Dados Pessoais and the documentation with an authenticated copy of the certificate must be sent within 15 days, and the IRS deduction from the collection is 4 times the IAS for each taxpayer with a disability and 2.5 times the IAS for each dependent or ascendant with one.",
+        "kind": "figure",
+        "namedThing": "atestado médico de incapacidade multiuso",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Dados_pessoais_familia/Dados_pessoais/Deficiencia_fiscalmente_relevante/Paginas/default.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The certificate does nothing for tax until it is separately registered with Finanças, and that registration has its own fifteen-day document deadline.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Dados_pessoais_familia/Dados_pessoais/Deficiencia_fiscalmente_relevante/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "health-multiuse-certificate-stays-valid-until-reassessed",
+      "pillar": "health_family",
+      "valueClass": "edge_case",
+      "title": "A multi-use certificate does not lapse while you wait",
+      "userQuestion": "My incapacity certificate has expired and the medical board has not called me. Do I lose the benefits?",
+      "scenario": "Someone whose certificate passed its date stops claiming benefits, or is refused them, while a reassessment appointment is outstanding.",
+      "audience": "people holding an incapacity certificate",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "What happens to the certificate's validity between its expiry and a new assessment, and what that protects.",
+      "anchorFact": {
+        "claim": "Under the rules in force an atestado médico de incapacidade multiuso remains valid until a new evaluation is guaranteed, ensuring the attribution and maintenance of the social, economic and tax benefits recognised for citizens with disabilities.",
+        "kind": "artefact",
+        "namedThing": "atestado médico de incapacidade multiuso",
+        "verifyAt": "https://www.sns24.gov.pt/servico/atestado-medico-de-incapacidade-multiuso/",
+        "volatility": "stable"
+      },
+      "notObvious": "The waiting time for a junta médica is the State's delay, not yours, and the rule says so explicitly.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.sns24.gov.pt/servico/atestado-medico-de-incapacidade-multiuso/",
+        "authority": "SNS 24"
+      }
     }
   ]
 }
