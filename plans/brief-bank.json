@@ -4644,6 +4644,106 @@
         "canonicalUrl": "https://www.consumidor.asf.com.pt/pt/poupan%C3%A7a/planos-de-poupan%C3%A7a",
         "authority": "ASF"
       }
+    },
+    {
+      "id": "irs-paying-a-tax-debt-in-instalments",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "How many instalments a tax debt can be split into",
+      "userQuestion": "Can I spread a tax bill I cannot pay in one go?",
+      "scenario": "Someone facing an unaffordable assessment ignores it rather than asking, and the debt moves to enforcement.",
+      "audience": "taxpayers facing an unaffordable assessment",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The usual instalment ceiling and minimum amount, the exceptional longer plan, and the missed payments that cancel it.",
+      "anchorFact": {
+        "claim": "Instalment payment requires a demonstrated economic situation preventing regularisation within legal deadlines and no other debts to the Autoridade Tributária; the number of instalments is generally up to 36, each at least 1 unidade de conta, extendable to 5 years where the debt exceeds 500 UC with each instalment at least 10 UC, juros de mora accrue on each instalment, and failure to pay 3 successive or 6 interpolated instalments makes the remainder fall due.",
+        "kind": "figure",
+        "namedThing": "juros de mora",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/pagamentos_e_reembolsos/pagamentos/Prestacoes/Pagar_prestacoes_antes_instaur_proc_executivo/A_pedido_do_contribuinte/Paginas/default.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The plan survives an occasional missed payment but not three in a row, and the interest keeps running on the outstanding balance throughout.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/pagamentos_e_reembolsos/pagamentos/Prestacoes/Pagar_prestacoes_antes_instaur_proc_executivo/A_pedido_do_contribuinte/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-contesting-a-tax-assessment",
+      "pillar": "irs",
+      "valueClass": "deadline_action",
+      "title": "The two routes to contest a tax assessment, and their clocks",
+      "userQuestion": "My IRS assessment looks wrong — how do I challenge it and by when?",
+      "scenario": "Someone disputes an assessment by phone or email, and the real deadlines pass while they wait for someone to fix it.",
+      "audience": "taxpayers disputing an assessment",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The administrative complaint window, the shorter window after it is rejected, and when interest is owed back to you.",
+      "anchorFact": {
+        "claim": "Under artigo 70 of the CPPT a reclamação graciosa may be filed on the same grounds as judicial challenge within 120 days of the facts in artigo 102, and on express or tacit rejection the taxpayer may bring an impugnação judicial within 30 days of the rejection notification or of the presumption of tacit rejection; indemnity interest is due where error attributable to the tax services caused an overpayment.",
+        "kind": "instrument",
+        "namedThing": "reclamação graciosa",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cppt/Pages/cppt70.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Silence counts as rejection and starts the thirty-day court clock, so waiting for a reply is itself how the second deadline is missed.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cppt/Pages/cppt70.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "social-security-debt-instalment-thresholds",
+      "pillar": "social_security",
+      "valueClass": "threshold",
+      "title": "Settling a Social Security debt online, and the limits that allow it",
+      "userQuestion": "Can I arrange a Social Security debt plan without going to a counter?",
+      "scenario": "Someone with arrears assumes any plan means an appointment and enforcement, and does nothing.",
+      "audience": "people with Social Security arrears",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The debt ceilings that keep the request online, the instalment counts by debt size, and how far back arrears are visible.",
+      "anchorFact": {
+        "claim": "An instalment request is made in Segurança Social Direta where total debt in enforcement is below 100,000 euros, with debt below 5,000 euros per process for individuals and 10,000 euros for legal persons; instalments run to 36 where the debt is below 3,060 euros, 60 where it exceeds that, and up to 150 under conditions including demonstrated notable financial difficulty, and both employers and independent workers can view amounts owed from the last five years.",
+        "kind": "figure",
+        "namedThing": "plano prestacional",
+        "verifyAt": "https://www.seg-social.pt/planos-prestacionais",
+        "volatility": "annual"
+      },
+      "notObvious": "The whole arrangement can be made online below the thresholds, which is the step people skip because they expect a counter and an enforcement officer.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/planos-prestacionais",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "social-security-contributory-declaration-validity",
+      "pillar": "social_security",
+      "valueClass": "threshold",
+      "title": "The contributory status declaration expires in four months",
+      "userQuestion": "How long is my Social Security clearance certificate valid for?",
+      "scenario": "Someone obtains the declaration early for a tender, licence or grant and finds it expired when it is finally needed.",
+      "audience": "people submitting a contributory clearance certificate",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "What the declaration proves and exactly how long it remains valid.",
+      "anchorFact": {
+        "claim": "The declaração da situação contributiva proves whether a person's situation with Segurança Social is regularised or in debt, and the declaration is valid for 4 months.",
+        "kind": "figure",
+        "namedThing": "situação contributiva",
+        "verifyAt": "https://www.seg-social.pt/ptss/pssd/menu/pagamentos-dividas/situacao-contributiva/declaracao-situacao-contributiva",
+        "volatility": "stable"
+      },
+      "notObvious": "Four months is short enough that obtaining it at the start of an application often means obtaining it twice.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/ptss/pssd/menu/pagamentos-dividas/situacao-contributiva/declaracao-situacao-contributiva",
+        "authority": "Instituto da Segurança Social"
+      }
     }
   ]
 }
