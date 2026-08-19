@@ -9018,6 +9018,31 @@
         "canonicalUrl": "https://www.consumidor.gov.pt/consumidor_4/direitos-dos-consumidores1/conflitos-de-consumo",
         "authority": "Direção-Geral do Consumidor"
       }
+    },
+    {
+      "id": "education-how-a-university-application-score-is-built",
+      "pillar": "education_children",
+      "valueClass": "threshold",
+      "title": "The weights behind a university application score",
+      "userQuestion": "How much does the exam really count against school grades?",
+      "scenario": "A family optimises for the school average alone, or panics about one exam, without knowing the weighting bands each institution works within.",
+      "audience": "applicants to Portuguese higher education",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The minimum exam mark, the weighting bands for school grade, exams and prerequisites, and the separate institutional minimum.",
+      "anchorFact": {
+        "claim": "Entrance exams require a classification of 95 points or more on a scale of 0 to 200; the candidate score weights the secondary education final grade at not less than 40 per cent, the entrance exam classification at not less than 45 per cent and prerequisites where required at not more than 15 per cent, with each of two required exams carrying 50 per cent of the exam weight unless the institution defines otherwise, and institutions separately set a minimum candidate classification below which an applicant cannot compete regardless of meeting the exam minimum.",
+        "kind": "figure",
+        "namedThing": "provas de ingresso",
+        "verifyAt": "https://www.dges.gov.pt/pt/faq/condicoes-de-acesso-e-ingresso-no-ensino-superior",
+        "volatility": "annual"
+      },
+      "notObvious": "There are two floors, not one: clearing the exam minimum still leaves the institution's own minimum candidate score to clear.",
+      "journeyStage": "studying",
+      "source": {
+        "canonicalUrl": "https://www.dges.gov.pt/pt/faq/condicoes-de-acesso-e-ingresso-no-ensino-superior",
+        "authority": "Direção-Geral do Ensino Superior"
+      }
     }
   ]
 }
