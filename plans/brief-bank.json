@@ -1878,13 +1878,13 @@
         "claim": "Where initial parental leave is shared, both workers must tell their employers the start and end of each period within 7 days after the birth by delivering a joint declaration, and the subsídio parental itself must be requested within 6 months of the fact determining the protection.",
         "kind": "deadline",
         "namedThing": "subsídio parental",
-        "verifyAt": "https://seg-social.pt/subsidio-parental",
+        "verifyAt": "https://www.seg-social.pt/subsidio-parental",
         "volatility": "stable"
       },
       "notObvious": "The two clocks are wildly different lengths and only one is generous. The seven-day joint declaration is what people miss.",
       "journeyStage": "bringing_family",
       "source": {
-        "canonicalUrl": "https://seg-social.pt/subsidio-parental",
+        "canonicalUrl": "https://www.seg-social.pt/subsidio-parental",
         "authority": "Instituto da Segurança Social"
       }
     },
