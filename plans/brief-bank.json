@@ -8543,6 +8543,56 @@
         "canonicalUrl": "https://www.amt-autoridade.pt/consumidor/direitos-dos-passageiros/direitos-dos-passageiros-no-transporte-ferroviario/",
         "authority": "Autoridade da Mobilidade e dos Transportes"
       }
+    },
+    {
+      "id": "consumer-the-bottled-gas-subsidy-most-people-miss",
+      "pillar": "daily_life_consumer",
+      "valueClass": "insider",
+      "title": "The bottled gas subsidy that runs until the money runs out",
+      "userQuestion": "Is there help with the cost of a gas bottle?",
+      "scenario": "A household on minimum social benefits buys bottled gas at full price all year, never hearing of a programme aimed exactly at them.",
+      "audience": "households on minimum social benefits using bottled gas",
+      "risk": "medium",
+      "volatility": "volatile",
+      "promise": "Who the bottled gas support is for, the amount per bottle and the temporary increase, and the two ways it can end.",
+      "anchorFact": {
+        "claim": "The Botija de Gás Solidária is extraordinary financial support for economically vulnerable domestic customers buying bottled liquefied petroleum gas, open to households where at least one member receives the minimum social benefits listed in the regulation; the contribution rose temporarily to 25 euros per bottle for 90 days until 18 September 2026 with the programme's other conditions unchanged, and it runs during 2026 or until the available allocation is exhausted.",
+        "kind": "figure",
+        "namedThing": "Botija de Gás Solidária",
+        "verifyAt": "https://www.dgeg.gov.pt/pt/areas-transversais/politicas-de-protecao-ao-consumidor-de-energia/apoio-aos-beneficiarios-de-tarifa-social-de-energia-eletrica/botija-de-gas-solidaria/",
+        "volatility": "volatile"
+      },
+      "notObvious": "It ends when the money runs out rather than at the year end, so applying early is worth more than qualifying well.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.dgeg.gov.pt/pt/areas-transversais/politicas-de-protecao-ao-consumidor-de-energia/apoio-aos-beneficiarios-de-tarifa-social-de-energia-eletrica/botija-de-gas-solidaria/",
+        "authority": "Direção-Geral de Energia e Geologia"
+      }
+    },
+    {
+      "id": "consumer-the-gas-social-tariff-has-a-consumption-ceiling",
+      "pillar": "daily_life_consumer",
+      "valueClass": "threshold",
+      "title": "The gas social tariff has a consumption ceiling as well",
+      "userQuestion": "Why do I get the electricity social tariff but not the gas one?",
+      "scenario": "A household receiving the electricity discount assumes gas follows automatically, and never checks the conditions that differ.",
+      "audience": "households receiving social benefits with a gas contract",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "The four conditions the gas social tariff attaches to the contract itself, including the annual consumption limit.",
+      "anchorFact": {
+        "claim": "To receive the tarifa social de gás natural the consumer must hold a natural gas supply contract in their own name, for exclusively domestic use in a permanent home, at low pressure, with annual consumption of 500 cubic metres or less, and must be receiving one of the listed Segurança Social supports.",
+        "kind": "figure",
+        "namedThing": "tarifa social de gás natural",
+        "verifyAt": "https://www.dgeg.gov.pt/pt/areas-transversais/politicas-de-protecao-ao-consumidor-de-energia/tarifa-social-de-energia/quais-as-condicoes-de-atribuicao-da-tarifa-social-de-energia/",
+        "volatility": "annual"
+      },
+      "notObvious": "Qualifying socially is only half of it: the contract must be in your own name, for a permanent home, and under a consumption ceiling.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.dgeg.gov.pt/pt/areas-transversais/politicas-de-protecao-ao-consumidor-de-energia/tarifa-social-de-energia/quais-as-condicoes-de-atribuicao-da-tarifa-social-de-energia/",
+        "authority": "Direção-Geral de Energia e Geologia"
+      }
     }
   ]
 }
