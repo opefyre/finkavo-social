@@ -5368,6 +5368,106 @@
         "canonicalUrl": "https://clientebancario.bportugal.pt/en/what-it-1",
         "authority": "Banco de Portugal"
       }
+    },
+    {
+      "id": "driving-points-are-earned-back-not-just-lost",
+      "pillar": "driving_transport",
+      "valueClass": "threshold",
+      "title": "Twelve points to start, and the two ways to get above it",
+      "userQuestion": "How does the Portuguese driving licence points system actually work?",
+      "scenario": "A driver treats the points balance as a one-way count towards losing the licence and never learns it can rise.",
+      "audience": "holders of a Portuguese driving licence",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The starting balance, what serious and very serious offences cost, and the two routes that add points back.",
+      "anchorFact": {
+        "claim": "Every driver starts with 12 points under the carta por pontos system in force since 1 June 2016; contraordenações graves can subtract 3 points and muito graves 5 points; a driver gains 3 points for each 3-year period without serious or very serious offences or road crimes up to a maximum of 15, and 1 point at each licence revalidation where they voluntarily attend road safety training, up to a maximum of 16.",
+        "kind": "figure",
+        "namedThing": "carta por pontos",
+        "verifyAt": "https://ansr.pt/contraordenacoes/carta-por-pontos",
+        "volatility": "stable"
+      },
+      "notObvious": "The ceiling is not twelve. Three clean years and a voluntary course put a driver above the starting balance, which is the buffer nobody builds.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://ansr.pt/contraordenacoes/carta-por-pontos",
+        "authority": "Autoridade Nacional de Segurança Rodoviária"
+      }
+    },
+    {
+      "id": "driving-missing-the-points-course-costs-the-licence",
+      "pillar": "driving_transport",
+      "valueClass": "costly_mistake",
+      "title": "The points course that is not optional once you are low",
+      "userQuestion": "What happens when my licence points drop that low?",
+      "scenario": "A driver summoned to road safety training does not attend, treating it as advisory, and loses the licence outright.",
+      "audience": "drivers who have lost points",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The point level that triggers compulsory training, and what an unjustified absence costs.",
+      "anchorFact": {
+        "claim": "A driver on 5 or 4 points under the carta por pontos system must attend a road safety training action, and an unjustified failure to attend implies cassação of the driving title, meaning the driver loses the licence and must wait 2 years before taking it again.",
+        "kind": "figure",
+        "namedThing": "carta por pontos",
+        "verifyAt": "https://ansr.pt/contraordenacoes/carta-por-pontos",
+        "volatility": "stable"
+      },
+      "notObvious": "Losing the licence here is not a penalty for the driving. It is a penalty for missing the appointment.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://ansr.pt/contraordenacoes/carta-por-pontos",
+        "authority": "Autoridade Nacional de Segurança Rodoviária"
+      }
+    },
+    {
+      "id": "irs-same-tax-address-proves-a-de-facto-union",
+      "pillar": "irs",
+      "valueClass": "insider",
+      "title": "Two years at the same address in the AT records is the proof",
+      "userQuestion": "What do we need to prove we live in união de facto for IRS?",
+      "scenario": "An unmarried couple assembles parish declarations and certified documents that the Tax Authority did not need from them.",
+      "audience": "unmarried couples filing IRS",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "When no proof at all is required, and the exact bundle needed when the address route does not work.",
+      "anchorFact": {
+        "claim": "Where both taxpayers are resident in Portuguese territory and registered with the Autoridade Tributária at the same tax address for 2 years and during the tax period, no proof of the união de facto is required; where the same tax domicile cannot be verified, the minimum two-year period may be proved by any legally admissible means, and proof through a declaration issued by the competent junta de freguesia must be accompanied by a sworn declaration from the taxpayers and certified copies of each person's birth registration.",
+        "kind": "procedure",
+        "namedThing": "união de facto",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00508.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Keeping the tax address updated is itself the evidence, which is why couples who never moved it need nothing further.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00508.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-de-facto-couples-choose-how-to-be-taxed",
+      "pillar": "irs",
+      "valueClass": "decision",
+      "title": "Filing together or apart when you are not married",
+      "userQuestion": "Should we file one IRS return or two?",
+      "scenario": "An unmarried couple files separately by default and never checks whether one joint return would have taxed them less.",
+      "audience": "unmarried couples with or without children",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The two filing options open to a de facto couple, who must sign what, and how dependants are split under each.",
+      "anchorFact": {
+        "claim": "A couple in união de facto, with or without children, may opt for tributação conjunta of their income by submitting a single return authenticated by both, or each may submit their own return under separate taxation, in which case 50 per cent of dependants' income is included in each declaration.",
+        "kind": "figure",
+        "namedThing": "tributação conjunta",
+        "verifyAt": "https://www.gov.pt/guias/casar-ou-viver-em-uniao-de-facto",
+        "volatility": "stable"
+      },
+      "notObvious": "It is a yearly choice rather than a status, and the joint return only counts if both authenticate it.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/casar-ou-viver-em-uniao-de-facto",
+        "authority": "gov.pt / Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
