@@ -5459,13 +5459,13 @@
         "claim": "The water tarifa social is granted automatically to people receiving supports including the complemento solidário para idosos, rendimento social de inserção, subsídio social de desemprego, abono de família, pensão social de invalidez or pensão social de velhice, or whose household has annual income of 5,808 euros or less increased by 50 per cent for each household member, but adherence to this automatic regime is voluntary and depends on a deliberation of the assembleia municipal on a proposal from the câmara municipal.",
         "kind": "figure",
         "namedThing": "tarifa social",
-        "verifyAt": "https://www.ersar.pt/pt/consumidor/tarifas-dos-servicos/tarifarios-sociais",
+        "verifyAt": "https://www.dgeg.gov.pt/pt/areas-transversais/politicas-de-protecao-ao-consumidor-de-energia/tarifa-social-de-energia/quais-as-condicoes-de-atribuicao-da-tarifa-social-de-energia/",
         "volatility": "volatile"
       },
       "notObvious": "Energy is national and automatic; water is decided council by council, so the same household qualifies in one municipality and not the next.",
       "journeyStage": "settled_life",
       "source": {
-        "canonicalUrl": "https://www.ersar.pt/pt/consumidor/tarifas-dos-servicos/tarifarios-sociais",
+        "canonicalUrl": "https://www.dgeg.gov.pt/pt/areas-transversais/politicas-de-protecao-ao-consumidor-de-energia/tarifa-social-de-energia/quais-as-condicoes-de-atribuicao-da-tarifa-social-de-energia/",
         "authority": "ERSAR"
       }
     },
@@ -6684,13 +6684,13 @@
         "claim": "Children under 12 years of age and less than 135 cm tall must be carried in the rear seat of vehicles fitted with seat belts using a homologated sistema de retenção adapted to their weight and height, while public passenger transport, TVDE and patient transport vehicles are exempt provided the child travels in the rear.",
         "kind": "figure",
         "namedThing": "sistema de retenção",
-        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2013-116041830-150903574",
+        "verifyAt": "https://www.imt-ip.pt/condutores/informacoes-gerais/seguranca-rodoviaria/transporte-de-criancas/",
         "volatility": "stable"
       },
       "notObvious": "Both conditions have to hold for the requirement to apply, so a child who clears either the age or the height leaves the rule behind.",
       "journeyStage": "raising_children",
       "source": {
-        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2013-116041830-150903574",
+        "canonicalUrl": "https://www.imt-ip.pt/condutores/informacoes-gerais/seguranca-rodoviaria/transporte-de-criancas/",
         "authority": "Diário da República / Código da Estrada"
       }
     },
@@ -7959,13 +7959,13 @@
         "claim": "Under artigo 1905 of the Código Civil as amended by Lei n.º 122/2015 a maintenance payment set during a child's minority automatically continues after majority until the child completes 25 years of age; parents must provide for the maintenance, security, health and education of adult or emancipated children where professional training was not complete when minority ended, where it is reasonable to require it of the parents, and where the child does not exceed the time normally needed to complete that training, and it falls to the obliged parent to take the initiative to end the obligation and to allege and prove the facts that extinguish it.",
         "kind": "figure",
         "namedThing": "pensão de alimentos",
-        "verifyAt": "https://diariodarepublica.pt/dr/jurisprudencia/lei/122-2015-70152049",
+        "verifyAt": "https://www.gov.pt/servicos/pedir-o-registo-civil-da-regulacao-das-responsabilidades-parentais",
         "volatility": "stable"
       },
       "notObvious": "The default after eighteen is that payment continues, and the burden of proving it should stop sits with whoever wants it to stop.",
       "journeyStage": "raising_children",
       "source": {
-        "canonicalUrl": "https://diariodarepublica.pt/dr/jurisprudencia/lei/122-2015-70152049",
+        "canonicalUrl": "https://www.gov.pt/servicos/pedir-o-registo-civil-da-regulacao-das-responsabilidades-parentais",
         "authority": "Diário da República / Código Civil"
       }
     },

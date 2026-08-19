@@ -188,14 +188,29 @@ for (let dayIndex = 0; dayIndex < days; dayIndex++) {
         used.add(anchorBrief.id);
         const occurrence = (occurrences.get(event.key) ?? 0) + 1;
         occurrences.set(event.key, occurrence);
+        // Only the title used to come from the event, so a deadline row carried an
+        // unrelated brief's audience and angle: the IRS assessment checkpoint was
+        // addressed to "people with a recognised degree of incapacity" because that
+        // was whichever irs brief the pool happened to yield. The event now supplies
+        // its own audience and intent, and the angle is the one the row actually is.
         const row = toPlanRow({
-          brief: { ...anchorBrief, title: event.title, risk: "high" },
+          brief: {
+            ...anchorBrief,
+            title: event.title,
+            risk: "high",
+            audience: event.audience ?? anchorBrief.audience,
+            valueClass: event.intent === "occasion" ? "scenario" : "deadline_action",
+          },
           date, slotIndex, occurrence,
           timing: event.status === "confirmed" ? "official_locked" : "must_reverify",
           reserve: "date_locked",
         });
         row.brief.occurrenceKey = event.key;
         row.brief.campaignStage = "single";
+        // Carried through planning into the post so the renderer picks the deadline
+        // palette from the plan rather than from whatever intent the model chooses.
+        row.brief.contentIntent = event.intent ?? "deadline_reminder";
+        row.brief.audience = event.audience ?? anchorBrief.audience;
         row.brief.calendarEventDate = event.date;
         row.brief.calendarStatus = event.status;
         row.authority = calendar.sources?.[event.source] ?? row.authority;

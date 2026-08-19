@@ -9,8 +9,15 @@ const stableIndex = (value: string, size: number) => {
   return (hash >>> 0) % size;
 };
 
+// Intents the plan itself is authoritative about. post_intent is chosen by the model
+// at generation time, so a date-locked deadline only reached the peach palette if the
+// model happened to label it a deadline_reminder. Where planning already knows what the
+// slot is -- a calendar deadline or a public occasion -- that wins.
+const PLANNED_INTENTS = new Set(["deadline_reminder", "occasion", "regulatory_change", "timely_news"]);
+
 export function selectVisualStyle(post: Record<string, unknown>): VisualStyle {
-  const intent = String(post.post_intent || "evergreen_explainer");
+  const planned = String(post.content_intent || "");
+  const intent = PLANNED_INTENTS.has(planned) ? planned : String(post.post_intent || "evergreen_explainer");
   if (intent === "deadline_reminder" || intent === "occasion") return "peach_deadline";
   if (intent === "regulatory_change" || intent === "timely_news") return "ink_alert";
 

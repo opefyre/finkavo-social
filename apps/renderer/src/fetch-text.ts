@@ -16,9 +16,16 @@ async function sharedBrowser(): Promise<Browser> {
 
 export type FetchedPage = {
   url: string;
+  // Where the browser ended up. Google News serves a redirect wrapper that only
+  // resolves once scripts run, so the caller cannot know the article URL without it.
+  finalUrl: string;
   status: number;
   title: string;
   text: string;
+  // Absolute hrefs found on the page. Official announcement indexes are the only
+  // reliable way to reach a notice published today, and reaching it means reading the
+  // index's links rather than hashing the index itself.
+  links: string[];
   error: string | null;
 };
 
@@ -46,6 +53,12 @@ export async function fetchRenderedText(url: string, timeoutMs = 45_000): Promis
     await page.waitForLoadState("networkidle", { timeout: 10_000 }).catch(() => {});
 
     const title = (await page.title().catch(() => "")) || url;
+    const links = await page.evaluate(() =>
+      [...document.querySelectorAll("a[href]")]
+        .map(a => (a as HTMLAnchorElement).href)
+        .filter(href => href.startsWith("http"))
+        .map(href => href.split("#")[0] ?? href),
+    ).catch(() => [] as string[]);
     const text = await page.evaluate(() => {
       for (const node of Array.from(document.querySelectorAll("script,style,noscript,nav,header,footer"))) node.remove();
       const tidy = (value: string) => value.replace(/[ \t]+/g, " ").replace(/\n{2,}/g, "\n").trim();
@@ -62,9 +75,9 @@ export async function fetchRenderedText(url: string, timeoutMs = 45_000): Promis
       return full.length > visible.length ? full : visible;
     });
 
-    return { url, status: response?.status() ?? 0, title: title.slice(0, 300), text, error: null };
+    return { url, finalUrl: page.url(), status: response?.status() ?? 0, title: title.slice(0, 300), text, links: [...new Set(links)], error: null };
   } catch (error) {
-    return { url, status: 0, title: url, text: "", error: String((error as Error).message ?? error) };
+    return { url, finalUrl: url, status: 0, title: url, text: "", links: [], error: String((error as Error).message ?? error) };
   } finally {
     await context?.close().catch(() => {});
   }

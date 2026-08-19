@@ -15,43 +15,667 @@
     "actHome": "https://portal.act.gov.pt/"
   },
   "continuousCycles": [
-    {"key":"immigration-current-services","subjectFamily":"immigration_residency","cadence":"daily_discovery_weekly_review","source":"aimaNews","rule":"Monitor current AIMA services and announcements; never infer a universal renewal deadline."},
-    {"key":"employment-law-current","subjectFamily":"employment","cadence":"weekly","source":"actHome","rule":"Monitor ACT guidance and Diário da República changes; create a dated campaign only after an applicable official change."}
+    {
+      "key": "immigration-current-services",
+      "subjectFamily": "immigration_residency",
+      "cadence": "daily_discovery_weekly_review",
+      "source": "aimaNews",
+      "rule": "Monitor current AIMA services and announcements; never infer a universal renewal deadline."
+    },
+    {
+      "key": "employment-law-current",
+      "subjectFamily": "employment",
+      "cadence": "weekly",
+      "source": "actHome",
+      "rule": "Monitor ACT guidance and Diário da República changes; create a dated campaign only after an applicable official change."
+    }
   ],
   "events": [
-    {"key":"irs-2026-filing","date":"2026-06-30","subjectFamily":"irs","title":"2026 IRS filing window closes","status":"confirmed","source":"atIrs2026","scope":"2025 income filed in 2026"},
-    {"key":"irs-2026-assessment","date":"2026-08-31","subjectFamily":"irs","title":"IRS assessment, refund or payment checkpoint","status":"confirmed","source":"atPayments2026","scope":"Only people whose assessment or notice applies","campaign":[{"publishDate":"2026-08-17","stage":"preparation","title":"IRS notices in August: check whether you have a refund or payment action"},{"publishDate":"2026-08-28","stage":"reminder","title":"IRS 31 August checkpoint: review your assessment or payment notice"},{"publishDate":"2026-08-31","stage":"last_call","title":"IRS today: act only if your assessment or payment notice requires it"},{"publishDate":"2026-09-02","stage":"after_deadline","title":"Missed an IRS payment shown on your notice? Check the official next step"}]},
-    {"key":"imi-2026-august","date":"2026-08-31","subjectFamily":"housing_property","title":"August IMI instalment month ends","status":"confirmed","source":"atImiAimi","scope":"Only bills above €500 have an August instalment","campaign":[{"publishDate":"2026-08-19","stage":"preparation","title":"August IMI instalment: check whether your bill is above €500"},{"publishDate":"2026-08-28","stage":"reminder","title":"IMI August reminder: confirm your instalment and payment reference"},{"publishDate":"2026-08-31","stage":"last_call","title":"IMI today: pay only if your notice includes an August instalment"}]},
-    {"key":"iva-2026-q2-return","date":"2026-09-21","subjectFamily":"iva","title":"Quarterly IVA return checkpoint","status":"confirmed","source":"atDeclarations2026","scope":"Quarterly IVA taxpayers; exact 2026 calendar date","campaign":[{"publishDate":"2026-09-07","stage":"preparation","title":"Quarterly IVA return: prepare Q2 records before 21 September"},{"publishDate":"2026-09-17","stage":"reminder","title":"Quarterly IVA return: four-day filing checklist"},{"publishDate":"2026-09-21","stage":"last_call","title":"Quarterly IVA return due today: submit and keep the receipt"}]},
-    {"key":"iva-2026-q2-payment","date":"2026-09-25","subjectFamily":"iva","title":"Quarterly IVA payment checkpoint","status":"confirmed","source":"atPayments2026","scope":"Quarterly IVA taxpayers with payment due","campaign":[{"publishDate":"2026-09-22","stage":"preparation","title":"Filed quarterly IVA? Check whether payment is due by 25 September"},{"publishDate":"2026-09-25","stage":"last_call","title":"Quarterly IVA payment today: verify the amount and keep proof"}]},
-    {"key":"aimi-2026-payment","date":"2026-09-30","subjectFamily":"housing_property","title":"AIMI payment deadline","status":"confirmed","source":"atPayments2026","scope":"Only taxpayers with an AIMI assessment","campaign":[{"publishDate":"2026-09-16","stage":"preparation","title":"AIMI payment: how to tell whether the September deadline applies"},{"publishDate":"2026-09-27","stage":"reminder","title":"AIMI reminder: verify your assessment and payment details"},{"publishDate":"2026-09-30","stage":"last_call","title":"AIMI due today: act only if you received an assessment"}]},
-    {"key":"republic-day-2026","date":"2026-10-05","subjectFamily":"daily_life_consumer","title":"Republic Day public holiday","status":"confirmed_rule","source":"nationalHolidays","scope":"National mandatory holiday","campaign":[{"publishDate":"2026-10-02","stage":"preparation","title":"Republic Day on Monday: plan public-service errands before the holiday"},{"publishDate":"2026-10-05","stage":"occasion","title":"Republic Day in Portugal: what the public holiday means for your plans"}]},
-    {"key":"ss-quarterly-2026-q3","date":"2026-10-31","subjectFamily":"social_security","title":"Self-employed quarterly declaration month ends","status":"confirmed_rule","source":"socialSecurityQuarterly","scope":"Workers subject to the quarterly declaration","campaign":[{"publishDate":"2026-10-17","stage":"preparation","title":"October Social Security declaration: collect your quarterly income records"},{"publishDate":"2026-10-28","stage":"reminder","title":"Self-employed Social Security: final quarterly declaration checks"},{"publishDate":"2026-10-31","stage":"last_call","title":"Quarterly Social Security declaration: complete it today if it applies"},{"publishDate":"2026-11-02","stage":"after_deadline","title":"Missed the quarterly Social Security declaration? Check correction options"}]},
-    {"key":"world-savings-day-2026","date":"2026-10-31","subjectFamily":"banking_money","title":"World Savings Day","status":"occasion","source":"atPayments2026","scope":"Educational occasion; no legal deadline claim","campaign":[{"publishDate":"2026-10-24","stage":"occasion_lead","title":"Before World Savings Day: five money-admin habits for life in Portugal"},{"publishDate":"2026-10-31","stage":"occasion","title":"World Savings Day: run a 15-minute Portugal money check"}]},
-    {"key":"all-saints-2026","date":"2026-11-01","subjectFamily":"daily_life_consumer","title":"All Saints' Day public holiday","status":"confirmed_rule","source":"nationalHolidays","scope":"National mandatory holiday","campaign":[{"publishDate":"2026-10-30","stage":"preparation","title":"All Saints’ Day weekend: check local schedules before travelling"},{"publishDate":"2026-11-01","stage":"occasion","title":"All Saints’ Day in Portugal: a practical note for international residents"}]},
-    {"key":"imi-2026-november","date":"2026-11-30","subjectFamily":"housing_property","title":"November IMI instalment month ends","status":"confirmed","source":"atImiAimi","scope":"Second or third instalment according to bill amount"},
-    {"key":"restoration-2026","date":"2026-12-01","subjectFamily":"daily_life_consumer","title":"Restoration of Independence public holiday","status":"confirmed_rule","source":"nationalHolidays","scope":"National mandatory holiday"},
-    {"key":"immaculate-conception-2026","date":"2026-12-08","subjectFamily":"daily_life_consumer","title":"Immaculate Conception public holiday","status":"confirmed_rule","source":"nationalHolidays","scope":"National mandatory holiday"},
-    {"key":"christmas-2026","date":"2026-12-25","subjectFamily":"daily_life_consumer","title":"Christmas Day public holiday","status":"confirmed_rule","source":"nationalHolidays","scope":"National mandatory holiday"},
-    {"key":"ss-quarterly-2026-q4","date":"2027-01-31","subjectFamily":"social_security","title":"Self-employed quarterly declaration month ends","status":"confirmed_rule","source":"socialSecurityQuarterly","scope":"Workers subject to the quarterly declaration"},
-    {"key":"irs-2027-filing","date":"2027-06-30","subjectFamily":"irs","title":"2027 IRS filing deadline candidate","status":"must_reverify","source":"atIrs2026","scope":"Do not publish a 2027 date until AT publishes the 2027 calendar"},
-    {"key":"iva-2027-q4-return","date":"2027-02-20","subjectFamily":"iva","title":"Quarterly IVA return candidate","status":"must_reverify","source":"atDeclarations2026","scope":"Do not publish a 2027 date until AT publishes the 2027 calendar"},
-    {"key":"school-start-2026-mainland","date":"2026-09-11","subjectFamily":"education_children","title":"Mainland school-start window opens","status":"confirmed","source":"schoolCalendar2026_2027","scope":"Mainland public preschool, basic and secondary schools start between 11 and 15 September; individual schools choose within the window","campaign":[{"publishDate":"2026-09-01","stage":"preparation","title":"School starts between 11 and 15 September: family admin checklist"},{"publishDate":"2026-09-10","stage":"reminder","title":"Before school starts: confirm your school’s exact first day and documents"},{"publishDate":"2026-09-11","stage":"window_open","title":"Portugal’s school-start window opens today: check your school’s date"}]},
-    {"key":"school-term1-end-2026-mainland","date":"2026-12-15","subjectFamily":"education_children","title":"Mainland public-school first term ends","status":"confirmed","source":"schoolCalendar2026_2027","scope":"General mainland public preschool, basic and secondary calendar; schools with approved alternative organization may differ","campaign":[{"publishDate":"2026-12-11","stage":"preparation","title":"School term ends 15 December: a family admin checklist for the break"}]},
-    {"key":"school-term2-start-2027-mainland","date":"2027-01-04","subjectFamily":"education_children","title":"Mainland public-school second term starts","status":"confirmed","source":"schoolCalendar2026_2027","scope":"General mainland public preschool, basic and secondary calendar","campaign":[{"publishDate":"2027-01-02","stage":"preparation","title":"School resumes 4 January: documents, meals and transport to recheck"}]},
-    {"key":"school-carnival-break-2027-mainland","date":"2027-02-08","subjectFamily":"education_children","title":"Mainland school Carnival interruption starts","status":"confirmed","source":"schoolCalendar2026_2027","scope":"General mainland public preschool, basic and secondary calendar; interruption runs 8–10 February","campaign":[{"publishDate":"2027-02-04","stage":"preparation","title":"School Carnival break is 8–10 February: plan childcare and services"}]},
-    {"key":"school-term2-end-2027-mainland","date":"2027-03-19","subjectFamily":"education_children","title":"Mainland public-school second term ends","status":"confirmed","source":"schoolCalendar2026_2027","scope":"General mainland public preschool, basic and secondary calendar","campaign":[{"publishDate":"2027-03-15","stage":"preparation","title":"School term ends 19 March: prepare for the Easter interruption"}]},
-    {"key":"school-term3-start-2027-mainland","date":"2027-04-05","subjectFamily":"education_children","title":"Mainland public-school third term starts","status":"confirmed","source":"schoolCalendar2026_2027","scope":"General mainland public preschool, basic and secondary calendar","campaign":[{"publishDate":"2027-04-02","stage":"preparation","title":"School resumes 5 April: your practical family reset checklist"}]},
-    {"key":"school-term3-end-older-2027-mainland","date":"2027-06-04","subjectFamily":"education_children","title":"School year ends for years 9, 11 and 12","status":"confirmed","source":"schoolCalendar2026_2027","scope":"Mainland public schools; applies to years 9, 11 and 12","campaign":[{"publishDate":"2027-06-01","stage":"preparation","title":"School ends 4 June for years 9, 11 and 12: records to download"}]},
-    {"key":"school-term3-end-middle-2027-mainland","date":"2027-06-11","subjectFamily":"education_children","title":"School year ends for years 5–8 and 10","status":"confirmed","source":"schoolCalendar2026_2027","scope":"Mainland public schools; applies to years 5, 6, 7, 8 and 10","campaign":[{"publishDate":"2027-06-08","stage":"preparation","title":"School ends 11 June for years 5–8 and 10: family checklist"}]},
-    {"key":"school-term3-end-younger-2027-mainland","date":"2027-06-30","subjectFamily":"education_children","title":"School year ends for preschool and years 1–4","status":"confirmed","source":"schoolCalendar2026_2027","scope":"Mainland public schools; applies to preschool and first cycle","campaign":[{"publishDate":"2027-06-25","stage":"preparation","title":"Preschool and primary school end 30 June: records and summer planning"}]},
-    {"key":"new-year-2027","date":"2027-01-01","subjectFamily":"daily_life_consumer","title":"New Year’s Day public holiday","status":"confirmed_rule","source":"nationalHolidays","scope":"National mandatory holiday","campaign":[{"publishDate":"2026-12-30","stage":"preparation","title":"Before New Year’s Day: finish urgent public-service tasks"}]},
-    {"key":"good-friday-2027","date":"2027-03-26","subjectFamily":"daily_life_consumer","title":"Good Friday public holiday","status":"confirmed_rule","source":"nationalHolidays","scope":"National mandatory holiday","campaign":[{"publishDate":"2027-03-24","stage":"preparation","title":"Good Friday is 26 March: plan appointments, travel and payments"}]},
-    {"key":"easter-2027","date":"2027-03-28","subjectFamily":"daily_life_consumer","title":"Easter Sunday public holiday","status":"confirmed_rule","source":"nationalHolidays","scope":"National mandatory holiday","campaign":[{"publishDate":"2027-03-27","stage":"occasion","title":"Easter Sunday in Portugal: a practical note for newcomers"}]},
-    {"key":"freedom-day-2027","date":"2027-04-25","subjectFamily":"daily_life_consumer","title":"Freedom Day public holiday","status":"confirmed_rule","source":"nationalHolidays","scope":"National mandatory holiday","campaign":[{"publishDate":"2027-04-23","stage":"preparation","title":"Freedom Day is 25 April: closures and civic context for newcomers"}]},
-    {"key":"labour-day-2027","date":"2027-05-01","subjectFamily":"employment","title":"Labour Day public holiday","status":"confirmed_rule","source":"nationalHolidays","scope":"National mandatory holiday","campaign":[{"publishDate":"2027-04-29","stage":"preparation","title":"Labour Day in Portugal: holiday planning and worker-admin essentials"}]},
-    {"key":"corpus-christi-2027","date":"2027-05-27","subjectFamily":"daily_life_consumer","title":"Corpus Christi public holiday","status":"confirmed_rule","source":"nationalHolidays","scope":"National mandatory holiday","campaign":[{"publishDate":"2027-05-25","stage":"preparation","title":"Corpus Christi is 27 May: plan public-service errands early"}]},
-    {"key":"portugal-day-2027","date":"2027-06-10","subjectFamily":"daily_life_consumer","title":"Portugal Day public holiday","status":"confirmed_rule","source":"nationalHolidays","scope":"National mandatory holiday","campaign":[{"publishDate":"2027-06-08","stage":"preparation","title":"Portugal Day is 10 June: closures and ways to take part"}]},
-    {"key":"assumption-2027","date":"2027-08-15","subjectFamily":"daily_life_consumer","title":"Assumption Day public holiday","status":"confirmed_rule","source":"nationalHolidays","scope":"National mandatory holiday","campaign":[{"publishDate":"2027-08-12","stage":"preparation","title":"15 August public holiday: check travel and service schedules"}]}
+    {
+      "key": "irs-2026-filing",
+      "date": "2026-06-30",
+      "subjectFamily": "irs",
+      "title": "2026 IRS filing window closes",
+      "status": "confirmed",
+      "source": "atIrs2026",
+      "scope": "2025 income filed in 2026",
+      "audience": "everyone who must file an IRS return",
+      "intent": "deadline_reminder"
+    },
+    {
+      "key": "irs-2026-assessment",
+      "date": "2026-08-31",
+      "subjectFamily": "irs",
+      "title": "IRS assessment, refund or payment checkpoint",
+      "status": "confirmed",
+      "source": "atPayments2026",
+      "scope": "Only people whose assessment or notice applies",
+      "campaign": [
+        {
+          "publishDate": "2026-08-17",
+          "stage": "preparation",
+          "title": "IRS notices in August: check whether you have a refund or payment action"
+        },
+        {
+          "publishDate": "2026-08-28",
+          "stage": "reminder",
+          "title": "IRS 31 August checkpoint: review your assessment or payment notice"
+        },
+        {
+          "publishDate": "2026-08-31",
+          "stage": "last_call",
+          "title": "IRS today: act only if your assessment or payment notice requires it"
+        },
+        {
+          "publishDate": "2026-09-02",
+          "stage": "after_deadline",
+          "title": "Missed an IRS payment shown on your notice? Check the official next step"
+        }
+      ],
+      "audience": "taxpayers waiting on an IRS assessment or refund",
+      "intent": "deadline_reminder"
+    },
+    {
+      "key": "imi-2026-august",
+      "date": "2026-08-31",
+      "subjectFamily": "housing_property",
+      "title": "August IMI instalment month ends",
+      "status": "confirmed",
+      "source": "atImiAimi",
+      "scope": "Only bills above €500 have an August instalment",
+      "campaign": [
+        {
+          "publishDate": "2026-08-19",
+          "stage": "preparation",
+          "title": "August IMI instalment: check whether your bill is above €500"
+        },
+        {
+          "publishDate": "2026-08-28",
+          "stage": "reminder",
+          "title": "IMI August reminder: confirm your instalment and payment reference"
+        },
+        {
+          "publishDate": "2026-08-31",
+          "stage": "last_call",
+          "title": "IMI today: pay only if your notice includes an August instalment"
+        }
+      ],
+      "audience": "property owners paying IMI in instalments",
+      "intent": "deadline_reminder"
+    },
+    {
+      "key": "iva-2026-q2-return",
+      "date": "2026-09-21",
+      "subjectFamily": "iva",
+      "title": "Quarterly IVA return checkpoint",
+      "status": "confirmed",
+      "source": "atDeclarations2026",
+      "scope": "Quarterly IVA taxpayers; exact 2026 calendar date",
+      "campaign": [
+        {
+          "publishDate": "2026-09-07",
+          "stage": "preparation",
+          "title": "Quarterly IVA return: prepare Q2 records before 21 September"
+        },
+        {
+          "publishDate": "2026-09-17",
+          "stage": "reminder",
+          "title": "Quarterly IVA return: four-day filing checklist"
+        },
+        {
+          "publishDate": "2026-09-21",
+          "stage": "last_call",
+          "title": "Quarterly IVA return due today: submit and keep the receipt"
+        }
+      ],
+      "audience": "businesses filing IVA quarterly",
+      "intent": "deadline_reminder"
+    },
+    {
+      "key": "iva-2026-q2-payment",
+      "date": "2026-09-25",
+      "subjectFamily": "iva",
+      "title": "Quarterly IVA payment checkpoint",
+      "status": "confirmed",
+      "source": "atPayments2026",
+      "scope": "Quarterly IVA taxpayers with payment due",
+      "campaign": [
+        {
+          "publishDate": "2026-09-22",
+          "stage": "preparation",
+          "title": "Filed quarterly IVA? Check whether payment is due by 25 September"
+        },
+        {
+          "publishDate": "2026-09-25",
+          "stage": "last_call",
+          "title": "Quarterly IVA payment today: verify the amount and keep proof"
+        }
+      ],
+      "audience": "businesses paying IVA quarterly",
+      "intent": "deadline_reminder"
+    },
+    {
+      "key": "aimi-2026-payment",
+      "date": "2026-09-30",
+      "subjectFamily": "housing_property",
+      "title": "AIMI payment deadline",
+      "status": "confirmed",
+      "source": "atPayments2026",
+      "scope": "Only taxpayers with an AIMI assessment",
+      "campaign": [
+        {
+          "publishDate": "2026-09-16",
+          "stage": "preparation",
+          "title": "AIMI payment: how to tell whether the September deadline applies"
+        },
+        {
+          "publishDate": "2026-09-27",
+          "stage": "reminder",
+          "title": "AIMI reminder: verify your assessment and payment details"
+        },
+        {
+          "publishDate": "2026-09-30",
+          "stage": "last_call",
+          "title": "AIMI due today: act only if you received an assessment"
+        }
+      ],
+      "audience": "owners of higher-value Portuguese property",
+      "intent": "deadline_reminder"
+    },
+    {
+      "key": "republic-day-2026",
+      "date": "2026-10-05",
+      "subjectFamily": "daily_life_consumer",
+      "title": "Republic Day public holiday",
+      "status": "confirmed_rule",
+      "source": "nationalHolidays",
+      "scope": "National mandatory holiday",
+      "campaign": [
+        {
+          "publishDate": "2026-10-02",
+          "stage": "preparation",
+          "title": "Republic Day on Monday: plan public-service errands before the holiday"
+        },
+        {
+          "publishDate": "2026-10-05",
+          "stage": "occasion",
+          "title": "Republic Day in Portugal: what the public holiday means for your plans"
+        }
+      ],
+      "audience": "workers and parents planning around a public holiday",
+      "intent": "occasion"
+    },
+    {
+      "key": "ss-quarterly-2026-q3",
+      "date": "2026-10-31",
+      "subjectFamily": "social_security",
+      "title": "Self-employed quarterly declaration month ends",
+      "status": "confirmed_rule",
+      "source": "socialSecurityQuarterly",
+      "scope": "Workers subject to the quarterly declaration",
+      "campaign": [
+        {
+          "publishDate": "2026-10-17",
+          "stage": "preparation",
+          "title": "October Social Security declaration: collect your quarterly income records"
+        },
+        {
+          "publishDate": "2026-10-28",
+          "stage": "reminder",
+          "title": "Self-employed Social Security: final quarterly declaration checks"
+        },
+        {
+          "publishDate": "2026-10-31",
+          "stage": "last_call",
+          "title": "Quarterly Social Security declaration: complete it today if it applies"
+        },
+        {
+          "publishDate": "2026-11-02",
+          "stage": "after_deadline",
+          "title": "Missed the quarterly Social Security declaration? Check correction options"
+        }
+      ],
+      "audience": "independent workers filing the quarterly declaration",
+      "intent": "deadline_reminder"
+    },
+    {
+      "key": "world-savings-day-2026",
+      "date": "2026-10-31",
+      "subjectFamily": "banking_money",
+      "title": "World Savings Day",
+      "status": "occasion",
+      "source": "atPayments2026",
+      "scope": "Educational occasion; no legal deadline claim",
+      "campaign": [
+        {
+          "publishDate": "2026-10-24",
+          "stage": "occasion_lead",
+          "title": "Before World Savings Day: five money-admin habits for life in Portugal"
+        },
+        {
+          "publishDate": "2026-10-31",
+          "stage": "occasion",
+          "title": "World Savings Day: run a 15-minute Portugal money check"
+        }
+      ],
+      "audience": "people reviewing where their savings sit",
+      "intent": "occasion"
+    },
+    {
+      "key": "all-saints-2026",
+      "date": "2026-11-01",
+      "subjectFamily": "daily_life_consumer",
+      "title": "All Saints' Day public holiday",
+      "status": "confirmed_rule",
+      "source": "nationalHolidays",
+      "scope": "National mandatory holiday",
+      "campaign": [
+        {
+          "publishDate": "2026-10-30",
+          "stage": "preparation",
+          "title": "All Saints’ Day weekend: check local schedules before travelling"
+        },
+        {
+          "publishDate": "2026-11-01",
+          "stage": "occasion",
+          "title": "All Saints’ Day in Portugal: a practical note for international residents"
+        }
+      ],
+      "audience": "workers and parents planning around a public holiday",
+      "intent": "occasion"
+    },
+    {
+      "key": "imi-2026-november",
+      "date": "2026-11-30",
+      "subjectFamily": "housing_property",
+      "title": "November IMI instalment month ends",
+      "status": "confirmed",
+      "source": "atImiAimi",
+      "scope": "Second or third instalment according to bill amount",
+      "audience": "property owners paying IMI in instalments",
+      "intent": "deadline_reminder"
+    },
+    {
+      "key": "restoration-2026",
+      "date": "2026-12-01",
+      "subjectFamily": "daily_life_consumer",
+      "title": "Restoration of Independence public holiday",
+      "status": "confirmed_rule",
+      "source": "nationalHolidays",
+      "scope": "National mandatory holiday",
+      "audience": "workers and parents planning around a public holiday",
+      "intent": "occasion"
+    },
+    {
+      "key": "immaculate-conception-2026",
+      "date": "2026-12-08",
+      "subjectFamily": "daily_life_consumer",
+      "title": "Immaculate Conception public holiday",
+      "status": "confirmed_rule",
+      "source": "nationalHolidays",
+      "scope": "National mandatory holiday",
+      "audience": "workers and parents planning around a public holiday",
+      "intent": "occasion"
+    },
+    {
+      "key": "christmas-2026",
+      "date": "2026-12-25",
+      "subjectFamily": "daily_life_consumer",
+      "title": "Christmas Day public holiday",
+      "status": "confirmed_rule",
+      "source": "nationalHolidays",
+      "scope": "National mandatory holiday",
+      "audience": "workers and parents planning around a public holiday",
+      "intent": "occasion"
+    },
+    {
+      "key": "ss-quarterly-2026-q4",
+      "date": "2027-01-31",
+      "subjectFamily": "social_security",
+      "title": "Self-employed quarterly declaration month ends",
+      "status": "confirmed_rule",
+      "source": "socialSecurityQuarterly",
+      "scope": "Workers subject to the quarterly declaration",
+      "audience": "independent workers filing the quarterly declaration",
+      "intent": "deadline_reminder"
+    },
+    {
+      "key": "irs-2027-filing",
+      "date": "2027-06-30",
+      "subjectFamily": "irs",
+      "title": "2027 IRS filing deadline candidate",
+      "status": "must_reverify",
+      "source": "atIrs2026",
+      "scope": "Do not publish a 2027 date until AT publishes the 2027 calendar",
+      "audience": "everyone who must file an IRS return",
+      "intent": "deadline_reminder"
+    },
+    {
+      "key": "iva-2027-q4-return",
+      "date": "2027-02-20",
+      "subjectFamily": "iva",
+      "title": "Quarterly IVA return candidate",
+      "status": "must_reverify",
+      "source": "atDeclarations2026",
+      "scope": "Do not publish a 2027 date until AT publishes the 2027 calendar",
+      "audience": "businesses filing IVA quarterly",
+      "intent": "deadline_reminder"
+    },
+    {
+      "key": "school-start-2026-mainland",
+      "date": "2026-09-11",
+      "subjectFamily": "education_children",
+      "title": "Mainland school-start window opens",
+      "status": "confirmed",
+      "source": "schoolCalendar2026_2027",
+      "scope": "Mainland public preschool, basic and secondary schools start between 11 and 15 September; individual schools choose within the window",
+      "campaign": [
+        {
+          "publishDate": "2026-09-01",
+          "stage": "preparation",
+          "title": "School starts between 11 and 15 September: family admin checklist"
+        },
+        {
+          "publishDate": "2026-09-10",
+          "stage": "reminder",
+          "title": "Before school starts: confirm your school’s exact first day and documents"
+        },
+        {
+          "publishDate": "2026-09-11",
+          "stage": "window_open",
+          "title": "Portugal’s school-start window opens today: check your school’s date"
+        }
+      ],
+      "audience": "parents of school-age children",
+      "intent": "deadline_reminder"
+    },
+    {
+      "key": "school-term1-end-2026-mainland",
+      "date": "2026-12-15",
+      "subjectFamily": "education_children",
+      "title": "Mainland public-school first term ends",
+      "status": "confirmed",
+      "source": "schoolCalendar2026_2027",
+      "scope": "General mainland public preschool, basic and secondary calendar; schools with approved alternative organization may differ",
+      "campaign": [
+        {
+          "publishDate": "2026-12-11",
+          "stage": "preparation",
+          "title": "School term ends 15 December: a family admin checklist for the break"
+        }
+      ],
+      "audience": "parents of school-age children",
+      "intent": "occasion"
+    },
+    {
+      "key": "school-term2-start-2027-mainland",
+      "date": "2027-01-04",
+      "subjectFamily": "education_children",
+      "title": "Mainland public-school second term starts",
+      "status": "confirmed",
+      "source": "schoolCalendar2026_2027",
+      "scope": "General mainland public preschool, basic and secondary calendar",
+      "campaign": [
+        {
+          "publishDate": "2027-01-02",
+          "stage": "preparation",
+          "title": "School resumes 4 January: documents, meals and transport to recheck"
+        }
+      ],
+      "audience": "parents of school-age children",
+      "intent": "occasion"
+    },
+    {
+      "key": "school-carnival-break-2027-mainland",
+      "date": "2027-02-08",
+      "subjectFamily": "education_children",
+      "title": "Mainland school Carnival interruption starts",
+      "status": "confirmed",
+      "source": "schoolCalendar2026_2027",
+      "scope": "General mainland public preschool, basic and secondary calendar; interruption runs 8–10 February",
+      "campaign": [
+        {
+          "publishDate": "2027-02-04",
+          "stage": "preparation",
+          "title": "School Carnival break is 8–10 February: plan childcare and services"
+        }
+      ],
+      "audience": "parents needing childcare in term breaks",
+      "intent": "occasion"
+    },
+    {
+      "key": "school-term2-end-2027-mainland",
+      "date": "2027-03-19",
+      "subjectFamily": "education_children",
+      "title": "Mainland public-school second term ends",
+      "status": "confirmed",
+      "source": "schoolCalendar2026_2027",
+      "scope": "General mainland public preschool, basic and secondary calendar",
+      "campaign": [
+        {
+          "publishDate": "2027-03-15",
+          "stage": "preparation",
+          "title": "School term ends 19 March: prepare for the Easter interruption"
+        }
+      ],
+      "audience": "parents of school-age children",
+      "intent": "occasion"
+    },
+    {
+      "key": "school-term3-start-2027-mainland",
+      "date": "2027-04-05",
+      "subjectFamily": "education_children",
+      "title": "Mainland public-school third term starts",
+      "status": "confirmed",
+      "source": "schoolCalendar2026_2027",
+      "scope": "General mainland public preschool, basic and secondary calendar",
+      "campaign": [
+        {
+          "publishDate": "2027-04-02",
+          "stage": "preparation",
+          "title": "School resumes 5 April: your practical family reset checklist"
+        }
+      ],
+      "audience": "parents of school-age children",
+      "intent": "occasion"
+    },
+    {
+      "key": "school-term3-end-older-2027-mainland",
+      "date": "2027-06-04",
+      "subjectFamily": "education_children",
+      "title": "School year ends for years 9, 11 and 12",
+      "status": "confirmed",
+      "source": "schoolCalendar2026_2027",
+      "scope": "Mainland public schools; applies to years 9, 11 and 12",
+      "campaign": [
+        {
+          "publishDate": "2027-06-01",
+          "stage": "preparation",
+          "title": "School ends 4 June for years 9, 11 and 12: records to download"
+        }
+      ],
+      "audience": "parents of students in years 9, 11 and 12",
+      "intent": "occasion"
+    },
+    {
+      "key": "school-term3-end-middle-2027-mainland",
+      "date": "2027-06-11",
+      "subjectFamily": "education_children",
+      "title": "School year ends for years 5–8 and 10",
+      "status": "confirmed",
+      "source": "schoolCalendar2026_2027",
+      "scope": "Mainland public schools; applies to years 5, 6, 7, 8 and 10",
+      "campaign": [
+        {
+          "publishDate": "2027-06-08",
+          "stage": "preparation",
+          "title": "School ends 11 June for years 5–8 and 10: family checklist"
+        }
+      ],
+      "audience": "parents of students in years 5 to 8 and 10",
+      "intent": "occasion"
+    },
+    {
+      "key": "school-term3-end-younger-2027-mainland",
+      "date": "2027-06-30",
+      "subjectFamily": "education_children",
+      "title": "School year ends for preschool and years 1–4",
+      "status": "confirmed",
+      "source": "schoolCalendar2026_2027",
+      "scope": "Mainland public schools; applies to preschool and first cycle",
+      "campaign": [
+        {
+          "publishDate": "2027-06-25",
+          "stage": "preparation",
+          "title": "Preschool and primary school end 30 June: records and summer planning"
+        }
+      ],
+      "audience": "parents of preschool and years 1 to 4",
+      "intent": "occasion"
+    },
+    {
+      "key": "new-year-2027",
+      "date": "2027-01-01",
+      "subjectFamily": "daily_life_consumer",
+      "title": "New Year’s Day public holiday",
+      "status": "confirmed_rule",
+      "source": "nationalHolidays",
+      "scope": "National mandatory holiday",
+      "campaign": [
+        {
+          "publishDate": "2026-12-30",
+          "stage": "preparation",
+          "title": "Before New Year’s Day: finish urgent public-service tasks"
+        }
+      ],
+      "audience": "workers and parents planning around a public holiday",
+      "intent": "occasion"
+    },
+    {
+      "key": "good-friday-2027",
+      "date": "2027-03-26",
+      "subjectFamily": "daily_life_consumer",
+      "title": "Good Friday public holiday",
+      "status": "confirmed_rule",
+      "source": "nationalHolidays",
+      "scope": "National mandatory holiday",
+      "campaign": [
+        {
+          "publishDate": "2027-03-24",
+          "stage": "preparation",
+          "title": "Good Friday is 26 March: plan appointments, travel and payments"
+        }
+      ],
+      "audience": "workers and parents planning around a public holiday",
+      "intent": "occasion"
+    },
+    {
+      "key": "easter-2027",
+      "date": "2027-03-28",
+      "subjectFamily": "daily_life_consumer",
+      "title": "Easter Sunday public holiday",
+      "status": "confirmed_rule",
+      "source": "nationalHolidays",
+      "scope": "National mandatory holiday",
+      "campaign": [
+        {
+          "publishDate": "2027-03-27",
+          "stage": "occasion",
+          "title": "Easter Sunday in Portugal: a practical note for newcomers"
+        }
+      ],
+      "audience": "workers and parents planning around a public holiday",
+      "intent": "occasion"
+    },
+    {
+      "key": "freedom-day-2027",
+      "date": "2027-04-25",
+      "subjectFamily": "daily_life_consumer",
+      "title": "Freedom Day public holiday",
+      "status": "confirmed_rule",
+      "source": "nationalHolidays",
+      "scope": "National mandatory holiday",
+      "campaign": [
+        {
+          "publishDate": "2027-04-23",
+          "stage": "preparation",
+          "title": "Freedom Day is 25 April: closures and civic context for newcomers"
+        }
+      ],
+      "audience": "workers and parents planning around a public holiday",
+      "intent": "occasion"
+    },
+    {
+      "key": "labour-day-2027",
+      "date": "2027-05-01",
+      "subjectFamily": "employment",
+      "title": "Labour Day public holiday",
+      "status": "confirmed_rule",
+      "source": "nationalHolidays",
+      "scope": "National mandatory holiday",
+      "campaign": [
+        {
+          "publishDate": "2027-04-29",
+          "stage": "preparation",
+          "title": "Labour Day in Portugal: holiday planning and worker-admin essentials"
+        }
+      ],
+      "audience": "workers planning around a public holiday",
+      "intent": "occasion"
+    },
+    {
+      "key": "corpus-christi-2027",
+      "date": "2027-05-27",
+      "subjectFamily": "daily_life_consumer",
+      "title": "Corpus Christi public holiday",
+      "status": "confirmed_rule",
+      "source": "nationalHolidays",
+      "scope": "National mandatory holiday",
+      "campaign": [
+        {
+          "publishDate": "2027-05-25",
+          "stage": "preparation",
+          "title": "Corpus Christi is 27 May: plan public-service errands early"
+        }
+      ],
+      "audience": "workers and parents planning around a public holiday",
+      "intent": "occasion"
+    },
+    {
+      "key": "portugal-day-2027",
+      "date": "2027-06-10",
+      "subjectFamily": "daily_life_consumer",
+      "title": "Portugal Day public holiday",
+      "status": "confirmed_rule",
+      "source": "nationalHolidays",
+      "scope": "National mandatory holiday",
+      "campaign": [
+        {
+          "publishDate": "2027-06-08",
+          "stage": "preparation",
+          "title": "Portugal Day is 10 June: closures and ways to take part"
+        }
+      ],
+      "audience": "workers and parents planning around a public holiday",
+      "intent": "occasion"
+    },
+    {
+      "key": "assumption-2027",
+      "date": "2027-08-15",
+      "subjectFamily": "daily_life_consumer",
+      "title": "Assumption Day public holiday",
+      "status": "confirmed_rule",
+      "source": "nationalHolidays",
+      "scope": "National mandatory holiday",
+      "campaign": [
+        {
+          "publishDate": "2027-08-12",
+          "stage": "preparation",
+          "title": "15 August public holiday: check travel and service schedules"
+        }
+      ],
+      "audience": "workers and parents planning around a public holiday",
+      "intent": "occasion"
+    }
   ]
 }

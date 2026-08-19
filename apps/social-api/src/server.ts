@@ -21,7 +21,7 @@ import { authenticatedReviewer } from "./access-auth.js";
 import { findDuplicate, type DuplicateCandidate } from "./duplicate.js";
 import { editorialIdentity } from "./editorial-identity.js";
 import { eligibleReserveCards, loadEvergreenReserve } from "./evergreen-reserve.js";
-import { collectDiscoveries, collectOfficialPages, fetchPage, visibleText, pageTitle, chunkText } from "./collectors.js";
+import { collectDiscoveries, collectOfficialPages, fetchPage, visibleText, pageTitle, chunkText, officialLinksIn, OFFICIAL_ANNOUNCEMENT_PAGES, announcementLinks } from "./collectors.js";
 import { sourceSupportsNewsTopic } from "./news-evidence.js";
 import { editorialScore } from "./editorial-score.js";
 import { boardPage } from "./board.js";
@@ -101,9 +101,24 @@ const classifyTopic = (value: unknown) => {
   if (/nif|finan.as/.test(text)) return "nif";
   return "general";
 };
+// The discovery feeds are Portuguese -- RTP and Google News on pt-PT -- but this filter
+// only ever matched English words, so a headline reading "reforma da Seguranca Social"
+// or "Pensoes em risco" scored nothing and was dropped before anyone looked at it. Of a
+// hundred items collected in a day, five got as far as being examined.
+//
+// Relevance now needs two things: the story has to name an institution or instrument
+// that actually administers something, and it has to be about a change a reader could
+// act on. Political debate about a reform is not an administrative change, and this is
+// what keeps "CIP wants to debate Social Security reform" out of the queue.
+const NEWS_INSTITUTIONS = /\b(?:aima|sef|autoridade tribut[áa]ria|financ[ae]s|seguran[çc]a social|seg-social|sns|servi[çc]o nacional de sa[úu]de|irn|conservat[óo]ria|imt|act|iefp|ihru|ersar?|erse|anacom|banco de portugal|di[áa]rio da rep[úu]blica|governo|minist[ée]rio|parlamento|assembleia da rep[úu]blica|c[âa]mara municipal|junta de freguesia|tax authority|social security|immigration)\b/i;
+const NEWS_SUBJECTS = /\b(?:irs|iva|imi|aimi|iuc|imt|isv|nif|niss|seguran[çc]a social|visto|vistos|autoriza[çc][ãa]o de resid[êe]ncia|resid[êe]ncia|nacionalidade|cidadania|imigra[çc][ãa]o|reagrupamento|abono|pens[ãa]o|pens[õo]es|subs[íi]dio|presta[çc][ãa]o|licen[çc]a|arrendamento|renda|habita[çc][ãa]o|contrato de trabalho|despedimento|desemprego|sal[áa]rio m[íi]nimo|escalon?[õo]?es|dedu[çc][ãa]o|imposto|impostos|taxa|taxas|coima|prazo|prazos|declara[çc][ãa]o|reembolso|apoio|tax|pension|benefit|deadline|residence permit|citizenship)\b/i;
+const NEWS_CHANGE = /\b(?:novo|nova|novos|novas|altera|altera[çc][ãa]o|altera[çc][õo]es|muda|mudan[çc]a|entra em vigor|aprovad[oa]|publicad[oa]|aumenta|aumento|sobe|desce|reduz|redu[çc][ãa]o|atualiza|atualiza[çc][ãa]o|passa a|deixa de|fim d[oae]|acaba|prazo|prorroga|adia|suspende|obrigat[óo]ri[oa]|regras|decreto|portaria|lei n|orçamento do estado|changes?|new rules?|deadline|comes into force|approved)\b/i;
+
 const newsRelevant = (title: unknown, category: unknown) => {
+  const text = String(title || "");
   if (String(category || "general") !== "general") return true;
-  return /\b(?:alert|bank|citizen|civil protection|consumer|countrywide|education|emergency|energy|evacuation|fire|flood|fraud|government|health|hospital|housing|immigrant|immigration|national|outage|payment|pension|public service|resident|school|scam|storm|strike|tax|transport|weather)\b/i.test(String(title || ""));
+  const named = NEWS_INSTITUTIONS.test(text) || NEWS_SUBJECTS.test(text);
+  return named && NEWS_CHANGE.test(text);
 };
 const officialDomains = ["aima.gov.pt", "diariodarepublica.pt", "dre.pt", "gov.pt", "portaldasfinancas.gov.pt", "seg-social.pt", "irn.justica.gov.pt", "bportugal.pt", "sns24.gov.pt", "ine.pt", "dgeste.mec.pt", "act.gov.pt"];
 const isOfficialUrl = (value:string) => { try { const hostname=new URL(value).hostname.replace(/^www\./,""); return officialDomains.some(domain=>hostname===domain||hostname.endsWith(`.${domain}`)); } catch { return false; } };
@@ -252,7 +267,46 @@ setBufferCallObserver(({ kind, status, quota }) => {
 
 // Reads a page through the renderer's Chromium so client-rendered and bot-guarded
 // official sites remain usable as evidence.
-async function fetchViaRenderer(url: string): Promise<{ title: string; text: string } | null> {
+// Fetch an official page and store it as evidence, returning the document row or null
+// when the page cannot be read well enough to cite. Extracted from the brief ingest so
+// triage can reach an official source the corpus has never seen -- a notice published
+// this morning is exactly the case news is supposed to catch, and it is never already
+// in the corpus.
+async function ingestOfficialDocument(canonicalUrl: string, authority: string) {
+  try {
+    const page = await fetchPage(canonicalUrl);
+    let text = page.html ? visibleText(page.html) : "";
+    let title = page.html ? pageTitle(page.html, canonicalUrl) : canonicalUrl;
+    if (page.status === 403 || page.status === 0 || text.length < 400) {
+      const rendered = await fetchViaRenderer(canonicalUrl);
+      if (rendered && rendered.text.length > text.length) { text = rendered.text; title = rendered.title || title; }
+    }
+    // Too thin to cite. Storing it anyway would let a post claim a source that says nothing.
+    if (text.length < 400) return null;
+    const contentHash = hash(text);
+    const [document] = await sql`
+      INSERT INTO document (source_tier, source_url, source_authority, title, original_lang, content_hash,
+                            fetched_at, last_verified_at, freshness_confidence, last_upstream_check_at, verified_still_available)
+      VALUES ('official', ${canonicalUrl}, ${authority}, ${title}, 'pt', ${contentHash},
+              now(), now(), 'fresh', now(), true)
+      ON CONFLICT (source_url) DO UPDATE SET
+        title=excluded.title, content_hash=excluded.content_hash, last_verified_at=now(),
+        freshness_confidence='fresh', last_upstream_check_at=now(), verified_still_available=true
+      RETURNING id
+    `;
+    const chunks = chunkText(text);
+    await sql`DELETE FROM chunk WHERE document_id=${document.id}`;
+    for (const [index, chunk] of chunks.entries()) {
+      await sql`INSERT INTO chunk (document_id, chunk_index, text, token_count, lang, content_hash)
+                VALUES (${document.id}, ${index}, ${chunk}, ${Math.ceil(chunk.length / 4)}, 'pt', ${hash(chunk)})`;
+    }
+    return document as { id: unknown };
+  } catch {
+    return null;
+  }
+}
+
+async function fetchViaRenderer(url: string): Promise<{ title: string; text: string; finalUrl: string; links: string[] } | null> {
   const base = process.env.RENDERER_BASE_URL || "http://127.0.0.1:4310";
   const rendererToken = process.env.RENDERER_API_TOKEN;
   if (!rendererToken) return null;
@@ -264,8 +318,8 @@ async function fetchViaRenderer(url: string): Promise<{ title: string; text: str
       signal: AbortSignal.timeout(70_000),
     });
     if (!response.ok) return null;
-    const page = await response.json() as { title?: string; text?: string };
-    return { title: String(page.title ?? ""), text: String(page.text ?? "") };
+    const page = await response.json() as { title?: string; text?: string; finalUrl?: string; links?: string[] };
+    return { title: String(page.title ?? ""), text: String(page.text ?? ""), finalUrl: String(page.finalUrl || url), links: Array.isArray(page.links) ? page.links.map(String) : [] };
   } catch {
     return null;
   }
@@ -995,32 +1049,120 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { discoveries: rows });
     }
 
+    if (req.method === "POST" && url.pathname === "/v1/discovery/official-announcements") {
+      // Read each institution's own notice board and record the individual notices as
+      // discoveries. They are on official domains, so triage reads and promotes them
+      // without needing a newspaper to vouch for anything.
+      const results: Array<Record<string, unknown>> = [];
+      let inserted = 0;
+      for (const page of OFFICIAL_ANNOUNCEMENT_PAGES) {
+        try {
+          const rendered = await fetchViaRenderer(page.url);
+          if (!rendered) { results.push({ page: page.url, state: "unreadable" }); continue; }
+          const candidates = announcementLinks(page.url, rendered.links).slice(0, 15);
+          let added = 0;
+          for (const link of candidates) {
+            const [existing] = await sql`SELECT id FROM social_discovery WHERE canonical_url=${link} LIMIT 1`;
+            if (existing) continue;
+            const slug = (link.split("/").filter(Boolean).slice(-1)[0] ?? link).replace(/[-_]/g, " ").replace(/\.\w+$/, "").slice(0, 200);
+            await sql`
+              INSERT INTO social_discovery (canonical_url, title, publisher, locale, category, risk_level, content_hash, source_kind, evidence_state, published_at)
+              VALUES (${link}, ${slug}, ${page.authority}, 'pt', 'general', 'high', ${hash(link)}, 'official_announcement', 'discovery_only', now())
+              ON CONFLICT DO NOTHING
+            `;
+            added++; inserted++;
+          }
+          results.push({ page: page.url, found: candidates.length, added });
+        } catch (error) {
+          results.push({ page: page.url, state: "error", error: String((error as Error).message ?? error).slice(0, 160) });
+        }
+      }
+      await sql`INSERT INTO social_event (event_type, payload) VALUES ('discovery.official_announcements', ${sql.json({ pages: OFFICIAL_ANNOUNCEMENT_PAGES.length, inserted })})`;
+      return send(res, 200, { pages: OFFICIAL_ANNOUNCEMENT_PAGES.length, inserted, results });
+    }
+
     if (req.method === "POST" && url.pathname === "/v1/verification/triage") {
       const discoveries = await sql`SELECT * FROM social_discovery WHERE evidence_state='discovery_only' ORDER BY COALESCE(published_at, created_at) DESC LIMIT 100`;
       let promoted = 0;
       let held = 0;
+      let corroborated = 0;
+      // Reading pages costs time and hits other people's servers, so a run only spends a
+      // fixed number of fetches. Anything not reached this quarter hour is reached next.
+      let fetchBudget = 12;
+
       for (const discovery of discoveries) {
-        const hostname = new URL(String(discovery.canonical_url)).hostname.replace(/^www\./, "");
-        const official = officialDomains.some((domain) => hostname === domain || hostname.endsWith(`.${domain}`));
-        if (!official) { held++; continue; }
-        const [document] = await sql`
+        const itemUrl = String(discovery.canonical_url);
+        const official = isOfficialUrl(itemUrl);
+        let evidenceUrl = itemUrl;
+
+        let [document] = await sql`
           SELECT id FROM document WHERE verified_still_available=true AND freshness_confidence='fresh' AND source_tier='official'
-            AND source_url=${String(discovery.canonical_url)} ORDER BY COALESCE(last_verified_at,fetched_at) DESC LIMIT 1
+            AND source_url=${itemUrl} ORDER BY COALESCE(last_verified_at,fetched_at) DESC LIMIT 1
         `;
+
+        // An official page announced today is never already in the corpus, which is what
+        // used to hold every official announcement: the corpus only ever contained the
+        // pages the brief bank and the monitor list named. Read it now.
+        if (!document && official && fetchBudget > 0) {
+          fetchBudget--;
+          const hostname = new URL(itemUrl).hostname.replace(/^www\./, "");
+          const ingested = await ingestOfficialDocument(itemUrl, String(discovery.source_authority || hostname));
+          if (ingested) document = ingested as { id: unknown };
+        }
+
+        // A newspaper is a signal, never evidence. Follow the official links out of the
+        // story and cite the notice itself; if the story leads nowhere official, hold it.
+        if (!document && !official) {
+          if (!newsRelevant(discovery.title, discovery.category)) { held++; continue; }
+          if (discovery.corroboration_attempted_at) { held++; continue; }
+          if (fetchBudget <= 0) { held++; continue; }
+          fetchBudget--;
+          await sql`UPDATE social_discovery SET corroboration_attempted_at=now() WHERE id=${discovery.id}`;
+
+          // Google News hands out redirect wrappers, not articles: fetching one returns
+          // half a megabyte of script and no link to anything. Two thirds of everything
+          // collected arrives this way, so the wrapper is opened in the renderer's
+          // browser, which follows the redirect the way a reader's would.
+          let articleUrl = itemUrl;
+          if (/(^|\.)news\.google\.com$/.test(new URL(itemUrl).hostname)) {
+            const resolved = await fetchViaRenderer(itemUrl);
+            const landed = resolved?.finalUrl ? new URL(resolved.finalUrl).hostname : "";
+            if (landed && !/(^|\.)google\.com$/.test(landed)) articleUrl = resolved!.finalUrl;
+            else { held++; continue; }
+          }
+
+          const article = await fetchPage(articleUrl);
+          const links = article.html ? officialLinksIn(article.html, officialDomains) : [];
+          for (const link of links.slice(0, 3)) {
+            const [existing] = await sql`
+              SELECT id FROM document WHERE verified_still_available=true AND freshness_confidence='fresh' AND source_tier='official'
+                AND source_url=${link} ORDER BY COALESCE(last_verified_at,fetched_at) DESC LIMIT 1
+            `;
+            const found = existing ?? await ingestOfficialDocument(link, new URL(link).hostname.replace(/^www\./, ""));
+            if (found) {
+              document = found as { id: unknown };
+              evidenceUrl = link;
+              corroborated++;
+              await sql`UPDATE social_discovery SET corroborating_url=${link} WHERE id=${discovery.id}`;
+              break;
+            }
+          }
+        }
+
         if (!document) { held++; continue; }
         const fingerprint = `official-change:${discovery.content_hash}`;
         await sql.begin(async (tx) => {
           await tx`UPDATE social_discovery SET evidence_state='promoted', updated_at=now() WHERE id=${discovery.id}`;
           await tx`
             INSERT INTO social_post_concept (document_id, discovery_id, topic, category, risk_level, priority, timeliness, fingerprint, status, reason, repeat_allowed, score)
-            VALUES (${document.id}, ${discovery.id}, ${discovery.title}, ${discovery.category}, ${discovery.risk_level}, 90, 'official_change', ${fingerprint}, 'eligible', 'New or changed official notice verified against the canonical corpus', true, 90)
+            VALUES (${document.id}, ${discovery.id}, ${discovery.title}, ${discovery.category}, ${discovery.risk_level}, 90, 'official_change', ${fingerprint}, 'eligible', ${evidenceUrl === itemUrl ? 'Official notice read and verified against the canonical corpus' : `News item corroborated against the official source at ${evidenceUrl}`}, true, 90)
             ON CONFLICT (fingerprint) DO NOTHING
           `;
         });
         promoted++;
       }
-      await sql`INSERT INTO social_event (event_type, payload) VALUES ('verification.triaged', ${sql.json({ reviewed: discoveries.length, promoted, held })})`;
-      return send(res, 200, { reviewed: discoveries.length, promoted, held, rule: "Only exact official URLs already present in the fresh canonical corpus are promoted" });
+      await sql`INSERT INTO social_event (event_type, payload) VALUES ('verification.triaged', ${sql.json({ reviewed: discoveries.length, promoted, held, corroborated })})`;
+      return send(res, 200, { reviewed: discoveries.length, promoted, held, corroborated, rule: "Official pages are read on sight; a news item is promoted only once an official source behind it has been read" });
     }
 
     if (req.method === "POST" && url.pathname === "/v1/news/dispatch-recent") {
@@ -1029,7 +1171,7 @@ const server = http.createServer(async (req, res) => {
         FROM social_post_concept c
         JOIN social_discovery d ON d.id=c.discovery_id
         WHERE c.status='eligible' AND c.timeliness='official_change'
-          AND COALESCE(d.published_at,d.created_at)>=now()-INTERVAL '4 hours'
+          AND COALESCE(d.published_at,d.created_at)>=now()-INTERVAL '24 hours'
         ORDER BY COALESCE(d.published_at,d.created_at),c.created_at
         LIMIT 20
       `;
@@ -1050,8 +1192,8 @@ const server = http.createServer(async (req, res) => {
         const reviewed=await internalApi("POST",`/v1/posts/${post.id}/request-review`,{expiresInMinutes:180});
         results.push({conceptId:candidate.id,postId:post.id,topic:candidate.topic,state:reviewed.ok?'sent_for_immediate_review':'review_failed',reviewStatus:reviewed.status,error:reviewed.ok?null:reviewed.result.error});
       }
-      await sql`INSERT INTO social_event(event_type,payload) VALUES('news.fast_lane_dispatched',${sql.json({windowHours:4,candidates:candidates.length,results})})`;
-      return send(res,200,{windowHours:4,candidates:candidates.length,results});
+      await sql`INSERT INTO social_event(event_type,payload) VALUES('news.fast_lane_dispatched',${sql.json({windowHours:24,candidates:candidates.length,results})})`;
+      return send(res,200,{windowHours:24,candidates:candidates.length,results});
     }
 
     if (req.method === "GET" && url.pathname === "/v1/candidates") {
