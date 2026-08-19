@@ -9368,6 +9368,131 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-01007.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "driving-taking-your-car-abroad-refunds-the-registration-tax",
+      "pillar": "driving_transport",
+      "valueClass": "insider",
+      "title": "Moving abroad with the car can refund the registration tax",
+      "userQuestion": "What do I do with my Portuguese car if I move to another EU country?",
+      "scenario": "Someone emigrates, re-registers the car abroad, and never claims back the Portuguese vehicle registration tax they paid.",
+      "audience": "people emigrating with a Portuguese-registered car",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The six-month point that forces re-registration, the four steps on each side of the border, and the refund most people never claim.",
+      "anchorFact": {
+        "claim": "Someone living in another EU country for more than 6 months who takes their car must register it there, change the plate, show proof of ownership and a valid inspection certificate, and pay that country's vehicle registration and circulation taxes; in Portugal they must cancel the vehicle registration, hand in the number plate, show proof of ownership and a valid inspection certificate, and submit a request for restitution of the imposto sobre veículos.",
+        "kind": "procedure",
+        "namedThing": "imposto sobre veículos",
+        "verifyAt": "https://www.gov.pt/guias/ir-viver-para-o-estrangeiro",
+        "volatility": "stable"
+      },
+      "notObvious": "The Portuguese side is not just deregistration, it includes a refund application, and nobody prompts you to file it.",
+      "journeyStage": "leaving_portugal",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/ir-viver-para-o-estrangeiro",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "driving-students-keep-the-plate-they-arrived-with",
+      "pillar": "driving_transport",
+      "valueClass": "edge_case",
+      "title": "Students abroad can keep the plate they arrived with",
+      "userQuestion": "Does a student abroad have to re-register the car after six months?",
+      "scenario": "A student on a long course abroad re-registers the car and pays a registration tax an exemption would have avoided.",
+      "audience": "students taking a car to another EU country",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The exception to the six-month re-registration rule, who it covers, and the tax that still has to be paid.",
+      "anchorFact": {
+        "claim": "A matrícula in the destination country is not required where the person proves they are staying only temporarily, for example to study, and in most EU countries students may circulate with a car registered in their country of origin and do not pay the vehicle registration tax, although they must still pay the circulation tax.",
+        "kind": "procedure",
+        "namedThing": "matrícula",
+        "verifyAt": "https://www.gov.pt/guias/ir-viver-para-o-estrangeiro",
+        "volatility": "stable"
+      },
+      "notObvious": "Only one of the two taxes falls away, so the exemption is real but partial and still leaves an annual bill somewhere.",
+      "journeyStage": "leaving_portugal",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/ir-viver-para-o-estrangeiro",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "citizenship-what-an-eu-registration-certificate-costs",
+      "pillar": "citizenship_civil",
+      "valueClass": "insider",
+      "title": "An EU registration certificate cannot cost more than a local ID",
+      "userQuestion": "What can another EU country charge me to register as a resident?",
+      "scenario": "A Portuguese citizen abroad is quoted a substantial fee or a long wait for a certificate that should be immediate and cheap.",
+      "audience": "Portuguese citizens settling in another EU country",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "When registration becomes required, how fast and how cheap the certificate must be, whether it expires, and what a missing one can and cannot cost you.",
+      "anchorFact": {
+        "claim": "During the first 3 months in another EU country no residence authorisation is required, after 3 months the country may require registration with the residence authorities to obtain a certificate, and that certificate must be issued immediately and may not cost more than an identity document costs that country's own nationals; it does not need renewing but must be updated on a change of address, and failing to register or to carry it can bring a fine but does not prevent the person continuing to live in the country.",
+        "kind": "figure",
+        "namedThing": "certificado de registo",
+        "verifyAt": "https://www.gov.pt/guias/ir-viver-para-o-estrangeiro",
+        "volatility": "stable"
+      },
+      "notObvious": "A fine for not carrying it is the whole penalty: the right to stay is not conditional on the paperwork.",
+      "journeyStage": "leaving_portugal",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/ir-viver-para-o-estrangeiro",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "citizenship-which-elections-you-keep-when-you-emigrate",
+      "pillar": "citizenship_civil",
+      "valueClass": "threshold",
+      "title": "The elections you keep and the ones you gain by moving",
+      "userQuestion": "Can I still vote in Portugal if I move to another EU country?",
+      "scenario": "An emigrant assumes moving means losing the vote entirely and never registers in either country.",
+      "audience": "Portuguese citizens living in another EU country",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The elections you can vote in where you now live, the ones you cannot, and the three Portuguese ballots you keep.",
+      "anchorFact": {
+        "claim": "A Portuguese citizen who moves to another EU country may vote and stand in that country's local elections and eleições europeias but not in its other elections such as legislative and presidential ones, while continuing to vote and stand in Portugal for the Assembleia da República, the Presidência da República and the European Parliament.",
+        "kind": "procedure",
+        "namedThing": "eleições europeias",
+        "verifyAt": "https://www.gov.pt/guias/ir-viver-para-o-estrangeiro",
+        "volatility": "stable"
+      },
+      "notObvious": "The European ballot exists in both places, so the practical question is which country you cast it in rather than whether you can.",
+      "journeyStage": "leaving_portugal",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/ir-viver-para-o-estrangeiro",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "driving-a-parked-car-still-needs-insurance",
+      "pillar": "driving_transport",
+      "valueClass": "costly_mistake",
+      "title": "A car that never moves still has to be insured",
+      "userQuestion": "Do I need insurance for a car sitting in the garage?",
+      "scenario": "An owner lays a car up for a year and cancels the policy, leaving an uninsured vehicle that is still legally required to be covered.",
+      "audience": "owners of vehicles that are not being driven",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "That the insurance obligation follows the vehicle rather than its use, and the sticker rule that no longer applies.",
+      "anchorFact": {
+        "claim": "In Portugal seguro automóvel is compulsory for every motor vehicle that requires a driving licence to be driven, and it remains compulsory even where the vehicle is parked, in a garage or on private land, and does not circulate; the insurance vinheta does not need to be displayed on the windscreen.",
+        "kind": "procedure",
+        "namedThing": "seguro automóvel",
+        "verifyAt": "https://www.gov.pt/guias/regras-de-transito-e-mobilidade-em-portugal",
+        "volatility": "stable"
+      },
+      "notObvious": "The duty attaches to owning the vehicle, not to using it, so laying a car up is the moment the risk of an uninsured penalty begins rather than ends.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/regras-de-transito-e-mobilidade-em-portugal",
+        "authority": "gov.pt"
+      }
     }
   ]
 }
