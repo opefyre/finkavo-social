@@ -11093,6 +11093,56 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/lgt/Pages/lgt45.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "irs-the-interest-on-a-late-tax-stops-after-180-days",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "The interest on an underpaid tax has a stopping point",
+      "userQuestion": "Does interest on a tax error keep running until I pay?",
+      "scenario": "Someone facing a correction for an old year assumes interest has been compounding the whole time and settles on the wrong figure.",
+      "audience": "taxpayers facing a correction or audit",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "When compensatory interest is due, the rate it uses, and the two maximum periods that cap it.",
+      "anchorFact": {
+        "claim": "Under artigo 35 of the Lei Geral Tributária juros compensatórios are due where the taxpayer's own fault delays the assessment or payment of tax or produces a refund higher than owed, at a rate equal to the legal interest rate fixed under artigo 559 of the Código Civil, and they are due for a maximum of 180 days where the error is evidenced in the taxpayer's declaration, or up to 90 days after the conclusion of an inspection where the fault is found in one.",
+        "kind": "figure",
+        "namedThing": "juros compensatórios",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/lgt/Pages/lgt35.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Interest is capped at months rather than running for the years a correction can take, which makes an old assessment far less frightening than it first looks.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/lgt/Pages/lgt35.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-an-unreported-move-does-not-count-as-a-move",
+      "pillar": "irs",
+      "valueClass": "costly_mistake",
+      "title": "An unreported change of address has not legally happened",
+      "userQuestion": "Does it matter if I have not told Finanças I moved?",
+      "scenario": "Someone moves, misses letters sent to the old address, and discovers deadlines ran while they knew nothing.",
+      "audience": "taxpayers who have moved house or abroad",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The rule that makes an uncommunicated move legally ineffective, and the sixty days to report a change of residency status.",
+      "anchorFact": {
+        "claim": "Under artigo 19 of the Lei Geral Tributária a change of domicílio fiscal is ineffective while it has not been communicated to the tax administration, and where a taxpayer's residency status changes they must communicate that alteration to the tax administration within 60 days.",
+        "kind": "instrument",
+        "namedThing": "domicílio fiscal",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/lgt/Pages/lgt19.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Ineffective means the old address remains your legal one, so letters sent there are properly served whether or not anyone reads them.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/lgt/Pages/lgt19.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
