@@ -8693,6 +8693,31 @@
         "canonicalUrl": "https://www.gov.pt/guias/apoio-a-familia/assistencia-na-gravidez",
         "authority": "gov.pt / Instituto da Segurança Social"
       }
+    },
+    {
+      "id": "social-security-a-trip-home-for-emigrants-who-cannot-afford-it",
+      "pillar": "social_security",
+      "valueClass": "insider",
+      "title": "The State-funded visit home after twenty years away",
+      "userQuestion": "Is there help for an elderly relative abroad who wants to see Portugal again?",
+      "scenario": "A family abroad assumes a trip home is simply unaffordable, never learning that a programme exists for exactly this situation.",
+      "audience": "Portuguese citizens over 65 living outside the EU",
+      "risk": "medium",
+      "volatility": "volatile",
+      "promise": "Who the short-stay support is for, the years away it requires, and the separate social support for vulnerable elderly emigrants.",
+      "anchorFact": {
+        "claim": "Any Portuguese citizen aged 65 or over resident outside the European Union who has not visited Portugal for more than 20 years and lacks the economic means to fund the journey may apply for support for a short stay in Portugal, and elderly Portuguese living abroad in situations of great vulnerability or need, because of inadequate responses from the authorities of their country of residence, may be entitled to individual or family social support.",
+        "kind": "figure",
+        "namedThing": "apoio a emigrantes idosos",
+        "verifyAt": "https://www.gov.pt/guias/apoio-a-familia/apoio-social-para-idosos",
+        "volatility": "volatile"
+      },
+      "notObvious": "The qualifying condition is the length of absence rather than any tie still held in Portugal, which is what makes long-settled emigrants eligible.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/apoio-a-familia/apoio-social-para-idosos",
+        "authority": "gov.pt / Instituto da Segurança Social"
+      }
     }
   ]
 }
