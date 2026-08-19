@@ -6968,6 +6968,56 @@
         "canonicalUrl": "https://clientebancario.bportugal.pt/en/interest-rates-consumer-credit",
         "authority": "Banco de Portugal"
       }
+    },
+    {
+      "id": "banking-your-own-credit-file-is-free-to-read",
+      "pillar": "banking_money",
+      "valueClass": "insider",
+      "title": "The credit file every lender sees and you can read for free",
+      "userQuestion": "How do I find out what lenders see when they check me?",
+      "scenario": "Someone refused credit for unexplained reasons never looks at the register the decision was based on, so an error in it goes uncorrected.",
+      "audience": "people refused credit or checking their record",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "What the credit liabilities map contains, how to obtain it at no cost, how far back it reaches, and who is responsible for fixing errors.",
+      "anchorFact": {
+        "claim": "The mapa de responsabilidades de crédito is obtained free of charge from the Banco de Portugal website using the Cartão de Cidadão authentication PIN or Portal das Finanças credentials, or at any Banco de Portugal counter or by post; it shows monthly information on debt to all institutions participating in the Central de Responsabilidades de Crédito including every contract where you are debtor or guarantor, covers a maximum period of 5 years, and the information is the exclusive responsibility of the lending institutions, which are the ones who must correct it.",
+        "kind": "artefact",
+        "namedThing": "mapa de responsabilidades de crédito",
+        "verifyAt": "https://clientebancario.bportugal.pt/en/credit-liabilities",
+        "volatility": "stable"
+      },
+      "notObvious": "Guarantees appear on it as well as your own borrowing, which is how people discover they are recorded against a loan they never took.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/en/credit-liabilities",
+        "authority": "Banco de Portugal"
+      }
+    },
+    {
+      "id": "banking-fifteen-years-before-a-dormant-account-goes-to-the-state",
+      "pillar": "banking_money",
+      "valueClass": "threshold",
+      "title": "Fifteen years of silence and the money becomes the State's",
+      "userQuestion": "What happens to a bank account nobody has touched in years?",
+      "scenario": "An old account from a first job, or an inherited one nobody claimed, sits untouched until the balance is no longer recoverable.",
+      "audience": "people with old or inherited accounts",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The period after which a deposit is considered abandoned, and the kinds of action that count as showing your right to it.",
+      "anchorFact": {
+        "claim": "Assets or amounts deposited in bank accounts are considered abandoned in favour of the State where, over a period of 15 years, the account holders have not demonstrated their rights over those amounts in any legitimate and unequivocal way, for example by not moving them, not paying charges and not collecting any interest due.",
+        "kind": "figure",
+        "namedThing": "conta bancária",
+        "verifyAt": "https://clientebancario.bportugal.pt/pt-pt/perguntas-frequentes",
+        "volatility": "stable"
+      },
+      "notObvious": "Almost any deliberate act on the account restarts it, which means the risk sits entirely with accounts nobody remembers rather than accounts nobody uses.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/pt-pt/perguntas-frequentes",
+        "authority": "Banco de Portugal"
+      }
     }
   ]
 }
