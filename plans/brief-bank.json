@@ -6768,6 +6768,31 @@
         "canonicalUrl": "https://www.sns24.gov.pt/servico/atestado-medico-de-incapacidade-multiuso/",
         "authority": "SNS 24"
       }
+    },
+    {
+      "id": "housing-condominium-can-oppose-not-cancel-local-lodging",
+      "pillar": "housing_property",
+      "valueClass": "edge_case",
+      "title": "What a condominium can and cannot do about a short-let flat",
+      "userQuestion": "Can the neighbours have a local lodging registration cancelled?",
+      "scenario": "A condominium votes to shut down a short-let flat and assumes the vote itself ends the registration, or an operator assumes a vote is harmless.",
+      "audience": "condominium owners and local lodging operators",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "The majority a condominium needs, what its deliberation must be based on, and who actually decides on cancellation.",
+      "anchorFact": {
+        "claim": "A condominium assembly can no longer cancel an alojamento local registration directly, but may oppose the activity by a justified deliberation approved by more than half of the building's permilagem, based on proven repeated acts that disturb the normal use of the property or cause discomfort affecting residents' rest; the condominium must then request a cancellation decision from the president of the territorially competent câmara municipal, who may invite the parties to reach agreement with or without the assistance of a provedor do alojamento local.",
+        "kind": "procedure",
+        "namedThing": "alojamento local",
+        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/2014-56917875",
+        "volatility": "volatile"
+      },
+      "notObvious": "The vote is the start of a municipal procedure, not the end of the business, and it has to rest on documented repeated disturbance rather than on disapproval.",
+      "journeyStage": "renting_out",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/2014-56917875",
+        "authority": "Diário da República"
+      }
     }
   ]
 }
