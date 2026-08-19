@@ -4608,13 +4608,13 @@
       "volatility": "stable",
       "promise": "The circumstances allowing penalty-free withdrawal, the age that opens it more broadly, and what a non-qualifying withdrawal costs.",
       "anchorFact": {
-        "claim": "A PPR can be redeemed in whole or part without penalty in cases of pre-retirement, early retirement, old-age or invalidity retirement, death of the participant, long-term unemployment, serious illness or permanent incapacity for work, and from age 60, or where the participant or a household member attends professional or higher education with expenses that year; redemption outside these conditions requires returning the tax benefits obtained plus an additional penalty.",
+        "claim": "A PPR can be redeemed without penalty where 5 years have elapsed since the date of the contributions being withdrawn and one of the listed situations applies: pre-retirement, early retirement, old-age or invalidity retirement, death of the participant, long-term unemployment of the participant or a household member, serious illness, permanent incapacity for work, redemption from age 60, or attendance of professional or higher education by the participant or a household member; redemption outside these conditions requires returning the tax benefits obtained plus an additional penalty.",
         "kind": "artefact",
         "namedThing": "PPR",
         "verifyAt": "https://www.consumidor.asf.com.pt/pt/poupan%C3%A7a/planos-de-poupan%C3%A7a",
         "volatility": "stable"
       },
-      "notObvious": "Long-term unemployment and a household member's tuition both qualify, which are exactly the moments people assume the money is locked away.",
+      "notObvious": "The five years run from each contribution rather than from opening the plan, so recent money is locked even when the qualifying situation is unquestionable.",
       "journeyStage": "resolving_a_problem",
       "source": {
         "canonicalUrl": "https://www.consumidor.asf.com.pt/pt/poupan%C3%A7a/planos-de-poupan%C3%A7a",
@@ -8492,6 +8492,31 @@
       "source": {
         "canonicalUrl": "https://clientebancario.bportugal.pt/en/how-repay-and-transfer",
         "authority": "Banco de Portugal"
+      }
+    },
+    {
+      "id": "banking-what-the-deposit-guarantee-actually-pays-and-when",
+      "pillar": "banking_money",
+      "valueClass": "threshold",
+      "title": "A hundred thousand per bank, paid in two tranches",
+      "userQuestion": "What happens to my savings if the bank fails?",
+      "scenario": "Someone concentrates savings in one bank above the guaranteed limit, or assumes a payout would take months.",
+      "audience": "people holding deposits in Portuguese banks",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The guaranteed amount and the unit it applies per, the two repayment deadlines, and the single extension allowed.",
+      "anchorFact": {
+        "claim": "The Fundo de Garantia de Depósitos guarantees reimbursement of deposits at member institutions up to 100,000 euros per depositor and per credit institution regardless of the number and type of deposits; reimbursement must occur within a maximum of 7 days for an amount up to 10,000 euros and within 15 working days for the remainder up to the limit, counted from the date the deposits became unavailable, and the Fund may request an exceptional extension from the Banco de Portugal once only for a period not exceeding 10 working days.",
+        "kind": "figure",
+        "namedThing": "Fundo de Garantia de Depósitos",
+        "verifyAt": "https://www.fgd.pt/en/amounts-guaranteed",
+        "volatility": "stable"
+      },
+      "notObvious": "The limit is per institution rather than per account, so two accounts at the same bank share one ceiling while two banks give you two.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://www.fgd.pt/en/amounts-guaranteed",
+        "authority": "Fundo de Garantia de Depósitos"
       }
     }
   ]
