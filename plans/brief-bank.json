@@ -8968,6 +8968,56 @@
         "canonicalUrl": "https://www.erse.pt/consumidores-de-energia/eletricidade/como-e-quando-paga/",
         "authority": "ERSE"
       }
+    },
+    {
+      "id": "driving-the-countries-whose-licence-skips-the-test",
+      "pillar": "driving_transport",
+      "valueClass": "insider",
+      "title": "The countries whose licence exchanges without an exam",
+      "userQuestion": "Will I have to retake a driving test to swap my licence here?",
+      "scenario": "A new resident books lessons and an exam for a licence that would have exchanged on a medical certificate alone.",
+      "audience": "new residents holding a non-EU licence",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "Which non-EU countries exchange without an examination, and the medical step that replaces it.",
+      "anchorFact": {
+        "claim": "Holders of a carta de condução issued by CPLP member states including Brazil, Cabo Verde, Angola, Moçambique and São Tomé e Príncipe, and by OECD members outside the EU and EEA including Australia, Canada, Chile, the Republic of Korea, the United States of America, Iceland, Israel, Japan, New Zealand, the United Kingdom, Switzerland and Turkey, are exempt from sitting examination tests for the categories they wish to exchange, but must complete a medical evaluation with the certificate issued by their doctor and made available on the electronic medical certificates platform.",
+        "kind": "procedure",
+        "namedThing": "carta de condução",
+        "verifyAt": "https://www.imt-ip.pt/condutores/reconhecimento/troca-de-titulo-de-conducao-estrangeiro/cartas-de-conducao-emitidas-pelos-paises-da-ocde-e-cplp/",
+        "volatility": "volatile"
+      },
+      "notObvious": "The exemption is by country of issue rather than by nationality, so where the licence was issued decides whether there is an exam at all.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.imt-ip.pt/condutores/reconhecimento/troca-de-titulo-de-conducao-estrangeiro/cartas-de-conducao-emitidas-pelos-paises-da-ocde-e-cplp/",
+        "authority": "Instituto da Mobilidade e dos Transportes"
+      }
+    },
+    {
+      "id": "consumer-the-municipal-desk-before-the-arbitration",
+      "pillar": "daily_life_consumer",
+      "valueClass": "insider",
+      "title": "The municipal consumer desk between you and arbitration",
+      "userQuestion": "Where do I take a shop dispute before going to arbitration?",
+      "scenario": "A consumer jumps from a fruitless phone call straight to giving up, unaware of a free local service that exists to intervene.",
+      "audience": "consumers in dispute with a trader",
+      "risk": "low",
+      "volatility": "stable",
+      "promise": "The order to escalate a consumer dispute in, the local service most people have never heard of, and the route for cross-border purchases.",
+      "anchorFact": {
+        "claim": "A consumer should first contact the trader by a means that leaves proof, such as registered post with acknowledgement of receipt or email with a read receipt, setting a deadline for a reply; if the conflict persists the consumer should turn to a Centro de Informação Autárquico ao Consumidor or go directly to an alternative dispute resolution body through the Centros de Arbitragem de Conflitos de Consumo, and a consumer resident in another Member State should complain through the Centro Europeu do Consumidor.",
+        "kind": "procedure",
+        "namedThing": "Centro de Informação Autárquico ao Consumidor",
+        "verifyAt": "https://www.consumidor.gov.pt/consumidor_4/direitos-dos-consumidores1/conflitos-de-consumo",
+        "volatility": "stable"
+      },
+      "notObvious": "The first step is choosing a channel that leaves proof, because that record is what every later stage is built on.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.consumidor.gov.pt/consumidor_4/direitos-dos-consumidores1/conflitos-de-consumo",
+        "authority": "Direção-Geral do Consumidor"
+      }
     }
   ]
 }
