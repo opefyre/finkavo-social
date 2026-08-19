@@ -4899,7 +4899,7 @@
       "id": "banking-unauthorised-payment-liability-cap",
       "pillar": "banking_money",
       "valueClass": "threshold",
-      "title": "Your maximum loss on a payment you did not authorise",
+      "title": "The fifty-euro cap on losses from an unauthorised payment",
       "userQuestion": "If money leaves my account fraudulently, who bears the loss?",
       "scenario": "A victim of card or homebanking fraud assumes the money is gone and negotiates with the bank from a position of ignorance.",
       "audience": "victims of unauthorised bank transactions",
