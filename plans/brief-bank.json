@@ -10693,6 +10693,31 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs78c.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "irs-the-student-rent-that-raises-the-education-ceiling",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "The student rent that lifts the education ceiling",
+      "userQuestion": "Can we deduct rent for a child studying away from home?",
+      "scenario": "A family pays rent for a student in another city and files the invoices as ordinary housing costs, losing both the deduction and the raised ceiling.",
+      "audience": "families with a student living away to study",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The education deduction and its ceiling, the distance and age conditions for displaced students, the extra ceiling their rent unlocks, and the wording the invoice must carry.",
+      "anchorFact": {
+        "claim": "Under artigo 78-D of the Código do IRS 30 per cent of education and training expenses is deductible up to an overall limit of 800 euros; for a student under 25 living more than 50 km from the family home to attend school, rent counts up to 400 euros a year and raises the overall 800 euro limit by 300 euros, provided the invoice states that it is for the letting of a displaced student and the invoices are declared on the Portal das Finanças by 28 February of the following year.",
+        "kind": "figure",
+        "namedThing": "despesas de educação",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs78d.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The invoice has to say the words: rent for a displaced student is only deductible if the landlord wrote that on it, which cannot be fixed the following February.",
+      "journeyStage": "studying",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs78d.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
