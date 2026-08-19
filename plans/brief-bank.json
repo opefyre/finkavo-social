@@ -4496,6 +4496,154 @@
         "canonicalUrl": "https://www2.gov.pt/servicos/pedir-atribuicao-de-matricula-para-um-veiculo",
         "authority": "gov.pt / IMT"
       }
+    },
+    {
+      "id": "identity-nif-is-free-representative-depends-on-residence",
+      "pillar": "identity_access",
+      "valueClass": "insider",
+      "title": "A NIF costs nothing, and whether you need a representative depends on where you live",
+      "userQuestion": "How much does a NIF cost and do I need a fiscal representative to get one?",
+      "scenario": "Someone abroad pays an agency for a NIF, believing both the number and a representative are unavoidable costs.",
+      "audience": "non-residents applying for a Portuguese NIF",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "That the request is free, when a representative is genuinely required, and which residents can use the online counter.",
+      "anchorFact": {
+        "claim": "Requesting a NIF is free; non-residents in Portugal need an identification document or passport and a fiscal representative resident in national territory, and the e-balcão route on the Portal das Finanças is available to people residing outside the European Union, Norway, Iceland and Liechtenstein.",
+        "kind": "artefact",
+        "namedThing": "NIF",
+        "verifyAt": "https://www2.gov.pt/migrantes-viver-e-trabalhar-em-portugal/migrantes-impostos-e-seguranca-social-em-portugal/como-pedir-o-nif-e-o-niss-para-cidadaos-estrangeiros-em-portugal",
+        "volatility": "stable"
+      },
+      "notObvious": "The representative requirement tracks residence outside the EU/EEA rather than nationality, so many people pay for one they do not need.",
+      "journeyStage": "before_moving",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/migrantes-viver-e-trabalhar-em-portugal/migrantes-impostos-e-seguranca-social-em-portugal/como-pedir-o-nif-e-o-niss-para-cidadaos-estrangeiros-em-portugal",
+        "authority": "gov.pt / Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "identity-financas-password-recovery-routes",
+      "pillar": "identity_access",
+      "valueClass": "decision",
+      "title": "Four ways back into Portal das Finanças, only one of which waits for post",
+      "userQuestion": "What is the fastest way to recover my Finanças password?",
+      "scenario": "Someone locked out requests a password by post and waits days, without checking the instant routes available to them.",
+      "audience": "people locked out of Portal das Finanças",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The postal timeline, and the three immediate alternatives including the SMS code and its five-minute window.",
+      "anchorFact": {
+        "claim": "Requesting a new Portal das Finanças senha de acesso cancels the previous one and posts a new password to the tax address in an average of 5 business days, while recovery is also possible through the security question, the Cartão de Cidadão or Chave Móvel Digital at Autenticação.gov, or by SMS code to a confirmed phone number which must be entered within 5 minutes.",
+        "kind": "deadline",
+        "namedThing": "senha de acesso",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00245.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Requesting the postal password cancels the old one immediately, so choosing that route locks you out for the days it takes to arrive.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00245.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-joint-custody-must-be-reported-by-both",
+      "pillar": "irs",
+      "valueClass": "costly_mistake",
+      "title": "Both parents must report joint custody, or the tax benefit collapses to one household",
+      "userQuestion": "Do separated parents each have to report the children to Finanças?",
+      "scenario": "One parent reports the household by February and assumes that covers both, or the two reports disagree.",
+      "audience": "separated parents sharing custody",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The February deadline, what each parent must declare, and exactly what happens when the reports conflict or are missing.",
+      "anchorFact": {
+        "claim": "Household composition must be confirmed in the Portal das Finanças by the end of February with reference to 31 December, and for a dependant in guarda conjunta both guardians must report the dependant's tax number and the joint custody; where the annual communication is missing or the guardians' communications are inconsistent, the tax authority treats the dependant as not having alternating residence and the income and the per-dependant deduction fall to the single household that includes them.",
+        "kind": "deadline",
+        "namedThing": "agregado familiar",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Dados_pessoais_familia/Familia/Agregado%20familiar/Paginas/default.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "Disagreement between the parents is treated the same as silence, so one late or inconsistent filing moves the whole deduction to the other household.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Dados_pessoais_familia/Familia/Agregado%20familiar/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "iva-exempt-traders-still-invoice-with-a-legend",
+      "pillar": "iva",
+      "valueClass": "edge_case",
+      "title": "Being IVA exempt does not exempt you from invoicing",
+      "userQuestion": "If I am under the Artigo 53 exemption, do I still issue invoices?",
+      "scenario": "A newly exempt freelancer issues informal receipts, or omits the required wording, and the invoices are defective.",
+      "audience": "freelancers exempt under Artigo 53",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The invoicing obligation that survives the exemption, the exact legend invoices must carry, and the return you are excused from.",
+      "anchorFact": {
+        "claim": "Taxpayers exempt under artigo 53 of the CIVA remain subject to the invoicing obligation and their invoices must always carry the mention 'IVA – Regime de Isenção', while they are exempt from submitting the declaração recapitulativa and do not declare operations for IVA purposes.",
+        "kind": "instrument",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/artigo-53-o-do-civa.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The exemption removes the tax and most returns but not the paperwork, and a missing legend is what makes an otherwise valid invoice defective.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/artigo-53-o-do-civa.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "banking-ppr-deduction-falls-with-age",
+      "pillar": "banking_money",
+      "valueClass": "threshold",
+      "title": "The retirement savings deduction shrinks as you get older",
+      "userQuestion": "How much do I get back on IRS for paying into a PPR?",
+      "scenario": "Someone starts a retirement plan late assuming the tax relief is the same at any age, and over-contributes for the benefit available.",
+      "audience": "people paying into a retirement savings plan",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The percentage deducted, and the three age bands that cap it.",
+      "anchorFact": {
+        "claim": "Under artigo 21 of the EBF, PPR contributions are deductible from IRS tax at 20% of amounts paid in the year, capped at 400 euros per taxpayer under 35, 350 euros between 35 and 50, and 300 euros above 50.",
+        "kind": "instrument",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/bf_rep/Pages/ebf-artigo-21-ordm-.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The cap falls with age, so the amount worth contributing purely for the deduction is highest for the youngest savers.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/bf_rep/Pages/ebf-artigo-21-ordm-.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "banking-ppr-withdrawal-without-penalty",
+      "pillar": "banking_money",
+      "valueClass": "edge_case",
+      "title": "When you can take money out of a PPR without losing the tax benefit",
+      "userQuestion": "Can I access my retirement savings early without a penalty?",
+      "scenario": "Someone facing unemployment or a large education cost leaves the money untouched, assuming any early withdrawal is penalised.",
+      "audience": "PPR holders needing access to funds",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The circumstances allowing penalty-free withdrawal, the age that opens it more broadly, and what a non-qualifying withdrawal costs.",
+      "anchorFact": {
+        "claim": "A PPR can be redeemed in whole or part without penalty in cases of pre-retirement, early retirement, old-age or invalidity retirement, death of the participant, long-term unemployment, serious illness or permanent incapacity for work, and from age 60, or where the participant or a household member attends professional or higher education with expenses that year; redemption outside these conditions requires returning the tax benefits obtained plus an additional penalty.",
+        "kind": "artefact",
+        "namedThing": "PPR",
+        "verifyAt": "https://www.consumidor.asf.com.pt/pt/poupan%C3%A7a/planos-de-poupan%C3%A7a",
+        "volatility": "stable"
+      },
+      "notObvious": "Long-term unemployment and a household member's tuition both qualify, which are exactly the moments people assume the money is locked away.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.consumidor.asf.com.pt/pt/poupan%C3%A7a/planos-de-poupan%C3%A7a",
+        "authority": "ASF"
+      }
     }
   ]
 }
