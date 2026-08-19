@@ -4197,6 +4197,105 @@
         "canonicalUrl": "https://www2.gov.pt/-/7929gne_texto",
         "authority": "gov.pt"
       }
+    },
+    {
+      "id": "iva-what-you-cannot-deduct",
+      "pillar": "iva",
+      "valueClass": "edge_case",
+      "title": "The business costs where IVA is never fully deductible",
+      "userQuestion": "Can I deduct the IVA on the car, the fuel and the client lunch?",
+      "scenario": "A business deducts IVA across all its running costs and faces a correction on exactly the categories the law singles out.",
+      "audience": "businesses deducting IVA on running costs",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The categories excluded outright, the partial rate on diesel and LPG, and the narrow case where event meals are partly deductible.",
+      "anchorFact": {
+        "claim": "Artigo 21 of the CIVA excludes deduction on acquisition, rental, use, transformation and repair of passenger cars, pleasure boats, helicopters, aircraft and motorcycles; IVA on diesel, LPG, natural gas and biofuels is deductible at 50%, and accommodation, food and drink linked to congresses, fairs, exhibitions and similar events contracted directly with organisers and contributing to taxable operations is deductible at 25%.",
+        "kind": "instrument",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/iva21.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Fuel is half deductible and event catering a quarter, so the answer is rarely all or nothing and the partial rates are where corrections come from.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/iva21.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "freelance-single-member-company-capital",
+      "pillar": "freelance_business",
+      "valueClass": "threshold",
+      "title": "The share capital a single-member company actually needs",
+      "userQuestion": "How much money do I need to set up a company in Portugal?",
+      "scenario": "Someone postpones incorporating because they assume a substantial minimum capital is required.",
+      "audience": "people considering incorporating alone",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The minimum quota value, the freedom to set capital, and the five working days to deposit it.",
+      "anchorFact": {
+        "claim": "For a sociedade unipessoal por quotas the share capital is freely set in the company contract except where the law provides otherwise, the quota value may vary but can never be below 1.00 euro, and proof of capital deposit in an account in the company's name can be made within five working days after incorporation.",
+        "kind": "figure",
+        "namedThing": "sociedade unipessoal",
+        "verifyAt": "https://www2.gov.pt/inicio/espaco-empresa/balcao-do-empreendedor/sociedade-unipessoal-por-quotas-constituicao",
+        "volatility": "stable"
+      },
+      "notObvious": "One euro is a lawful capital and the deposit can follow incorporation, so the money is not a barrier to starting that people assume it is.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/inicio/espaco-empresa/balcao-do-empreendedor/sociedade-unipessoal-por-quotas-constituicao",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "freelance-beneficial-owner-register-deadlines",
+      "pillar": "freelance_business",
+      "valueClass": "deadline_action",
+      "title": "The register every new company must file within thirty days",
+      "userQuestion": "Is there anything to file after incorporating besides tax registration?",
+      "scenario": "A founder completes incorporation, opens activity, and never files the beneficial owner declaration nobody mentioned.",
+      "audience": "founders of a newly incorporated entity",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The thirty-day initial deadline, the thirty days after any change, the annual confirmation, and who counts as beneficial owner.",
+      "anchorFact": {
+        "claim": "The initial RCBE declaration must be filed within 30 days of the NIF being attributed, any change to declared data must be updated within 30 days, entities must confirm the information annually, and the beneficial owner is the ultimate natural person controlling the entity, identified by criteria such as holding more than 25% of share capital or another member's voting rights.",
+        "kind": "deadline",
+        "namedThing": "RCBE",
+        "verifyAt": "https://www2.gov.pt/servicos/preencher-a-declaracao-do-registo-central-do-beneficiario-efetivo-rcbe-",
+        "volatility": "stable"
+      },
+      "notObvious": "The annual confirmation is separate from the initial filing, so a company compliant on day one drifts out of compliance without doing anything.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/preencher-a-declaracao-do-registo-central-do-beneficiario-efetivo-rcbe-",
+        "authority": "gov.pt / IRN"
+      }
+    },
+    {
+      "id": "health-pensioner-medicine-top-up",
+      "pillar": "health_family",
+      "valueClass": "threshold",
+      "title": "The extra medicine subsidy for pensioners on a low income",
+      "userQuestion": "Do pensioners pay less for prescriptions?",
+      "scenario": "A pensioner on a small pension pays the standard share, never having been told an income-based uplift exists.",
+      "audience": "pensioners paying for prescribed medicines",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The additional percentage added to the standard tiers, the annual income ceiling that gates it, and where fuller regimes exist.",
+      "anchorFact": {
+        "claim": "Pensioners whose pension does not exceed the minimum wage receive an additional 15% on medicine comparticipação in tiers B, C and D, and this protection applies only to pensioners whose total annual income does not exceed 14 times the national minimum wage, alongside regimes excecionais that raise the rate or reach 100% for defined pathologies and groups.",
+        "kind": "figure",
+        "namedThing": "comparticipação",
+        "verifyAt": "https://www.infarmed.pt/web/infarmed/regimes-excecionais-de-comparticipacao",
+        "volatility": "annual"
+      },
+      "notObvious": "The ceiling is expressed as fourteen times the minimum wage annually rather than a monthly pension figure, so pensioners rarely recognise that they qualify.",
+      "journeyStage": "long_term_residence",
+      "source": {
+        "canonicalUrl": "https://www.infarmed.pt/web/infarmed/regimes-excecionais-de-comparticipacao",
+        "authority": "INFARMED"
+      }
     }
   ]
 }
