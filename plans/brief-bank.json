@@ -5067,6 +5067,81 @@
         "canonicalUrl": "https://www2.gov.pt/servicos/pedir-o-certificado-de-registo-criminal-de-pessoas-singulares",
         "authority": "gov.pt / Ministério da Justiça"
       }
+    },
+    {
+      "id": "housing-aimi-six-hundred-thousand-deduction",
+      "pillar": "housing_property",
+      "valueClass": "threshold",
+      "title": "The property value where a second annual tax starts",
+      "userQuestion": "At what property value does the extra IMI surcharge begin?",
+      "scenario": "An owner holding two or three properties assumes the annual bill is IMI alone and is surprised by a second assessment in September.",
+      "audience": "people owning Portuguese property",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The deduction that shields most owners, the three rate bands above it, and the June assessment that produces a September bill.",
+      "anchorFact": {
+        "claim": "AIMI deducts 600,000 euros from the taxable value for an individual taxpayer or undivided inheritance, then charges 0.7 per cent up to 1,000,000 euros, 1 per cent on the excess from 1,000,000 to 2,000,000 euros and 1.5 per cent above 2,000,000 euros, and is assessed by the AT during June with notification to pay in a single instalment in September.",
+        "kind": "figure",
+        "namedThing": "AIMI",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "The deduction applies to the combined value of everything you own, not to each property, so three modest homes can cross a line one home never would.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "housing-aimi-joint-option-doubles-the-shield",
+      "pillar": "housing_property",
+      "valueClass": "decision",
+      "title": "Married owners can double the AIMI deduction by opting in",
+      "userQuestion": "Does being married change what we pay on the IMI surcharge?",
+      "scenario": "A couple is assessed individually on separately registered properties and pays a surcharge that joint taxation would have removed.",
+      "audience": "married and de facto couples owning property",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "What the joint option changes, the deduction it unlocks, and the effect on the rate bands.",
+      "anchorFact": {
+        "claim": "Where married taxpayers or those in a união de facto opt for joint AIMI taxation the deduction rises from 600,000 euros to 1,200,000 euros and the band values double while the rates stay unchanged.",
+        "kind": "figure",
+        "namedThing": "AIMI",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "It is an option that has to be exercised, not an automatic consequence of being married, and the bands double as well as the deduction.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Casa_e_propriedades/Imposto_anual/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "housing-tenant-preference-eight-day-window",
+      "pillar": "housing_property",
+      "valueClass": "deadline_action",
+      "title": "Eight days to answer when your landlord sells",
+      "userQuestion": "Do I get first refusal if the flat I rent is put up for sale?",
+      "scenario": "A tenant receives a formal notice of a sale project, treats it as information rather than an offer, and loses the right by saying nothing.",
+      "audience": "long-term tenants",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "How long the tenancy must have run, what the landlord must send, and the short window before the right lapses.",
+      "anchorFact": {
+        "claim": "Under artigo 1091.º of the Código Civil the tenant holds a direito de preferência on the sale or dação em cumprimento of premises rented for more than three years, and the party bound to give preference must communicate the sale project and the contract clauses so the right can be exercised within eight days, sob pena de caducidade, unless a shorter period binds them or a longer one is granted.",
+        "kind": "instrument",
+        "namedThing": "direito de preferência",
+        "verifyAt": "https://diariodarepublica.pt/dr/lexionario/termo/direito-legal-preferencia",
+        "volatility": "stable"
+      },
+      "notObvious": "Silence is not neutral: the eight days run from the communication and the right expires when they pass.",
+      "journeyStage": "renting",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/lexionario/termo/direito-legal-preferencia",
+        "authority": "Diário da República / Código Civil"
+      }
     }
   ]
 }
