@@ -7,7 +7,7 @@ import { z } from "zod";
 import { DraftSchema } from "./contracts.js";
 import { generateDraft } from "./openai.js";
 import { createBufferMediaUrl, createUploadUrl, uploadRenderedObject, verifyUploadedObject, type RenderFileInput } from "./storage.js";
-import { BufferError, createScheduledPost, deletePost as deleteBufferPost, findMatchingScheduledPost, getPost as getBufferPost } from "./buffer.js";
+import { BufferError, createScheduledPost, deletePost as deleteBufferPost, findMatchingScheduledPost, getPost as getBufferPost, setBufferCallObserver } from "./buffer.js";
 import { notifyDiscord, notifyDiscordReview } from "./discord.js";
 import { renderReviewPreview } from "./preview.js";
 import { retryDecision } from "./retry-policy.js";
@@ -199,6 +199,20 @@ async function internalApi(method: "GET" | "POST", pathname: string, body?: unkn
 // Buffer-touching endpoint and across API restarts.
 const BUFFER_PROVIDER = "buffer";
 
+// Buffer allows 250 calls per rolling day. Five posts need roughly thirty, so the budget
+// is generous — but only if nothing polls blindly. Monitoring is capped well below the
+// ceiling so that publishing, which is the part that cannot be deferred, always has
+// headroom left even on a bad day.
+const BUFFER_DAILY_QUOTA = Number(process.env.BUFFER_DAILY_QUOTA ?? 250);
+const BUFFER_MONITOR_BUDGET = Number(process.env.BUFFER_MONITOR_BUDGET ?? 120);
+const BUFFER_MONITOR_MAX_PER_RUN = 3;
+const BUFFER_MONITOR_RECHECK_MINUTES = 10;
+
+async function bufferCallsLastDay(): Promise<number> {
+  const [row] = await sql`SELECT count(*) AS count FROM social_provider_call WHERE provider=${BUFFER_PROVIDER} AND created_at > now() - INTERVAL '24 hours'`;
+  return Number(row?.count ?? 0);
+}
+
 async function providerCooldownUntil(provider = BUFFER_PROVIDER): Promise<Date | null> {
   const [row] = await sql`SELECT until FROM social_provider_cooldown WHERE provider=${provider} AND until>now()`;
   return row ? new Date(String(row.until)) : null;
@@ -224,6 +238,15 @@ async function noteProviderPacing(failure: BufferError) {
     await startProviderCooldown(failure.retryAfterMinutes || 60, failure.code);
   }
 }
+
+// Every Buffer call is recorded so the daily budget is measured rather than assumed, and
+// the provider's own remaining-quota header is trusted over our count when it is lower.
+setBufferCallObserver(({ kind, status, quota }) => {
+  void sql`INSERT INTO social_provider_call (provider, kind) VALUES (${BUFFER_PROVIDER}, ${kind})`.catch(() => {});
+  if (quota.dailyRemaining !== null && quota.dailyRemaining <= 0 && quota.resetSeconds) {
+    void startProviderCooldown(Math.ceil(quota.resetSeconds / 60), `DAILY_QUOTA_EXHAUSTED_${status}`).catch(() => {});
+  }
+});
 
 async function reconcileBufferPublish(job: Record<string, any>) {
   const channelId = process.env.BUFFER_CHANNEL_ID;
@@ -1517,6 +1540,11 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && url.pathname === "/v1/publish-jobs/process") {
       const cooldown = await providerCooldownUntil();
       if (cooldown) return send(res, 200, { skipped: "buffer_cooldown", until: cooldown.toISOString() });
+      const dailySpend = await bufferCallsLastDay();
+      if (dailySpend >= BUFFER_DAILY_QUOTA) {
+        await startProviderCooldown(60, "DAILY_QUOTA_GUARD");
+        return send(res, 200, { skipped: "buffer_daily_quota", spentLastDay: dailySpend, quota: BUFFER_DAILY_QUOTA });
+      }
       const workerId = z.string().min(3).max(120).parse(req.headers["x-publisher-id"] || "n8n-publisher");
       const job: any = await sql.begin(async (tx) => {
         await tx`UPDATE social_publish_job SET status = 'retrying', lease_owner = NULL, lease_expires_at = NULL, available_at = now(), updated_at = now() WHERE status = 'processing' AND lease_expires_at < now()`;
@@ -1591,11 +1619,30 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && url.pathname === "/v1/publish-jobs/monitor") {
       const monitorCooldown = await providerCooldownUntil();
       if (monitorCooldown) return send(res, 200, { skipped: "buffer_cooldown", until: monitorCooldown.toISOString(), checked: 0 });
+
+      // Monitoring is the optional half of the budget: a confirmation can wait, a publish
+      // cannot. Once monitoring has spent its share, stop and leave the rest for handoff.
+      const spent = await bufferCallsLastDay();
+      if (spent >= BUFFER_MONITOR_BUDGET) {
+        return send(res, 200, { skipped: "monitor_budget_reached", spentLastDay: spent, monitorBudget: BUFFER_MONITOR_BUDGET, checked: 0 });
+      }
+
+      // Only look at posts that are actually due, and re-check any single job at most
+      // every few minutes. Previously this ran every two minutes against up to ten jobs
+      // regardless of whether their time had come, which alone exceeded the daily quota
+      // three times over and left nothing to confirm delivery with.
       const jobs = await sql`
         SELECT * FROM social_publish_job
-        WHERE status = 'scheduled' AND scheduled_at <= now() + INTERVAL '10 minutes'
-        ORDER BY scheduled_at LIMIT 10
+        WHERE status = 'scheduled'
+          AND scheduled_at <= now()
+          AND (last_provider_check_at IS NULL
+               OR last_provider_check_at < now() - (${BUFFER_MONITOR_RECHECK_MINUTES}::STRING || ' minutes')::INTERVAL)
+        ORDER BY scheduled_at
+        LIMIT ${BUFFER_MONITOR_MAX_PER_RUN}
       `;
+      for (const job of jobs) {
+        await sql`UPDATE social_publish_job SET last_provider_check_at = now() WHERE id = ${job.id}`;
+      }
       const results: Array<{ id: string; status: string }> = [];
       for (const job of jobs) {
         try {

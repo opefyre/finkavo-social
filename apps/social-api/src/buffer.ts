@@ -12,7 +12,34 @@ const retryAfterMinutes = (value: string | null) => {
   return Number.isFinite(timestamp) ? Math.max(1, Math.ceil((timestamp - Date.now()) / 60_000)) : 60;
 };
 
-async function request<T>(query: string, variables: Record<string, unknown>): Promise<T> {
+// Buffer publishes its remaining quota on every response. Reading it lets the caller
+// record real spend rather than inferring it, and lets a near-empty daily allowance stop
+// optional monitoring before it becomes a hard 429.
+export type BufferQuota = { dailyRemaining: number | null; windowRemaining: number | null; resetSeconds: number | null };
+
+function parseQuota(headers: Headers): BufferQuota {
+  // e.g. ratelimit: "100-in-15min"; r=94; t=593, "250-in-1day"; r=0; t=25734
+  const raw = headers.get("ratelimit") ?? "";
+  const read = (policy: RegExp) => {
+    const segment = raw.split(",").find(part => policy.test(part));
+    if (!segment) return { remaining: null as number | null, reset: null as number | null };
+    const remaining = Number(segment.match(/\br=(\d+)/)?.[1]);
+    const reset = Number(segment.match(/\bt=(\d+)/)?.[1]);
+    return {
+      remaining: Number.isFinite(remaining) ? remaining : null,
+      reset: Number.isFinite(reset) ? reset : null,
+    };
+  };
+  const daily = read(/1day/i);
+  const window = read(/min/i);
+  return { dailyRemaining: daily.remaining, windowRemaining: window.remaining, resetSeconds: daily.reset };
+}
+
+/** Set by the server so every provider call is accounted for and quota is observable. */
+export let onBufferCall: (info: { kind: string; status: number; quota: BufferQuota }) => void = () => {};
+export function setBufferCallObserver(observer: typeof onBufferCall) { onBufferCall = observer; }
+
+async function request<T>(query: string, variables: Record<string, unknown>, kind = "graphql"): Promise<T> {
   const apiKey = process.env.BUFFER_API_KEY;
   if (!apiKey) throw new BufferError("BUFFER_API_KEY is not configured", "AUTH_NOT_CONFIGURED", false);
   let response: Response;
@@ -24,6 +51,8 @@ async function request<T>(query: string, variables: Record<string, unknown>): Pr
   } catch (error) {
     throw new BufferError(error instanceof Error ? error.message : "Buffer network failure", "UNKNOWN_PROVIDER_RESULT", false, true);
   }
+  const quota = parseQuota(response.headers);
+  try { onBufferCall({ kind, status: response.status, quota }); } catch { /* accounting must never break a publish */ }
   if (response.status === 429) throw new BufferError("Buffer rate limit exceeded", "RATE_LIMIT_EXCEEDED", true, false, retryAfterMinutes(response.headers.get("retry-after")));
   const contentType = response.headers.get("content-type") || "unknown content type";
   const raw = await response.text();
