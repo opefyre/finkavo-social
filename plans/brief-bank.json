@@ -2425,6 +2425,226 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/pages/faqs-00488.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "citizenship-nationality-for-children-born-here",
+      "pillar": "citizenship_civil",
+      "valueClass": "threshold",
+      "title": "What a child born in Portugal to foreign parents now needs for nationality",
+      "userQuestion": "Does my child get Portuguese nationality by being born here?",
+      "scenario": "Parents assume birth on Portuguese soil is enough, and only discover the residence condition when they try to register it.",
+      "audience": "foreign parents of a child born in Portugal",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "The parental residence requirement, the change that lengthened it, and the declaration that must accompany the request.",
+      "anchorFact": {
+        "claim": "Attribution of nacionalidade to a child born in Portugal to foreign parents requires legal residence of a parent in national territory, and legislative changes require that residence to have lasted a minimum period of 3 years and that the will for the child to be Portuguese is expressly declared.",
+        "kind": "deadline",
+        "namedThing": "nacionalidade",
+        "verifyAt": "https://www.gov.pt/servicos/pedir-a-nacionalidade-portuguesa",
+        "volatility": "volatile"
+      },
+      "notObvious": "This is actively changing and the residence period is the part that moved, so guidance written even recently can be wrong about the qualifying period.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/pedir-a-nacionalidade-portuguesa",
+        "authority": "gov.pt / IRN"
+      }
+    },
+    {
+      "id": "citizenship-birth-registration-and-nationality-together",
+      "pillar": "citizenship_civil",
+      "valueClass": "insider",
+      "title": "Registering a birth and requesting nationality is one online step",
+      "userQuestion": "Do I have to register the birth first and apply for nationality separately?",
+      "scenario": "New parents queue for a registry appointment to register the birth, then plan a second process for nationality, doubling the admin at the worst possible time.",
+      "audience": "parents registering a birth in Portugal",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The single online service that covers both, and the hospital document you need before starting.",
+      "anchorFact": {
+        "claim": "The IRN provides an online service to request the registo de nascimento and the attribution of Portuguese nationality together, requiring the birth certificate issued by the hospital or maternity unit where the birth took place.",
+        "kind": "procedure",
+        "namedThing": "registo de nascimento",
+        "verifyAt": "https://irn.justica.gov.pt/Servicos/Cidadao/Nascimento/Pedir-o-registo-de-nascimento-e-a-nacionalidade",
+        "volatility": "stable"
+      },
+      "notObvious": "Treating them as two processes is the default assumption and costs an extra appointment during the weeks parents can least spare one.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://irn.justica.gov.pt/Servicos/Cidadao/Nascimento/Pedir-o-registo-de-nascimento-e-a-nacionalidade",
+        "authority": "IRN"
+      }
+    },
+    {
+      "id": "driving-licence-renewal-ages",
+      "pillar": "driving_transport",
+      "valueClass": "threshold",
+      "title": "The ages at which a driving licence must be revalidated",
+      "userQuestion": "At what age does my driving licence need renewing?",
+      "scenario": "A driver assumes the licence runs to its printed date and misses an age-triggered revalidation they never knew existed.",
+      "audience": "drivers approaching a revalidation age",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The age points that trigger revalidation for ordinary categories, the shorter cycle after 70, and the age from which a medical certificate becomes mandatory.",
+      "anchorFact": {
+        "claim": "For licences issued up to 1 January 2013 in categories AM, A1, A2, A, B1, B and BE, revalidação is required at 50, 60, 65 and 70 years, and every 2 years from age 70; an electronic atestado médico is mandatory for drivers aged 60 or over in those categories.",
+        "kind": "figure",
+        "verifyAt": "https://www.imt-ip.pt/condutores/informacoes-gerais/quero-ser-condutor/revalidacao-da-carta-de-conducao/",
+        "volatility": "stable"
+      },
+      "notObvious": "The trigger is your age, not the card's expiry, and the two do not line up for licences issued before 2013.",
+      "journeyStage": "long_term_residence",
+      "source": {
+        "canonicalUrl": "https://www.imt-ip.pt/condutores/informacoes-gerais/quero-ser-condutor/revalidacao-da-carta-de-conducao/",
+        "authority": "IMT"
+      }
+    },
+    {
+      "id": "driving-medical-certificate-six-month-validity",
+      "pillar": "driving_transport",
+      "valueClass": "deadline_action",
+      "title": "The order to do a licence renewal in, and what it costs",
+      "userQuestion": "Should I get the medical certificate before or after starting the renewal?",
+      "scenario": "A driver starts the renewal, then books a medical appointment weeks later, or obtains a certificate so early it expires before it is used.",
+      "audience": "drivers renewing a licence with a medical certificate",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "How long the certificate stays valid, when the renewal window opens, and the fee before and after 70.",
+      "anchorFact": {
+        "claim": "Medical certificates for licence revalidation are valid for 6 months and the doctor submits them electronically to the IMT, the renewal window opens 6 months before the limit date, and renewal costs 27 euros up to age 70 and 13.50 euros after 70.",
+        "kind": "deadline",
+        "namedThing": "atestado médico",
+        "verifyAt": "https://www.gov.pt/servicos/revalidar-a-carta-de-conducao",
+        "volatility": "annual"
+      },
+      "notObvious": "The certificate and the renewal window are both six months, so obtaining the certificate first is what makes them line up rather than expire against each other.",
+      "journeyStage": "long_term_residence",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/revalidar-a-carta-de-conducao",
+        "authority": "gov.pt / IMT"
+      }
+    },
+    {
+      "id": "immigration-cplp-residence-permit-terms",
+      "pillar": "immigration_residency",
+      "valueClass": "threshold",
+      "title": "What a CPLP residence permit gives you and what it costs",
+      "userQuestion": "How long is a CPLP residence permit valid and what do I pay?",
+      "scenario": "A national of a CPLP state hears the route is faster but cannot find the validity period, the fee, or what has changed about the process.",
+      "audience": "CPLP nationals applying for residence",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "The validity of a new grant, the residence period leading to permanent status, the fee, and the in-person step now required.",
+      "anchorFact": {
+        "claim": "A newly granted Autorização de Residência CPLP is valid for 2 years and costs 15 euros, permanent residence can be requested after five years of temporary residence, and following Lei 9/2025 of 13 February the permit is issued in the uniform model requiring an in-person AIMA appointment for biometric data and documents.",
+        "kind": "instrument",
+        "verifyAt": "https://www.gov.pt/servicos/obter-autorizacao-de-residencia-cplp",
+        "volatility": "volatile"
+      },
+      "notObvious": "The move to the uniform model reintroduced a mandatory in-person appointment to a route people still describe as fully online.",
+      "journeyStage": "first_30_days",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/obter-autorizacao-de-residencia-cplp",
+        "authority": "gov.pt / AIMA"
+      }
+    },
+    {
+      "id": "immigration-which-states-the-cplp-route-covers",
+      "pillar": "immigration_residency",
+      "valueClass": "edge_case",
+      "title": "Which nationalities the CPLP mobility route actually covers",
+      "userQuestion": "Does the CPLP residence route apply to my nationality?",
+      "scenario": "Someone assumes any Portuguese-speaking background qualifies, or rules themselves out without checking whether the agreement is in force for their state.",
+      "audience": "people checking whether they qualify under CPLP",
+      "risk": "high",
+      "volatility": "volatile",
+      "promise": "The states for which the mobility agreement is in force, and why speaking Portuguese is not the test.",
+      "anchorFact": {
+        "claim": "The Autorização de Residência CPLP is issued to nationals of States where the Acordo sobre a Mobilidade entre os Estados-Membros da CPLP is in force, namely Angola, Brazil, Cape Verde, Guinea-Bissau, Equatorial Guinea, Mozambique, Portugal, São Tomé and Príncipe and Timor-Leste.",
+        "kind": "artefact",
+        "verifyAt": "https://www.gov.pt/servicos/obter-autorizacao-de-residencia-cplp",
+        "volatility": "volatile",
+        "namedThing": "Autorização de Residência CPLP"
+      },
+      "notObvious": "Eligibility follows whether the agreement is in force for that specific state, not language or cultural ties, and the list is shorter than people assume.",
+      "journeyStage": "before_moving",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/obter-autorizacao-de-residencia-cplp",
+        "authority": "gov.pt / AIMA"
+      }
+    },
+    {
+      "id": "irs-vat-back-on-specific-sectors",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "The sectors where asking for a NIF returns part of the VAT",
+      "userQuestion": "Which purchases are actually worth putting my NIF on?",
+      "scenario": "Someone gives their NIF at every till without knowing which categories return anything, or skips it at the ones that do.",
+      "audience": "consumers deciding when to give their NIF",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The share of VAT returned, the household cap, and the specific sectors it applies to.",
+      "anchorFact": {
+        "claim": "IRS allows a deduction corresponding to 15% of the VAT on invoices, with a global limit of 250 euros per household, for acquisitions in defined sectors including vehicle and motorcycle maintenance and repair, accommodation and restaurant services, hairdressing and beauty activities, and veterinary activities.",
+        "kind": "figure",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/e_Fatura/Paginas/default.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "Only a short list of sectors returns VAT this way, so the habit of giving a NIF everywhere is mostly wasted while the categories that pay are easy to forget.",
+      "journeyStage": "first_tax_year",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/e_Fatura/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "employment-fixed-term-contract-maximum-duration",
+      "pillar": "employment",
+      "valueClass": "threshold",
+      "title": "How long a fixed-term contract can run before it must become permanent",
+      "userQuestion": "How many times can my employer renew my fixed-term contract?",
+      "scenario": "A worker on a rolling series of short contracts cannot tell whether the arrangement is still lawful or has already exceeded its limit.",
+      "audience": "workers on fixed-term contracts",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The cumulative ceiling including renewals, the separate limit for uncertain-term contracts, and the rule that caps each renewal.",
+      "anchorFact": {
+        "claim": "The maximum cumulative duration of a contrato de trabalho a termo certo including renewals was reduced from three years to 2 years, the maximum for uncertain-term contracts from six to 4 years, and renewals may not exceed the duration of the initial contract period.",
+        "kind": "figure",
+        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475-46734975",
+        "volatility": "stable"
+      },
+      "notObvious": "The renewal cap is the part people miss: three renewals of a nine-month contract are allowed only if together they stay inside those nine months.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475-46734975",
+        "authority": "Diário da República"
+      }
+    },
+    {
+      "id": "employment-new-contract-limits-are-not-retroactive",
+      "pillar": "employment",
+      "valueClass": "edge_case",
+      "title": "Which contract the shorter duration limits actually apply to",
+      "userQuestion": "Do the new fixed-term limits apply to the contract I signed years ago?",
+      "scenario": "A long-serving worker on an old fixed-term contract reads about the reduced limits and expects their contract to have converted automatically.",
+      "audience": "workers on contracts signed before the law changed",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Why the reduced ceilings do not reach back, and what that means for a contract signed under the previous rules.",
+      "anchorFact": {
+        "claim": "Under the Código do Trabalho amendments, the new maximum duration periods and renewal rules for fixed-term contracts do not apply to contracts celebrated before those amendments entered into force.",
+        "kind": "instrument",
+        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475-46734975",
+        "volatility": "stable"
+      },
+      "notObvious": "Reading the current limit and applying it to an older contract produces the wrong answer in both directions, which matters when arguing conversion.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475-46734975",
+        "authority": "Diário da República"
+      }
     }
   ]
 }
