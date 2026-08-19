@@ -5318,6 +5318,56 @@
         "canonicalUrl": "https://www.seg-social.pt/rede-de-creches-gratuitas",
         "authority": "Instituto da Segurança Social"
       }
+    },
+    {
+      "id": "banking-a-refused-basic-account-must-be-refused-in-writing",
+      "pillar": "banking_money",
+      "valueClass": "insider",
+      "title": "A bank that turns down a basic account owes you the reason in writing",
+      "userQuestion": "The branch said no to a conta de serviços mínimos. Is that the end of it?",
+      "scenario": "Someone is told at the counter that the account is not available to them, accepts it, and keeps paying full maintenance fees.",
+      "audience": "people refused a basic bank account",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The single lawful ground for refusal, the written notice the bank owes you, and where the notice must point you next.",
+      "anchorFact": {
+        "claim": "A credit institution may only refuse a conta de serviços mínimos bancários where the person holds more than one current account deposit, and it must inform the customer of the refusal immediately and free of charge on paper or another durable medium, stating the grounds and the mechanisms available if the customer disagrees, including a complaint to Banco de Portugal and alternative dispute resolution.",
+        "kind": "procedure",
+        "namedThing": "conta de serviços mínimos bancários",
+        "verifyAt": "https://clientebancario.bportugal.pt/en/noticias/new-duties-information-when-refusing-open-or-convert-basic-bank-accounts",
+        "volatility": "stable"
+      },
+      "notObvious": "A verbal no at the counter is not a refusal in the legal sense, and asking for it in writing is what produces either the account or an appealable decision.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/en/noticias/new-duties-information-when-refusing-open-or-convert-basic-bank-accounts",
+        "authority": "Banco de Portugal"
+      }
+    },
+    {
+      "id": "banking-basic-account-co-holder-exception",
+      "pillar": "banking_money",
+      "valueClass": "edge_case",
+      "title": "Holding other accounts and still joining a basic one",
+      "userQuestion": "Can I open a low-cost account with my parent if I already have my own?",
+      "scenario": "An adult child helping an older parent is told the account is unavailable because the child already banks elsewhere.",
+      "audience": "families supporting an older or disabled relative",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The general one-account rule and the two circumstances that let someone with other accounts join as co-holder.",
+      "anchorFact": {
+        "claim": "A conta de serviços mínimos bancários may only be held by someone who holds no other current account, but a person holding other current accounts may be co-holder together with a person over 65 years of age, or with a duly certified permanent disability of 60 per cent or more, who has no other accounts.",
+        "kind": "figure",
+        "namedThing": "conta de serviços mínimos bancários",
+        "verifyAt": "https://clientebancario.bportugal.pt/en/what-it-1",
+        "volatility": "stable"
+      },
+      "notObvious": "The exception is written around the older or disabled holder, so it survives the helper having a full bank relationship of their own.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/en/what-it-1",
+        "authority": "Banco de Portugal"
+      }
     }
   ]
 }
