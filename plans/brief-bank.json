@@ -3117,24 +3117,24 @@
       "id": "housing-porta-65-young-rent-support",
       "pillar": "housing_property",
       "valueClass": "deadline_action",
-      "title": "The rent subsidy for under-36s and when you can apply",
+      "title": "The rent subsidy for under-36s, and the rentals it will not cover",
       "userQuestion": "Is there state help with rent for young people, and when do applications open?",
       "scenario": "A young renter hears about Porta 65 but not the age limits, the ownership conditions, or that applications run in fixed periods.",
       "audience": "renters under 36",
       "risk": "medium",
-      "volatility": "annual",
-      "promise": "The age range including the couple exception, the disqualifying conditions, the four application windows and the decision time.",
+      "volatility": "volatile",
+      "promise": "Who qualifies by age and circumstance, that applications never close, and the one kind of rental the programme excludes.",
       "anchorFact": {
-        "claim": "Porta 65-Jovem is open to applicants aged 18 to 35, with one member of a couple allowed to be 36 while the other is at most 35, requires permanent residence and tax address at the rented property and no ownership of another home or other public housing support, runs four application periods a year of at least 15 days each in April, September and December, and applications are analysed within 45 days.",
+        "claim": "Porta 65-Jovem is open to applicants aged 18 to 35, with one member of a couple allowed to be 36 while the other is at most 35, requires permanent residence and tax address at the rented property and no ownership of another home or other public housing support; applications can be submitted at any time because they are always open, the support can go to couples, young people living alone or people sharing a home, and it cannot be used for renting a room.",
         "kind": "deadline",
         "namedThing": "Porta 65",
-        "verifyAt": "https://www2.gov.pt/servicos/candidatar-se-ao-porta-65-jovem",
-        "volatility": "annual"
+        "verifyAt": "https://www.gov.pt/servicos/candidatar-se-ao-porta-65-jovem",
+        "volatility": "volatile"
       },
-      "notObvious": "The tax address condition catches people who never moved their domicílio fiscal to the rented flat, which quietly disqualifies an otherwise valid application.",
+      "notObvious": "Room rentals are excluded outright, which is exactly the arrangement most people in this age group are actually in.",
       "journeyStage": "renting_buying_moving",
       "source": {
-        "canonicalUrl": "https://www2.gov.pt/servicos/candidatar-se-ao-porta-65-jovem",
+        "canonicalUrl": "https://www.gov.pt/servicos/candidatar-se-ao-porta-65-jovem",
         "authority": "gov.pt / IHRU"
       }
     },
@@ -7667,6 +7667,31 @@
       "source": {
         "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475-46737975",
         "authority": "Diário da República / Código do Trabalho"
+      }
+    },
+    {
+      "id": "housing-the-deposit-is-taxable-until-you-give-it-back",
+      "pillar": "housing_property",
+      "valueClass": "edge_case",
+      "title": "A rental deposit is taxable income until it is returned",
+      "userQuestion": "Do I have to declare the deposit my tenant paid me?",
+      "scenario": "A landlord treats the deposit as money held on account, declares nothing, and later cannot deduct it when it is handed back.",
+      "audience": "landlords holding a tenancy deposit",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "How a deposit is treated for tax while you hold it, and the document that turns its return into a deductible expense.",
+      "anchorFact": {
+        "claim": "For the purposes of categoria F of the Código do IRS a caução constitutes rendimento predial, and where the caução is returned to the tenant the tenant should issue a receipt of quitação whose value the landlord enters as an expense in the respective Anexo F.",
+        "kind": "instrument",
+        "namedThing": "caução",
+        "verifyAt": "https://diariodarepublica.pt/dr/lexionario/termo/caucao-renda",
+        "volatility": "stable"
+      },
+      "notObvious": "Getting the paperwork right on the way out is what makes the tax on the way in reversible, and the document has to come from the tenant.",
+      "journeyStage": "renting_out",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/lexionario/termo/caucao-renda",
+        "authority": "Diário da República / Código do IRS"
       }
     }
   ]
