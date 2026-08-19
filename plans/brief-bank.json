@@ -4844,6 +4844,129 @@
         "canonicalUrl": "https://www.cne.pt/faq2/95/5",
         "authority": "Comissão Nacional de Eleições"
       }
+    },
+    {
+      "id": "health-dentist-vouchers-for-pregnancy",
+      "pillar": "health_family",
+      "valueClass": "threshold",
+      "title": "Free dental care during pregnancy, and the window after the birth",
+      "userQuestion": "Is dental treatment free while I am pregnant?",
+      "scenario": "An expectant parent postpones dental treatment on cost grounds, unaware the SNS covers it and that the entitlement expires after the birth.",
+      "audience": "pregnant patients followed by the SNS",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "How many vouchers pregnancy entitles you to, who hands them over, and the deadline for using them after the birth.",
+      "anchorFact": {
+        "claim": "A pregnant patient followed in SNS services is entitled to a maximum of 3 cheques-dentista, handed over by the family doctor, usable until 60 days after the date of birth, with the treatments free of charge.",
+        "kind": "figure",
+        "namedThing": "cheque-dentista",
+        "verifyAt": "https://www.sns24.gov.pt/pt/tema/saude-oral/cheque-dentista-gravidas/",
+        "volatility": "annual"
+      },
+      "notObvious": "The vouchers expire sixty days after the birth, which is exactly the period when a new parent is least likely to book a dentist.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://www.sns24.gov.pt/pt/tema/saude-oral/cheque-dentista-gravidas/",
+        "authority": "SNS 24"
+      }
+    },
+    {
+      "id": "health-dentist-vouchers-beyond-pregnancy",
+      "pillar": "health_family",
+      "valueClass": "edge_case",
+      "title": "The other groups the dentist voucher covers",
+      "userQuestion": "Can adults get free dental care on the SNS?",
+      "scenario": "Someone assumes dental care is entirely private in Portugal and never asks whether they fall into a covered group.",
+      "audience": "SNS users wondering about dental cover",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "The pensioner route through the solidarity supplement, and the specific childhood ages the school programme covers.",
+      "anchorFact": {
+        "claim": "The cheque-dentista gives free access to oral health care to SNS users who are beneficiaries of the Complemento Solidário para Idosos, and the Programa Nacional de Promoção de Saúde Oral covers children and young people at ages 7, 10 and 13 and those with special health needs.",
+        "kind": "artefact",
+        "namedThing": "cheque-dentista",
+        "verifyAt": "https://www.sns24.gov.pt/servico/cheques-dentista/",
+        "volatility": "annual"
+      },
+      "notObvious": "Eligibility runs through another benefit rather than age alone, so pensioners who never claimed the solidarity supplement also lose the dental cover attached to it.",
+      "journeyStage": "long_term_residence",
+      "source": {
+        "canonicalUrl": "https://www.sns24.gov.pt/servico/cheques-dentista/",
+        "authority": "SNS 24"
+      }
+    },
+    {
+      "id": "banking-unauthorised-payment-liability-cap",
+      "pillar": "banking_money",
+      "valueClass": "threshold",
+      "title": "Your maximum loss on a payment you did not authorise",
+      "userQuestion": "If money leaves my account fraudulently, who bears the loss?",
+      "scenario": "A victim of card or homebanking fraud assumes the money is gone and negotiates with the bank from a position of ignorance.",
+      "audience": "victims of unauthorised bank transactions",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The liability cap, the refund deadline the bank must meet, what removes the cap, and the effect of alerting the bank.",
+      "anchorFact": {
+        "claim": "For an unauthorised payment operation the customer may bear at most 50 euros, and the provider must reimburse by the end of the first business day following notification except where there is suspicion of fraud by the customer; the cap does not apply where the customer failed to comply with security rules, and after alerting the bank to loss, theft or misappropriation of card or homebanking credentials the customer cannot be charged for later unauthorised movements.",
+        "kind": "figure",
+        "namedThing": "homebanking",
+        "verifyAt": "https://www.bportugal.pt/page/consultou-os-movimentos-da-sua-conta-e-ha-uma-operacao-que-nao-reconhece-saiba-o-que-fazer",
+        "volatility": "stable"
+      },
+      "notObvious": "Notification is what stops the clock and shifts the loss, so the minutes spent deciding whether to call the bank are the expensive part.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.bportugal.pt/page/consultou-os-movimentos-da-sua-conta-e-ha-uma-operacao-que-nao-reconhece-saiba-o-que-fazer",
+        "authority": "Banco de Portugal"
+      }
+    },
+    {
+      "id": "irs-minimum-existence-shields-low-incomes",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "The income floor below which IRS is not payable",
+      "userQuestion": "Do I pay IRS if I earn the minimum wage?",
+      "scenario": "A low earner assumes tax is owed on every euro and does not understand why their assessment comes back at zero, or expects a refund that never applies.",
+      "audience": "people on low incomes filing IRS",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "How the reference value is calculated, and the purpose it serves for minimum-wage earners.",
+      "anchorFact": {
+        "claim": "Under artigo 70 of the CIRS the reference value of the mínimo de existência equals the greater of 12,880 euros and 1.5 × 14 × the IAS, and its uprating is intended to keep those earning the national minimum wage exempt from IRS.",
+        "kind": "instrument",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/pages/irs70.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "It is defined as the higher of a fixed figure and an IAS formula, so it moves each year and the exemption follows the minimum wage rather than a fixed salary.",
+      "journeyStage": "first_tax_year",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/pages/irs70.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "citizenship-nationality-through-a-portuguese-partner",
+      "pillar": "citizenship_civil",
+      "valueClass": "edge_case",
+      "title": "Nationality through marriage, and the extra step unmarried couples need",
+      "userQuestion": "Can I get nationality through my Portuguese partner if we never married?",
+      "scenario": "A couple in a long unmarried relationship applies like a married couple and the request stalls for want of a court decision.",
+      "audience": "foreign partners of Portuguese nationals",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The three-year requirement for both routes, the judicial recognition unmarried couples must obtain first, and the fee.",
+      "anchorFact": {
+        "claim": "Under artigo 3 of the Lei da Nacionalidade (Lei 37/81) a foreigner married for more than three years to a Portuguese national may declare for nationality, while an unmarried partner living in união de facto for more than three years must first obtain judicial recognition of that union and provide a declaration by the Portuguese national made less than three months earlier confirming it continues; the fee is 250 euros to the Conservatória dos Registos Centrais.",
+        "kind": "instrument",
+        "verifyAt": "https://justica.gov.pt/Como-obter-nacionalidade-portuguesa/E-casado-ou-vive-em-uniao-de-facto-com-um-portugues-ha-mais-de-3-anos",
+        "volatility": "stable"
+      },
+      "notObvious": "The unmarried route needs a court judgment before the application even starts, which adds a separate proceeding most couples do not anticipate.",
+      "journeyStage": "long_term_residence",
+      "source": {
+        "canonicalUrl": "https://justica.gov.pt/Como-obter-nacionalidade-portuguesa/E-casado-ou-vive-em-uniao-de-facto-com-um-portugues-ha-mais-de-3-anos",
+        "authority": "Ministério da Justiça / IRN"
+      }
     }
   ]
 }
