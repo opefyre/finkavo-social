@@ -5,7 +5,7 @@
 // differ only in endpoint shape, so the provider is a small adapter and the model can be
 // changed with env vars alone.
 
-export type LlmProvider = "groq" | "openai";
+export type LlmProvider = "groq" | "openai" | "openrouter";
 
 export type LlmConfig = {
   provider: LlmProvider;
@@ -25,7 +25,43 @@ const DEFAULTS: Record<LlmProvider, { baseUrl: string; model: string; keyEnv: st
     model: "gpt-5-mini",
     keyEnv: "OPENAI_API_KEY",
   },
+  // Free-tier standby. Its models are reached through an OpenAI-compatible endpoint, so
+  // it needs no adapter of its own beyond not sending Groq's parameters.
+  openrouter: {
+    baseUrl: "https://openrouter.ai/api/v1",
+    model: "nvidia/nemotron-3-super-120b-a12b:free",
+    keyEnv: "OPENROUTER_API_KEY",
+  },
 };
+
+// Groq's day runs out well before the work does, and when it does there is nothing to
+// fall back on but waiting. These are the standby models, tried in order, and every one
+// of them is free: a paid model would turn a quiet afternoon into a bill without anyone
+// choosing it. Each is checked at startup for structured-output support, because a model
+// that cannot honour a JSON schema is no use to a pipeline built entirely on them.
+const FREE_MODEL_SUFFIX = ":free";
+
+export function resolveFallbackConfigs(): LlmConfig[] {
+  const provider = (process.env.LLM_FALLBACK_PROVIDER ?? "") as LlmProvider;
+  if (!provider) return [];
+  const defaults = DEFAULTS[provider];
+  if (!defaults) return [];
+  const apiKey = process.env[defaults.keyEnv];
+  if (!apiKey) return [];
+
+  const models = (process.env.LLM_FALLBACK_MODELS ?? defaults.model)
+    .split(",").map(entry => entry.trim()).filter(Boolean)
+    // Never silently spend money as a fallback. If a paid model is listed it is dropped
+    // rather than used, because the whole point of the standby is that it stays free.
+    .filter(model => provider !== "openrouter" || model.endsWith(FREE_MODEL_SUFFIX));
+
+  return models.map(model => ({
+    provider,
+    apiKey,
+    model,
+    baseUrl: (process.env.LLM_FALLBACK_BASE_URL || defaults.baseUrl).replace(/\/$/, ""),
+  }));
+}
 
 export function resolveLlmConfig(): LlmConfig {
   const provider = (process.env.LLM_PROVIDER ?? "groq") as LlmProvider;
@@ -176,7 +212,27 @@ async function reserve(estimated: number): Promise<(actual: number | null) => vo
 export function llmDailyBudget() {
   const now = Date.now();
   const spent = dailyTokens(now);
-  return { limit: TOKENS_PER_DAY, spent, remaining: Math.max(0, TOKENS_PER_DAY - spent), blockedUntil: providerBlockedUntil > now ? new Date(providerBlockedUntil).toISOString() : null };
+  return {
+    limit: TOKENS_PER_DAY, spent, remaining: Math.max(0, TOKENS_PER_DAY - spent),
+    blockedUntil: providerBlockedUntil > now ? new Date(providerBlockedUntil).toISOString() : null,
+    standbys: resolveFallbackConfigs().map(config => config.model),
+    standbyBlockedUntil: standbyBlockedUntil > now ? new Date(standbyBlockedUntil).toISOString() : null,
+  };
+}
+
+// OpenRouter's free tier allows fifty model requests a day, shared across every free
+// model on it, and says so in a header when it refuses. Without honouring that, each
+// generation spends a call per standby rediscovering the same exhaustion. Blocked until
+// the reset it names, the standbys are skipped and the concept defers cleanly instead.
+let standbyBlockedUntil = 0;
+
+function standbyAvailable() { return Date.now() >= standbyBlockedUntil; }
+
+function noteStandbyRefusal(resetHeader: string | null) {
+  const resetMs = Number(resetHeader);
+  standbyBlockedUntil = Number.isFinite(resetMs) && resetMs > Date.now()
+    ? resetMs
+    : Date.now() + 60 * 60 * 1000;
 }
 
 /** Called when the provider returns a pacing signal, so every caller backs off, not one. */
@@ -189,7 +245,9 @@ function blockProvider(seconds: number) {
  * floor rather than zero: if the input is so large that nothing fits, the request should
  * fail loudly as a 413 rather than silently ask for a truncated, schema-invalid object.
  */
-function completionBudget(request: { instructions: string; input: string; schema?: unknown; maxCompletionTokens?: number }): number {
+function completionBudget(request: { instructions: string; input: string; schema?: unknown; maxCompletionTokens?: number }, provider: LlmProvider = "groq"): number {
+  // Standby budgets are their own: see the reasoning note on the request body below.
+  if (provider !== "groq") return request.maxCompletionTokens ?? Number(process.env.LLM_FALLBACK_MAX_TOKENS ?? 6_000);
   // The JSON schema is sent with the request and counts against the same window; at
   // ~2100 characters it is not a rounding error.
   const schemaTokens = request.schema ? estimateTokens(JSON.stringify(request.schema)) : 0;
@@ -225,8 +283,13 @@ export async function generateStructured(
     + (request.schema ? estimateTokens(JSON.stringify(request.schema)) : 0)
     + completionBudget(request);
 
-  for (let attempt = 1; ; attempt++) {
-    const settle = await reserve(estimated);
+  let paced: LlmRateLimitError | null = null;
+  for (let attempt = 1; attempt <= 2 && !paced; attempt++) {
+    const settle = await reserve(estimated).catch(error => {
+      if (error instanceof LlmRateLimitError) { paced = error; return null; }
+      throw error;
+    });
+    if (!settle) break;
     try {
       const result = await callProvider(request, config);
       settle(result.totalTokens);
@@ -238,9 +301,27 @@ export async function generateStructured(
       blockProvider(error.retryAfterSeconds ?? 65);
       // One inline retry, and only when the wait is short enough to hold the caller for.
       const waitMs = Math.max(0, providerBlockedUntilMs() - Date.now());
-      if (attempt >= 2 || waitMs > PACING_MAX_INLINE_WAIT_MS) throw error;
+      if (attempt >= 2 || waitMs > PACING_MAX_INLINE_WAIT_MS) { paced = error; break; }
     }
   }
+
+  // The primary is rate limited or out of tokens for the day. That is a statement about
+  // the account, not the request, so the same work is offered to the free standby models
+  // in turn. Only a pacing failure gets here: a malformed request would fail identically
+  // everywhere and should surface as itself rather than be retried four more times.
+  for (const fallback of standbyAvailable() ? resolveFallbackConfigs() : []) {
+    try {
+      const result = await callProvider(request, fallback);
+      return { text: result.text, model: result.model };
+    } catch (error) {
+      // A standby with its own limit reached, or one that cannot hold the schema, just
+      // means the next one gets a turn. Anything else is a real fault and stops here.
+      if (error instanceof LlmRateLimitError) continue;
+      if (error instanceof Error && /\((?:4\d\d|5\d\d)\)|no structured output/i.test(error.message)) continue;
+      throw error;
+    }
+  }
+  throw paced ?? new LlmRateLimitError("every provider is rate limited", 60);
 }
 
 /** Exposed for the retry decision above; the value itself stays private to the gate. */
@@ -252,7 +333,9 @@ async function callProvider(
   request: StructuredRequest,
   config: LlmConfig,
 ): Promise<{ text: string; model: string; totalTokens: number | null }> {
-  const timeout = AbortSignal.timeout(request.timeoutMs ?? 90_000);
+  const timeout = AbortSignal.timeout(
+    request.timeoutMs ?? (config.provider === "groq" ? 90_000 : Number(process.env.LLM_FALLBACK_TIMEOUT_MS ?? 240_000)),
+  );
 
   if (config.provider === "openai") {
     const response = await fetch(`${config.baseUrl}/responses`, {
@@ -277,10 +360,18 @@ async function callProvider(
     return { text, model: config.model, totalTokens: null };
   }
 
-  // Groq exposes an OpenAI-compatible chat/completions endpoint.
+  // Groq and OpenRouter both expose an OpenAI-compatible chat/completions endpoint, but
+  // only Groq takes max_completion_tokens and reasoning_effort; sending them onward makes
+  // some models reject the whole request.
+  const isGroq = config.provider === "groq";
+  const budget = completionBudget(request, config.provider);
   const response = await fetch(`${config.baseUrl}/chat/completions`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${config.apiKey}`, "Content-Type": "application/json" },
+    headers: {
+      Authorization: `Bearer ${config.apiKey}`,
+      "Content-Type": "application/json",
+      ...(config.provider === "openrouter" ? { "X-Title": "Finkavo Social" } : {}),
+    },
     body: JSON.stringify({
       model: config.model,
       temperature: 0.2,
@@ -289,8 +380,15 @@ async function callProvider(
       // evidence excerpts were ingested the same request went from fitting to 13,500
       // tokens. The ceiling is derived from what the input actually costs so the request
       // is always inside the window.
-      max_completion_tokens: completionBudget(request),
-      reasoning_effort: process.env.LLM_REASONING_EFFORT ?? "low",
+      // Both standbys reason before answering, and their thinking is charged against the
+      // same ceiling as the answer. Nemotron given 5,000 tokens spent 4,000 of them
+      // thinking and returned an object cut off at its second line; given 16,000 it spent
+      // every one and still returned nothing valid, taking 106 seconds to do it. Turning
+      // reasoning off it answers in under a thousand tokens, in full, first time. So the
+      // fix is not more room — it is not asking for the deliberation in the first place.
+      ...(isGroq
+        ? { max_completion_tokens: budget, reasoning_effort: process.env.LLM_REASONING_EFFORT ?? "low" }
+        : { max_tokens: budget, reasoning: { enabled: false } }),
       response_format: {
         type: "json_schema",
         json_schema: { name: request.schemaName, strict: true, schema: request.schema },
@@ -332,6 +430,10 @@ async function describeFailure(response: Response, config: LlmConfig): Promise<s
   // completion budget exceeds the per-minute token allowance — also a pacing problem,
   // not a bad request, so both wait rather than burning a repair attempt.
   if (response.status === 429 || response.status === 413) {
+    if (config.provider === "openrouter" && /free-models-per-day|openrouter_free_tier_daily/i.test(detail)) {
+      const reset = /"X-RateLimit-Reset":"(\d+)"/i.exec(detail)?.[1] ?? null;
+      noteStandbyRefusal(reset);
+    }
     const header = response.headers.get("retry-after");
     const parsed = header ? Number(header) : NaN;
     const retryAfter = Number.isFinite(parsed) ? parsed : null;

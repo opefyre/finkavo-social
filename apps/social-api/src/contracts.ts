@@ -42,13 +42,20 @@ export type Draft = z.infer<typeof DraftSchema>;
  *
  * The provider therefore enforces shape — required fields, types, enums, item counts —
  * while Zod keeps the full contract, including every length the renderer depends on.
+ *
+ * minLength is the exception, and it is kept. Dropping it made an empty string a valid
+ * answer, and a weaker model takes that offer: the free standby models returned drafts
+ * whose hook, caption and call to action were all "", which Zod then rejected three
+ * times before the topic was retired. An over-long field is worth repairing because
+ * there is something there to shorten; an empty one is not a length to fix but an answer
+ * never given, and no repair round recovers it.
  */
 export function providerSchema(schema: unknown): unknown {
   if (Array.isArray(schema)) return schema.map(providerSchema);
   if (!schema || typeof schema !== "object") return schema;
   const relaxed: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(schema as Record<string, unknown>)) {
-    if (key === "maxLength" || key === "minLength" || key === "pattern") continue;
+    if (key === "maxLength" || key === "pattern") continue;
     relaxed[key] = providerSchema(value);
   }
   return relaxed;

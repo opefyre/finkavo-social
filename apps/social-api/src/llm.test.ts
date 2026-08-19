@@ -106,4 +106,81 @@ describe("free-tier pacing", () => {
     await expect(generateStructured(REQUEST)).rejects.toBeInstanceOf(LlmRateLimitError);
     expect(fetchMock).toHaveBeenCalledTimes(afterFirst);
   });
+
+  it("hands the work to a free standby when the primary is out of tokens", async () => {
+    // Groq's day is spent — the state that left an afternoon with no drafts at all.
+    const fetchMock = vi.fn(async (url: string | URL) => String(url).includes("openrouter")
+      ? new Response(JSON.stringify({ choices: [{ message: { content: '{"ok":"from-standby"}' } }] }), { status: 200 })
+      : new Response("daily limit", { status: 429, headers: { "retry-after": "1800" } }));
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    const { generateStructured } = await freshClient({
+      ...BASE_ENV,
+      LLM_FALLBACK_PROVIDER: "openrouter",
+      OPENROUTER_API_KEY: "test-standby-key",
+      LLM_FALLBACK_MODELS: "nvidia/nemotron-3-super-120b-a12b:free",
+    });
+
+    const result = await generateStructured(REQUEST);
+    expect(result.text).toContain("from-standby");
+    expect(result.model).toBe("nvidia/nemotron-3-super-120b-a12b:free");
+  });
+
+  it("refuses to fall back onto a paid model", async () => {
+    // A standby that costs money would turn a quiet afternoon into a bill nobody chose.
+    const { resolveFallbackConfigs } = await freshClient({
+      ...BASE_ENV,
+      LLM_FALLBACK_PROVIDER: "openrouter",
+      OPENROUTER_API_KEY: "test-standby-key",
+      LLM_FALLBACK_MODELS: "anthropic/claude-sonnet-4.5,nvidia/nemotron-3-super-120b-a12b:free,openai/gpt-5",
+    });
+
+    const models = resolveFallbackConfigs().map(config => config.model);
+    expect(models).toEqual(["nvidia/nemotron-3-super-120b-a12b:free"]);
+  });
+
+  it("tries the next standby when one is rate limited, and gives up honestly", async () => {
+    const fetchMock = vi.fn(async (url: string | URL) => new Response(String(url) && "limit", { status: 429, headers: { "retry-after": "900" } }));
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    const { generateStructured, LlmRateLimitError } = await freshClient({
+      ...BASE_ENV,
+      LLM_FALLBACK_PROVIDER: "openrouter",
+      OPENROUTER_API_KEY: "test-standby-key",
+      LLM_FALLBACK_MODELS: "nvidia/nemotron-3-super-120b-a12b:free,google/gemma-4-26b-a4b-it:free",
+    });
+
+    // Primary refuses, then both standbys refuse; the caller still sees a rate limit,
+    // which defers the concept rather than retiring the brief behind it.
+    await expect(generateStructured(REQUEST)).rejects.toBeInstanceOf(LlmRateLimitError);
+    const targets = fetchMock.mock.calls.map(call => String(call[0]));
+    expect(targets.filter(url => url.includes("openrouter"))).toHaveLength(2);
+  });
+
+  it("stops asking the standbys once their shared daily allowance is spent", async () => {
+    // OpenRouter refuses every free model together, and names when it resets. Without
+    // reading that, each generation burns one call per standby learning it again.
+    const refusal = JSON.stringify({ error: {
+      message: "Rate limit exceeded: free-models-per-day",
+      metadata: { headers: { "X-RateLimit-Limit": "50", "X-RateLimit-Remaining": "0", "X-RateLimit-Reset": String(Date.now() + 3_600_000) } },
+    } });
+    const fetchMock = vi.fn(async (url: string | URL) => String(url).includes("openrouter")
+      ? new Response(refusal, { status: 429 })
+      : new Response("primary limit", { status: 429, headers: { "retry-after": "1800" } }));
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    const { generateStructured, LlmRateLimitError, llmDailyBudget } = await freshClient({
+      ...BASE_ENV,
+      LLM_FALLBACK_PROVIDER: "openrouter",
+      OPENROUTER_API_KEY: "test-standby-key",
+      LLM_FALLBACK_MODELS: "nvidia/nemotron-3-super-120b-a12b:free,google/gemma-4-26b-a4b-it:free",
+    });
+
+    await expect(generateStructured(REQUEST)).rejects.toBeInstanceOf(LlmRateLimitError);
+    const firstRound = fetchMock.mock.calls.filter(call => String(call[0]).includes("openrouter")).length;
+    expect(firstRound).toBeGreaterThan(0);
+    expect(llmDailyBudget().standbyBlockedUntil).toBeTruthy();
+
+    // The next caller should not spend a single call rediscovering the same wall.
+    await expect(generateStructured(REQUEST)).rejects.toBeInstanceOf(LlmRateLimitError);
+    expect(fetchMock.mock.calls.filter(call => String(call[0]).includes("openrouter"))).toHaveLength(firstRound);
+  });
 });
+
