@@ -341,7 +341,11 @@ async function assessStoredEditorial(postId:string,revisionId:string){
 }
 
 const GenerateSchema = z.object({ conceptId: z.string().uuid() });
-const PlanningSchema = z.object({ date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), capacity: z.number().int().min(1).max(5).default(2) });
+// Five is the daily cadence the plan is built for, so it is the default. This defaulted
+// to 2 while the scheduler called it with no override, which silently capped the day at
+// two planned concepts no matter how many slots the plan held. Capacity remains a cap,
+// not a quota: a slot without current evidence is still held rather than filled.
+const PlanningSchema = z.object({ date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), capacity: z.number().int().min(1).max(5).default(5) });
 const ResearchSchema = z.object({ date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional() });
 const ReviewRequestSchema = z.object({ expiresInMinutes: z.number().int().min(5).max(1440).default(60), dryRun: z.boolean().default(false) });
 const RenderRequestSchema = z.object({ idempotencyKey: z.string().min(8).max(200) });
