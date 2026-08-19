@@ -4832,7 +4832,7 @@
       "volatility": "stable",
       "promise": "The nationalities that qualify, the residence periods some require, where to register, and the cut-off before an election.",
       "anchorFact": {
-        "claim": "Local election voting is open to Portuguese citizens, Brazilian citizens with equal political rights status, EU nationals aged 17 or over registered in Portugal, and nationals of Brazil without that status, Cape Verde, Argentina, Chile, Colombia, Iceland, Norway, New Zealand, Peru, the United Kingdom, Uruguay or Venezuela resident in Portugal for more than two or three years depending on the country; registration is at the junta de freguesia of the address on the residence title, and recenseamento is suspended from the 60th day before an election.",
+        "claim": "Local election voting is open to Portuguese citizens, Brazilian citizens with equal political rights status, EU nationals aged 17 or over registered in Portugal, and nationals of Brazil without that status, Cape Verde, Argentina, Chile, Colombia, Iceland, Norway, New Zealand, Peru, the United Kingdom, Uruguay or Venezuela resident in Portugal for more than two or three years depending on the country; recenseamento eleitoral registration is at the junta de freguesia of the address on the residence title, and recenseamento is suspended from the 60th day before an election.",
         "kind": "artefact",
         "namedThing": "recenseamento eleitoral",
         "verifyAt": "https://www.cne.pt/faq2/95/5",
