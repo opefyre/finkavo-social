@@ -695,6 +695,7 @@ const server = http.createServer(async (req, res) => {
 
       const results: Array<Record<string, unknown>> = [];
       for (const [canonicalUrl, authority] of targets) {
+       try {
         if (!force) {
           const [fresh] = await sql`SELECT id FROM document WHERE source_url=${canonicalUrl} AND verified_still_available=true AND last_verified_at > now() - INTERVAL '24 hours'`;
           if (fresh) { results.push({ url: canonicalUrl, state: "fresh" }); continue; }
@@ -741,6 +742,11 @@ const server = http.createServer(async (req, res) => {
                     VALUES (${document.id}, ${index}, ${chunk}, ${Math.ceil(chunk.length / 4)}, 'pt', ${hash(chunk)})`;
         }
         results.push({ url: canonicalUrl, state: "ingested", via, chunks: chunks.length, characters: text.length });
+       } catch (error) {
+        // One unreachable or malformed source must not abort ingestion of the rest;
+        // otherwise a single bad page holds every brief that follows it.
+        results.push({ url: canonicalUrl, state: "error", error: String((error as Error).message ?? error).slice(0, 200) });
+       }
       }
       const ingested = results.filter(r => r.state === "ingested").length;
       const unusable = results.filter(r => r.state === "unusable").length;
