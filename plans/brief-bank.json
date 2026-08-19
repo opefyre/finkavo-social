@@ -3557,6 +3557,128 @@
         "canonicalUrl": "https://www2.gov.pt/servicos/pedir-o-reembolso-de-despesas-de-saude-a-adse",
         "authority": "gov.pt / ADSE"
       }
+    },
+    {
+      "id": "housing-condominium-reserve-fund-and-arrears",
+      "pillar": "housing_property",
+      "valueClass": "threshold",
+      "title": "The reserve fund every condominium owner must pay into",
+      "userQuestion": "What is the reserve fund on my condominium bill, and can I opt out?",
+      "scenario": "An owner queries an extra line on the condominium charge, or a building has no fund at all and cannot pay for urgent works.",
+      "audience": "apartment owners paying condominium charges",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The minimum contribution set in law, the window for pursuing an owner in arrears, and what the minutes must record.",
+      "anchorFact": {
+        "claim": "Each condómino contributes to the fundo comum de reserva an amount corresponding to at least 10% of their share in other condominium expenses, the assembly minutes must state the annual amount payable by each owner and the payment date, and judicial action to collect must be filed within 90 days of the first default unless the assembly decides otherwise.",
+        "kind": "figure",
+        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/1994-144575382-177443439",
+        "volatility": "stable"
+      },
+      "notObvious": "The 90-day window to sue for arrears is short, so a condominium that waits to see whether a neighbour pays can lose the straightforward route to recovery.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/1994-144575382-177443439",
+        "authority": "Diário da República"
+      }
+    },
+    {
+      "id": "housing-energy-certificate-required-before-advertising",
+      "pillar": "housing_property",
+      "valueClass": "deadline_action",
+      "title": "The energy certificate is needed before you advertise, not at signing",
+      "userQuestion": "When do I need the energy certificate to sell or rent out my property?",
+      "scenario": "An owner lists a property, finds a tenant, and only then discovers a certificate was required from the moment the advert went up.",
+      "audience": "owners selling or letting a property",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "When the certificate becomes mandatory, what adverts must display, and the registration fee range for homes.",
+      "anchorFact": {
+        "claim": "A valid certificado energético is mandatory to present when entering into a purchase, lease or rental contract for any building, and since 1 December 2013 any advertisement for sale or letting must state the energy classification from the certificate or pre-certificate; the registration fee for residential properties ranges from 28 to 65 euros plus the qualified expert's fee and VAT.",
+        "kind": "deadline",
+        "namedThing": "certificado energético",
+        "verifyAt": "https://www2.gov.pt/cidadaos-europeus-viajar-viver-e-fazer-negocios-em-portugal/viver-em-portugal/compra-e-venda-de-imoveis-em-portugal-cidadaos-europeus-",
+        "volatility": "annual"
+      },
+      "notObvious": "The obligation attaches to the advert, so it bites weeks before the deed and is the stage at which owners are actually caught out.",
+      "journeyStage": "renting_buying_moving",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/cidadaos-europeus-viajar-viver-e-fazer-negocios-em-portugal/viver-em-portugal/compra-e-venda-de-imoveis-em-portugal-cidadaos-europeus-",
+        "authority": "gov.pt / ADENE"
+      }
+    },
+    {
+      "id": "employment-overtime-rates-change-after-100-hours",
+      "pillar": "employment",
+      "valueClass": "threshold",
+      "title": "Overtime pay rates double after a hundred hours in the year",
+      "userQuestion": "Is all my overtime paid at the same rate?",
+      "scenario": "A worker doing regular overtime checks a payslip against the headline rate and cannot tell whether the uplift is correct.",
+      "audience": "workers doing regular overtime",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The uplift for the first and later hours below and above the annual threshold, and the different rate on rest days.",
+      "anchorFact": {
+        "claim": "Trabalho suplementar up to 100 hours a year is paid with an uplift of 25% for the first hour and 37.5% for subsequent hours on working days, and 50% on rest days or holidays; above 100 hours a year the uplifts become 50% for the first hour and 75% for subsequent hours on working days, and 100% on rest days or holidays.",
+        "kind": "figure",
+        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475-211441912",
+        "volatility": "stable"
+      },
+      "notObvious": "Four different rates apply depending on the hour of the day and the running annual total, so a single quoted percentage is almost never the right one.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475-211441912",
+        "authority": "Diário da República"
+      }
+    },
+    {
+      "id": "employment-compensatory-rest-after-mandatory-rest-day",
+      "pillar": "employment",
+      "valueClass": "edge_case",
+      "title": "Working a mandatory rest day earns a full day back",
+      "userQuestion": "I worked two hours on my rest day — do I get anything besides the extra pay?",
+      "scenario": "A worker called in briefly on their weekly rest day is paid the uplift and assumes that settles it.",
+      "audience": "workers called in on a weekly rest day",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The paid compensatory day owed regardless of hours worked, and the window in which it must be taken.",
+      "anchorFact": {
+        "claim": "Under the Código do Trabalho, providing trabalho suplementar on a mandatory weekly rest day gives the worker the right to a paid compensatory rest day regardless of how long the overtime lasted, to be taken within one of the three following working days, set by agreement or failing that by the employer.",
+        "kind": "instrument",
+        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475-211441912",
+        "volatility": "stable"
+      },
+      "notObvious": "A whole day is owed even for a short call-in, and the three-working-day window means it lapses quickly if nobody schedules it.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475-211441912",
+        "authority": "Diário da República"
+      }
+    },
+    {
+      "id": "employment-remote-work-expense-compensation",
+      "pillar": "employment",
+      "valueClass": "scenario",
+      "title": "Claiming the extra household costs of working from home",
+      "userQuestion": "Should my employer pay for the electricity and internet I use working from home?",
+      "scenario": "A remote worker absorbs higher bills, assuming the arrangement is a personal convenience rather than something the employer must fund.",
+      "audience": "employees working under a remote work agreement",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The employer's duty to pay additional costs, the two sets of bills that evidence them, when payment falls due, and why it is not taxed as income.",
+      "anchorFact": {
+        "claim": "Under the teletrabalho regime in the Código do Trabalho, the employer pays the additional expenses the worker incurs, proven by producing consumption documents for the last month of in-person work before the agreement and for the month the increase relates to, with payment due in the month following that proof; the compensation is a cost to the employer and does not constitute worker income up to the defined limit.",
+        "kind": "instrument",
+        "namedThing": "teletrabalho",
+        "verifyAt": "https://diariodarepublica.pt/dr/detalhe/lei/83-2021-175397114",
+        "volatility": "stable"
+      },
+      "notObvious": "The comparison is against your own pre-remote bills, so keeping one month of old invoices is what makes the claim provable at all.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/detalhe/lei/83-2021-175397114",
+        "authority": "Diário da República"
+      }
     }
   ]
 }
