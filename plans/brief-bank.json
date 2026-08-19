@@ -7318,6 +7318,106 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/Deducoes_beneficios_taxas/Paginas/default.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "freelance-one-off-work-without-opening-activity",
+      "pillar": "freelance_business",
+      "valueClass": "threshold",
+      "title": "Invoicing once a year without opening activity",
+      "userQuestion": "I did one job this year. Do I have to register as self-employed?",
+      "scenario": "Someone paid once for a single piece of work opens an activity, and inherits quarterly declarations they never needed.",
+      "audience": "people paid once for a single job",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The value below which a one-off invoice is possible, the registration it avoids, and when the tax has to be paid.",
+      "anchorFact": {
+        "claim": "Where in a civil year a person receives payment only once for a sale of goods or a supply of services and the amount does not exceed 25,000 euros, they may issue an ato isolado instead of declaring the start of activity, and the corresponding tax must be delivered by the end of the month following the conclusion of the operation.",
+        "kind": "figure",
+        "namedThing": "ato isolado",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Atividade_profissional/Ato_Isolado/Paginas/default.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "It is once per year, not once per client, so a second payment in the same year takes the whole thing out of the regime.",
+      "journeyStage": "starting_work",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Atividade_profissional/Ato_Isolado/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "freelance-when-a-one-off-invoice-escapes-withholding",
+      "pillar": "freelance_business",
+      "valueClass": "edge_case",
+      "title": "The one-off invoice that escapes withholding tax",
+      "userQuestion": "Does the client have to withhold IRS on a one-off invoice?",
+      "scenario": "A payer withholds on a one-off invoice that was exempt, or fails to withhold on one that was not, and both sides discover it at filing time.",
+      "audience": "people issuing or paying a one-off invoice",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The value below which withholding does not apply, and the type of activity that is exempt from it whatever the amount.",
+      "anchorFact": {
+        "claim": "An ato isolado is exempt from IRS retenção na fonte where its value is below 15,000 euros, and an ato isolado arising from a commercial, industrial or agricultural activity rather than from a professional activity is always exempt from withholding.",
+        "kind": "figure",
+        "namedThing": "ato isolado",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Atividade_profissional/Ato_Isolado/Paginas/default.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The activity type overrides the amount entirely, so two invoices of the same value can be treated differently depending on what the work was.",
+      "journeyStage": "starting_work",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Atividade_profissional/Ato_Isolado/Paginas/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "iva-every-invoice-must-carry-a-code-and-be-reported",
+      "pillar": "iva",
+      "valueClass": "deadline_action",
+      "title": "The fifth of the month, and two codes on every invoice",
+      "userQuestion": "What do I actually have to send Finanças about the invoices I issue?",
+      "scenario": "A small business issues correct invoices all month and is non-compliant anyway, because nothing was communicated and the documents carry no codes.",
+      "audience": "people issuing invoices in Portugal",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The monthly communication deadline, and the two codes every fiscally relevant document has to carry.",
+      "anchorFact": {
+        "claim": "Invoice elements must be communicated to the Autoridade Tributária through e-Fatura by the 5th day of the month following issuance; the ATCUD unique document code must appear on invoices and other fiscally relevant documents at the moment of issue, and the two-dimensional QR code required by the Decreto-Lei 28/2019 has been mandatory on those documents since 1 January 2021.",
+        "kind": "deadline",
+        "namedThing": "ATCUD",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00883.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Issuing the invoice and reporting it are separate obligations with separate deadlines, and only the second one has a date attached.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/Pages/faqs-00883.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "immigration-passive-income-visa-is-not-for-remote-work",
+      "pillar": "immigration_residency",
+      "valueClass": "decision",
+      "title": "The visa that passive income buys, and the one remote work needs",
+      "userQuestion": "Which visa do I need if I live off investments, or work remotely?",
+      "scenario": "Someone working remotely for a foreign employer applies on the passive-income route and is refused for using the wrong visa entirely.",
+      "audience": "people moving to Portugal on income from abroad",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "What each visa is for, the income each requires, and the reductions available when accommodation and food are secured.",
+      "anchorFact": {
+        "claim": "The D7 residence visa is for people living on their own income from movable or immovable property, intellectual property or financial investments, requires a constant and stable flow at least equivalent to the Portuguese minimum wage and cannot be used by someone working remotely for companies outside Portugal, while the D8 digital nomad route requires average monthly income over the last 3 months of at least 4 minimum wages; means of subsistence may be reduced by half where accommodation is assured and by up to 90 per cent where food is also assured.",
+        "kind": "figure",
+        "namedThing": "meios de subsistência",
+        "verifyAt": "https://aima.gov.pt/pt/temas-transversais/meios-de-subsistencia",
+        "volatility": "annual"
+      },
+      "notObvious": "The reduction for secured accommodation and food is where the real threshold sits, and almost nobody applying quotes it.",
+      "journeyStage": "before_arrival",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/pedir-um-visto-de-residencia-para-fixacao-de-residencia-de-reformados-religiosos-e-pessoas-que-vivem-de-rendimentos-proprios",
+        "authority": "gov.pt / AIMA"
+      }
     }
   ]
 }
