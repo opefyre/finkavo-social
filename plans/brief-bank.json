@@ -7793,6 +7793,31 @@
         "canonicalUrl": "https://iefponline.iefp.pt/IEFP/direitosDeveres.do",
         "authority": "Instituto do Emprego e Formação Profissional"
       }
+    },
+    {
+      "id": "iva-tax-free-has-a-three-month-clock-and-a-packaging-rule",
+      "pillar": "iva",
+      "valueClass": "deadline_action",
+      "title": "Three months to leave with it, in the original packaging",
+      "userQuestion": "How does a visitor actually reclaim the IVA on shopping here?",
+      "scenario": "A visitor buys expecting a refund, wears or unpacks the item before flying, and the customs certification is refused.",
+      "audience": "visitors resident outside the EU",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "What has to be said at the till, the deadline to leave the EU with the goods, and the condition they must be in at the border.",
+      "anchorFact": {
+        "claim": "A traveller resident outside the European Union must tell the seller at the moment of purchase that they want the IVA exemption and show a passport or other officially recognised document proving residence outside the EU; they have until the end of the 3rd month following the purchase to leave EU territory with the goods in their personal baggage, the e-Taxfree Portugal system applies only when leaving the EU through Portugal and only to purchases made in national territory, and the goods must be presented at the exit customs office in their original packaging and without signs of use.",
+        "kind": "deadline",
+        "namedThing": "e-Taxfree Portugal",
+        "verifyAt": "https://info-aduaneiro.portaldasfinancas.gov.pt/pt/informacao_aduaneira/viajantes/isencao_bagagem_pterceiro/Pages/faq-isencao-iva.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "Asking at the till is the step that creates the claim, so a refund cannot be arranged after the fact no matter what the receipt shows.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info-aduaneiro.portaldasfinancas.gov.pt/pt/informacao_aduaneira/viajantes/isencao_bagagem_pterceiro/Pages/faq-isencao-iva.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
