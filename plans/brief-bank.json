@@ -10793,6 +10793,56 @@
         "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/civa_rep/Pages/iva78.aspx",
         "authority": "Autoridade Tributária e Aduaneira"
       }
+    },
+    {
+      "id": "irs-the-surcharge-that-starts-at-eighty-thousand",
+      "pillar": "irs",
+      "valueClass": "threshold",
+      "title": "The surcharge that starts above eighty thousand",
+      "userQuestion": "Is there an extra tax on higher incomes beyond the normal brackets?",
+      "scenario": "Someone with a one-off high-income year models the ordinary brackets and misses a surcharge sitting on top of them.",
+      "audience": "people with high or irregular taxable income",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The income above which the solidarity surcharge applies, and the two rates that sit on top of the ordinary brackets.",
+      "anchorFact": {
+        "claim": "Under artigo 68-A of the Código do IRS an additional solidarity rate applies to taxable income above 80,000 euros, at 2.5 per cent on the part between 80,001 and 250,000 euros and 5 per cent on the part above 250,000 euros.",
+        "kind": "figure",
+        "namedThing": "taxa adicional de solidariedade",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs68a.aspx",
+        "volatility": "annual"
+      },
+      "notObvious": "It applies only to the slice above each threshold rather than to the whole income, which is what makes the effective cost far smaller than the headline rate suggests.",
+      "journeyStage": "settled_life",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs68a.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "irs-the-effective-withholding-rate-on-your-payslip",
+      "pillar": "irs",
+      "valueClass": "insider",
+      "title": "The withholding rate your payslip has to show you",
+      "userQuestion": "How do I know whether too much tax is being taken from my pay?",
+      "scenario": "An employee cannot tell whether their withholding matches their circumstances because they never look for the figure the employer must print.",
+      "audience": "employees and pensioners subject to withholding",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "Who withholds and at what moment, and the effective monthly rate the payment document must display.",
+      "anchorFact": {
+        "claim": "Under artigo 99 of the Código do IRS the entities owing employment income and pensions must retain tax at the moment of payment or of making the amounts available to their holders, and the payment document must show the effective monthly retenção na fonte rate, calculated as the ratio between the amounts withheld and the gross income paid.",
+        "kind": "instrument",
+        "namedThing": "retenção na fonte",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs99.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "The effective rate is printed for you rather than something to calculate, which makes checking it against your circumstances a two-minute job.",
+      "journeyStage": "in_employment",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs99.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
     }
   ]
 }
