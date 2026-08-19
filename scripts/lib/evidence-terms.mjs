@@ -13,14 +13,14 @@ export const PILLAR_TERMS = {
   freelance_business: ["trabalhador independente", "abrir atividade", "recibos verdes", "CAE", "ato isolado", "cessação de atividade", "regime simplificado", "coeficiente", "fatura", "recibo verde"],
   iva: ["IVA", "CIVA", "artigo 53", "declaração periódica", "VIES", "declaração de alterações", "declaração recapitulativa", "autoliquidação", "taxa reduzida", "taxa intermédia", "Lista I", "Lista II"],
   irs: ["IRS", "Modelo 3", "e-Fatura", "Anexo J", "IRS Automático", "IRS Jovem", "IAS", "taxa liberatória", "Modelo 30", "retenção na fonte", "dedução à coleta", "despesas de saúde"],
-  social_security: ["Segurança Social", "declaração trimestral", "contribuições", "NISS", "trabalhador independente", "subsídio parental", "pensão de velhice", "fator de sustentabilidade"],
+  social_security: ["Segurança Social", "Segurança Social Direta", "carreira contributiva", "declaração trimestral", "contribuições", "NISS", "trabalhador independente", "subsídio parental", "pensão de velhice", "fator de sustentabilidade"],
   housing_property: ["arrendamento", "IMI", "AIMI", "IMT", "imóvel", "caderneta predial", "certidão permanente", "registo predial", "Imposto do Selo", "habitação própria permanente", "VPT", "oposição à renovação", "NRAU"],
-  banking_money: ["Banco de Portugal", "SEPA", "conta bancária", "IBAN", "serviços mínimos bancários", "IAS", "MB WAY", "transferência a crédito", "débito direto", "mudança de conta", "crédito à habitação", "reembolso antecipado"],
+  banking_money: ["Banco de Portugal", "SEPA", "conta bancária", "IBAN", "serviços mínimos bancários", "IAS", "MB WAY", "transferência a crédito", "débito direto", "mudança de conta", "crédito à habitação", "reembolso antecipado", "crédito aos consumidores", "TAEG"],
   employment: ["contrato de trabalho", "Código do Trabalho", "salário", "férias", "feriado", "período experimental", "aviso prévio", "subsídio de desemprego", "prazo de garantia", "subsídio de férias", "duodécimos"],
   health_family: ["SNS", "centro de saúde", "médico de família", "número de utente", "taxas moderadoras", "insuficiência económica", "IAS", "consulta de recurso", "SNS 24", "licença parental", "subsídio parental", "comparticipação", "receita sem papel"],
   driving_transport: ["IMT", "carta de condução", "IUC", "veículo", "troca de carta", "título de condução", "inspeção periódica", "IPO", "registo de propriedade", "revalidação", "atestado médico"],
-  education_children: ["matrícula escolar", "educação", "equivalência", "reconhecimento", "Direção-Geral da Educação", "Portal das Matrículas", "ASE", "abono de família", "prova escolar", "concurso nacional de acesso", "provas de ingresso"],
-  daily_life_consumer: ["ePortugal", "Livro de Reclamações", "ANACOM", "energia", "arbitragem de consumo", "fidelização", "ANACOM", "livre resolução", "garantia", "comercializador", "ERSE"],
+  education_children: ["matrícula escolar", "educação", "equivalência", "reconhecimento", "Direção-Geral da Educação", "Portal das Matrículas", "ASE", "abono de família", "prova escolar", "concurso nacional de acesso", "provas de ingresso", "creche", "manuais escolares"],
+  daily_life_consumer: ["ePortugal", "Livro de Reclamações", "ANACOM", "energia", "arbitragem de consumo", "fidelização", "ANACOM", "livre resolução", "garantia", "comercializador", "ERSE", "serviços públicos essenciais", "prescrição"],
 };
 
 const INSTRUMENT_PATTERN =

@@ -2645,6 +2645,178 @@
         "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2009-34546475-46734975",
         "authority": "Diário da República"
       }
+    },
+    {
+      "id": "consumer-utility-debt-prescribes-in-six-months",
+      "pillar": "daily_life_consumer",
+      "valueClass": "threshold",
+      "title": "A utility can only chase six months of unbilled consumption",
+      "userQuestion": "My provider sent a huge back-bill for old consumption — do I have to pay it?",
+      "scenario": "A household receives a correction covering a year or more of estimated readings and assumes an old debt is still owed in full.",
+      "audience": "households sent a retroactive utility bill",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The six-month limit on recovering unbilled supply, and the step you must take yourself for it to apply.",
+      "anchorFact": {
+        "claim": "Under the Lei dos Serviços Públicos Essenciais the supplier's right to receive payment for services supplied prescribes 6 months after the supply, and where the consumer paid less than actual consumption the right to the difference expires 6 months after that first payment.",
+        "kind": "instrument",
+        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/1996-34491275-58940580",
+        "volatility": "stable"
+      },
+      "notObvious": "Prescription is not automatic. It only bites if the consumer expressly invokes it in writing, and invoking it after paying recovers nothing.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/1996-34491275-58940580",
+        "authority": "Diário da República"
+      }
+    },
+    {
+      "id": "consumer-invoking-prescription-before-you-pay",
+      "pillar": "daily_life_consumer",
+      "valueClass": "costly_mistake",
+      "title": "Paying a disputed back-bill destroys your right to dispute it",
+      "userQuestion": "Should I pay the disputed amount first and argue afterwards?",
+      "scenario": "A customer pays a large correction to avoid a supply cut, planning to reclaim it later, and finds the protection no longer available.",
+      "audience": "customers disputing a utility correction",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Why the order matters, what invoking prescription requires, and what paying first forfeits.",
+      "anchorFact": {
+        "claim": "For prescrição and caducidade to take effect on essential services billing the consumer must expressly invoke them, preferably in writing, to the supplier, and invoking them after the invoice has already been paid does not result in reimbursement of amounts paid.",
+        "kind": "artefact",
+        "namedThing": "prescrição",
+        "verifyAt": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/1996-34491275-58940580",
+        "volatility": "stable"
+      },
+      "notObvious": "The instinct to pay first and argue later is exactly what forfeits the right, and no one at the call centre will point that out.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/1996-34491275-58940580",
+        "authority": "Diário da República"
+      }
+    },
+    {
+      "id": "banking-consumer-credit-14-day-withdrawal",
+      "pillar": "banking_money",
+      "valueClass": "deadline_action",
+      "title": "Fourteen days to walk away from a consumer credit agreement",
+      "userQuestion": "Can I cancel a personal loan or credit agreement after signing?",
+      "scenario": "Someone signs a store or personal credit agreement under time pressure and assumes the commitment is final the moment they sign.",
+      "audience": "people who have signed a consumer credit agreement",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The withdrawal window, that no reason is needed, and the settlement you owe if you use it.",
+      "anchorFact": {
+        "claim": "A consumer has 14 calendar days from signature of a consumer credit contract to withdraw without justifying the decision, and on exercising it must pay the institution the principal plus interest accrued from the date the credit was used until repayment, within 30 days.",
+        "kind": "deadline",
+        "namedThing": "crédito aos consumidores",
+        "verifyAt": "https://clientebancario.bportugal.pt/en/how-enter-consumer-credit-agreement",
+        "volatility": "stable"
+      },
+      "notObvious": "The exit exists but is not free-standing: the 30-day settlement obligation is what people are not told, and it decides whether withdrawing is practical.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/en/how-enter-consumer-credit-agreement",
+        "authority": "Banco de Portugal"
+      }
+    },
+    {
+      "id": "banking-taeg-is-the-comparable-number",
+      "pillar": "banking_money",
+      "valueClass": "decision",
+      "title": "The one figure that lets you compare two credit offers",
+      "userQuestion": "Two loans quote different interest rates — which is actually cheaper?",
+      "scenario": "A borrower compares headline interest rates across offers and picks the lowest, without seeing the charges folded into each.",
+      "audience": "people comparing credit offers",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Which figure carries the total cost, where it must legally appear, and what else the standardised sheet must show.",
+      "anchorFact": {
+        "claim": "Under Decreto-Lei 133/2009 the TAEG must appear visibly on the first page of the standardised pre-contractual information sheet, together with the total credit amount, the interest rates and the costs applicable on late payment.",
+        "kind": "instrument",
+        "verifyAt": "https://www.bportugal.pt/legislacao/decreto-lei-no-1332009-de-2-de-junho",
+        "volatility": "stable"
+      },
+      "notObvious": "The nominal rate is the number lenders advertise and the TAEG is the one the law makes them show, because only the second is comparable across offers.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://www.bportugal.pt/legislacao/decreto-lei-no-1332009-de-2-de-junho",
+        "authority": "Banco de Portugal"
+      }
+    },
+    {
+      "id": "education-free-creche-by-income-bracket",
+      "pillar": "education_children",
+      "valueClass": "threshold",
+      "title": "Which income brackets get a free creche place",
+      "userQuestion": "Do we qualify for a free creche place?",
+      "scenario": "A family assumes free childcare is means-tested out of reach, or that it only covers state-run nurseries.",
+      "audience": "families with a child under three",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The income brackets that qualify, which institutions are covered, and the birth date that widened eligibility.",
+      "anchorFact": {
+        "claim": "Children up to age 3 in families in the 1st and 2nd comparticipação familiar brackets have a right to free creche and childminder places paid by the ISS in public creches or those in the cooperation system, and from 1 January 2024 creches run by municipalities, public higher education institutions and public institutes became free for children born from 1 September 2021 as well as for all children in those two brackets.",
+        "kind": "figure",
+        "verifyAt": "https://www.seg-social.pt/rede-de-creches-gratuitas",
+        "volatility": "annual"
+      },
+      "notObvious": "Two separate routes qualify a child — the income bracket and the birth-date rule for certain institutions — and families usually only hear about one.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/rede-de-creches-gratuitas",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "education-school-books-moved-out-of-ase",
+      "pillar": "education_children",
+      "valueClass": "insider",
+      "title": "School book support no longer depends on your ASE bracket",
+      "userQuestion": "Do we need an ASE bracket to get help with school books?",
+      "scenario": "A family just above the ASE thresholds assumes they receive nothing towards compulsory books and budgets for the full cost.",
+      "audience": "families buying compulsory school books",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "Which support left the means-tested scheme and became general, and which pupils it now reaches.",
+      "anchorFact": {
+        "claim": "Support for acquiring compulsory manuais escolares for the 1st cycle moved out of the Ação Social Escolar scheme and became a generally attributed financial support for educational material, covering all 1st cycle pupils in public schools and private schools with an association contract.",
+        "kind": "artefact",
+        "namedThing": "manuais escolares",
+        "verifyAt": "https://www.gov.pt/guias/apoio-a-familia/apoios-para-criancas-e-jovens",
+        "volatility": "annual"
+      },
+      "notObvious": "Families who do not qualify for ASE assume they are excluded from everything, when this particular support stopped being means-tested.",
+      "journeyStage": "bringing_family",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/apoio-a-familia/apoios-para-criancas-e-jovens",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "social-security-check-your-contribution-record",
+      "pillar": "social_security",
+      "valueClass": "insider",
+      "title": "Checking that your employer's contributions actually reached your record",
+      "userQuestion": "How do I confirm my employer has been paying my Social Security contributions?",
+      "scenario": "A worker assumes deductions on the payslip reached Segurança Social, and only discovers a gap years later when claiming a benefit or pension.",
+      "audience": "employees verifying their contribution history",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Where the contribution record lives, how to authenticate without a password, and the declaration you can pull yourself.",
+      "anchorFact": {
+        "claim": "The carreira contributiva can be consulted in Segurança Social Direta, which is accessed by authenticating with Chave Móvel Digital or with the NISS and password, and a declaração da situação contributiva can be obtained through the account menu.",
+        "kind": "procedure",
+        "namedThing": "Segurança Social Direta",
+        "verifyAt": "https://www.seg-social.pt/ptss/pssd/menu/trabalho/remuneracoes-contribuicoes/carreira-contributiva",
+        "volatility": "stable"
+      },
+      "notObvious": "A payslip deduction is not proof the contribution was delivered. The record is the only evidence that counts, and it is checkable in minutes.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/ptss/pssd/menu/trabalho/remuneracoes-contribuicoes/carreira-contributiva",
+        "authority": "Instituto da Segurança Social"
+      }
     }
   ]
 }
