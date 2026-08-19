@@ -3679,6 +3679,153 @@
         "canonicalUrl": "https://diariodarepublica.pt/dr/detalhe/lei/83-2021-175397114",
         "authority": "Diário da República"
       }
+    },
+    {
+      "id": "banking-deposit-guarantee-limit-and-timing",
+      "pillar": "banking_money",
+      "valueClass": "threshold",
+      "title": "How much of your savings is protected if a bank fails",
+      "userQuestion": "Is my money safe if my bank collapses, and how fast would I get it?",
+      "scenario": "Someone with savings above the guarantee sits with everything at one institution, unaware the protection is capped per bank.",
+      "audience": "savers holding deposits at one bank",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The guaranteed amount per depositor per institution, what counts towards it, and the two repayment deadlines.",
+      "anchorFact": {
+        "claim": "The Fundo de Garantia de Depósitos guarantees a maximum of 100,000 euros per depositor and per credit institution regardless of the number and type of deposits including interest due, with up to 10,000 euros repaid within a maximum of seven business days and the remainder up to 100,000 euros within 15 business days of deposits becoming unavailable.",
+        "kind": "figure",
+        "verifyAt": "https://clientebancario.bportugal.pt/en/deposit-guarantee",
+        "volatility": "stable"
+      },
+      "notObvious": "The cap is per institution, so splitting savings across banks multiplies the protection, and the two-stage repayment tells you what cash is actually reachable in week one.",
+      "journeyStage": "first_90_days",
+      "source": {
+        "canonicalUrl": "https://clientebancario.bportugal.pt/en/deposit-guarantee",
+        "authority": "Banco de Portugal"
+      }
+    },
+    {
+      "id": "freelance-work-accident-insurance-is-mandatory",
+      "pillar": "freelance_business",
+      "valueClass": "costly_mistake",
+      "title": "Freelancers must hold work accident insurance too",
+      "userQuestion": "Do I need work accident insurance if I work for myself?",
+      "scenario": "A freelancer assumes accident cover is an employer obligation and carries none, leaving themselves exposed and in breach.",
+      "audience": "independent workers without accident cover",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "That the obligation applies to independent workers, the minimum insured earnings, and who can come after you if you have no policy.",
+      "anchorFact": {
+        "claim": "Seguro de acidentes de trabalho is mandatory for independent workers as well as employees and its absence is punishable by coima; the earnings insured are the independent worker's responsibility and cannot be less than fourteen times the national minimum wage, and a presumed responsible entity acquires a right of recourse against the independent worker's insurer or against the worker.",
+        "kind": "artefact",
+        "namedThing": "acidentes de trabalho",
+        "verifyAt": "https://www.consumidor.asf.com.pt/pt/seguros/seguro-de-acidentes-de-trabalho",
+        "volatility": "annual"
+      },
+      "notObvious": "Without a policy the client who engaged you can recover from you personally, so the exposure is not only the fine.",
+      "journeyStage": "first_freelance_activity",
+      "source": {
+        "canonicalUrl": "https://www.consumidor.asf.com.pt/pt/seguros/seguro-de-acidentes-de-trabalho",
+        "authority": "ASF"
+      }
+    },
+    {
+      "id": "consumer-flight-compensation-amounts",
+      "pillar": "daily_life_consumer",
+      "valueClass": "threshold",
+      "title": "The three compensation bands for a cancelled flight",
+      "userQuestion": "How much compensation am I owed for a cancelled flight?",
+      "scenario": "A passenger accepts a voucher or a rebooking, not knowing a fixed cash amount may be due on top of it.",
+      "audience": "passengers on cancelled or delayed flights",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The three compensation bands by distance, and the notice periods that remove the entitlement.",
+      "anchorFact": {
+        "claim": "Under EU air passenger rules on direitos dos passageiros, compensation is 250 euros for flights up to 1,500 kilometres, 400 euros for intra-community flights over 1,500 kilometres and other flights between 1,500 and 3,500 kilometres, and 600 euros for all other flights; it is not due where cancellation was notified more than 14 days ahead, or within defined shorter notice periods when a sufficiently close alternative flight is offered.",
+        "kind": "figure",
+        "verifyAt": "https://www2.gov.pt/servicos/reclamar-em-caso-de-recusa-cancelamento-ou-atraso-no-voo",
+        "volatility": "stable",
+        "namedThing": "direitos dos passageiros"
+      },
+      "notObvious": "Compensation is separate from the refund or rebooking, so accepting a new flight does not waive the cash entitlement.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/reclamar-em-caso-de-recusa-cancelamento-ou-atraso-no-voo",
+        "authority": "gov.pt / ANAC"
+      }
+    },
+    {
+      "id": "consumer-flight-complaint-order-and-deadline",
+      "pillar": "daily_life_consumer",
+      "valueClass": "deadline_action",
+      "title": "The order to complain in after a flight goes wrong",
+      "userQuestion": "Should I complain to the airline or the regulator first?",
+      "scenario": "A passenger goes straight to the regulator and is sent back to the airline, losing weeks, or gives up after the airline ignores them.",
+      "audience": "passengers pursuing a flight claim",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "Who must be approached first, how long to wait for a reply, and the outer limit for escalating.",
+      "anchorFact": {
+        "claim": "A complaint must first be made to the operating airline, and where there is no reply within 6 weeks or the reply is unsatisfactory the passenger may complain to ANAC within a maximum of 3 years from the date of the flight.",
+        "kind": "deadline",
+        "namedThing": "ANAC",
+        "verifyAt": "https://www2.gov.pt/servicos/reclamar-em-caso-de-recusa-cancelamento-ou-atraso-no-voo",
+        "volatility": "stable"
+      },
+      "notObvious": "Airline silence is itself the trigger to escalate after six weeks, and the three-year outer limit means an old claim is often still live.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/reclamar-em-caso-de-recusa-cancelamento-ou-atraso-no-voo",
+        "authority": "gov.pt / ANAC"
+      }
+    },
+    {
+      "id": "identity-binding-tax-ruling-response-times",
+      "pillar": "identity_access",
+      "valueClass": "decision",
+      "title": "Getting a binding answer from Finanças instead of a phone opinion",
+      "userQuestion": "Can I get an answer from Finanças that actually binds them?",
+      "scenario": "Someone with an unusual tax situation relies on a call centre answer, then finds it carries no weight at assessment.",
+      "audience": "taxpayers with a genuinely unclear tax position",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The two statutory response times, what urgency requires, and what a request must contain.",
+      "anchorFact": {
+        "claim": "Under artigo 68 of the Lei Geral Tributária the deadlines for informações vinculativas are 75 days for urgent requests and 150 days for normal ones, urgency must be recognised by the Autoridade Tributária and a fee paid, and the request must describe the facts in detail and set out the proposed tax framework.",
+        "kind": "instrument",
+        "verifyAt": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/informacoes_vinculativas/Pages/default.aspx",
+        "volatility": "stable"
+      },
+      "notObvious": "A binding ruling is the only answer the tax authority cannot later contradict, and most people never learn the route exists.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/informacoes_vinculativas/Pages/default.aspx",
+        "authority": "Autoridade Tributária e Aduaneira"
+      }
+    },
+    {
+      "id": "consumer-data-rights-30-day-response",
+      "pillar": "daily_life_consumer",
+      "valueClass": "deadline_action",
+      "title": "Thirty days for a company to answer a data request before you escalate",
+      "userQuestion": "A company is ignoring my request to see or delete my data — what now?",
+      "scenario": "Someone asks a company for their personal data or its deletion, hears nothing, and assumes there is no way to force the issue.",
+      "audience": "people whose data request has been ignored",
+      "risk": "medium",
+      "volatility": "stable",
+      "promise": "The statutory response deadline, the regulator you escalate to, and the evidence to keep from the start.",
+      "anchorFact": {
+        "claim": "Under artigos 15 to 22 of the RGPD a data controller must respond to a data subject exercising rights of access, rectification or erasure within a legal timeframe of 30 days, after which, or where the request is ignored or unjustifiably refused, the data subject may complain to the CNPD, keeping proof of the dated request and all correspondence.",
+        "kind": "instrument",
+        "verifyAt": "https://www.gov.pt/servicos/apresentar-reclamacao-queixa-sobre-a-protecao-de-dados-pessoais",
+        "volatility": "stable"
+      },
+      "notObvious": "The dated request is what makes escalation work, so sending it in writing rather than by phone is the step that decides whether the deadline is enforceable.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/apresentar-reclamacao-queixa-sobre-a-protecao-de-dados-pessoais",
+        "authority": "gov.pt / CNPD"
+      }
     }
   ]
 }
