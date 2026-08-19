@@ -4967,6 +4967,106 @@
         "canonicalUrl": "https://justica.gov.pt/Como-obter-nacionalidade-portuguesa/E-casado-ou-vive-em-uniao-de-facto-com-um-portugues-ha-mais-de-3-anos",
         "authority": "Ministério da Justiça / IRN"
       }
+    },
+    {
+      "id": "social-security-legal-aid-covers-more-than-fees",
+      "pillar": "social_security",
+      "valueClass": "insider",
+      "title": "Legal aid covers the lawyer, not just the court fees",
+      "userQuestion": "Can I get help paying for a lawyer if I cannot afford one?",
+      "scenario": "Someone with a genuine legal problem does nothing because they price a lawyer before checking whether the State would appoint one.",
+      "audience": "people who cannot afford legal costs",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "What legal aid actually covers, where the means test is decided, the decision deadline, and the ten days you get to respond to a refusal.",
+      "anchorFact": {
+        "claim": "Apoio judiciário includes appointment of a lawyer and payment of their fees or those of the defensor oficioso, exemption from court costs and assignment of an enforcement agent; economic insufficiency is assessed on household income, assets and permanent expenses by Segurança Social, which answers within 30 days and must give written notice with 10 days to respond before a refusal becomes final.",
+        "kind": "artefact",
+        "namedThing": "apoio judiciário",
+        "verifyAt": "https://www.seg-social.pt/protecao-juridica",
+        "volatility": "stable"
+      },
+      "notObvious": "The scheme pays the lawyer as well as waiving the fees, and a refusal is not final until a ten-day reply window has passed.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.seg-social.pt/protecao-juridica",
+        "authority": "Instituto da Segurança Social"
+      }
+    },
+    {
+      "id": "citizenship-small-claims-through-a-peace-court",
+      "pillar": "citizenship_civil",
+      "valueClass": "decision",
+      "title": "The small-claims court that costs 35 euros to start",
+      "userQuestion": "Is there a cheaper alternative to court for a small dispute?",
+      "scenario": "Someone owed a modest sum writes it off, assuming any legal action costs more than the claim is worth.",
+      "audience": "people with a low-value civil dispute",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "The value ceiling and subjects covered, the fees for winning, losing and settling, and how long it takes.",
+      "anchorFact": {
+        "claim": "Julgados de paz resolve civil disputes up to 15,000 euros excluding family matters and debts under adhesion contracts, each party pays an initial 35 euros, the process costs nothing for the winning party and 70 euros for the losing one, mediation settlement costs 50 euros in total, cases take around two and a half months, and appeal is possible where the value exceeds 2,500 euros.",
+        "kind": "figure",
+        "namedThing": "julgado de paz",
+        "verifyAt": "https://www.gov.pt/servicos/iniciar-um-processo-num-julgado-de-paz",
+        "volatility": "annual"
+      },
+      "notObvious": "Winning costs nothing beyond the initial 35 euros, which changes the arithmetic on claims people currently abandon.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/servicos/iniciar-um-processo-num-julgado-de-paz",
+        "authority": "gov.pt / Ministério da Justiça"
+      }
+    },
+    {
+      "id": "consumer-arbitration-centres-are-usually-free",
+      "pillar": "daily_life_consumer",
+      "valueClass": "decision",
+      "title": "Consumer arbitration is free in most centres",
+      "userQuestion": "What does it cost to take a consumer dispute to arbitration?",
+      "scenario": "A consumer with an unresolved complaint assumes arbitration means legal costs and drops the matter.",
+      "audience": "consumers with an unresolved dispute",
+      "risk": "low",
+      "volatility": "annual",
+      "promise": "How many centres exist, how few charge, the dispute value they handle, and the three mechanisms available.",
+      "anchorFact": {
+        "claim": "Portugal has 12 authorised consumer conflict arbitration centres resolving disputes through mediation, conciliation or arbitration, the process is free or low cost with only 4 centres charging fees, centres supported by the Ministério da Justiça are typically free, and they handle consumer disputes up to 5,000 euros.",
+        "kind": "figure",
+        "namedThing": "arbitragem",
+        "verifyAt": "https://www.gov.pt/guias/resolucao-de-conflitos-de-consumo",
+        "volatility": "annual"
+      },
+      "notObvious": "Only a third of the centres charge anything, so the assumed cost barrier usually does not exist for the centre covering your area.",
+      "journeyStage": "resolving_a_problem",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/resolucao-de-conflitos-de-consumo",
+        "authority": "gov.pt / Direção-Geral do Consumidor"
+      }
+    },
+    {
+      "id": "citizenship-criminal-record-certificate-validity",
+      "pillar": "citizenship_civil",
+      "valueClass": "threshold",
+      "title": "A criminal record certificate is valid for ninety days and names its purpose",
+      "userQuestion": "How long does a criminal record certificate last and what does it cost?",
+      "scenario": "Someone obtains a certificate early for an application and finds it expired, or that it names the wrong purpose.",
+      "audience": "people asked for a criminal record certificate",
+      "risk": "medium",
+      "volatility": "annual",
+      "promise": "The validity period, the fee, that it is requested online, and the purpose declaration it must carry.",
+      "anchorFact": {
+        "claim": "A certificado de registo criminal is valid for 90 days from issue, each request costs 5 euros paid by Multibanco with defined free purposes, it can be requested and obtained entirely online, and the concrete and precise purpose for which it is intended must be stated.",
+        "kind": "figure",
+        "namedThing": "registo criminal",
+        "verifyAt": "https://www2.gov.pt/servicos/pedir-o-certificado-de-registo-criminal-de-pessoas-singulares",
+        "volatility": "annual"
+      },
+      "notObvious": "The stated purpose is part of the certificate, so one obtained for a different reason may be rejected even while still inside its ninety days.",
+      "journeyStage": "first_employment",
+      "source": {
+        "canonicalUrl": "https://www2.gov.pt/servicos/pedir-o-certificado-de-registo-criminal-de-pessoas-singulares",
+        "authority": "gov.pt / Ministério da Justiça"
+      }
     }
   ]
 }
