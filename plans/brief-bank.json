@@ -1334,7 +1334,7 @@
       "volatility": "stable",
       "promise": "The 30-day deadline, the validation code that actually confirms closure, and why Segurança Social needs no separate request.",
       "anchorFact": {
-        "claim": "A cessação de atividade must be communicated to Finanças within 30 days of ceasing self-employed work; the generated document carries a code that must be entered under Validação de documentos to confirm closure, and Segurança Social deregistration follows automatically because the two cross-check information.",
+        "claim": "A cessação de atividade must be communicated to Finanças within 30 days of ceasing self-employed work; the generated document carries a code that must be entered under Validação de documentos to confirm closure, and Segurança Social deregistration follows automatically because the two cross-check information; contributions only stop from the first day of the month following the deregistration, so the previous month may still be payable, and the cessation must be reported in the following year's IRS declaration in anexo B, quadro 14.",
         "kind": "deadline",
         "namedThing": "cessação de atividade",
         "verifyAt": "https://www2.gov.pt/servicos/pessoa-singular-declaracao-de-cessacao-de-atividade-",
@@ -9692,6 +9692,81 @@
       "source": {
         "canonicalUrl": "https://www.gov.pt/guias/casar-ou-viver-em-uniao-de-facto",
         "authority": "gov.pt / Instituto dos Registos e do Notariado"
+      }
+    },
+    {
+      "id": "freelance-professions-with-their-own-benefit-fund",
+      "pillar": "freelance_business",
+      "valueClass": "edge_case",
+      "title": "The professions whose benefits do not come from Segurança Social",
+      "userQuestion": "Why is Segurança Social telling me I have no right to sick pay?",
+      "scenario": "A lawyer or solicitor falls ill and applies to Segurança Social, which is not the body that covers them.",
+      "audience": "members of professions with their own provident fund",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "Which professions sit outside the general scheme, and which benefits follow their own fund's rules instead.",
+      "anchorFact": {
+        "claim": "Where a person exercises a profession with its own caixa de previdência, such as lawyers and solicitadores, the social supports for sickness, parenthood and unemployment follow the rules of that fund rather than those of Segurança Social, and the person must obtain information from their own fund.",
+        "kind": "procedure",
+        "namedThing": "caixa de previdência",
+        "verifyAt": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/apoios-e-encerramento-da-atividade",
+        "volatility": "stable"
+      },
+      "notObvious": "Paying into a professional fund replaces the general scheme rather than supplementing it, so the usual answers about sick pay simply do not apply.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/apoios-e-encerramento-da-atividade",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "employment-keeping-a-side-activity-while-on-unemployment",
+      "pillar": "employment",
+      "valueClass": "threshold",
+      "title": "The side income you can keep while claiming unemployment",
+      "userQuestion": "Will my small freelance work stop my unemployment benefit?",
+      "scenario": "Someone made redundant closes a small freelance activity unnecessarily, or keeps it quietly and has the benefit suspended.",
+      "audience": "people claiming unemployment with a small freelance activity",
+      "risk": "high",
+      "volatility": "annual",
+      "promise": "The income ceiling that lets the activity continue, the five working days to declare it, and what happens above the line.",
+      "anchorFact": {
+        "claim": "A person dismissed from their main employment may keep a small independent activity while receiving subsídio de desemprego parcial provided the average monthly income does not exceed 1 IAS, published as 537.13 euros for 2026, and must report that income to the centro de emprego within 5 working days of starting or resuming the activity; where the income exceeds 1 IAS or the activity is considered the main one, the activity must be closed at Finanças or the benefit may be suspended or cancelled.",
+        "kind": "figure",
+        "namedThing": "subsídio de desemprego parcial",
+        "verifyAt": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/apoios-e-encerramento-da-atividade",
+        "volatility": "annual"
+      },
+      "notObvious": "Declaring the side income within five working days is what protects the claim; it is the silence rather than the earnings that ends the benefit.",
+      "journeyStage": "leaving_a_job",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/apoios-e-encerramento-da-atividade",
+        "authority": "gov.pt"
+      }
+    },
+    {
+      "id": "freelance-the-formula-behind-a-partial-cessation-benefit",
+      "pillar": "freelance_business",
+      "valueClass": "insider",
+      "title": "The formula that adds thirty-five per cent before deducting your earnings",
+      "userQuestion": "How is a partial benefit calculated if I still earn something?",
+      "scenario": "A freelancer with reduced income assumes any earnings cancel the benefit and does not apply at all.",
+      "audience": "freelancers whose income has fallen but not stopped",
+      "risk": "high",
+      "volatility": "stable",
+      "promise": "The formula behind the partial benefit, and why earning something does not simply subtract from the payment.",
+      "anchorFact": {
+        "claim": "The subsídio parcial por cessação de atividade is calculated as the base subsidy the person would receive with no other income, plus 35 per cent of that base subsidy, minus the monthly income declared as an independent worker, so a base of 800 euros against declared income of 500 euros gives 580 euros a month, and the value can be revised if the income changes.",
+        "kind": "figure",
+        "namedThing": "subsídio parcial por cessação de atividade",
+        "verifyAt": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/apoios-e-encerramento-da-atividade",
+        "volatility": "stable"
+      },
+      "notObvious": "The thirty-five per cent uplift is added before your earnings are deducted, which is why continuing to work leaves you better off rather than square.",
+      "journeyStage": "running_a_business",
+      "source": {
+        "canonicalUrl": "https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/apoios-e-encerramento-da-atividade",
+        "authority": "gov.pt"
       }
     }
   ]
