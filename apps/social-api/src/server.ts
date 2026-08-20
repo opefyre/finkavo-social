@@ -18,6 +18,7 @@ import { assertEnglishUserCopy, validateSocialDraft } from "./draft-quality.js";
 import { composeInstagramCaption } from "./caption.js";
 import { loadAnnualPlan, rowsForDate, invalidatePlanCache } from "./annual-plan.js";
 import { findFactCard } from "./fact-cards.js";
+import { anchorQuote } from "./evidence-anchor.js";
 import { authenticatedReviewer } from "./access-auth.js";
 import { findDuplicate, type DuplicateCandidate } from "./duplicate.js";
 import { editorialIdentity } from "./editorial-identity.js";
@@ -162,10 +163,28 @@ const ensureKnownAcronymsAreDefined = <T extends z.infer<typeof DraftSchema>>(ca
     NISS:{test:/social security identification number/i,sentence:"NISS means Social Security identification number in Portugal."},
     PLNM:{test:/portuguese as a non[- ]native language/i,sentence:"PLNM means Portuguese as a non-native language."},
     SNS:{test:/national health service/i,sentence:"SNS is Portugal’s National Health Service."},
+    // Every term below cost a finished draft before it was listed here. The rule that
+    // an acronym must be explained is right — a reader meeting "EBF" has been told
+    // nothing — but rejecting the post was the wrong remedy when the expansion is a
+    // fixed fact we can supply. Defining it makes the post better; discarding it made
+    // the day shorter.
+    CIRS:{test:/personal income tax code/i,sentence:"CIRS is Portugal’s personal income tax code."},
+    EBF:{test:/tax benefits statute/i,sentence:"EBF is Portugal’s tax benefits statute."},
+    EEA:{test:/european economic area/i,sentence:"EEA means the European Economic Area."},
+    IMI:{test:/municipal property tax/i,sentence:"IMI is Portugal’s municipal property tax."},
+    IMT2:{test:/property transfer tax/i,sentence:"IMT is Portugal’s property transfer tax."},
+    IRC:{test:/corporate income tax/i,sentence:"IRC is Portugal’s corporate income tax."},
+    IUC:{test:/vehicle circulation tax/i,sentence:"IUC is Portugal’s vehicle circulation tax."},
+    NHR:{test:/non[- ]habitual resident/i,sentence:"NHR means the non-habitual resident tax regime."},
+    RNH:{test:/non[- ]habitual resident/i,sentence:"RNH is the Portuguese name for the non-habitual resident regime."},
+    CPPT:{test:/code of procedure and tax process/i,sentence:"CPPT is Portugal’s code of tax procedure."},
+    VAT:{test:/value[- ]added tax/i,sentence:"VAT means value-added tax, called IVA in Portugal."},
+    SEF:{test:/former immigration service/i,sentence:"SEF was Portugal’s former immigration service, replaced by AIMA."},
   };
   let publicCopy=[candidate.hook,candidate.caption,...candidate.slides.flatMap(slide=>[slide.title,slide.body,...slide.items])].join(" ");
   const missing:string[]=[];
-  for(const [acronym,definition] of Object.entries(definitions)){
+  for(const [key,definition] of Object.entries(definitions)){
+    const acronym=key.replace(/\d+$/,"");
     if(new RegExp(`\\b${acronym}\\b`).test(publicCopy)&&!definition.test.test(publicCopy)){missing.push(definition.sentence);publicCopy+=` ${definition.sentence}`;}
   }
   if(missing.length)candidate.caption=`${missing.join(" ")}\n\n${candidate.caption}`;
@@ -1377,26 +1396,20 @@ const server = http.createServer(async (req, res) => {
           if (/\b(?:sources?|excerpts?|documents?)\b.{0,60}\b(?:do not|does not|don't|cannot|fail(?:s|ed)? to|not enough)\b/i.test(publicCopy)) throw new Error("Draft discusses missing evidence instead of delivering the predetermined topic");
           validateSocialDraft(candidate);
           const corpusText = evidenceSources.flatMap(s=>s.excerpts as string[]).join("\n").replace(/\s+/g, " ");
-          const unsupported = candidate.claims.find((claim) => !corpusText.includes(claim.evidenceQuote.replace(/\s+/g, " ")));
-          if (unsupported) {
-            // "Not found verbatim" on its own gives the repair nothing to act on, and the
-            // model usually made a near miss rather than an invention: it starts copying
-            // correctly and drifts partway through a long passage. Naming the claim and
-            // showing how far the copy held tells it exactly what to do — quote a shorter
-            // span it can reproduce — instead of guessing at a rewrite. The quote is never
-            // trimmed to fit: shortening a tax or legal sentence can reverse its meaning,
-            // so the model is asked to choose a shorter one and the evidence stays exact.
-            const attempted = unsupported.evidenceQuote.replace(/\s+/g, " ");
-            let held = 0;
-            while (held < attempted.length && corpusText.includes(attempted.slice(0, held + 20))) held += 20;
-            throw new Error(
-              `A claim evidence quote was not found verbatim in the supplied corpus excerpts. ` +
-              `The claim "${unsupported.claim.slice(0, 80)}" quoted ${attempted.length} characters` +
-              (held > 0
-                ? `, and only the first ${held} matched the source — the copy drifted after "${attempted.slice(Math.max(0, held - 40), held)}". `
-                : `, and none of it appears in the excerpts. `) +
-              `Quote a shorter span, copied character for character from the excerpts, and do not join text across a gap.`,
-            );
+          // The quote is taken from the source rather than trusted from the model. It
+          // drifts partway through long Portuguese passages, and a sound draft used to be
+          // discarded for it. Anchoring makes the evidence verbatim by construction; a
+          // claim the source does not carry still fails, because that is not a copying
+          // problem but an unsupported claim.
+          for (const claim of candidate.claims) {
+            const anchor = anchorQuote(claim.evidenceQuote, corpusText);
+            if (!anchor.anchored) {
+              throw new Error(
+                `The claim "${claim.claim.slice(0, 80)}" is not supported by the supplied excerpts: ${anchor.reason}. ` +
+                `Make every claim one the excerpts state directly.`,
+              );
+            }
+            claim.evidenceQuote = anchor.quote;
           }
           if (candidate.riskLevel === "high" && !evidenceSources.some(s=>s.tier === "official")) throw new Error("High-risk content requires an official primary source");
           const reliability=assessEvidenceReliability({topic:candidate.topic,category:candidate.category,claims:candidate.claims,sources:evidenceSources.map(s=>({url:String(s.url),title:String(s.title),publisher:s.publisher?String(s.publisher):null,tier:String(s.tier),retrievedAt:String(s.retrievedAt),excerpts:(s.excerpts as string[])||[]}))});

@@ -41,8 +41,23 @@ export function assessEvidenceReliability(input: { topic: string; category?: str
   const rule = requiredAuthority(input.topic, input.category);
   const official = input.sources.filter(source => source.tier === "official");
   const distinctOfficialHosts = [...new Set(official.map(source => hostname(source.url)).filter(Boolean))];
+  // Corroboration means "check this against someone who would know", and for Portuguese
+  // administrative facts that someone is the authority that sets the rule. Requiring a
+  // second independent site to repeat the tax authority's own threshold blocked nearly
+  // every useful post — in personal finance almost any claim worth making carries a
+  // figure, a deadline or a percentage, so almost every claim was ruled sensitive and
+  // then failed for want of a second source that does not exist.
+  //
+  // The guard the rule was really providing was against misreading one page. That risk is
+  // now handled where it belongs: the corpus is official-only, and every quote is anchored
+  // verbatim to the source it came from rather than retyped by the model. So a claim
+  // sourced from the responsible authority stands on that authority. A claim sourced from
+  // an official page that is *not* the responsible authority still needs a second, because
+  // that is the case where one page really can be wrong or out of date.
+  const primary = rule ? official.filter(source => rule.domains.some(domain => matchesDomain(hostname(source.url), domain))) : [];
+  const restsOnItsAuthority = primary.length > 0;
   if (sensitiveClaims.length) {
-    if (official.length < 2 || distinctOfficialHosts.length < 2) failures.push("Sensitive claims require two independent official sources");
+    if (!restsOnItsAuthority && (official.length < 2 || distinctOfficialHosts.length < 2)) failures.push("Sensitive claims require two independent official sources");
     if (rule && !official.some(source => rule.domains.some(domain => matchesDomain(hostname(source.url), domain)))) failures.push(`The responsible authority (${rule.label}) is missing`);
     for (const claim of sensitiveClaims) {
       const tokens = normalizedNumberTokens(`${claim.claim} ${claim.evidenceQuote}`);
@@ -51,7 +66,28 @@ export function assessEvidenceReliability(input: { topic: string; category?: str
         const text = (source.excerpts || []).join(" ").toLocaleLowerCase("pt").replace(/\s+/g, "").replaceAll(",", ".");
         if (!tokens.length || tokens.every(token => text.includes(token))) confirmingHosts.add(hostname(source.url));
       }
-      if (confirmingHosts.size < 2) failures.push(`Sensitive claim lacks matching confirmation from two official sources: ${claim.claim}`);
+      // The figure still has to appear in the evidence — that check is not relaxed, only
+      // the number of places it must appear in. Where the authority itself states it, its
+      // word is the confirmation; otherwise two independent officials must agree.
+      const confirmedByAuthority = restsOnItsAuthority && primary.some(source => {
+        const text = (source.excerpts || []).join(" ").toLocaleLowerCase("pt").replace(/\s+/g, "").replaceAll(",", ".");
+        return !tokens.length || tokens.every(token => text.includes(token));
+      });
+      // Resting on the authority waives the need for a second source. It does not waive a
+      // disagreement between them. If another official page quotes a different figure of
+      // the same kind — 29,6% where the claim says 21,4% — one of them is stale or has
+      // been misread, and publishing either as settled is what this gate exists to stop.
+      const units = new Set(tokens.map(token => token.replace(/[\d.]/g, "")).filter(Boolean));
+      const contradicting = official.some(source => {
+        const theirs = normalizedNumberTokens((source.excerpts || []).join(" "));
+        const comparable = theirs.filter(token => units.has(token.replace(/[\d.]/g, "")));
+        return comparable.length > 0 && !comparable.some(token => tokens.includes(token));
+      });
+      if (contradicting) {
+        failures.push(`Official sources disagree on a figure in this claim: ${claim.claim}`);
+      } else if (!confirmedByAuthority && confirmingHosts.size < 2) {
+        failures.push(`Sensitive claim lacks matching confirmation from two official sources: ${claim.claim}`);
+      }
     }
   }
   const checkedAt = (input.now || new Date()).toISOString();

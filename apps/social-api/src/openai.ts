@@ -98,6 +98,33 @@ export async function generateDraft(candidate: Candidate): Promise<{ draft: Draf
     });
   }
 
+  // A body that stops after "and" or a comma is a sentence the model did not finish, and
+  // the fix is to end it at the last one it did — not to throw the post away and spend
+  // another generation on the same topic. Only trailing fragments are removed; nothing is
+  // rewritten, reordered or shortened for style, so what remains is the model's own copy.
+  function endAtLastCompleteSentence(value: unknown): unknown {
+    if (typeof value !== "string") return value;
+    const text = value.trim();
+    if (!text || /[.!?)]$/.test(text)) return text;
+    const cut = Math.max(text.lastIndexOf(". "), text.lastIndexOf("! "), text.lastIndexOf("? "));
+    // Keep the fragment rather than gut the slide: a body reduced to almost nothing is
+    // worse than one the repair loop is asked to finish properly.
+    return cut > text.length * 0.5 ? text.slice(0, cut + 1) : text;
+  }
+
+  function tidyProse(value: unknown): unknown {
+    if (!Array.isArray(value)) return value;
+    return value.map(slide => {
+      if (!slide || typeof slide !== "object") return slide;
+      const entry = slide as Record<string, unknown>;
+      return {
+        ...entry,
+        ...(typeof entry.body === "string" ? { body: endAtLastCompleteSentence(entry.body) } : {}),
+        ...(Array.isArray(entry.items) ? { items: entry.items.map(endAtLastCompleteSentence) } : {}),
+      };
+    });
+  }
+
   let parsed: unknown;
   try {
     parsed = JSON.parse(text);
@@ -116,7 +143,8 @@ export async function generateDraft(candidate: Candidate): Promise<{ draft: Draf
   if (parsed && typeof parsed === "object") {
     const draft = parsed as Record<string, unknown>;
     draft.hashtags = tidyHashtags(draft.hashtags);
-    draft.slides = tidyAltText(draft.slides);
+    draft.slides = tidyAltText(tidyProse(draft.slides));
+    draft.callToAction = endAtLastCompleteSentence(draft.callToAction);
   }
   return { draft: DraftSchema.parse(parsed), model, totalTokens };
 }

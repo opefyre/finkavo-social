@@ -21,6 +21,18 @@ describe("evidence reliability", () => {
       {url:"https://www.gov.pt/guide",tier:"official",excerpts:["A taxa contributiva é de 29,6%."]},
     ]});
     expect(result.passed).toBe(false);
-    expect(result.failures.join(" ")).toMatch(/lacks matching confirmation/);
+    expect(result.failures.join(" ")).toMatch(/disagree on a figure|lacks matching confirmation/);
+  });
+
+  it("accepts the responsible authority alone when nothing contradicts it", () => {
+    // Almost every useful personal-finance claim carries a figure, so demanding a second
+    // site repeat the authority's own number blocked the pipeline rather than protecting
+    // it. One authority, quoted verbatim and uncontradicted, is enough.
+    const result = assessEvidenceReliability({
+      topic: "Social Security contributions for freelancers", category: "social_security", claims: [claim],
+      sources: [{ url: "https://www.seg-social.pt/faq", tier: "official", excerpts: ["A taxa contributiva e de 21,4%."] }],
+    });
+    expect(result.passed).toBe(true);
   });
 });
+
