@@ -66,5 +66,20 @@ export async function generateDraft(candidate: Candidate): Promise<{ draft: Draf
       "If repairFeedback is supplied, fix exactly that problem while keeping the topic and evidence-bound meaning.",
     ].join(" "),
   });
-  return { draft: DraftSchema.parse(JSON.parse(text)), model, totalTokens };
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text);
+  } catch (error) {
+    // A parse failure says nothing about the draft on its own. Describing the shape of
+    // what came back distinguishes a model that wrote bad JSON from one that padded its
+    // answer with whitespace until the token ceiling cut the object off mid-write.
+    const lines = text.split("\n");
+    const blank = lines.filter(line => !line.trim()).length;
+    throw new Error(
+      `${model} returned unparseable JSON (${error instanceof Error ? error.message : "parse failed"}); ` +
+      `chars=${text.length} lines=${lines.length} blank=${blank} tokens=${totalTokens ?? "?"} ` +
+      `head=${JSON.stringify(text.slice(0, 80))} tail=${JSON.stringify(text.slice(-60))}`,
+    );
+  }
+  return { draft: DraftSchema.parse(parsed), model, totalTokens };
 }

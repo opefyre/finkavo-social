@@ -214,12 +214,39 @@ async function reserve(estimated: number): Promise<(actual: number | null) => vo
   };
 }
 
+// The in-process counter only knows what this process has spent since it started, and
+// it restarts often. It read "0 spent, 200,000 remaining" while Groq had 199,076 on the
+// clock from the previous day's rolling window — so every caller believed there was a
+// full day of capacity, kept sending requests that could not be admitted, and spent the
+// standby's fifty on the overflow. Groq reports the truth on every response; believing
+// it over our own arithmetic is the difference between deferring once and burning both
+// providers to discover the same fact.
+function readProviderQuota(headers: Headers) {
+  // A missing header is not a reading of zero. Number(null) is 0, so treating an absent
+  // value as a number would have every provider that omits it look permanently exhausted.
+  const raw = headers.get("x-ratelimit-remaining-tokens");
+  if (raw === null || raw.trim() === "") return;
+  const remaining = Number(raw);
+  const resetRaw = headers.get("x-ratelimit-reset-tokens") ?? "";
+  if (!Number.isFinite(remaining)) return;
+  const seconds = /^([\d.]+)s$/.exec(resetRaw)?.[1];
+  const minutes = /^([\d.]+)m/.exec(resetRaw)?.[1];
+  const resetSeconds = seconds ? Number(seconds) : minutes ? Number(minutes) * 60 : 60;
+  // Not enough left for a real draft is the same as none: reserve the window rather than
+  // sending a request that will be refused, and re-check when it says capacity returns.
+  if (remaining < MIN_COMPLETION_TOKENS) blockProvider(Math.max(30, Math.min(resetSeconds, 600)));
+}
+
 /** What the day has left, for health reporting. */
 export function llmDailyBudget() {
   const now = Date.now();
   const spent = dailyTokens(now);
   return {
-    limit: TOKENS_PER_DAY, spent, remaining: Math.max(0, TOKENS_PER_DAY - spent),
+    limit: lastKnownProviderSpend?.limit ?? TOKENS_PER_DAY,
+    spent: Math.max(spent, lastKnownProviderSpend?.used ?? 0),
+    remaining: lastKnownProviderSpend
+      ? Math.max(0, lastKnownProviderSpend.limit - lastKnownProviderSpend.used)
+      : Math.max(0, TOKENS_PER_DAY - spent),
     blockedUntil: providerBlockedUntil > now ? new Date(providerBlockedUntil).toISOString() : null,
     standbys: resolveFallbackConfigs().map(config => config.model),
     standbyBlockedUntil: standbyBlockedUntil > now ? new Date(standbyBlockedUntil).toISOString() : null,
@@ -231,6 +258,8 @@ export function llmDailyBudget() {
 // generation spends a call per standby rediscovering the same exhaustion. Blocked until
 // the reset it names, the standbys are skipped and the concept defers cleanly instead.
 let standbyBlockedUntil = 0;
+/** What the provider last told us about its own day, which outranks our local count. */
+let lastKnownProviderSpend: { used: number; limit: number } | null = null;
 
 function standbyAvailable() { return Date.now() >= standbyBlockedUntil; }
 
@@ -241,9 +270,19 @@ function noteStandbyRefusal(resetHeader: string | null) {
     : Date.now() + 60 * 60 * 1000;
 }
 
+// Groq's retry-after is pessimistic. A burst against the per-minute window returns a
+// figure like 845 seconds, and capacity is back long before it elapses — this morning it
+// was free within a couple of minutes while we sat out the full fourteen and deferred
+// every draft in that window. Taking it literally converts a momentary limit into an
+// hour of doing nothing, so the wait is capped and reality is re-checked instead. If the
+// provider is still limited the next call says so and we back off again, which costs one
+// request rather than a morning.
+const PROVIDER_BLOCK_CAP_MS = Number(process.env.LLM_PROVIDER_BLOCK_CAP_MS ?? 180_000);
+
 /** Called when the provider returns a pacing signal, so every caller backs off, not one. */
 function blockProvider(seconds: number) {
-  providerBlockedUntil = Math.max(providerBlockedUntil, Date.now() + Math.max(1, seconds) * 1000);
+  const asked = Math.max(1, seconds) * 1000;
+  providerBlockedUntil = Math.max(providerBlockedUntil, Date.now() + Math.min(asked, PROVIDER_BLOCK_CAP_MS));
 }
 
 /**
@@ -260,11 +299,16 @@ function completionBudget(request: { instructions: string; input: string; schema
   const used = estimateTokens(request.instructions) + estimateTokens(request.input) + schemaTokens;
   const available = TOKENS_PER_MINUTE - used - SAFETY_MARGIN;
   // Groq admits a request on what it reserves, not what it ends up using, and the daily
-  // allowance is what runs out first. Reserving 5,000 against real drafts that complete
-  // in about 1,100 spent a third of the day's tokens on headroom nothing ever occupied:
-  // 6,890 a request instead of 4,490, which is 29 attempts in a day rather than 44. The
-  // floor below is still 2,600, so this leaves better than twice what a draft has needed.
-  const ceiling = request.maxCompletionTokens ?? Number(process.env.LLM_MAX_TOKENS ?? 2_600);
+  // allowance runs out before the day does, so the reservation should not be padded.
+  //
+  // It can be cut too far, though, and 2,600 was: a trivial draft completes in about
+  // 1,100 tokens, but a real five-slide carousel with claims and alt text runs to nine
+  // thousand characters of JSON, and the ceiling cut it off mid-object. A truncated
+  // object is not a bad draft that can be repaired — it is unparseable, and it failed
+  // three times in a row before retiring a topic that had nothing wrong with it. Four
+  // thousand covers what a full draft actually emits with room to spare, and still
+  // leaves the day about 34 attempts rather than the 29 that 5,000 allowed.
+  const ceiling = request.maxCompletionTokens ?? Number(process.env.LLM_MAX_TOKENS ?? 4_000);
   return Math.max(MIN_COMPLETION_TOKENS, Math.min(ceiling, available));
 }
 
@@ -412,6 +456,7 @@ async function callProvider(
     signal: timeout,
   });
   if (!response.ok) throw new Error(await describeFailure(response, config));
+  if (isGroq) readProviderQuota(response.headers);
   const result = await response.json() as {
     choices?: Array<{ message?: { content?: string } }>;
     usage?: { total_tokens?: number };
@@ -441,6 +486,11 @@ async function describeFailure(response: Response, config: LlmConfig): Promise<s
   // completion budget exceeds the per-minute token allowance — also a pacing problem,
   // not a bad request, so both wait rather than burning a repair attempt.
   if (response.status === 429 || response.status === 413) {
+    if (config.provider === "groq") {
+      const used = /Used (\d+)/.exec(detail)?.[1];
+      const limit = /Limit (\d+)/.exec(detail)?.[1];
+      if (used && limit) lastKnownProviderSpend = { used: Number(used), limit: Number(limit) };
+    }
     if (config.provider === "openrouter" && /free-models-per-day|openrouter_free_tier_daily/i.test(detail)) {
       const reset = /"X-RateLimit-Reset":"(\d+)"/i.exec(detail)?.[1] ?? null;
       noteStandbyRefusal(reset);
