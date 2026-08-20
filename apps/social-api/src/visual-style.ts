@@ -21,8 +21,15 @@ export function selectVisualStyle(post: Record<string, unknown>): VisualStyle {
   if (intent === "deadline_reminder" || intent === "occasion") return "peach_deadline";
   if (intent === "regulatory_change" || intent === "timely_news") return "ink_alert";
 
+  // Peach is reserved for the deadline above, and appears in none of the lists below.
+  // It used to sit in all three, which made it both the deadline colour and a general
+  // purpose one: with roughly a quarter of the plan being dated, peach came out on close
+  // to half of everything and stopped telling the reader anything. Kept exclusive, the
+  // colour carries a meaning -- this one is time-sensitive -- and the remaining three
+  // share the evergreen posts evenly. The hash was never the problem; it distributes
+  // 4000 posts as 1000/985/999/1016.
   const key = [post.planned_for, post.id, post.topic].map(value => String(value || "")).join(":");
-  if (intent === "checklist") return ["mint_checklist", "cream_guide", "peach_deadline"][stableIndex(key, 3)] as VisualStyle;
-  if (intent === "common_mistake") return ["petrol_editorial", "mint_checklist", "peach_deadline"][stableIndex(key, 3)] as VisualStyle;
-  return ["cream_guide", "mint_checklist", "petrol_editorial", "peach_deadline"][stableIndex(key, 4)] as VisualStyle;
+  if (intent === "checklist") return ["mint_checklist", "cream_guide"][stableIndex(key, 2)] as VisualStyle;
+  if (intent === "common_mistake") return ["petrol_editorial", "mint_checklist"][stableIndex(key, 2)] as VisualStyle;
+  return ["cream_guide", "mint_checklist", "petrol_editorial"][stableIndex(key, 3)] as VisualStyle;
 }
