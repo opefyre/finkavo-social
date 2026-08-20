@@ -5,7 +5,7 @@
 // differ only in endpoint shape, so the provider is a small adapter and the model can be
 // changed with env vars alone.
 
-export type LlmProvider = "groq" | "openai" | "openrouter";
+export type LlmProvider = "groq" | "openai" | "openrouter" | "cerebras" | "mistral";
 
 export type LlmConfig = {
   provider: LlmProvider;
@@ -32,6 +32,20 @@ const DEFAULTS: Record<LlmProvider, { baseUrl: string; model: string; keyEnv: st
     model: "nvidia/nemotron-3-super-120b-a12b:free",
     keyEnv: "OPENROUTER_API_KEY",
   },
+  // Cerebras serves the same gpt-oss-120b the primary runs, from a separate free
+  // allowance. That makes it the standby worth reaching for first: the prompt has been
+  // tuned against this exact model, so nothing about the draft changes when it takes over
+  // — only whose quota pays for it.
+  cerebras: {
+    baseUrl: "https://api.cerebras.ai/v1",
+    model: "gpt-oss-120b",
+    keyEnv: "CEREBRAS_API_KEY",
+  },
+  mistral: {
+    baseUrl: "https://api.mistral.ai/v1",
+    model: "mistral-medium-latest",
+    keyEnv: "MISTRAL_API_KEY",
+  },
 };
 
 // Groq's day runs out well before the work does, and when it does there is nothing to
@@ -42,26 +56,34 @@ const DEFAULTS: Record<LlmProvider, { baseUrl: string; model: string; keyEnv: st
 const FREE_MODEL_SUFFIX = ":free";
 
 export function resolveFallbackConfigs(): LlmConfig[] {
-  const provider = (process.env.LLM_FALLBACK_PROVIDER ?? "") as LlmProvider;
-  if (!provider) return [];
-  const defaults = DEFAULTS[provider];
-  if (!defaults) return [];
-  const apiKey = process.env[defaults.keyEnv];
-  if (!apiKey) return [];
+  // A chain rather than one provider's model list. Free allowances are small and each is
+  // its own bucket, so the way to survive a busy day is several independent ones, tried
+  // in order, not a bigger share of any single tier.
+  const chain = (process.env.LLM_FALLBACK_CHAIN ?? "").split(",").map(entry => entry.trim()).filter(Boolean);
+  const entries = chain.length
+    ? chain.map(entry => {
+        // Split on the first colon only: an OpenRouter model name carries its own
+        // (":free"), and losing that suffix would name a paid model instead.
+        const at = entry.indexOf(":");
+        return at === -1 ? null : { provider: entry.slice(0, at) as LlmProvider, model: entry.slice(at + 1) };
+      }).filter((entry): entry is { provider: LlmProvider; model: string } => Boolean(entry))
+    : (process.env.LLM_FALLBACK_MODELS ?? "").split(",").map(m => m.trim()).filter(Boolean)
+        .map(model => ({ provider: (process.env.LLM_FALLBACK_PROVIDER ?? "") as LlmProvider, model }));
 
-  const models = (process.env.LLM_FALLBACK_MODELS ?? defaults.model)
-    .split(",").map(entry => entry.trim()).filter(Boolean)
-    // Never silently spend money as a fallback. If a paid model is listed it is dropped
-    // rather than used, because the whole point of the standby is that it stays free.
-    .filter(model => provider !== "openrouter" || model.endsWith(FREE_MODEL_SUFFIX));
-
-  return models.map(model => ({
-    provider,
-    apiKey,
-    model,
-    baseUrl: (process.env.LLM_FALLBACK_BASE_URL || defaults.baseUrl).replace(/\/$/, ""),
-  }));
+  const configs: LlmConfig[] = [];
+  for (const { provider, model } of entries) {
+    const defaults = DEFAULTS[provider];
+    if (!defaults) continue;
+    const apiKey = process.env[defaults.keyEnv];
+    if (!apiKey) continue;
+    // Never silently spend money as a fallback. OpenRouter prices per model, so only its
+    // explicitly free ones are allowed; the other standbys here are free-tier accounts.
+    if (provider === "openrouter" && !model.endsWith(FREE_MODEL_SUFFIX)) continue;
+    configs.push({ provider, apiKey, model, baseUrl: defaults.baseUrl.replace(/\/$/, "") });
+  }
+  return configs;
 }
+
 
 export function resolveLlmConfig(): LlmConfig {
   const provider = (process.env.LLM_PROVIDER ?? "groq") as LlmProvider;
@@ -248,8 +270,12 @@ export function llmDailyBudget() {
       ? Math.max(0, lastKnownProviderSpend.limit - lastKnownProviderSpend.used)
       : Math.max(0, TOKENS_PER_DAY - spent),
     blockedUntil: providerBlockedUntil > now ? new Date(providerBlockedUntil).toISOString() : null,
-    standbys: resolveFallbackConfigs().map(config => config.model),
-    standbyBlockedUntil: standbyBlockedUntil > now ? new Date(standbyBlockedUntil).toISOString() : null,
+    standbys: resolveFallbackConfigs().map(config => ({
+      provider: config.provider,
+      model: config.model,
+      blockedUntil: (standbyBlockedUntil.get(config.provider) ?? 0) > now
+        ? new Date(standbyBlockedUntil.get(config.provider)!).toISOString() : null,
+    })),
   };
 }
 
@@ -257,17 +283,16 @@ export function llmDailyBudget() {
 // model on it, and says so in a header when it refuses. Without honouring that, each
 // generation spends a call per standby rediscovering the same exhaustion. Blocked until
 // the reset it names, the standbys are skipped and the concept defers cleanly instead.
-let standbyBlockedUntil = 0;
+const standbyBlockedUntil = new Map<string, number>();
 /** What the provider last told us about its own day, which outranks our local count. */
 let lastKnownProviderSpend: { used: number; limit: number } | null = null;
 
-function standbyAvailable() { return Date.now() >= standbyBlockedUntil; }
+function standbyAvailable(provider: string) { return Date.now() >= (standbyBlockedUntil.get(provider) ?? 0); }
 
-function noteStandbyRefusal(resetHeader: string | null) {
+function noteStandbyRefusal(provider: string, resetHeader: string | null) {
   const resetMs = Number(resetHeader);
-  standbyBlockedUntil = Number.isFinite(resetMs) && resetMs > Date.now()
-    ? resetMs
-    : Date.now() + 60 * 60 * 1000;
+  const until = Number.isFinite(resetMs) && resetMs > Date.now() ? resetMs : Date.now() + 60 * 60 * 1000;
+  standbyBlockedUntil.set(provider, Math.max(standbyBlockedUntil.get(provider) ?? 0, until));
 }
 
 // Groq's retry-after is pessimistic. A burst against the per-minute window returns a
@@ -364,7 +389,7 @@ export async function generateStructured(
   // the account, not the request, so the same work is offered to the free standby models
   // in turn. Only a pacing failure gets here: a malformed request would fail identically
   // everywhere and should surface as itself rather than be retried four more times.
-  for (const fallback of standbyAvailable() ? resolveFallbackConfigs() : []) {
+  for (const fallback of resolveFallbackConfigs().filter(config => standbyAvailable(config.provider))) {
     try {
       const result = await callProvider(request, fallback);
       return { text: result.text, model: result.model, totalTokens: result.totalTokens };
@@ -418,7 +443,10 @@ async function callProvider(
   // Groq and OpenRouter both expose an OpenAI-compatible chat/completions endpoint, but
   // only Groq takes max_completion_tokens and reasoning_effort; sending them onward makes
   // some models reject the whole request.
-  const isGroq = config.provider === "groq";
+  // gpt-oss reasons before answering and takes an effort dial; the rest either reject
+  // those fields outright or, on OpenRouter, need reasoning turned off to stop it eating
+  // the whole completion budget. Sending the wrong pair fails the request, not the draft.
+  const reasons = config.provider === "groq" || config.provider === "cerebras";
   const budget = completionBudget(request, config.provider);
   const response = await fetch(`${config.baseUrl}/chat/completions`, {
     method: "POST",
@@ -441,9 +469,11 @@ async function callProvider(
       // every one and still returned nothing valid, taking 106 seconds to do it. Turning
       // reasoning off it answers in under a thousand tokens, in full, first time. So the
       // fix is not more room — it is not asking for the deliberation in the first place.
-      ...(isGroq
+      ...(reasons
         ? { max_completion_tokens: budget, reasoning_effort: process.env.LLM_REASONING_EFFORT ?? "low" }
-        : { max_tokens: budget, reasoning: { enabled: false } }),
+        : config.provider === "openrouter"
+          ? { max_tokens: budget, reasoning: { enabled: false } }
+          : { max_tokens: budget }),
       response_format: {
         type: "json_schema",
         json_schema: { name: request.schemaName, strict: true, schema: request.schema },
@@ -456,7 +486,7 @@ async function callProvider(
     signal: timeout,
   });
   if (!response.ok) throw new Error(await describeFailure(response, config));
-  if (isGroq) readProviderQuota(response.headers);
+  if (config.provider === "groq") readProviderQuota(response.headers);
   const result = await response.json() as {
     choices?: Array<{ message?: { content?: string } }>;
     usage?: { total_tokens?: number };
@@ -493,7 +523,7 @@ async function describeFailure(response: Response, config: LlmConfig): Promise<s
     }
     if (config.provider === "openrouter" && /free-models-per-day|openrouter_free_tier_daily/i.test(detail)) {
       const reset = /"X-RateLimit-Reset":"(\d+)"/i.exec(detail)?.[1] ?? null;
-      noteStandbyRefusal(reset);
+      noteStandbyRefusal(config.provider, reset);
     }
     const header = response.headers.get("retry-after");
     const parsed = header ? Number(header) : NaN;

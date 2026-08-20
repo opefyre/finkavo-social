@@ -1378,7 +1378,26 @@ const server = http.createServer(async (req, res) => {
           validateSocialDraft(candidate);
           const corpusText = evidenceSources.flatMap(s=>s.excerpts as string[]).join("\n").replace(/\s+/g, " ");
           const unsupported = candidate.claims.find((claim) => !corpusText.includes(claim.evidenceQuote.replace(/\s+/g, " ")));
-          if (unsupported) throw new Error("A claim evidence quote was not found verbatim in the supplied corpus excerpts");
+          if (unsupported) {
+            // "Not found verbatim" on its own gives the repair nothing to act on, and the
+            // model usually made a near miss rather than an invention: it starts copying
+            // correctly and drifts partway through a long passage. Naming the claim and
+            // showing how far the copy held tells it exactly what to do — quote a shorter
+            // span it can reproduce — instead of guessing at a rewrite. The quote is never
+            // trimmed to fit: shortening a tax or legal sentence can reverse its meaning,
+            // so the model is asked to choose a shorter one and the evidence stays exact.
+            const attempted = unsupported.evidenceQuote.replace(/\s+/g, " ");
+            let held = 0;
+            while (held < attempted.length && corpusText.includes(attempted.slice(0, held + 20))) held += 20;
+            throw new Error(
+              `A claim evidence quote was not found verbatim in the supplied corpus excerpts. ` +
+              `The claim "${unsupported.claim.slice(0, 80)}" quoted ${attempted.length} characters` +
+              (held > 0
+                ? `, and only the first ${held} matched the source — the copy drifted after "${attempted.slice(Math.max(0, held - 40), held)}". `
+                : `, and none of it appears in the excerpts. `) +
+              `Quote a shorter span, copied character for character from the excerpts, and do not join text across a gap.`,
+            );
+          }
           if (candidate.riskLevel === "high" && !evidenceSources.some(s=>s.tier === "official")) throw new Error("High-risk content requires an official primary source");
           const reliability=assessEvidenceReliability({topic:candidate.topic,category:candidate.category,claims:candidate.claims,sources:evidenceSources.map(s=>({url:String(s.url),title:String(s.title),publisher:s.publisher?String(s.publisher):null,tier:String(s.tier),retrievedAt:String(s.retrievedAt),excerpts:(s.excerpts as string[])||[]}))});
           if(!reliability.passed)throw new Error(`Evidence reliability gate failed: ${reliability.failures.join("; ")}`);

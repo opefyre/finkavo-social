@@ -115,9 +115,8 @@ describe("free-tier pacing", () => {
     globalThis.fetch = fetchMock as unknown as typeof fetch;
     const { generateStructured } = await freshClient({
       ...BASE_ENV,
-      LLM_FALLBACK_PROVIDER: "openrouter",
       OPENROUTER_API_KEY: "test-standby-key",
-      LLM_FALLBACK_MODELS: "nvidia/nemotron-3-super-120b-a12b:free",
+      LLM_FALLBACK_CHAIN: "openrouter:nvidia/nemotron-3-super-120b-a12b:free",
     });
 
     const result = await generateStructured(REQUEST);
@@ -129,9 +128,8 @@ describe("free-tier pacing", () => {
     // A standby that costs money would turn a quiet afternoon into a bill nobody chose.
     const { resolveFallbackConfigs } = await freshClient({
       ...BASE_ENV,
-      LLM_FALLBACK_PROVIDER: "openrouter",
       OPENROUTER_API_KEY: "test-standby-key",
-      LLM_FALLBACK_MODELS: "anthropic/claude-sonnet-4.5,nvidia/nemotron-3-super-120b-a12b:free,openai/gpt-5",
+      LLM_FALLBACK_CHAIN: "openrouter:anthropic/claude-sonnet-4.5,openrouter:nvidia/nemotron-3-super-120b-a12b:free,openrouter:openai/gpt-5",
     });
 
     const models = resolveFallbackConfigs().map(config => config.model);
@@ -143,9 +141,8 @@ describe("free-tier pacing", () => {
     globalThis.fetch = fetchMock as unknown as typeof fetch;
     const { generateStructured, LlmRateLimitError } = await freshClient({
       ...BASE_ENV,
-      LLM_FALLBACK_PROVIDER: "openrouter",
       OPENROUTER_API_KEY: "test-standby-key",
-      LLM_FALLBACK_MODELS: "nvidia/nemotron-3-super-120b-a12b:free,google/gemma-4-26b-a4b-it:free",
+      LLM_FALLBACK_CHAIN: "openrouter:nvidia/nemotron-3-super-120b-a12b:free,openrouter:google/gemma-4-26b-a4b-it:free",
     });
 
     // Primary refuses, then both standbys refuse; the caller still sees a rate limit,
@@ -176,7 +173,7 @@ describe("free-tier pacing", () => {
     await expect(generateStructured(REQUEST)).rejects.toBeInstanceOf(LlmRateLimitError);
     const firstRound = fetchMock.mock.calls.filter(call => String(call[0]).includes("openrouter")).length;
     expect(firstRound).toBeGreaterThan(0);
-    expect(llmDailyBudget().standbyBlockedUntil).toBeTruthy();
+    expect(llmDailyBudget().standbys.every(standby => standby.blockedUntil)).toBe(true);
 
     // The next caller should not spend a single call rediscovering the same wall.
     await expect(generateStructured(REQUEST)).rejects.toBeInstanceOf(LlmRateLimitError);
@@ -204,6 +201,38 @@ describe("free-tier pacing", () => {
     await expect(second).resolves.toBeTruthy();
     vi.useRealTimers();
     expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not let one standby's exhausted day stop the others", async () => {
+    // Each free tier is its own bucket. Treating them as one meant OpenRouter running out
+    // of its fifty a day silenced Mistral too, which had capacity the whole time.
+    const refusal = JSON.stringify({ error: {
+      message: "Rate limit exceeded: free-models-per-day",
+      metadata: { headers: { "X-RateLimit-Reset": String(Date.now() + 3_600_000) } },
+    } });
+    const fetchMock = vi.fn(async (url: string | URL) => {
+      const target = String(url);
+      if (target.includes("openrouter")) return new Response(refusal, { status: 429 });
+      if (target.includes("mistral")) return new Response(JSON.stringify({ choices: [{ message: { content: '{"ok":"from-mistral"}' } }] }), { status: 200 });
+      return new Response("primary limit", { status: 429, headers: { "retry-after": "1800" } });
+    });
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    const { generateStructured } = await freshClient({
+      ...BASE_ENV,
+      OPENROUTER_API_KEY: "test-openrouter",
+      MISTRAL_API_KEY: "test-mistral",
+      LLM_FALLBACK_CHAIN: "openrouter:nvidia/nemotron-3-super-120b-a12b:free,mistral:magistral-small-latest",
+    });
+
+    const result = await generateStructured(REQUEST);
+    expect(result.text).toContain("from-mistral");
+    expect(result.model).toBe("magistral-small-latest");
+
+    // OpenRouter is now known to be out for the day, so the next call skips it entirely
+    // and goes straight to the standby that still has room.
+    const before = fetchMock.mock.calls.filter(c => String(c[0]).includes("openrouter")).length;
+    await generateStructured(REQUEST);
+    expect(fetchMock.mock.calls.filter(c => String(c[0]).includes("openrouter"))).toHaveLength(before);
   });
 });
 

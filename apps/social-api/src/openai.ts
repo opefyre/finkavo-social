@@ -66,6 +66,38 @@ export async function generateDraft(candidate: Candidate): Promise<{ draft: Draf
       "If repairFeedback is supplied, fix exactly that problem while keeping the topic and evidence-bound meaning.",
     ].join(" "),
   });
+  // Hashtags must match ^#[A-Za-z0-9_]+$, and that pattern is stripped from the schema
+  // the provider sees, so a model has no way to know it and writes "#IRS 2026" or
+  // "#mais-info". Failing an otherwise sound draft over punctuation in its hashtags is
+  // the wrong trade: they carry no claim and no evidence, so they are repaired here
+  // rather than sent back for another generation. Anything left empty is dropped.
+  function tidyHashtags(value: unknown): unknown {
+    if (!Array.isArray(value)) return value;
+    const cleaned = value
+      .map(tag => `#${String(tag).replace(/[^A-Za-z0-9_]/g, "")}`)
+      .filter(tag => tag.length > 1);
+    return [...new Set(cleaned)];
+  }
+
+  // Alt text has a 300-character ceiling that is stripped from the schema the provider
+  // sees, so the model overruns it and an otherwise good draft is thrown away. Unlike the
+  // copy on the slide, alt text is a description of what the slide shows: it carries no
+  // claim, is never read by a follower, and trimming it to the last full sentence that
+  // fits changes nothing about the post. Visible copy is deliberately not touched here —
+  // when a title or body runs long the repair loop rewrites it, which is its job.
+  function tidyAltText(value: unknown): unknown {
+    if (!Array.isArray(value)) return value;
+    return value.map(slide => {
+      if (!slide || typeof slide !== "object") return slide;
+      const entry = slide as Record<string, unknown>;
+      const alt = typeof entry.altText === "string" ? entry.altText.trim() : "";
+      if (alt.length <= 300) return entry;
+      const clipped = alt.slice(0, 300);
+      const lastStop = Math.max(clipped.lastIndexOf(". "), clipped.lastIndexOf("? "), clipped.lastIndexOf("! "));
+      return { ...entry, altText: lastStop > 80 ? clipped.slice(0, lastStop + 1) : `${clipped.slice(0, 297).trimEnd()}...` };
+    });
+  }
+
   let parsed: unknown;
   try {
     parsed = JSON.parse(text);
@@ -80,6 +112,11 @@ export async function generateDraft(candidate: Candidate): Promise<{ draft: Draf
       `chars=${text.length} lines=${lines.length} blank=${blank} tokens=${totalTokens ?? "?"} ` +
       `head=${JSON.stringify(text.slice(0, 80))} tail=${JSON.stringify(text.slice(-60))}`,
     );
+  }
+  if (parsed && typeof parsed === "object") {
+    const draft = parsed as Record<string, unknown>;
+    draft.hashtags = tidyHashtags(draft.hashtags);
+    draft.slides = tidyAltText(draft.slides);
   }
   return { draft: DraftSchema.parse(parsed), model, totalTokens };
 }
