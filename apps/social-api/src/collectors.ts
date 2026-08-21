@@ -182,13 +182,43 @@ export function chunkText(text: string, size = 1200): string[] {
 }
 
 /** Fetches one page for corpus ingestion. */
+// Article URLs come out of RSS items, so they are chosen by whoever publishes the feed
+// rather than by us. The feed list is a fixed set of Portuguese news outlets and none of
+// this is likely, but the machine doing the fetching also runs n8n on localhost, and a
+// link that resolves inward would be fetched, stored as a document and could surface in
+// a post. The cost of refusing is nothing; the cost of allowing it is the whole host.
+const PRIVATE_HOST = /^(?:localhost|.*\.localhost|.*\.local|.*\.internal)$/i;
+const PRIVATE_IPV4 = /^(?:0|10|127)\.|^169\.254\.|^172\.(?:1[6-9]|2\d|3[01])\.|^192\.168\./;
+
+export function isFetchableUrl(rawUrl: string): boolean {
+  try {
+    const parsed = new URL(rawUrl);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return false;
+    const host = parsed.hostname.replace(/^\[|\]$/g, "").toLowerCase();
+    if (PRIVATE_HOST.test(host)) return false;
+    if (PRIVATE_IPV4.test(host)) return false;
+    // IPv6 loopback and unique-local.
+    if (host === "::1" || host.startsWith("fc") || host.startsWith("fd") || host.startsWith("fe80")) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function fetchPage(url: string) {
+  if (!isFetchableUrl(url)) return { url, status: 0, html: "", error: "refused: not a public http(s) address" };
   try {
     const response = await fetch(url, {
       headers: { "user-agent": BROWSER_UA, "accept-language": "pt-PT,pt;q=0.9,en;q=0.8" },
       redirect: "follow",
       signal: AbortSignal.timeout(30_000),
     });
+    // A redirect can land somewhere the first URL was not, and fetch follows them for us,
+    // so the destination is checked too. The request has already happened by this point;
+    // what this prevents is the response being kept and used as evidence.
+    if (response.url && !isFetchableUrl(response.url)) {
+      return { url, status: 0, html: "", error: "refused: redirected to a private address" };
+    }
     const html = await response.text();
     return { url, status: response.status, html, error: null as string | null };
   } catch (error) {

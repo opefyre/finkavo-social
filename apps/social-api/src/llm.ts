@@ -173,6 +173,26 @@ let gate: Promise<unknown> = Promise.resolve();
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+// The caps only mean anything if they outlive the process. Spend is reported to whoever
+// is listening — the server writes it to social_llm_spend — and read back at startup, so
+// a restart no longer hands the day a fresh allowance. Kept as an observer rather than a
+// direct database call so this module stays free of the connection and the import cycle
+// that would come with it.
+type SpendReport = { at: number; tokens: number; paid: boolean };
+let spendObserver: (report: SpendReport) => void = () => {};
+export function setLlmSpendObserver(observer: (report: SpendReport) => void) { spendObserver = observer; }
+
+/** Restores the trailing day's spend after a restart. */
+export function hydrateLlmSpend(rows: SpendReport[]) {
+  const now = Date.now();
+  for (const row of rows) {
+    if (now - row.at >= DAY_MS) continue;
+    (row.paid ? paidSpends : dailySpends).push({ at: row.at, tokens: row.tokens });
+  }
+  dailySpends.sort((left, right) => left.at - right.at);
+  paidSpends.sort((left, right) => left.at - right.at);
+}
+
 function dailyTokens(now: number) {
   dailySpends = dailySpends.filter(spend => now - spend.at < DAY_MS);
   return dailySpends.reduce((total, spend) => total + spend.tokens, 0);
@@ -240,13 +260,22 @@ async function reserve(estimated: number): Promise<(actual: number | null) => vo
     const spend: Spend = { at, tokens: estimated };
     spends.push(spend);
     dailySpends.push(spend);
+    spendObserver({ at, tokens: estimated, paid: false });
     return spend;
   });
   // Keep the queue intact even when this caller gives up, so the next one still waits.
   gate = claim.catch(() => undefined);
   const spend = await claim;
   return (actual: number | null) => {
-    if (actual !== null && Number.isFinite(actual)) spend.tokens = actual;
+    // A provider that does not report usage returns null, and one that reports zero has
+    // told us nothing either. Treating either as the true cost refunded the whole
+    // reservation and left the ledger summing to nothing, which is a budget that can
+    // never be reached. The reservation stands unless something better replaces it.
+    if (actual === null || !Number.isFinite(actual) || actual <= 0) return;
+    // Only the correction is reported; the reservation is already on the ledger.
+    const difference = actual - spend.tokens;
+    spend.tokens = actual;
+    if (difference !== 0) spendObserver({ at: spend.at, tokens: difference, paid: false });
   };
 }
 
@@ -455,11 +484,16 @@ export async function generateStructured(
       const at = Date.now();
       const spend: Spend = { at, tokens: estimated };
       paidSpends.push(spend);
+      spendObserver({ at, tokens: estimated, paid: true });
       try {
         const result = await callProvider(request, paid);
         // Charged what it actually cost rather than what was reserved, so the day's
         // ceiling measures spending and not caution.
-        if (result.totalTokens !== null) spend.tokens = result.totalTokens;
+        if (result.totalTokens !== null && result.totalTokens > 0) {
+          const difference = result.totalTokens - spend.tokens;
+          spend.tokens = result.totalTokens;
+          if (difference !== 0) spendObserver({ at: spend.at, tokens: difference, paid: true });
+        }
         return { text: result.text, model: result.model, totalTokens: result.totalTokens };
       } catch (error) {
         spend.tokens = 0;

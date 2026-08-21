@@ -7,7 +7,7 @@ import postgres from "postgres";
 import { z } from "zod";
 import { DraftSchema } from "./contracts.js";
 import { generateDraft } from "./openai.js";
-import { LlmRateLimitError, llmDailyBudget } from "./llm.js";
+import { LlmRateLimitError, llmDailyBudget, setLlmSpendObserver, hydrateLlmSpend} from "./llm.js";
 import { createBufferMediaUrl, createUploadUrl, uploadRenderedObject, verifyUploadedObject, type RenderFileInput } from "./storage.js";
 import { BufferError, createScheduledPost, deletePost as deleteBufferPost, findMatchingScheduledPost, getPost as getBufferPost, setBufferCallObserver } from "./buffer.js";
 import { notifyDiscord } from "./discord.js";
@@ -317,6 +317,23 @@ async function noteProviderPacing(failure: BufferError) {
 
 // Every Buffer call is recorded so the daily budget is measured rather than assumed, and
 // the provider's own remaining-quota header is trusted over our count when it is lower.
+// The token budget and the paid caps are only ceilings if they survive a restart, so
+// spend goes to the ledger as it happens and comes back at startup. Fire-and-forget on
+// the way out: a request must not fail because its bookkeeping did.
+setLlmSpendObserver(({ at, tokens, paid }) => {
+  void sql`INSERT INTO social_llm_spend (paid, tokens, created_at) VALUES (${paid}, ${Math.round(tokens)}, ${new Date(at).toISOString()})`.catch(() => {});
+});
+
+void (async () => {
+  try {
+    const rows = await sql`SELECT paid, tokens, created_at FROM social_llm_spend WHERE created_at > now() - INTERVAL '24 hours' ORDER BY created_at`;
+    hydrateLlmSpend(rows.map(row => ({ at: new Date(String(row.created_at)).getTime(), tokens: Number(row.tokens), paid: Boolean(row.paid) })));
+  } catch {
+    // A budget that cannot be read is not a reason to refuse to start; the in-memory
+    // window still applies and the next restart will try again.
+  }
+})();
+
 setBufferCallObserver(({ kind, status, quota }) => {
   void sql`INSERT INTO social_provider_call (provider, kind) VALUES (${BUFFER_PROVIDER}, ${kind})`.catch(() => {});
   if (quota.dailyRemaining !== null && quota.dailyRemaining <= 0 && quota.resetSeconds) {
