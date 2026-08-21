@@ -7,7 +7,20 @@ import { ReelManifestSchema } from "./reel-schema.js";
 const fixturePath = process.argv[2] || new URL("../fixtures/reel-imi-august.json", import.meta.url);
 const manifest = ReelManifestSchema.parse(JSON.parse(await readFile(fixturePath, "utf8")));
 const outputDir = process.env.RENDER_OUTPUT_DIR ?? "./data/reels";
+const musicPath = process.env.REEL_MUSIC_PATH;
 
 const frames = await renderReel(manifest, outputDir);
-const video = await composeReel(manifest, frames, path.join(outputDir, "reel.mp4"));
-process.stdout.write(`${frames.join("\n")}\n${video.path} (${video.seconds}s)\n`);
+
+// Frames are rendered once and scored three ways, so the only difference between the
+// files is what they sound like.
+const variants: Array<[string, { musicPath?: string; whoosh?: boolean }]> = [
+  ["music", { musicPath }],
+  ["whoosh", { whoosh: true }],
+  ["music-and-whoosh", { musicPath, whoosh: true }],
+];
+
+for (const [name, audio] of variants) {
+  if (audio.musicPath === undefined && name !== "whoosh") continue;
+  const out = await composeReel(manifest, frames, path.join(outputDir, `reel-${name}.mp4`), audio);
+  process.stdout.write(`${out.path} (${out.seconds}s)\n`);
+}
