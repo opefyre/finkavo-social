@@ -341,7 +341,7 @@ const MAX_REVISION_ROUNDS = 2;
 const conceptsRemainingFor = async (day: string) => {
   const [row] = await sql`
     SELECT count(*) AS count FROM social_post_concept c
-    WHERE c.status='planned' AND c.planned_for=${day}
+    WHERE c.status='planned' AND c.planned_for <= ${day}
       AND EXISTS (SELECT 1 FROM social_topic_evidence_bundle b WHERE b.id=c.evidence_bundle_id AND b.verification_state='verified' AND b.expires_at>now())`;
   return Number(row.count) > 0;
 };
@@ -411,6 +411,16 @@ async function schedulePublishJob(tx: typeof sql, input: {
 // reader value" — and that list is the only part worth handing back to the model. The
 // error string on its own says a gate refused the post, which is not something anyone can
 // rewrite from.
+// A day, however the value arrived: an ISO string, a driver Date, or a plan date.
+const asDay = (value: unknown) => {
+  if (value instanceof Date) return Number.isNaN(value.getTime()) ? "" : lisbonDate(value);
+  const text = String(value ?? "").trim();
+  const iso = text.match(/^\d{4}-\d{2}-\d{2}/);
+  if (iso) return iso[0];
+  const parsed = new Date(text);
+  return Number.isNaN(parsed.getTime()) ? "" : lisbonDate(parsed);
+};
+
 const refusalReason = (result: Record<string, unknown>) => {
   const failures = Array.isArray(result.failures) ? result.failures.map(String).filter(Boolean) : [];
   if (failures.length) return failures.join("; ");
@@ -437,10 +447,13 @@ async function returnConceptForRepair(tx: typeof sql, input: { topic: string; pl
 async function requestReplacement(tx: typeof sql, input: { publishDate: unknown; reason: string; postId?: unknown; jobId?: unknown }) {
   // The day the slot belongs to, preferred over today: a post lost at 23:50 is a debt
   // against the day it was planned for, not against tomorrow.
-  let publishDate = input.publishDate ? String(input.publishDate).slice(0, 10) : "";
+  //
+  // Via asDay, because the driver hands back a Date and String(date).slice(0, 10) is
+  // "Sun Aug 19" — which the DATE column accepted and filed under the year 2001.
+  let publishDate = input.publishDate ? asDay(input.publishDate) : "";
   if (!publishDate && input.postId) {
     const [post] = await tx`SELECT planned_for FROM social_post WHERE id=${String(input.postId)}`;
-    if (post?.planned_for) publishDate = String(post.planned_for).slice(0, 10);
+    if (post?.planned_for) publishDate = asDay(post.planned_for);
   }
   if (!publishDate) publishDate = lisbonDate(new Date());
   await tx`
@@ -1966,10 +1979,18 @@ const server = http.createServer(async (req, res) => {
       // files the same debt. Without this the two failures were reported differently:
       // a withdrawn post raised an alert, a day that simply came up short returned a
       // flag in a response body that only the scheduler ever read.
-      const gap = Math.max(0, input.target - posts.length);
+      // Only for a day that has actually run. Recovery works ahead by design, so a
+      // future day is normally incomplete and owes nothing yet; a post genuinely lost
+      // from a future day still files its own debt through requestReplacement.
+      const gap = day <= lisbonDate(new Date()) ? Math.max(0, input.target - posts.length) : 0;
       if (gap > 0) {
-        const [alreadyOwed] = await sql`SELECT count(*) AS count FROM social_replacement_request WHERE publish_date=${day} AND status='open'`;
-        for (let i = Number(alreadyOwed.count); i < gap; i++) {
+        // Counted across every status except 'filled'. Counting only the open ones meant
+        // each run re-filed a shortfall the previous run had just closed as unfillable,
+        // so the debt grew by the size of the gap every cycle and the alert text changed
+        // with it — which also defeated the alert's own de-duplication. Aug 23 reached
+        // fourteen owed posts on a day that was three short.
+        const [recorded] = await sql`SELECT count(*) AS count FROM social_replacement_request WHERE publish_date=${day} AND status<>'filled'`;
+        for (let i = Number(recorded.count); i < gap; i++) {
           await sql`INSERT INTO social_replacement_request (publish_date, reason) VALUES (${day}, ${`the day finished ${gap} post(s) short of ${input.target}`})`;
         }
       }
@@ -1980,12 +2001,17 @@ const server = http.createServer(async (req, res) => {
         const settled = await sql`UPDATE social_replacement_request SET status='filled', updated_at=now() WHERE publish_date=${day} AND status='open' RETURNING id`;
         replacementsFilled = settled.length;
         await sql`INSERT INTO social_event(event_type,payload) VALUES('publish.replacement_filled',${sql.json({ day, filled: replacementsFilled })})`;
-      } else if (owed.length) {
+      } else if (owed.length && day <= lisbonDate(new Date())) {
         // The day is short and cannot be worked any further this cycle. Whether that is
         // because the bank is empty, the token budget is gone or the clock ran out, the
         // one thing that must not happen is for it to pass unnoticed.
+        //
+        // Only for today or a day already gone. A day in the future being incomplete is
+        // not a failure, it is a day that has not happened yet — recovery works ahead by
+        // design, and alerting on that reported every look at tomorrow as a crisis.
         const exhausted = budgetExhausted || outOfTime() || !(await conceptsRemainingFor(day));
-        if (exhausted) {
+        const [alreadyToldSomeone] = await sql`SELECT count(*) AS count FROM social_replacement_request WHERE publish_date=${day} AND alerted_at IS NOT NULL`;
+        if (exhausted && !Number(alreadyToldSomeone.count)) {
           const marked = await sql`UPDATE social_replacement_request SET status='unfillable', alerted_at=now(), updated_at=now() WHERE publish_date=${day} AND status='open' RETURNING id, reason`;
           replacementsUnfillable = marked.length;
           const cause = budgetExhausted ? "the day's generation budget was spent" : outOfTime() ? "the recovery run hit its time limit" : "no eligible topic remained in the bank";
