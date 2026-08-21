@@ -2063,10 +2063,14 @@ const server = http.createServer(async (req, res) => {
       const owed = await sql`SELECT id, reason, source_post_id FROM social_replacement_request WHERE publish_date=${day} AND status='open' ORDER BY created_at`;
       let replacementsFilled = 0;
       let replacementsUnfillable = 0;
-      if (owed.length && complete) {
-        const settled = await sql`UPDATE social_replacement_request SET status='filled', updated_at=now() WHERE publish_date=${day} AND status='open' RETURNING id`;
+      if (complete) {
+        // Including the ones already written off. A day that was short at nine in the
+        // morning and whole by lunchtime should not keep a failure on its record, and
+        // leaving it there kept the seven-day summary reporting a shortfall that no
+        // longer existed.
+        const settled = await sql`UPDATE social_replacement_request SET status='filled', updated_at=now() WHERE publish_date=${day} AND status<>'filled' RETURNING id`;
         replacementsFilled = settled.length;
-        await sql`INSERT INTO social_event(event_type,payload) VALUES('publish.replacement_filled',${sql.json({ day, filled: replacementsFilled })})`;
+        if (replacementsFilled) await sql`INSERT INTO social_event(event_type,payload) VALUES('publish.replacement_filled',${sql.json({ day, filled: replacementsFilled })})`;
       } else if (owed.length && day <= lisbonDate(new Date())) {
         // The day is short and cannot be worked any further this cycle. Whether that is
         // because the bank is empty, the token budget is gone or the clock ran out, the
