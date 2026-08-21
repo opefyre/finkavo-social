@@ -34,34 +34,46 @@ export function choosePostFormat(input: {
   postIntent?: string | null;
   hasValidReel: boolean;
   reelsAlreadyOnDay: number;
+  postsAlreadyOnDay?: number;
+  postsPerDay?: number;
+  reelsPerDay?: number;
   maxReelsPerDay?: number;
 }): FormatDecision {
-  const maxReels = input.maxReelsPerDay ?? 2;
+  const postsPerDay = input.postsPerDay ?? 5;
+  const wantedReels = input.reelsPerDay ?? 1;
+  const maxReels = input.maxReelsPerDay ?? wantedReels;
 
-  // No reel to publish is the commonest answer and not an interesting one: the model did
-  // not write one, or what it wrote did not survive its checks.
   if (!input.hasValidReel) return { format: "carousel", reason: "no reel survived generation for this post" };
-
   if (input.reelsAlreadyOnDay >= maxReels) {
-    return { format: "carousel", reason: `the day already has ${input.reelsAlreadyOnDay} reels, which is the cap` };
+    return { format: "carousel", reason: `the day already has ${input.reelsAlreadyOnDay} reel(s), which is the cap` };
   }
 
-  // The plan's intent outranks the model's. Planning knows a slot is a dated calendar
-  // event; the model is guessing from the evidence in front of it.
   const planned = String(input.contentIntent ?? "");
   const chosen = String(input.postIntent ?? "");
   const intent = URGENT_INTENTS.has(planned) ? planned : chosen;
-
   if (URGENT_INTENTS.has(intent)) {
     return { format: "reel", reason: `${intent} carries a date or a consequence, which is what a reel is for` };
+  }
+
+  // The floor. Preferring dated posts is the right instinct but it is only a preference,
+  // and a day made entirely of explainers was getting no reel at all — which is how a
+  // format meant to reach strangers ends up never running. Once there are no longer more
+  // slots left than reels still owed, the next post that can carry one does, whatever it
+  // is about. A quieter reel is worth more than the day's only chance at reach going
+  // unused.
+  const stillOwed = wantedReels - input.reelsAlreadyOnDay;
+  const slotsLeftAfterThis = Math.max(0, postsPerDay - (input.postsAlreadyOnDay ?? 0) - 1);
+  if (stillOwed > 0 && slotsLeftAfterThis < stillOwed) {
+    return { format: "reel", reason: `the day still owes ${stillOwed} reel and has ${slotsLeftAfterThis} slot(s) left after this one` };
   }
 
   return { format: "carousel", reason: `${intent || "evergreen"} rewards being saved and re-read, which a carousel does better` };
 }
 
 /** How many reels a day should carry, given how many posts it holds. */
-export function reelsPerDay(postsPerDay: number, maxReelsPerDay = 2): number {
-  // Never the whole day. Even on a day made entirely of deadlines, some of it has to be
-  // the format people keep.
-  return Math.max(0, Math.min(maxReelsPerDay, Math.floor(postsPerDay / 2)));
+export function reelsPerDay(postsPerDay: number, maxReelsPerDay = 1): number {
+  // One a day out of five: enough that the account is reaching people who have never
+  // heard of it, few enough that most of the feed is still the format people save. Never
+  // the whole day, even on a day made entirely of deadlines.
+  return Math.max(0, Math.min(maxReelsPerDay, Math.max(postsPerDay >= 2 ? 1 : 0, Math.floor(postsPerDay / 5))));
 }

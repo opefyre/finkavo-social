@@ -2141,7 +2141,16 @@ const server = http.createServer(async (req, res) => {
           WHERE format = 'reel' AND status NOT IN ('failed','blocked')
             AND scheduled_at >= ${`${day} 00:00:00+00`} AND scheduled_at < ${`${day} 23:59:59+00`}
         `;
+        // How full the day already is decides whether this post is the last chance to
+        // meet its reel, so the count matters as much as the intent.
+        const [dayCount] = await tx`
+          SELECT count(*) AS count FROM social_publish_job
+          WHERE status NOT IN ('failed','blocked')
+            AND scheduled_at >= ${`${day} 00:00:00+00`} AND scheduled_at < ${`${day} 23:59:59+00`}
+        `;
         const decided = choosePostFormat({
+          postsAlreadyOnDay: Number(dayCount?.count ?? 0),
+          postsPerDay: 5,
           contentIntent: conceptRow?.content_intent ? String(conceptRow.content_intent) : null,
           postIntent: post.post_intent ? String(post.post_intent) : null,
           hasValidReel: Array.isArray(revisionRow?.reel_frames) && (revisionRow.reel_frames as unknown[]).length >= 3,
