@@ -32,7 +32,14 @@ const wordsIn = (frame: ReelFrame): number => {
  * twenty words cannot be shown for as long as one carrying four — and the whole is then
  * scaled into the band where Reels get rewatched.
  */
-export function frameDurations(frames: ReelFrame[]): number[] {
+export function frameDurations(frames: ReelFrame[], holdSeconds?: number): number[] {
+  // An explicit hold is honoured exactly, including past the fifteen-second band: the
+  // band exists to stop a video being too long, and a fixed short hold cannot be.
+  if (holdSeconds) {
+    const exact = Math.round(holdSeconds * REEL_FPS) / REEL_FPS;
+    return frames.map(() => exact);
+  }
+
   const raw = frames.map(frame => {
     // A second of recognition before the words, then roughly four words a second, which
     // is a slow-ish silent read on a phone.
@@ -69,7 +76,7 @@ export async function composeReel(manifest: ReelManifest, frameFiles: string[], 
   }
   await mkdir(path.dirname(outputPath), { recursive: true });
 
-  const durations = frameDurations(manifest.frames);
+  const durations = frameDurations(manifest.frames, manifest.holdSeconds);
   // Each still is turned into a fixed number of frames by the input itself: -loop on its
   // own is an endless source, and pairing that with a zoompan hold asks for every one of
   // those frames to be held again. The first attempt at this wrote a quarter of a

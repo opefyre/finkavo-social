@@ -1,11 +1,29 @@
 {
   "topic": "The August IMI instalment closes on the 31st",
   "visualStyle": "peach_deadline",
-  "sourceLabel": "Autoridade Tributária e Aduaneira",
+  "sourceLabel": "Autoridade Tributaria e Aduaneira",
   "frames": [
-    { "type": "hook", "kicker": "10 days left", "headline": "If you pay IMI in instalments, one is due this month." },
-    { "type": "beat", "figure": "31 August", "label": "This instalment closes", "body": "Miss it and the whole remaining bill can fall due at once, not just the instalment." },
-    { "type": "beat", "figure": "3", "label": "Instalments, not two", "body": "Larger bills are split across May, August and November. The August one is the middle payment people forget." },
-    { "type": "payoff", "headline": "Check your IMI notice before the 31st.", "action": "Open Portal das Financas and confirm which instalment plan you are on." }
+    {
+      "type": "hook",
+      "kicker": "10 days left",
+      "headline": "Your IMI instalment is due this month."
+    },
+    {
+      "type": "beat",
+      "figure": "31 August",
+      "label": "The deadline",
+      "body": "Miss it and the whole bill can fall due."
+    },
+    {
+      "type": "beat",
+      "figure": "3",
+      "label": "Not two instalments",
+      "body": "May, August, November. August is the forgotten one."
+    },
+    {
+      "type": "payoff",
+      "headline": "Check your IMI notice.",
+      "action": "Portal das Financas, before the 31st."
+    }
   ]
 }
