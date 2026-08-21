@@ -35,6 +35,13 @@ export async function fetchRenderedText(url: string, timeoutMs = 45_000): Promis
     const instance = await sharedBrowser();
     context = await instance.newContext({
       locale: "pt-PT",
+      // Stated as a header as well as a locale. Some official sites serve English or
+      // Portuguese for the same URL depending on what they infer, and a corpus that
+      // changes language between fetches makes every stored quote look deleted: the words
+      // are still on the page, just not in the language they were captured in. Asking for
+      // one language explicitly, on both fetch paths, keeps the corpus comparable to
+      // itself.
+      extraHTTPHeaders: { "accept-language": "pt-PT,pt;q=0.9,en;q=0.8" },
       userAgent:
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36",
     });

@@ -57,14 +57,30 @@ function numericValue(raw: string): string {
   return Number.isFinite(value) ? String(value) : "";
 }
 
-export const normalizedNumberTokens = (value: string) =>
+export // Portuguese official text spells numbers as often as it writes them: "os noivos tem ate
+// seis meses para casar", "no prazo de trinta dias". A post written in English says "6
+// months", and comparing digits alone called that unsupported — a correct figure refused
+// because the source used a word for it. Both sides are put into digits first.
+const SPELLED_NUMBERS: Array<[RegExp, string]> = [
+  [/\b(?:um|uma|one)\b/giu, "1"], [/\b(?:dois|duas|two)\b/giu, "2"], [/\b(?:tr[êe]s|three)\b/giu, "3"],
+  [/\b(?:quatro|four)\b/giu, "4"], [/\b(?:cinco|five)\b/giu, "5"], [/\b(?:seis|six)\b/giu, "6"],
+  [/\b(?:sete|seven)\b/giu, "7"], [/\b(?:oito|eight)\b/giu, "8"], [/\b(?:nove|nine)\b/giu, "9"],
+  [/\b(?:dez|ten)\b/giu, "10"], [/\b(?:onze|eleven)\b/giu, "11"], [/\b(?:doze|twelve)\b/giu, "12"],
+  [/\b(?:quinze|fifteen)\b/giu, "15"], [/\b(?:vinte|twenty)\b/giu, "20"], [/\b(?:trinta|thirty)\b/giu, "30"],
+  [/\b(?:sessenta|sixty)\b/giu, "60"], [/\b(?:noventa|ninety)\b/giu, "90"], [/\b(?:cento|hundred)\b/giu, "100"],
+];
+
+const withDigits = (value: string) =>
+  SPELLED_NUMBERS.reduce((text, [pattern, digit]) => text.replace(pattern, digit), value);
+
+export const normalizedNumberTokens = (rawValue: string): string[] => ((value: string) =>
   [...value.matchAll(/(?:€\s*)?(\d[\d.,]*)\s*(%|€|euros?|eur|days?|dias?|months?|meses|m[êe]s|years?|anos?|per ?cento?|percent)?/giu)]
     .map(match => {
       const unit = canonicalUnit(match[2] ?? "") || (/^€/.test(match[0]) ? "eur" : "");
       const number = numericValue(match[1]);
       return unit && number ? `${number}${unit}` : "";
     })
-    .filter(Boolean);
+    .filter(Boolean))(withDigits(rawValue));
 
 
 export function isSensitiveClaim(value: EvidenceClaim | string) {

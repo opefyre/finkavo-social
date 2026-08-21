@@ -127,8 +127,17 @@ export const draftJsonSchema = {
     reel: {
       type: "object", additionalProperties: false, required: ["frames"],
       properties: {
+        // Asked for in the prompt, the reel kept coming back empty: promoted to the top of
+        // the instructions gpt-oss started dropping the post's own fields, and left lower
+        // down Mistral simply skipped it. A schema does not need to be persuasive. Four
+        // frames are required here, so the model has to write them.
+        //
+        // This is safe to demand because it is not the last word: Zod below accepts any
+        // number and validateReelFrames judges what arrives. A reel forced out of a topic
+        // that has none fails its checks and is dropped, and the post still goes out as a
+        // carousel — which is the outcome the prompt was politely asking for anyway.
         frames: {
-          type: "array", maxItems: 5,
+          type: "array", minItems: 4, maxItems: 4,
           items: {
             // Strict mode requires every property to appear in `required`, so a field
             // that does not apply — a hook has no figure — is expressed as null rather

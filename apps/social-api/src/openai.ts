@@ -50,16 +50,6 @@ export async function generateDraft(candidate: Candidate): Promise<{ draft: Draf
       "WRITE EVERY USER-FACING FIELD IN ENGLISH. Evidence is usually Portuguese; the post never is. Only evidenceQuote keeps its source language.",
       "You write practical English Instagram carousels for Finkavo, a Portugal personal-finance product.",
       "Use ONLY the supplied excerpts. Never add a date, threshold, rate, fee, eligibility rule or legal claim that is not in them. Never invent sources or give individual financial, tax or legal advice.",
-      // Left until last and paired with an easy out, this was simply skipped: the first
-      // real draft came back with an empty array and a perfectly good carousel. It sits
-      // near the top now, and the escape is narrow enough to be rare.
-      "EVERY post also needs a reel: exactly 4 frames — one hook, two beats, one payoff, in that order. This is required, not optional.",
-      "A frame is read in 1.7 seconds. hook text max 12 words, beat text max 12 words, payoff text max 10 words. Short sentences, never a paragraph.",
-      "Put the number in the beat's figure field, 3 words at most — '30 June', '25 euros', '36 months' — and name it in label, 5 words at most. The figure is what a viewer remembers.",
-      "The beat's text must not repeat its figure: the figure is already the largest thing on the frame. Use the text to say what it means or what happens if it is missed. Figure '30 June', text 'Filing after this costs you the deduction' — not 'File by 30 June'.",
-      "Spell out an institution the first time it appears in the reel: 'the tax authority', not 'AT'. A viewer sees the reel without the caption.",
-      "Reel frames carry only facts the excerpts state directly, exactly as the slides do.",
-      "Return reel.frames empty ONLY if the excerpts contain no date, amount, rate or duration at all. If there is a number in the evidence, there is a reel.",
       "The topic is predetermined. Sources prove it; they never replace it. Every slide and caption line must serve that topic. Omit adjacent facts that merely appear in the evidence.",
       "Reconcile multiple sources, preferring official ones. Never merge rules that apply to different audiences, regions or years.",
       "Each claim needs a short exact supporting excerpt. Set riskLevel high for tax, immigration, legal, deadline, fee or eligibility content.",
@@ -75,6 +65,17 @@ export async function generateDraft(candidate: Candidate): Promise<{ draft: Draf
       "Repeat recurring deadlines when the candidate is a new filing period; prior coverage is not a reason to omit it.",
       "Every body, item, quote and CTA is a complete thought ending in . ? ! or ). Sentence case, never all-caps. Slide copy is clean English paraphrase, never a raw corpus fragment, Markdown, chunk labels such as D1, or dangling quotes.",
       "altText describes only the text, layout and approved icon actually in the slide. Never invent photos, people, charts or symbols the template will not render.",
+      // These sat at the top for a while, shouted, because the reel kept coming back
+      // empty. The cause turned out to be a missing field in the schema — the model had
+      // nowhere to write one — and by the time that was fixed the emphasis was still here,
+      // crowding out the post itself: gpt-oss started returning objects with the reel and
+      // none of the required top-level fields. Stated once, in its place, it behaves.
+      "Also write a reel of the same post: 4 frames, one hook, two beats, one payoff, in that order.",
+      "A reel frame is read in 1.7 seconds. hook text max 12 words, beat text max 12 words, payoff text max 10 words.",
+      "Put the number in the beat's figure field, 3 words at most — '30 June', '25 euros', '36 months' — and name it in label, 5 words at most.",
+      "The beat's text must not repeat its figure; use it to say what the figure means or what happens if it is missed.",
+      "Spell out an institution the first time it appears in the reel: 'the tax authority', not 'AT'. A reel is watched without the caption.",
+      "Reel frames carry only facts the excerpts state directly. Return reel.frames empty only if the excerpts contain no date, amount, rate or duration at all.",
       "If repairFeedback is supplied, fix exactly that problem while keeping the topic and evidence-bound meaning.",
     ].join(" "),
   }, undefined, { allowPaid: Boolean(candidate.allowPaid) });
