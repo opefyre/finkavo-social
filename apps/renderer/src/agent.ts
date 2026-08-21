@@ -3,6 +3,11 @@ import { hostname } from "node:os";
 import { readFile, stat } from "node:fs/promises";
 import { renderManifestSchema, type RenderManifest } from "./schema.js";
 import { renderManifest } from "./render.js";
+import { ReelManifestSchema } from "./reel-schema.js";
+import { renderReel } from "./render-reel.js";
+import { composeReel } from "./compose-reel.js";
+import { chooseSound, loadSoundLibrary } from "./sound-library.js";
+import path from "node:path";
 
 const apiBase = process.env.SOCIAL_API_BASE_URL || "http://127.0.0.1:4320";
 const token = process.env.SOCIAL_API_TOKEN;
@@ -24,12 +29,50 @@ async function api(path: string, init: RequestInit = {}) {
 
 async function processOne() {
   const claimed = await api("/v1/render-jobs/claim", { method: "POST", body: "{}" });
-  const job = claimed.job as { id: string; manifest: unknown } | null;
+  const job = claimed.job as { id: string; manifest: unknown; kind?: string } | null;
   if (!job) {
     await api("/v1/renderer/heartbeat", { method: "POST", body: "{}" });
     return false;
   }
   try {
+    // A reel comes off the same queue with the same lease and the same retries; only what
+    // it produces differs — an MP4 and the cover frame, rather than one PNG per slide.
+    if (job.kind === "reel") {
+      const reel = ReelManifestSchema.parse(job.manifest);
+      const workDir = path.join(outputRoot, "reels", job.id);
+      const framePaths = await renderReel(reel, workDir);
+
+      // The soundtrack is chosen from the post itself, so a re-render after an edit does
+      // not silently hand the same reel a different song.
+      const assetRoot = path.resolve(process.env.RENDER_ASSET_ROOT || "branding/assets");
+      const library = await loadSoundLibrary(assetRoot);
+      const sound = chooseSound(reel.topic, library);
+      const audio = sound?.kind === "music" ? { musicPath: sound.path } : sound ? { effectPath: sound.path } : {};
+      const video = await composeReel(reel, framePaths, path.join(workDir, "reel.mp4"), audio);
+
+      // Two files: the video, and the opening frame as its cover. Left to itself
+      // Instagram picks a frame mid-zoom with the text half-scaled.
+      const parts = [
+        { index: 1, file: video.path, mimeType: "video/mp4" as const },
+        { index: 2, file: framePaths[0]!, mimeType: "image/png" as const },
+      ];
+      const reelFiles = await Promise.all(parts.map(async part => {
+        const bytes = await readFile(part.file);
+        const info = await stat(part.file);
+        return { index: part.index, path: part.file, sha256: createHash("sha256").update(bytes).digest("hex"), bytes: info.size, width: 1080 as const, height: 1920 as const, mimeType: part.mimeType };
+      }));
+      const preparedReel = await api(`/v1/render-jobs/${job.id}/uploads`, { method: "POST", body: JSON.stringify({ files: reelFiles.map(({ path: _p, ...file }) => file) }) });
+      const reelUploads = preparedReel.uploads as Array<{ index: number; key: string; uploadUrl: string; bytes: number; mimeType: string }>;
+      for (const upload of reelUploads) {
+        const local = reelFiles.find(item => item.index === upload.index)!;
+        const bytes = await readFile(local.path);
+        const response = await fetch(upload.uploadUrl, { method: "PUT", headers: { "content-type": upload.mimeType, "content-length": String(upload.bytes) }, body: new Uint8Array(bytes) });
+        if (!response.ok) throw new Error(`R2 upload failed (${response.status}) for reel part ${upload.index}`);
+      }
+      await api(`/v1/render-jobs/${job.id}/complete`, { method: "POST", body: JSON.stringify({ files: reelUploads.map(({ uploadUrl: _u, ...file }) => file) }) });
+      return true;
+    }
+
     const manifest: RenderManifest = renderManifestSchema.parse(job.manifest);
     const paths = await renderManifest(manifest, outputRoot);
     const files = await Promise.all(paths.map(async (path, index) => {

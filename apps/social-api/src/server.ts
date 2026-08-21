@@ -21,6 +21,7 @@ import { findFactCard } from "./fact-cards.js";
 import { anchorQuote } from "./evidence-anchor.js";
 import { validateReelFrames } from "./reel-quality.js";
 import { choosePostFormat } from "./post-format.js";
+import { buildReelManifest } from "./reel-manifest.js";
 import { authenticatedReviewer } from "./access-auth.js";
 import { findDuplicate, type DuplicateCandidate } from "./duplicate.js";
 import { editorialIdentity } from "./editorial-identity.js";
@@ -534,9 +535,22 @@ const PlanningSchema = z.object({ date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).
 const ResearchSchema = z.object({ date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional() });
 const ReviewRequestSchema = z.object({ expiresInMinutes: z.number().int().min(5).max(1440).default(60), dryRun: z.boolean().default(false) });
 const RenderRequestSchema = z.object({ idempotencyKey: z.string().min(8).max(200) });
-const RenderFileSchema = z.object({ index: z.number().int().min(1).max(10), sha256: z.string().regex(/^[a-f0-9]{64}$/), bytes: z.number().int().positive().max(15_000_000), width: z.literal(1080), height: z.literal(1350), mimeType: z.literal("image/png") });
-const UploadRequestSchema = z.object({ files: z.array(RenderFileSchema).min(3).max(7) });
-const CompleteRenderSchema = z.object({ files: z.array(RenderFileSchema.extend({ key: z.string().min(10).max(500) })).min(3).max(7) });
+// What a renderer is allowed to hand back. Each kind is exact rather than loosened into
+// "any size, any type": the literal dimensions are what stop a slide of the wrong shape
+// reaching Instagram, and widening them so a reel could fit would have given that up for
+// carousels too.
+const RenderFileBase = { index: z.number().int().min(1).max(10), sha256: z.string().regex(/^[a-f0-9]{64}$/), bytes: z.number().int().positive().max(60_000_000) };
+const CarouselSlideFile = z.object({ ...RenderFileBase, width: z.literal(1080), height: z.literal(1350), mimeType: z.literal("image/png") });
+const ReelVideoFile = z.object({ ...RenderFileBase, width: z.literal(1080), height: z.literal(1920), mimeType: z.literal("video/mp4") });
+const ReelCoverFile = z.object({ ...RenderFileBase, width: z.literal(1080), height: z.literal(1920), mimeType: z.literal("image/png") });
+const RenderFileSchema = z.union([CarouselSlideFile, ReelVideoFile, ReelCoverFile]);
+const UploadRequestSchema = z.object({ files: z.array(RenderFileSchema).min(2).max(7) });
+const KeyedRenderFile = z.union([
+  CarouselSlideFile.extend({ key: z.string().min(10).max(500) }),
+  ReelVideoFile.extend({ key: z.string().min(10).max(500) }),
+  ReelCoverFile.extend({ key: z.string().min(10).max(500) }),
+]);
+const CompleteRenderSchema = z.object({ files: z.array(KeyedRenderFile).min(2).max(7) });
 const FailJobSchema = z.object({ code: z.string().min(1).max(80), message: z.string().min(1).max(1000), retryable: z.boolean() });
 const ScheduleSchema = z.object({ scheduledAt: z.string().datetime({ offset: true }), idempotencyKey: z.string().min(8).max(200) });
 const DiscoverySchema = z.object({
@@ -1973,9 +1987,11 @@ const server = http.createServer(async (req, res) => {
       const { files } = UploadRequestSchema.parse(await readJson(req));
       const [job] = await sql`SELECT * FROM social_render_job WHERE id = ${uploadMatch[1]} AND status = 'leased' AND lease_owner = ${workerId} AND lease_expires_at > now()`;
       if (!job) return send(res, 409, { error: "Render lease is missing or expired" });
-      if (files.length !== (job.manifest as { slides: unknown[] }).slides.length) return send(res, 400, { error: "Rendered file count does not match manifest" });
+      const isReel = String(job.kind) === "reel";
+      const expected = isReel ? 2 : (job.manifest as { slides: unknown[] }).slides.length;
+      if (files.length !== expected) return send(res, 400, { error: `Expected ${expected} files for a ${isReel ? "reel" : "carousel"} render, received ${files.length}` });
       const date = new Date(job.created_at as string);
-      const prefix = `social/carousels/${date.getUTCFullYear()}/${String(date.getUTCMonth() + 1).padStart(2, "0")}/${String(date.getUTCDate()).padStart(2, "0")}/${job.post_id}/${job.revision_id}`;
+      const prefix = `social/${isReel ? "reels" : "carousels"}/${date.getUTCFullYear()}/${String(date.getUTCMonth() + 1).padStart(2, "0")}/${String(date.getUTCDate()).padStart(2, "0")}/${job.post_id}/${job.revision_id}`;
       const uploads = await Promise.all(files.map(async (file) => {
         const stored: RenderFileInput = { ...file, key: `${prefix}/${String(file.index).padStart(2, "0")}.png` };
         return { ...stored, uploadUrl: await createUploadUrl(stored) };
@@ -2061,7 +2077,26 @@ const server = http.createServer(async (req, res) => {
         });
         const [created] = await tx`INSERT INTO social_publish_job (post_id, revision_id, render_job_id, idempotency_key, scheduled_at, available_at, format, format_reason) VALUES (${post.id}, ${post.revision_id}, ${post.render_job_id}, ${idempotencyKey}, ${scheduledAt}, ${availableAt.toISOString()}, ${decided.format}, ${decided.reason}) RETURNING *`;
         await tx`UPDATE social_post SET scheduled_at = ${scheduledAt}, updated_at = now() WHERE id = ${post.id}`;
-        await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'publish.queued', ${tx.json({ jobId: created.id, scheduledAt })})`;
+
+        // A reel is rendered by the same worker that renders slides, through the same
+        // queue, leases and retries — none of which care what comes out at the end. It is
+        // queued here rather than at handoff so the video is finished long before its slot
+        // arrives, instead of being encoded while a publish waits on it.
+        if (decided.format === "reel" && Array.isArray(revisionRow?.reel_frames)) {
+          const reelManifest = buildReelManifest(post as Record<string, unknown>, revisionRow.reel_frames as never);
+          const reelKey = `reel:${post.id}:${post.revision_id}`;
+          const [existingReel] = await tx`SELECT id FROM social_render_job WHERE idempotency_key = ${reelKey}`;
+          if (!existingReel) {
+            const [reelJob] = await tx`
+              INSERT INTO social_render_job (post_id, revision_id, idempotency_key, manifest, manifest_hash, kind)
+              VALUES (${post.id}, ${post.revision_id}, ${reelKey}, ${tx.json(reelManifest)}, ${hash(reelManifest)}, 'reel')
+              RETURNING id
+            `;
+            await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'reel.render_queued', ${tx.json({ jobId: reelJob.id, frames: reelManifest.frames.length })})`;
+          }
+        }
+
+        await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'publish.queued', ${tx.json({ jobId: created.id, scheduledAt, format: decided.format, formatReason: decided.reason })})`;
         return created;
       });
       return job ? send(res, 201, { job }) : send(res, 409, { error: "Only an approved, completed render of the current revision can be scheduled" });
@@ -2133,6 +2168,31 @@ const server = http.createServer(async (req, res) => {
         if (!channelId) throw new BufferError("BUFFER_CHANNEL_ID is not configured", "CHANNEL_NOT_CONFIGURED", false);
         const storedFiles = job.post.render_files as Array<{ key: string }>;
         const mediaUrls = await Promise.all(storedFiles.map((file) => createBufferMediaUrl(file.key)));
+
+        // A reel goes over as a video, and only if its render actually finished. If the
+        // encode failed or is still running when the slot arrives, the post goes out as
+        // the carousel it was also written as — the slides exist either way, so a missing
+        // video costs the format and not the post.
+        let video: { url: string; thumbnailUrl?: string; title?: string } | undefined;
+        if (String(job.format) === "reel") {
+          const [reelRender] = await sql`
+            SELECT output_files FROM social_render_job
+            WHERE post_id = ${job.post_id} AND revision_id = ${job.revision_id} AND kind = 'reel' AND status = 'completed'
+            ORDER BY created_at DESC LIMIT 1
+          `;
+          const parts = (reelRender?.output_files ?? []) as Array<{ key: string; mimeType?: string }>;
+          const videoPart = parts.find(part => part.mimeType === "video/mp4");
+          const coverPart = parts.find(part => part.mimeType === "image/png");
+          if (videoPart) {
+            video = {
+              url: await createBufferMediaUrl(videoPart.key),
+              ...(coverPart ? { thumbnailUrl: await createBufferMediaUrl(coverPart.key) } : {}),
+              title: String(job.post.topic ?? "").slice(0, 90),
+            };
+          } else {
+            await sql`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'reel.render_missing',${sql.json({ jobId: job.id })})`;
+          }
+        }
         const hashtags = job.post.hashtags as string[];
         const text = composeInstagramCaption({ hook: String(job.post.hook), body: String(job.post.caption), callToAction: String(job.post.call_to_action), hashtags });
         // Whether this arrives as a draft depends on whether a person has already said
@@ -2148,7 +2208,7 @@ const server = http.createServer(async (req, res) => {
           ORDER BY decided_at DESC LIMIT 1
         `;
         const approvedByAPerson = Boolean(priorApproval?.reviewer) && String(priorApproval.reviewer) !== "buffer_draft_review";
-        const providerPost = await createScheduledPost({ channelId, text, dueAt: new Date(job.scheduled_at as string).toISOString(), mediaUrls, saveToDraft: reviewMode === "buffer_draft" && !approvedByAPerson });
+        const providerPost = await createScheduledPost({ channelId, text, dueAt: new Date(job.scheduled_at as string).toISOString(), mediaUrls, video, saveToDraft: reviewMode === "buffer_draft" && !approvedByAPerson });
         const [saved] = await sql.begin(async (tx) => {
           const [updated] = await tx`UPDATE social_publish_job SET status = 'scheduled', provider_post_id = ${providerPost.id}, provider_status = ${providerPost.status || "scheduled"}, lease_owner = NULL, lease_expires_at = NULL, updated_at = now() WHERE id = ${job.id} AND status = 'processing' RETURNING *`;
           await tx`UPDATE social_publish_attempt SET finished_at = now(), outcome = 'scheduled', provider_correlation_id = ${providerPost.id} WHERE job_id = ${job.id} AND attempt_number = ${job.attempt_count}`;
