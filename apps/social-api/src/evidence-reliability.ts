@@ -19,8 +19,21 @@ const authorityRules: Array<{ pattern: RegExp; domains: string[]; label: string 
   { pattern: /employment|labour|labor|contrato de trabalho|worker rights/iu, domains: ["act.gov.pt"], label: "ACT" },
 ];
 
+// Diário da República publishes the law itself. Every rule above names the agency that
+// administers something — ACT for working conditions, Segurança Social for contributions
+// — and for how a rule is applied in practice that is the right authority to insist on.
+// But when the source is the statute as published in the official gazette, demanding the
+// agency that interprets it is backwards: the Código do Trabalho on dre.pt is the more
+// authoritative account of statutory leave than any guidance page about it. Seven
+// employment topics failed in a single day for the offence of citing the law.
+const PRIMARY_LAW_DOMAINS = ["dre.pt", "diariodarepublica.pt"];
+
 const hostname = (url: string) => { try { return new URL(url).hostname.replace(/^www\d?\./, ""); } catch { return ""; } };
 const matchesDomain = (host: string, domain: string) => host === domain || host.endsWith(`.${domain}`);
+const speaksWithAuthority = (url: string, domains: string[]) => {
+  const host = hostname(url);
+  return domains.some(domain => matchesDomain(host, domain)) || PRIMARY_LAW_DOMAINS.some(domain => matchesDomain(host, domain));
+};
 // A figure has to be compared across two languages and two number conventions, because
 // the post is written in English and the source it cites is Portuguese. Comparing the raw
 // text meant "120 days" never matched "120 dias", "8500 euros" never matched "8.500
@@ -112,11 +125,11 @@ export function assessEvidenceReliability(input: { topic: string; category?: str
   // sourced from the responsible authority stands on that authority. A claim sourced from
   // an official page that is *not* the responsible authority still needs a second, because
   // that is the case where one page really can be wrong or out of date.
-  const primary = rule ? official.filter(source => rule.domains.some(domain => matchesDomain(hostname(source.url), domain))) : [];
+  const primary = rule ? official.filter(source => speaksWithAuthority(source.url, rule.domains)) : [];
   const restsOnItsAuthority = primary.length > 0;
   if (sensitiveClaims.length) {
     if (!restsOnItsAuthority && (official.length < 2 || distinctOfficialHosts.length < 2)) failures.push("Sensitive claims require two independent official sources");
-    if (rule && !official.some(source => rule.domains.some(domain => matchesDomain(hostname(source.url), domain)))) failures.push(`The responsible authority (${rule.label}) is missing`);
+    if (rule && !official.some(source => speaksWithAuthority(source.url, rule.domains))) failures.push(`The responsible authority (${rule.label}) is missing`);
     for (const claim of sensitiveClaims) {
       const tokens = normalizedNumberTokens(`${claim.claim} ${claim.evidenceQuote}`);
       const confirmingHosts = new Set<string>();

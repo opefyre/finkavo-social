@@ -60,3 +60,21 @@ describe("evidence reliability", () => {
   }
 });
 
+
+describe("the official gazette", () => {
+  it("counts as the responsible authority for a topic it legislates", () => {
+    // Seven employment topics failed in one day because they cited the Codigo do
+    // Trabalho on dre.pt rather than a guidance page on act.gov.pt.
+    const result = assessEvidenceReliability({
+      topic: "The days of leave owed for a marriage or a death in the family",
+      category: "employment",
+      claims: [{ claim: "An employee is entitled to 15 consecutive days of leave to marry.", evidenceQuote: "o trabalhador tem direito a faltar 15 dias seguidos por casamento" }],
+      sources: [{
+        url: "https://dre.pt/codigo-do-trabalho", title: "Codigo do Trabalho", publisher: "Diario da Republica",
+        tier: "official", retrievedAt: new Date().toISOString(),
+        excerpts: ["o trabalhador tem direito a faltar 15 dias seguidos por casamento"],
+      }],
+    });
+    expect(result.failures.join(" ")).not.toMatch(/responsible authority/i);
+  });
+});

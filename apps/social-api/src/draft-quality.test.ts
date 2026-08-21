@@ -79,3 +79,36 @@ describe("social draft quality", () => {
   });
 });
 
+
+describe("the final slide", () => {
+  const post = (last: { title: string; body: string }) => ({
+    topic: "The reinvestment window that removes tax on selling your home",
+    hook: "Selling your home in Portugal? The tax can disappear.",
+    caption: "If you reinvest the proceeds of your permanent home within the window, the gain is not taxed. Residents who sell and buy again qualify, so check the dates before you sign anything.",
+    slides: [
+      { title: "The reinvestment window", body: "Selling your permanent home in Portugal can be tax free." },
+      { title: "What counts", body: "The property you sold has to have been your permanent home." },
+      { title: "The window", body: "You reinvest within the period the law allows." },
+      last,
+    ],
+  });
+
+  it("accepts a takeaway phrased without a whitelisted verb", () => {
+    // Every one of these was refused by the permitted-verb list.
+    for (const body of [
+      "30 June is the deadline to declare the reinvestment.",
+      "Read the notice from Financas before you sign.",
+      "Set a reminder for the reinvestment window.",
+      "Get the form from Financas before the deadline.",
+    ]) {
+      expect(() => validateStandaloneValue(post({ title: "Before you sell", body })), body).not.toThrow();
+    }
+  });
+
+  it("still refuses a last slide that says nothing about the post", () => {
+    expect(() => validateStandaloneValue(post({ title: "Save this", body: "Save this for later." })))
+      .toThrow(/final slide/i);
+    expect(() => validateStandaloneValue(post({ title: "Follow", body: "Follow us for more tips." })))
+      .toThrow(/final slide/i);
+  });
+});

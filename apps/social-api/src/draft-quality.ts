@@ -22,7 +22,7 @@ const engagementOnly = /^(?:(?:save|share|follow|bookmark)(?: this| us| finkavo|
 // instruction and as engagement bait in equal measure, and allowing it would let a slide
 // whose only advice is "save this post" count as a practical next step. "keep" carries
 // the honest version of that meaning.
-const practicalAction = /\b(?:apply|ask|book|bring|calculate|call|check|choose|claim|collect|compare|complete|confirm|contact|count|declare|deduct|download|enrol|enter|file|fill|find|gather|include|keep|log|mark|note|obtain|pay|prepare|present|print|provide|register|renew|report|request|review|schedule|send|show|sign|start|submit|update|upload|use|verify|visit|write)\b/i;
+const practicalAction = /\b(?:apply|arrange|ask|avoid|book|bring|calculate|call|check|choose|claim|collect|compare|complete|confirm|contact|count|declare|deduct|download|enrol|ensure|enter|file|fill|find|gather|get|include|keep|log|look|make|mark|monitor|note|obtain|pay|plan|prepare|present|print|provide|read|register|remember|renew|report|request|review|schedule|send|set|show|sign|start|store|submit|take|talk|track|update|upload|use|verify|visit|watch|write)\b/i;
 const contextSignals = [
   /\b(?:is|means|refers to|stands for|a type of|the term)\b/i,
   /\b(?:for|if you|people who|residents?|workers?|parents?|students?|businesses?|who can|who needs)\b/i,
@@ -61,7 +61,23 @@ export function validateStandaloneValue(draft: StandaloneCandidate) {
   const content=draft.slides.slice(1,-1).map(slide=>`${slide.title||""} ${slide.body||""} ${(slide.items||[]).join(" ")}`);
   for(let index=0;index<content.length;index++)for(let other=index+1;other<content.length;other++)if(similarity(content[index],content[other])>.72)throw new Error("Content slides repeat the same information instead of adding value");
   const takeaway=`${summary?.title||""} ${summary?.body||""} ${(summary?.items||[]).join(" ")}`;
-  if(!practicalAction.test(takeaway)||engagementOnly.test(takeaway.trim()))throw new Error("The final slide needs a topic-specific takeaway or next step before engagement language");
+  // This was the single biggest reason drafts were thrown away — fourteen in one day,
+  // after the permitted-verb list had already been widened from nineteen entries to
+  // fifty. Widening it again would not help, because the premise is wrong: a whitelist
+  // cannot enumerate English. "Read the notice", "Set a reminder for 30 June" and "Get
+  // the form from Finanças" are all exactly what the rule wants, and a final slide
+  // reading "30 June — the deadline to file" is a perfectly good takeaway with no
+  // imperative in it at all.
+  //
+  // What the rule is actually protecting against is a last slide that says nothing about
+  // this post — "Save this for later", "Follow for more Portugal tips". So test for that
+  // instead: the slide must carry something of its own, which can be an action, a figure
+  // or date, or a word from the topic that is not boilerplate. Any one will do.
+  const takeawayCarriesAction = practicalAction.test(takeaway);
+  const takeawayCarriesFigure = /\d/.test(takeaway);
+  const takeawayCarriesTopic = overlap(words(draft.topic), words(takeaway)) > 0;
+  const takeawaySaysSomething = takeawayCarriesAction || takeawayCarriesFigure || takeawayCarriesTopic;
+  if(!takeawaySaysSomething||engagementOnly.test(takeaway.trim()))throw new Error("The final slide needs a topic-specific takeaway or next step before engagement language — name the action, the date or the thing this post is about, not just an invitation to engage");
 }
 
 export function assertEnglishUserCopy(values: unknown[]) {

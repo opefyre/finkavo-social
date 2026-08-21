@@ -13,7 +13,7 @@ import { BufferError, createScheduledPost, deletePost as deleteBufferPost, findM
 import { notifyDiscord, notifyDiscordReview } from "./discord.js";
 import { renderReviewPreview } from "./preview.js";
 import { retryDecision } from "./retry-policy.js";
-import { classifyGenerationFailure, countsAsAttempt, shouldRetireConcept } from "./block-reason.js";
+import { classifyGenerationFailure, countsAsAttempt, shouldRetireConcept, MAX_GENERATION_ATTEMPTS } from "./block-reason.js";
 import { expandCalendar, loadEditorialCalendar, selectDailyMix } from "./planner.js";
 import { assertEnglishUserCopy, validateSocialDraft } from "./draft-quality.js";
 import { composeInstagramCaption } from "./caption.js";
@@ -399,6 +399,39 @@ async function schedulePublishJob(tx: typeof sql, input: {
     }
   }
   return { job: created, decided };
+}
+
+// A draft that fails the gate on its way to review is in exactly the position a draft
+// that fails validation during generation is in: the copy is wrong, the topic is not.
+// The difference was that generation repairs and this path retired the topic outright —
+// after the tokens had already been spent writing the thing. The gate's own complaint is
+// specific enough to rewrite from, so it goes back as reviewer feedback and the topic
+// returns to the bank. Only a topic that keeps failing this way is eventually retired.
+// The gates answer with a list of what is wrong — "complete Instagram caption; standalone
+// reader value" — and that list is the only part worth handing back to the model. The
+// error string on its own says a gate refused the post, which is not something anyone can
+// rewrite from.
+const refusalReason = (result: Record<string, unknown>) => {
+  const failures = Array.isArray(result.failures) ? result.failures.map(String).filter(Boolean) : [];
+  if (failures.length) return failures.join("; ");
+  return String(result.detail || result.error || "review request failed");
+};
+
+async function returnConceptForRepair(tx: typeof sql, input: { topic: string; plannedFor: unknown; reason: string }) {
+  const [concept] = await tx`
+    SELECT id, plan_slot_id, generation_attempts FROM social_post_concept
+    WHERE topic=${input.topic} AND planned_for=${input.plannedFor as string} ORDER BY updated_at DESC LIMIT 1`;
+  if (!concept) return { retired: false, attempts: 0 };
+  const attempts = Number(concept.generation_attempts ?? 0) + 1;
+  const retire = attempts >= MAX_GENERATION_ATTEMPTS;
+  if (retire) {
+    await tx`UPDATE social_post_concept SET status='blocked',blocked_kind='content_quality',blocked_reason=${input.reason.slice(0, 300)},blocked_at=now(),generation_attempts=${attempts},updated_at=now() WHERE id=${concept.id as string}`;
+    if (concept.plan_slot_id) await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${concept.plan_slot_id}`;
+  } else {
+    await tx`UPDATE social_post_concept SET status='planned',revision_feedback=${input.reason.slice(0, 500)},generation_attempts=${attempts},blocked_kind=NULL,blocked_reason=NULL,updated_at=now() WHERE id=${concept.id as string}`;
+    if (concept.plan_slot_id) await tx`UPDATE social_editorial_plan_slot SET status='evidence_ready',updated_at=now() WHERE id=${concept.plan_slot_id}`;
+  }
+  return { retired: retire, attempts };
 }
 
 async function requestReplacement(tx: typeof sql, input: { publishDate: unknown; reason: string; postId?: unknown; jobId?: unknown }) {
@@ -1048,7 +1081,18 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && url.pathname === "/v1/corpus/ingest-briefs") {
       const bankRaw = await readFile(new URL("../../../plans/brief-bank.json", import.meta.url), "utf8");
       const bank = JSON.parse(bankRaw) as { briefs: Array<{ source: { canonicalUrl: string; authority: string } }> };
-      const targets = [...new Map(bank.briefs.map(b => [b.source.canonicalUrl, b.source.authority])).entries()];
+      // The recurring calendar rules reference sources of their own, and those were never
+      // on this list — only the brief bank was. So a rule pointing at a perfectly good
+      // Finanças page produced a blocked concept every quarter, for the same reason the
+      // comment above describes: the URL was never ingested, so nothing could verify
+      // against it. Quarterly IVA, World Savings Day and Portugal Day had all been sitting
+      // blocked as "no verified official document" while their sources existed and were
+      // reachable.
+      const calendarRules = await sql`SELECT DISTINCT source_url, title FROM social_editorial_rule WHERE source_url IS NOT NULL AND source_url <> ''`;
+      const targets = [...new Map([
+        ...bank.briefs.map(b => [b.source.canonicalUrl, b.source.authority] as [string, string]),
+        ...calendarRules.map(rule => [String(rule.source_url), String(rule.title || "Official source")] as [string, string]),
+      ]).entries()];
       const force = Boolean((await readJson(req).catch(() => ({})) as { force?: boolean }).force);
 
       const results: Array<Record<string, unknown>> = [];
@@ -1899,7 +1943,7 @@ const server = http.createServer(async (req, res) => {
             continue;
           }
           const postId=generated.ok&&generated.result.post&&typeof generated.result.post==='object'?String((generated.result.post as Record<string,unknown>).id||''):'';
-          if(postId){const reviewed=await internalApi("POST",`/v1/posts/${postId}/request-review`,{expiresInMinutes:180});reviews.push({postId,ok:reviewed.ok,status:reviewed.status,error:reviewed.ok?null:String(reviewed.result.error||"review request failed")});if(!reviewed.ok)await sql.begin(async tx=>{await tx`UPDATE social_post SET status='failed',updated_at=now() WHERE id=${postId} AND status='draft'`;const concepts=await tx`UPDATE social_post_concept SET status='blocked',blocked_kind='review_handoff',blocked_reason=${`the draft was written but never reached review: ${String(reviewed.result.error||"review request failed")}`},blocked_at=now(),updated_at=now() WHERE topic=${String(concept.topic||"")} AND planned_for=${day} RETURNING plan_slot_id`;for(const row of concepts)if(row.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${row.plan_slot_id}`;await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${postId},'review.handoff_failed',${tx.json({conceptId:concept.id,error:String(reviewed.result.error||"review request failed")})})`;await requestReplacement(tx,{publishDate:day,reason:`review handoff failed: ${String(reviewed.result.error||"review request failed")}`,postId});});}
+          if(postId){const reviewed=await internalApi("POST",`/v1/posts/${postId}/request-review`,{expiresInMinutes:180});reviews.push({postId,ok:reviewed.ok,status:reviewed.status,error:reviewed.ok?null:String(reviewed.result.error||"review request failed")});if(!reviewed.ok)await sql.begin(async tx=>{await tx`UPDATE social_post SET status='failed',updated_at=now() WHERE id=${postId} AND status='draft'`;await returnConceptForRepair(tx,{topic:String(concept.topic||""),plannedFor:day,reason:`The previous draft was refused on its way to review: ${refusalReason(reviewed.result as Record<string, unknown>)}. Rewrite it so it passes.`});await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${postId},'review.handoff_failed',${tx.json({conceptId:concept.id,error:String(reviewed.result.error||"review request failed")})})`;await requestReplacement(tx,{publishDate:day,reason:`review handoff failed: ${String(reviewed.result.error||"review request failed")}`,postId});});}
         }
         if (budgetExhausted) break;
       }
@@ -1910,7 +1954,7 @@ const server = http.createServer(async (req, res) => {
         if(reviews.some(review=>review.postId===String(draft.id)))continue;
         const reviewed = await internalApi("POST", `/v1/posts/${draft.id}/request-review`, { expiresInMinutes: 180 });
         reviews.push({ postId: String(draft.id), ok: reviewed.ok, status: reviewed.status, error: reviewed.ok ? null : String(reviewed.result.error || "review request failed") });
-        if(!reviewed.ok)await sql.begin(async tx=>{const [post]=await tx`UPDATE social_post SET status='failed',updated_at=now() WHERE id=${draft.id} AND status='draft' RETURNING topic,planned_for`;if(post){const concepts=await tx`UPDATE social_post_concept SET status='blocked',blocked_kind='review_handoff',blocked_reason=${`the draft was written but never reached review: ${String(reviewed.result.error||"review request failed")}`},blocked_at=now(),updated_at=now() WHERE topic=${post.topic} AND planned_for=${post.planned_for} RETURNING plan_slot_id`;for(const row of concepts)if(row.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${row.plan_slot_id}`;await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${draft.id},'review.handoff_failed',${tx.json({error:String(reviewed.result.error||"review request failed")})})`;}});
+        if(!reviewed.ok)await sql.begin(async tx=>{const [post]=await tx`UPDATE social_post SET status='failed',updated_at=now() WHERE id=${draft.id} AND status='draft' RETURNING topic,planned_for`;if(post){await returnConceptForRepair(tx,{topic:String(post.topic),plannedFor:post.planned_for,reason:`The previous draft was refused on its way to review: ${refusalReason(reviewed.result as Record<string, unknown>)}. Rewrite it so it passes.`});await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${draft.id},'review.handoff_failed',${tx.json({error:String(reviewed.result.error||"review request failed")})})`;}});
       }
       const ready = complete && reviews.every(review => review.ok);
       budgetExhausted = !complete && attemptsUsed >= input.dailyAttemptBudget;
@@ -2594,6 +2638,23 @@ const server = http.createServer(async (req, res) => {
         try {
           const providerPost = await getBufferPost(String(job.provider_post_id));
           if (!providerPost) continue;
+
+          // The owner reschedules from the Buffer app, and nothing brought that back
+          // here. Our copy kept the original slot, the confirmation check then read the
+          // post as overdue, and the alert fired on every run about a post that had
+          // simply been moved. Once a post is handed over, Buffer owns its time.
+          if (providerPost.dueAt && providerPost.status !== "sent") {
+            const providerDue = new Date(providerPost.dueAt);
+            const localDue = new Date(String(job.scheduled_at));
+            if (!Number.isNaN(providerDue.getTime()) && Math.abs(providerDue.getTime() - localDue.getTime()) > 60_000) {
+              await sql.begin(async tx => {
+                await tx`UPDATE social_publish_job SET scheduled_at=${providerDue.toISOString()}, updated_at=now() WHERE id=${job.id}`;
+                await tx`UPDATE social_post SET scheduled_at=${providerDue.toISOString()}, updated_at=now() WHERE id=${job.post_id}`;
+                await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${job.post_id}, 'publish.reschedule_adopted', ${tx.json({ jobId: job.id, from: localDue.toISOString(), to: providerDue.toISOString() })})`;
+              });
+            }
+          }
+
           if (providerPost.status === "sent") {
             await sql.begin(async (tx) => {
               await tx`UPDATE social_publish_job SET status = 'published', provider_status = 'sent', updated_at = now() WHERE id = ${job.id}`;
