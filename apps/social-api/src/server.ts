@@ -10,7 +10,7 @@ import { generateDraft } from "./openai.js";
 import { LlmRateLimitError, llmDailyBudget } from "./llm.js";
 import { createBufferMediaUrl, createUploadUrl, uploadRenderedObject, verifyUploadedObject, type RenderFileInput } from "./storage.js";
 import { BufferError, createScheduledPost, deletePost as deleteBufferPost, findMatchingScheduledPost, getPost as getBufferPost, setBufferCallObserver } from "./buffer.js";
-import { notifyDiscord, notifyDiscordReview } from "./discord.js";
+import { notifyDiscord } from "./discord.js";
 import { renderReviewPreview } from "./preview.js";
 import { retryDecision } from "./retry-policy.js";
 import { classifyGenerationFailure, countsAsAttempt, shouldRetireConcept, MAX_GENERATION_ATTEMPTS } from "./block-reason.js";
@@ -2086,7 +2086,7 @@ const server = http.createServer(async (req, res) => {
           replacementsUnfillable = marked.length;
           const cause = budgetExhausted ? "the day's generation budget was spent" : outOfTime() ? "the recovery run hit its time limit" : "no eligible topic remained in the bank";
           await sql`INSERT INTO social_event(event_type,payload) VALUES('operations.alert_sent',${sql.json({ kind: 'replacement_unfillable', day, owed: marked.length, validPosts: posts.length, target: input.target, cause })})`;
-          await notifyDiscord("errors", `Finkavo: ${day} is short ${input.target - posts.length} post(s) and cannot be refilled`, {
+          await notifyDiscord(`Finkavo: ${day} is short ${input.target - posts.length} post(s) and cannot be refilled`, {
             day,
             postsHeld: `${posts.length} of ${input.target}`,
             replacementsOwed: marked.length,
@@ -2321,7 +2321,7 @@ const server = http.createServer(async (req, res) => {
         callToAction: String(previewSource.revision_cta),
         hashtags: previewSource.revision_hashtags as string[],
       });
-      await notifyDiscordReview({ title: "Instagram carousel ready for review", postId: reviewRequest[1], expiresAt: created.expires_at, actionUrl: reviewUrl, caption: finalCaption, files: previewFiles });
+      // Review happens in Buffer drafts now; nothing to announce here.
       return send(res, 201, { reviewUrl, expiresAt: created.expires_at });
     }
 
@@ -2478,7 +2478,7 @@ const server = http.createServer(async (req, res) => {
         if (!retry) await tx`UPDATE social_post SET status = 'failed', updated_at = now() WHERE id = ${job.post_id}`;
         return [next];
       });
-      if (updated && updated.status === "failed") await notifyDiscord("errors", "Carousel rendering failed permanently", { post: updated.post_id, job: updated.id, code: updated.error_code, attempt: updated.attempt_count });
+      if (updated && updated.status === "failed") await notifyDiscord("Carousel rendering failed permanently", { post: updated.post_id, job: updated.id, code: updated.error_code, attempt: updated.attempt_count });
       return updated ? send(res, 200, { job: updated }) : send(res, 409, { error: "Render job is not leased by this worker" });
     }
 
@@ -2590,7 +2590,7 @@ const server = http.createServer(async (req, res) => {
           const refresh = await refreshRevisionEvidence(String(job.post_id), String(job.revision_id));
           if (refresh.refreshed) reliability = await assessStoredRevision(String(job.post_id), String(job.revision_id), true);
         }
-        if(!reliability.passed){await sql.begin(async tx=>{await tx`UPDATE social_publish_job SET status='blocked',lease_owner=NULL,lease_expires_at=NULL,error_code='EVIDENCE_REVALIDATION_FAILED',error_message=${reliability.failures.join("; ")},updated_at=now() WHERE id=${job.id}`;await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${job.post_id}`;await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'evidence.reliability_blocked',${tx.json({stage:'pre_publish',jobId:job.id,...reliability})})`;await requestReplacement(tx,{publishDate:job.planned_for??job.scheduled_at,reason:`evidence revalidation failed before publishing: ${reliability.failures.join("; ")}`,postId:job.post_id,jobId:job.id});});await notifyDiscord("errors","Publication blocked by evidence validation",{post:job.post_id,job:job.id,problems:reliability.failures.join("\n")});return send(res,422,{error:"Publication blocked by evidence validation",...reliability});}
+        if(!reliability.passed){await sql.begin(async tx=>{await tx`UPDATE social_publish_job SET status='blocked',lease_owner=NULL,lease_expires_at=NULL,error_code='EVIDENCE_REVALIDATION_FAILED',error_message=${reliability.failures.join("; ")},updated_at=now() WHERE id=${job.id}`;await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${job.post_id}`;await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'evidence.reliability_blocked',${tx.json({stage:'pre_publish',jobId:job.id,...reliability})})`;await requestReplacement(tx,{publishDate:job.planned_for??job.scheduled_at,reason:`evidence revalidation failed before publishing: ${reliability.failures.join("; ")}`,postId:job.post_id,jobId:job.id});});await notifyDiscord("Publication blocked by evidence validation",{post:job.post_id,job:job.id,problems:reliability.failures.join("\n")});return send(res,422,{error:"Publication blocked by evidence validation",...reliability});}
         assertPublishableCopy(job.post as Record<string, unknown>);
         const channelId = process.env.BUFFER_CHANNEL_ID;
         if (!channelId) throw new BufferError("BUFFER_CHANNEL_ID is not configured", "CHANNEL_NOT_CONFIGURED", false);
@@ -2691,7 +2691,7 @@ const server = http.createServer(async (req, res) => {
         });
         if (!retry) {
           const boardUrl = `${(reviewBaseUrl || "https://approve.finkavo.com").replace(/\/$/, "")}/board?post=${job.post_id}`;
-          await notifyDiscord("errors", blocked ? "Publish result needs reconciliation" : "Publish failed", {
+          await notifyDiscord(blocked ? "Publish result needs reconciliation" : "Publish failed", {
             topic: job.post.topic, postId: job.post_id, publishJobId: job.id,
             intendedTime: new Date(job.scheduled_at as string).toISOString(), attempt: job.attempt_count,
             code: failure.code, error: failure.message,
@@ -2757,7 +2757,6 @@ const server = http.createServer(async (req, res) => {
               await tx`UPDATE social_post SET status = 'published', published_at = ${providerPost.sentAt || new Date().toISOString()}, updated_at = now() WHERE id = ${job.post_id}`;
               await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${job.post_id}, 'publish.published', ${tx.json({ jobId: job.id, bufferPostId: job.provider_post_id })})`;
             });
-            await notifyDiscord("published", "Instagram post published", { post: job.post_id, slides: (await sql`SELECT jsonb_array_length(render_files) AS count FROM social_post WHERE id = ${job.post_id}`)[0]?.count || "unknown" });
           } else if (providerPost.status === "error") {
             await sql.begin(async tx => {
               await tx`UPDATE social_publish_job SET status='retrying',provider_post_id=NULL,provider_status='error',available_at=now()+INTERVAL '30 minutes',error_code='BUFFER_POST_ERROR',error_message='Buffer reported post error; queued for a new slot',updated_at=now() WHERE id=${job.id}`;
@@ -2766,7 +2765,7 @@ const server = http.createServer(async (req, res) => {
             });
             const [failedPost] = await sql`SELECT topic FROM social_post WHERE id=${job.post_id}`;
             const boardUrl = `${(reviewBaseUrl || "https://approve.finkavo.com").replace(/\/$/, "")}/board?post=${job.post_id}`;
-            await notifyDiscord("errors", "Buffer/Instagram delivery failed; post retained", {
+            await notifyDiscord("Buffer/Instagram delivery failed; post retained", {
               topic: failedPost?.topic || "Unknown topic", postId: job.post_id, publishJobId: job.id,
               bufferPostId: job.provider_post_id, failedScheduledTime: new Date(job.scheduled_at as string).toISOString(),
               providerStatus: "error", recovery: "Returned to the durable local queue for automatic assignment to the next available slot.",
@@ -2803,7 +2802,7 @@ const server = http.createServer(async (req, res) => {
         if(!input.dryRun){await sql.begin(async tx=>{if(row.job_id)await tx`UPDATE social_publish_job SET status='blocked',error_code='EVIDENCE_REVALIDATION_FAILED',error_message=${assessment.failures.join("; ")},updated_at=now() WHERE id=${row.job_id} AND status IN('pending','processing','retrying')`;await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${row.id}`;const concepts=await tx`UPDATE social_post_concept SET status='blocked',blocked_kind='evidence',blocked_reason=${`evidence revalidation failed on a queued post: ${assessment.failures.join("; ").slice(0,240)}`},blocked_at=now(),updated_at=now() WHERE topic=${row.topic} AND planned_for=(SELECT planned_for FROM social_post WHERE id=${row.id}) RETURNING plan_slot_id`;for(const concept of concepts)if(concept.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${concept.plan_slot_id}`;await tx`INSERT INTO social_event(post_id,event_type,payload)VALUES(${row.id},'evidence.queue_audit_blocked',${tx.json(assessment)})`;await requestReplacement(tx,{publishDate:row.planned_for,reason:`queue audit blocked the post on evidence: ${assessment.failures.join("; ")}`,postId:row.id,jobId:row.job_id});});}
         blocked.push({postId:row.id,topic:row.topic,failures:assessment.failures});
       }
-      if(external.length&&!input.dryRun)await notifyDiscord('errors','Buffer posts require evidence review before publication',{posts:external.map(item=>`${item.topic} — post ${item.postId}, Buffer ${item.bufferPostId}`).join('\n')});
+      if(external.length&&!input.dryRun)await notifyDiscord('Buffer posts require evidence review before publication',{posts:external.map(item=>`${item.topic} — post ${item.postId}, Buffer ${item.bufferPostId}`).join('\n')});
       return send(res,200,{dryRun:input.dryRun,checked:checked.length,passed:checked.filter(item=>item.passed).length,blocked,external});
     }
 
@@ -2840,8 +2839,7 @@ const server = http.createServer(async (req, res) => {
       const held=slots.filter(row=>row.status==='held').map(row=>`${row.slot_number}. ${row.topic} (source ${row.verification_state||'missing'}; generation failed: ${row.generation_error||'replacement unavailable'})`);
       const topicLines=slots.map(row=>`${row.slot_number}. ${row.publish_time} — ${row.topic} [${row.status==='held'?'source verified, generation failed':row.status}; evidence ${row.verification_state||'missing'}]`);
       const approvalLines=approvals.map(row=>`${row.status}${row.scheduled_at?` at ${new Date(String(row.scheduled_at)).toISOString()}`:''} — ${row.topic}`);
-      const sent=await notifyDiscord('system',`Finkavo daily content report — ${day}`,{plannedTopics:topicLines.join('\n')||'No plan found',newsCandidates:String(news.count),held:held.join('\n')||'None',approvalsAndSchedule:approvalLines.join('\n')||'No drafts or approvals yet'});
-      return send(res,200,{date:day,planned:slots.length,verified:slots.filter(row=>row.verification_state==='verified'&&new Date(String(row.expires_at))>new Date()).length,held:held.length,newsCandidates:Number(news.count),approvalStates:approvals.length,discordSent:sent,topics:topicLines});
+      return send(res,200,{date:day,planned:slots.length,verified:slots.filter(row=>row.verification_state==='verified'&&new Date(String(row.expires_at))>new Date()).length,held:held.length,newsCandidates:Number(news.count),approvalStates:approvals.length,topics:topicLines});
     }
 
     if(req.method==="POST"&&url.pathname==="/v1/maintenance/weekly"){
@@ -2853,7 +2851,7 @@ const server = http.createServer(async (req, res) => {
       const repaired=await sql`UPDATE social_editorial_plan_slot s SET status='evidence_ready',updated_at=now() WHERE s.publish_date BETWEEN ${today} AND ${end} AND s.status='held' AND EXISTS (SELECT 1 FROM social_topic_evidence_bundle b WHERE b.plan_slot_id=s.id AND b.verification_state='verified' AND b.expires_at>now()) RETURNING s.id`;
       const held=await sql`SELECT s.publish_date,s.slot_number,s.topic FROM social_editorial_plan_slot s WHERE s.publish_date BETWEEN ${today} AND ${end} AND s.plan_version=(SELECT max(current_slot.plan_version) FROM social_editorial_plan_slot current_slot WHERE current_slot.publish_date=s.publish_date) AND s.status='held' ORDER BY s.publish_date,s.slot_number`;
       const cards=await loadEvergreenReserve();const urls=[...new Set(cards.map(card=>card.sourcePolicy.canonicalUrl))];const evidence=await sql`SELECT canonical_url AS "canonicalUrl",max(verified_at) AS "verifiedAt" FROM social_reserve_evidence WHERE canonical_url IN ${sql(urls)} AND available=true GROUP BY canonical_url`;const reserveEligible=eligibleReserveCards(cards,evidence.map(row=>({canonicalUrl:String(row.canonicalUrl),verifiedAt:String(row.verifiedAt)})),[]).length;
-      const details={window:`${today} to ${end}`,plannedBriefs:upcoming.length,evidenceChecks:researched,duplicateIdentities:duplicateIdentities.length,repairedEvidenceHolds:repaired.length,remainingHolds:held.length,reserveEligible};await notifyDiscord('system','Finkavo weekly content maintenance',details);
+      const details={window:`${today} to ${end}`,plannedBriefs:upcoming.length,evidenceChecks:researched,duplicateIdentities:duplicateIdentities.length,repairedEvidenceHolds:repaired.length,remainingHolds:held.length,reserveEligible};
       return send(res,200,{...details,held});
     }
 
@@ -2861,7 +2859,7 @@ const server = http.createServer(async (req, res) => {
       ReportSchema.parse(await readJson(req));const today=lisbonDate(new Date());const end=addLisbonDays(today,89);const plan=await loadAnnualPlan();const upcoming=plan.rows.filter(row=>row.date>=today&&row.date<=end);
       const [performance]=await sql`SELECT count(*) FILTER (WHERE status='published') AS published,count(*) FILTER (WHERE status IN ('blocked','failed','rejected')) AS unsuccessful,count(*) FILTER (WHERE status='approved') AS approved FROM social_post WHERE created_at>now()-INTERVAL '30 days'`;
       const [coverage]=await sql`SELECT count(*) AS active_slots,count(*) FILTER (WHERE s.status='held') AS held FROM social_editorial_plan_slot s WHERE s.publish_date BETWEEN ${today} AND ${end} AND s.plan_version=(SELECT max(current_slot.plan_version) FROM social_editorial_plan_slot current_slot WHERE current_slot.publish_date=s.publish_date)`;
-      const details={window:`${today} to ${end}`,plannedBriefs:upcoming.length,activeSlots:Number(coverage.active_slots),held:Number(coverage.held),published30d:Number(performance.published),unsuccessful30d:Number(performance.unsuccessful),approved30d:Number(performance.approved)};await notifyDiscord('system','Finkavo monthly 90-day content review',details);return send(res,200,details);
+      const details={window:`${today} to ${end}`,plannedBriefs:upcoming.length,activeSlots:Number(coverage.active_slots),held:Number(coverage.held),published30d:Number(performance.published),unsuccessful30d:Number(performance.unsuccessful),approved30d:Number(performance.approved)};return send(res,200,details);
     }
 
     if(req.method==="POST"&&url.pathname==="/v1/alerts/check"){
@@ -2871,23 +2869,17 @@ const server = http.createServer(async (req, res) => {
       const [renderFailed]=await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${today} AND status='failed'`;if(Number(renderFailed.count)>0)alerts.push(`${renderFailed.count} planned post(s) failed rendering`);
       const [stranded]=await sql`SELECT count(*) AS count FROM social_post p WHERE p.status='rendered' AND p.rendered_at<now()-INTERVAL '15 minutes' AND NOT EXISTS(SELECT 1 FROM social_publish_job j WHERE j.post_id=p.id AND j.revision_id=p.approved_revision_id)`;if(Number(stranded.count)>0)alerts.push(`${stranded.count} rendered post(s) are missing an internal publish job`);
       const [localOverdue]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status IN ('pending','retrying') AND scheduled_at<now()`;if(Number(localOverdue.count)>0)alerts.push(`${localOverdue.count} internal queued post(s) need rescheduling`);
-      // A day that went short and could not be refilled is worth saying out loud every
-      // time the report runs, not once when it happened.
-      const unfillable=await sql`SELECT publish_date,count(*) AS count FROM social_replacement_request WHERE status='unfillable' AND publish_date>=current_date-INTERVAL '7 days' GROUP BY publish_date ORDER BY publish_date DESC`;
-      if(unfillable.length>0)alerts.push(`${unfillable.reduce((sum,row)=>sum+Number(row.count),0)} slot(s) went unfilled in the last 7 days:\n${unfillable.map(row=>`${String(row.publish_date).slice(0,10)} — ${row.count} post(s) short`).join('\n')}`);
-      // Destructured. Without it this read the result array's own row count, which for
-      // an aggregate is always exactly one — so the alert claimed a post was owed every
-      // single run, including when nothing was.
-      const [owedNow]=await sql`SELECT count(*) AS count FROM social_replacement_request WHERE status='open' AND publish_date<=current_date`;
-      if(Number(owedNow.count)>0)alerts.push(`${owedNow.count} replacement post(s) are still owed for today or earlier`);
+      // The seven-day shortfall tally and the still-owed count both used to be listed
+      // here. Neither is a fault anyone can act on — a day that came up short has
+      // already said so once, at the time, and repeating it daily for a week is how a
+      // channel stops being read. What is left below is only what is actually broken.
       const blockedPublish=await sql`SELECT j.id,p.id AS post_id,p.topic,j.scheduled_at,j.error_code FROM social_publish_job j JOIN social_post p ON p.id=j.post_id WHERE j.status='blocked' AND j.updated_at<now()-INTERVAL '24 hours' ORDER BY j.scheduled_at LIMIT 10`;if(blockedPublish.length>0)alerts.push(`${blockedPublish.length} ambiguous Buffer result(s) have remained unresolved for more than 24 hours:\n${blockedPublish.map(row=>`${row.topic} — post ${row.post_id}, job ${row.id}, ${row.error_code||'unknown error'}`).join('\n')}`);
-      const [bufferQueued]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='scheduled' AND scheduled_at>now()`;if(Number(bufferQueued.count)>=bufferQueueSoftLimit)alerts.push(`Buffer handoff soft cap reached: ${bufferQueued.count}/${bufferQueueSoftLimit}`);
       // A post sitting in Buffer as a draft is waiting for a person, not running late, so it
       // is not counted as an overdue confirmation. provider_status carries what Buffer last
       // said about it: draft and needs_approval both mean the ball is with the owner.
       const [overdue]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='scheduled' AND scheduled_at<now()-INTERVAL '20 minutes' AND coalesce(provider_status,'') NOT IN ('draft','needs_approval')`;if(Number(overdue.count)>0)alerts.push(`${overdue.count} publication confirmation(s) are overdue`);
       if(lisbonTime>='09:00'){const [batch]=await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${today} AND status NOT IN ('blocked','failed','rejected')`;if(Number(batch.count)<5){const [recovery]=await sql`SELECT payload FROM social_event WHERE event_type='generation.day_recovery_completed' AND payload->>'day'=${today} ORDER BY created_at DESC LIMIT 1`;if(recovery?.payload?.budgetExhausted===true){const failures=await sql`SELECT s.topic,e.payload->>'error' AS error FROM social_editorial_plan_slot s LEFT JOIN LATERAL (SELECT payload FROM social_event WHERE event_type='generation.failed' AND payload->>'planSlotId'=s.id::STRING ORDER BY created_at DESC LIMIT 1) e ON true WHERE s.publish_date=${today} AND s.status='held' ORDER BY s.slot_number`;alerts.push(`Daily recovery budget exhausted: ${batch.count}/5 posts ready after ${recovery.payload.attemptsUsed}/${recovery.payload.attemptBudget} candidate attempts${failures.length?`\n${failures.map(row=>`${row.topic}: ${row.error||'no verified replacement available'}`).join('\n')}`:''}`);}}}
-      const signature=hash({today,alerts});let sent=false;if(alerts.length){const [existing]=await sql`SELECT id FROM social_event WHERE event_type='operations.alert_sent' AND payload->>'signature'=${signature} LIMIT 1`;if(!existing){sent=await notifyDiscord('errors','Finkavo pipeline alert',{date:today,problems:alerts.join('\n')});await sql`INSERT INTO social_event(event_type,payload) VALUES('operations.alert_sent',${sql.json({signature,alerts})})`;}}
+      const signature=hash({today,alerts});let sent=false;if(alerts.length){const [existing]=await sql`SELECT id FROM social_event WHERE event_type='operations.alert_sent' AND payload->>'signature'=${signature} LIMIT 1`;if(!existing){sent=await notifyDiscord('Finkavo pipeline alert',{date:today,problems:alerts.join('\n')});await sql`INSERT INTO social_event(event_type,payload) VALUES('operations.alert_sent',${sql.json({signature,alerts})})`;}}
       return send(res,200,{date:today,alerts,sent});
     }
 
