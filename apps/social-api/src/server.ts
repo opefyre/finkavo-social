@@ -2069,7 +2069,11 @@ const server = http.createServer(async (req, res) => {
       const date = new Date(job.created_at as string);
       const prefix = `social/${isReel ? "reels" : "carousels"}/${date.getUTCFullYear()}/${String(date.getUTCMonth() + 1).padStart(2, "0")}/${String(date.getUTCDate()).padStart(2, "0")}/${job.post_id}/${job.revision_id}`;
       const uploads = await Promise.all(files.map(async (file) => {
-        const stored: RenderFileInput = { ...file, key: `${prefix}/${String(file.index).padStart(2, "0")}.png` };
+        // The extension follows the file rather than the convention. Naming a reel's MP4
+        // "01.png" works — R2 serves the content type it was uploaded with, and Buffer
+        // read it quite happily — but it is a lie on disk, and the first person to open
+        // the bucket looking for a video will not find one.
+        const stored: RenderFileInput = { ...file, key: `${prefix}/${String(file.index).padStart(2, "0")}.${file.mimeType === "video/mp4" ? "mp4" : "png"}` };
         return { ...stored, uploadUrl: await createUploadUrl(stored) };
       }));
       return send(res, 200, { uploads });
