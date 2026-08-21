@@ -74,7 +74,13 @@ async function request<T>(query: string, variables: Record<string, unknown>, kin
   return body.data;
 }
 
-export async function createScheduledPost(input: { channelId: string; text: string; dueAt?: string; mode?: "customScheduled" | "shareNow"; mediaUrls: string[] }) {
+// Buffer's schema has carried reels all along — PostType lists them beside post and
+// story, and AssetInput takes a video as readily as an image. Nothing here was blocked;
+// the type was simply pinned to "post" and every asset built as an image, so a carousel
+// was the only thing this could ever have sent.
+export type BufferVideo = { url: string; thumbnailUrl?: string; title?: string };
+
+export async function createScheduledPost(input: { channelId: string; text: string; dueAt?: string; mode?: "customScheduled" | "shareNow"; mediaUrls: string[]; video?: BufferVideo }) {
   const data = await request<{ createPost: { __typename: string; message?: string; post?: { id: string; status?: string; dueAt?: string } } }>(`
     mutation CreatePost($input: CreatePostInput!) {
       createPost(input: $input) {
@@ -83,7 +89,28 @@ export async function createScheduledPost(input: { channelId: string; text: stri
         ... on MutationError { message }
       }
     }
-  `, { input: { text: input.text, channelId: input.channelId, schedulingType: "automatic", mode: input.mode || "customScheduled", ...(input.dueAt ? { dueAt: input.dueAt } : {}), aiAssisted: true, metadata: { instagram: { type: "post", shouldShareToFeed: true, isAiGenerated: true } }, assets: input.mediaUrls.map((url) => ({ image: { url } })) } });
+  `, { input: {
+    text: input.text,
+    channelId: input.channelId,
+    schedulingType: "automatic",
+    mode: input.mode || "customScheduled",
+    ...(input.dueAt ? { dueAt: input.dueAt } : {}),
+    aiAssisted: true,
+    metadata: { instagram: {
+      type: input.video ? "reel" : "post",
+      // A reel is shown in the reels tab; this also puts it on the profile grid, which
+      // is where anyone who came looking for the account will go.
+      shouldShareToFeed: true,
+      isAiGenerated: true,
+    } },
+    assets: input.video
+      ? [{ video: {
+          url: input.video.url,
+          ...(input.video.thumbnailUrl ? { thumbnailUrl: input.video.thumbnailUrl } : {}),
+          ...(input.video.title ? { metadata: { title: input.video.title } } : {}),
+        } }]
+      : input.mediaUrls.map((url) => ({ image: { url } })),
+  } });
   if (!data.createPost.post) {
     const message = data.createPost.message || `Buffer mutation failed (${data.createPost.__typename})`;
     const queueFull = /queue|scheduled posts?|posting limit|maximum posts?/i.test(message);
