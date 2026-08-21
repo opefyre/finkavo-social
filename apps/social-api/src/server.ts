@@ -676,6 +676,43 @@ function reviewPage(post: Record<string, unknown>, revision: Record<string, unkn
  * evidence has been re-read and still holds. If it does not, the timestamp stays where it
  * was and the post stays blocked, which is the entire point of the check.
  */
+// Re-read one document from its source. Documents that arrive through the brief bank or
+// the recurring calendar are kept fresh by /v1/corpus/ingest-briefs, but a document that
+// came in through discovery has nothing refreshing it — so it quietly aged past the
+// twenty-four hours the pre-publish check demands, and posts already sitting in Buffer
+// were pulled back out over a source that was still perfectly available. Refreshing on
+// demand costs one fetch and only happens for a document a live post actually depends on.
+async function reverifyDocument(documentId: string): Promise<boolean> {
+  const [document] = await sql`SELECT id, source_url, source_authority, title FROM document WHERE id=${documentId}`;
+  if (!document?.source_url) return false;
+  const canonicalUrl = String(document.source_url);
+  try {
+    const page = await fetchPage(canonicalUrl);
+    let text = page.html ? visibleText(page.html) : "";
+    let title = page.html ? pageTitle(page.html, canonicalUrl) : String(document.title || canonicalUrl);
+    if (page.status === 403 || page.status === 0 || text.length < 400) {
+      const rendered = await fetchViaRenderer(canonicalUrl);
+      if (rendered && rendered.text.length > text.length) { text = rendered.text; title = rendered.title || title; }
+    }
+    // Storing a page that came back empty would replace real evidence with nothing.
+    if (text.length < 400) return false;
+    await sql`
+      UPDATE document SET title=${title}, content_hash=${hash(text)}, last_verified_at=now(),
+        freshness_confidence='fresh', last_upstream_check_at=now(), verified_still_available=true
+      WHERE id=${documentId}`;
+    const chunks = chunkText(text);
+    await sql`DELETE FROM chunk WHERE document_id=${documentId}`;
+    for (const [index, chunk] of chunks.entries()) {
+      await sql`INSERT INTO chunk (document_id, chunk_index, text, token_count, lang, content_hash)
+                VALUES (${documentId}, ${index}, ${chunk}, ${Math.ceil(chunk.length / 4)}, 'pt', ${hash(chunk)})`;
+    }
+    await sql`INSERT INTO social_event (event_type, payload) VALUES ('official_source.reverified', ${sql.json({ documentId, url: canonicalUrl, chunks: chunks.length })})`;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 async function refreshRevisionEvidence(postId: string, revisionId: string): Promise<{ refreshed: number; changed: number }> {
   const [row] = await sql`SELECT source_bundle FROM social_post_revision WHERE id=${revisionId} AND post_id=${postId}`;
   const sources = (row?.source_bundle ?? []) as Array<Record<string, unknown>>;
@@ -689,11 +726,21 @@ async function refreshRevisionEvidence(postId: string, revisionId: string): Prom
   const updated = await Promise.all(sources.map(async source => {
     const documentId = source.documentId ? String(source.documentId) : "";
     if (!documentId) return source;
-    const [document] = await sql`
+    let [document] = await sql`
       SELECT last_verified_at FROM document
       WHERE id=${documentId} AND verified_still_available=true
         AND last_verified_at > now() - INTERVAL '24 hours'
     `;
+    // Stale is not the same as gone. Read it again before deciding the post cannot go
+    // out; only a source that will not come back should stop a post that is already
+    // written, approved and queued.
+    if (!document && await reverifyDocument(documentId)) {
+      [document] = await sql`
+        SELECT last_verified_at FROM document
+        WHERE id=${documentId} AND verified_still_available=true
+          AND last_verified_at > now() - INTERVAL '24 hours'
+      `;
+    }
     if (!document) return source;
 
     const [body] = await sql`SELECT string_agg(text, chr(10) ORDER BY chunk_index) AS text FROM chunk WHERE document_id=${documentId}`;
@@ -705,7 +752,13 @@ async function refreshRevisionEvidence(postId: string, revisionId: string): Prom
     if (!stillThere) { changed += 1; return source; }
 
     refreshed += 1;
-    return { ...source, retrievedAt: String(document.last_verified_at) };
+    // ISO, not String(date). The driver returns a Date and its default string form is
+    // "Fri Aug 21 2026 07:59:50 GMT+0100 (Western European Summer Time)", which every
+    // later reader has to re-parse and which some of them get wrong.
+    const verifiedAt = document.last_verified_at instanceof Date
+      ? document.last_verified_at.toISOString()
+      : new Date(String(document.last_verified_at)).toISOString();
+    return { ...source, retrievedAt: verifiedAt };
   }));
 
   if (refreshed) {
@@ -722,8 +775,21 @@ async function assessStoredRevision(postId: string, revisionId: string, requireR
   const sources=(row.source_bundle||[]) as Array<Record<string,unknown>>;
   const assessment=assessEvidenceReliability({topic:String(row.topic),category:String(row.category),claims:claims.map(claim=>({claim:String(claim.claim),evidenceQuote:String(claim.evidenceQuote)})),sources:sources.map(source=>({url:String(source.url),title:String(source.title||""),publisher:source.publisher?String(source.publisher):null,tier:String(source.tier||""),retrievedAt:String(source.retrievedAt||""),excerpts:Array.isArray(source.excerpts)?source.excerpts.map(String):[]}))});
   if(requireRecent&&assessment.sensitive){
-    const oldest=sources.reduce((age,source)=>Math.max(age,Date.now()-new Date(String(source.retrievedAt||0)).getTime()),0);
-    if(!Number.isFinite(oldest)||oldest>24*60*60_000)return {...assessment,passed:false,failures:[...assessment.failures,"Sensitive evidence is older than 24 hours and must be researched again"]};
+    // Re-read the sources before judging their age. The publish path already did this;
+    // the queue audit did not, so a post whose source had simply not been re-checked
+    // that day was pulled out of Buffer rather than refreshed — which is the same
+    // stale-timestamp refusal this was written to end, arriving through the other door.
+    await refreshRevisionEvidence(postId, revisionId).catch(() => ({ refreshed: 0, changed: 0 }));
+    const [refreshedRow]=await sql`SELECT source_bundle FROM social_post_revision WHERE id=${revisionId}`;
+    const current=((refreshedRow?.source_bundle||sources) as Array<Record<string,unknown>>);
+    // A timestamp that will not parse is a source that needs looking at, not a source
+    // that is infinitely old — and reduced through Math.max it turned one bad value into
+    // NaN and failed the whole bundle. One post was refused at ten hours old for it.
+    const ages=current.map(source=>new Date(String(source.retrievedAt??"")).getTime()).filter(time=>Number.isFinite(time)).map(time=>Date.now()-time);
+    const unreadable=current.length-ages.length;
+    const oldest=ages.length?Math.max(...ages):Number.POSITIVE_INFINITY;
+    if(unreadable>0)return {...assessment,passed:false,failures:[...assessment.failures,`${unreadable} evidence source(s) carry an unreadable retrieval time`]};
+    if(oldest>24*60*60_000)return {...assessment,passed:false,failures:[...assessment.failures,"Sensitive evidence is older than 24 hours and must be researched again"]};
   }
   return assessment;
 }
