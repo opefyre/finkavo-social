@@ -2,7 +2,12 @@ packages:
   - apps/*
   - packages/*
 
+# ffmpeg-static fetches a platform binary in its install script, which is the whole
+# reason for depending on it: it puts a working ffmpeg on the machine without Homebrew
+# or admin rights, neither of which this host has.
 onlyBuiltDependencies:
   - esbuild
+  - ffmpeg-static
 allowBuilds:
-  esbuild: set this to true or false
+  esbuild: true
+  ffmpeg-static: true
