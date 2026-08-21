@@ -2875,7 +2875,10 @@ const server = http.createServer(async (req, res) => {
       // time the report runs, not once when it happened.
       const unfillable=await sql`SELECT publish_date,count(*) AS count FROM social_replacement_request WHERE status='unfillable' AND publish_date>=current_date-INTERVAL '7 days' GROUP BY publish_date ORDER BY publish_date DESC`;
       if(unfillable.length>0)alerts.push(`${unfillable.reduce((sum,row)=>sum+Number(row.count),0)} slot(s) went unfilled in the last 7 days:\n${unfillable.map(row=>`${String(row.publish_date).slice(0,10)} — ${row.count} post(s) short`).join('\n')}`);
-      const owedNow=await sql`SELECT count(*) AS count FROM social_replacement_request WHERE status='open' AND publish_date<=current_date`;
+      // Destructured. Without it this read the result array's own row count, which for
+      // an aggregate is always exactly one — so the alert claimed a post was owed every
+      // single run, including when nothing was.
+      const [owedNow]=await sql`SELECT count(*) AS count FROM social_replacement_request WHERE status='open' AND publish_date<=current_date`;
       if(Number(owedNow.count)>0)alerts.push(`${owedNow.count} replacement post(s) are still owed for today or earlier`);
       const blockedPublish=await sql`SELECT j.id,p.id AS post_id,p.topic,j.scheduled_at,j.error_code FROM social_publish_job j JOIN social_post p ON p.id=j.post_id WHERE j.status='blocked' AND j.updated_at<now()-INTERVAL '24 hours' ORDER BY j.scheduled_at LIMIT 10`;if(blockedPublish.length>0)alerts.push(`${blockedPublish.length} ambiguous Buffer result(s) have remained unresolved for more than 24 hours:\n${blockedPublish.map(row=>`${row.topic} — post ${row.post_id}, job ${row.id}, ${row.error_code||'unknown error'}`).join('\n')}`);
       const [bufferQueued]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='scheduled' AND scheduled_at>now()`;if(Number(bufferQueued.count)>=bufferQueueSoftLimit)alerts.push(`Buffer handoff soft cap reached: ${bufferQueued.count}/${bufferQueueSoftLimit}`);
