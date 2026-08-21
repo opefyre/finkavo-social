@@ -20,6 +20,7 @@ import { loadAnnualPlan, rowsForDate, invalidatePlanCache } from "./annual-plan.
 import { findFactCard } from "./fact-cards.js";
 import { anchorQuote } from "./evidence-anchor.js";
 import { validateReelFrames } from "./reel-quality.js";
+import { choosePostFormat } from "./post-format.js";
 import { authenticatedReviewer } from "./access-auth.js";
 import { findDuplicate, type DuplicateCandidate } from "./duplicate.js";
 import { editorialIdentity } from "./editorial-identity.js";
@@ -2040,7 +2041,25 @@ const server = http.createServer(async (req, res) => {
         if (!post || !(post.render_files as unknown[])?.length || !(post.caption as string)?.trim()) return null;
         assertPublishableCopy(post as Record<string, unknown>);
         const availableAt = publishAvailableAt(new Date(scheduledAt));
-        const [created] = await tx`INSERT INTO social_publish_job (post_id, revision_id, render_job_id, idempotency_key, scheduled_at, available_at) VALUES (${post.id}, ${post.revision_id}, ${post.render_job_id}, ${idempotencyKey}, ${scheduledAt}, ${availableAt.toISOString()}) RETURNING *`;
+
+        // Decided here, while the slot is being assigned, because that is the only moment
+        // the day's mix is knowable: how many reels it already holds decides whether this
+        // one can be another.
+        const [revisionRow] = await tx`SELECT reel_frames FROM social_post_revision WHERE id = ${post.revision_id}`;
+        const [conceptRow] = await tx`SELECT content_intent FROM social_post_concept WHERE topic = ${post.topic} ORDER BY updated_at DESC LIMIT 1`;
+        const day = lisbonDate(new Date(scheduledAt));
+        const [reelCount] = await tx`
+          SELECT count(*) AS count FROM social_publish_job
+          WHERE format = 'reel' AND status NOT IN ('failed','blocked')
+            AND scheduled_at >= ${`${day} 00:00:00+00`} AND scheduled_at < ${`${day} 23:59:59+00`}
+        `;
+        const decided = choosePostFormat({
+          contentIntent: conceptRow?.content_intent ? String(conceptRow.content_intent) : null,
+          postIntent: post.post_intent ? String(post.post_intent) : null,
+          hasValidReel: Array.isArray(revisionRow?.reel_frames) && (revisionRow.reel_frames as unknown[]).length >= 3,
+          reelsAlreadyOnDay: Number(reelCount?.count ?? 0),
+        });
+        const [created] = await tx`INSERT INTO social_publish_job (post_id, revision_id, render_job_id, idempotency_key, scheduled_at, available_at, format, format_reason) VALUES (${post.id}, ${post.revision_id}, ${post.render_job_id}, ${idempotencyKey}, ${scheduledAt}, ${availableAt.toISOString()}, ${decided.format}, ${decided.reason}) RETURNING *`;
         await tx`UPDATE social_post SET scheduled_at = ${scheduledAt}, updated_at = now() WHERE id = ${post.id}`;
         await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'publish.queued', ${tx.json({ jobId: created.id, scheduledAt })})`;
         return created;
