@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DraftSchema } from "./contracts.js";
-import { assertEnglishUserCopy, validateSocialDraft } from "./draft-quality.js";
+import { assertEnglishUserCopy, validateSocialDraft, validateStandaloneValue } from "./draft-quality.js";
 
 const good = DraftSchema.parse({ topic:"Portugal deadline",category:"tax",riskLevel:"high",postIntent:"deadline_reminder",hook:"A deadline worth preparing for.",caption:"Portugal tax deadline explained clearly.",callToAction:"Save this reminder.",hashtags:["#Portugal","#Tax","#Deadline","#Finkavo"],searchKeywords:["Portugal tax deadline","filing reminder Portugal"],slides:[{type:"cover",icon:"calendar",eyebrow:"Deadline",title:"Prepare before the deadline",body:"Know what to check before you submit.",items:[],highlight:"",sourceLabel:"Official source",altText:"Cover layout with a calendar icon and deadline title."},{type:"bullets",icon:"check",eyebrow:"Checklist",title:"Before you submit",body:"",items:["Check your information before submission.","Keep the official receipt after submission."],highlight:"",sourceLabel:"Official source",altText:"Checklist layout with two preparation items."},{type:"summary",icon:"document",eyebrow:"Summary",title:"Prepare early",body:"Use the official portal and keep your receipt.",items:[],highlight:"",sourceLabel:"Official source",altText:"Summary layout with a document icon and final reminder."}],claims:[{claim:"The official portal provides the filing process.",evidenceQuote:"Use the official portal to submit the declaration."}] });
 
@@ -45,4 +45,37 @@ describe("social draft quality", () => {
     candidate.slides[0]!.body="SAVE THIS IMPORTANT POST.";
     expect(()=>validateSocialDraft(candidate)).toThrow(/all-caps/);
   });
+
+  // The final slide must leave the reader something to do. That was expressed as a list
+  // of nineteen permitted verbs, so "File by 30 June" and "Confirm your tax number" were
+  // refused for using a synonym — a third of one morning's drafts died on it.
+  describe("the practical next step on the final slide", () => {
+    const build = (takeaway: string) => ({
+      topic: "tax return filing", hook: "Filing your tax return in Portugal", caption: "c",
+      callToAction: "Check the deadline.", hashtags: ["#tax"],
+      slides: [
+        { type: "cover", title: "Tax return filing in Portugal", body: "The tax return filing window for residents who must submit a return.", items: [], altText: "a", sourceLabel: "Tax office", eyebrow: "Tax" },
+        { type: "content", title: "Who must file", body: "Residents with income must submit the return before the deadline.", items: [], altText: "a", sourceLabel: "Tax office", eyebrow: "Tax" },
+        { type: "summary", title: "Next step", body: takeaway, items: [], altText: "a", sourceLabel: "Tax office", eyebrow: "Tax" },
+      ],
+    });
+
+    for (const takeaway of [
+      "File your tax return by 30 June to avoid the penalty.",
+      "Confirm your tax number before signing the lease.",
+      "Ask the tax office for the form if your situation changed.",
+      "Keep the receipt: you will need it to claim the deduction.",
+    ]) {
+      it(`accepts a real instruction: ${takeaway.slice(0, 32)}`, () => {
+        expect(() => validateStandaloneValue(build(takeaway) as never)).not.toThrow();
+      });
+    }
+
+    for (const takeaway of ["Save this post. Follow for more.", "Share this and follow us for more tips."]) {
+      it(`still refuses engagement bait: ${takeaway.slice(0, 28)}`, () => {
+        expect(() => validateStandaloneValue(build(takeaway) as never)).toThrow(/final slide needs/);
+      });
+    }
+  });
 });
+

@@ -21,9 +21,51 @@ const authorityRules: Array<{ pattern: RegExp; domains: string[]; label: string 
 
 const hostname = (url: string) => { try { return new URL(url).hostname.replace(/^www\d?\./, ""); } catch { return ""; } };
 const matchesDomain = (host: string, domain: string) => host === domain || host.endsWith(`.${domain}`);
-const normalizedNumberTokens = (value: string) => [...value.matchAll(/(?:€\s*)?\d+(?:[.,]\d+)?\s*(?:%|€|euros?|days?|months?|years?|dias?|meses?|anos?)?/giu)]
-  .map(match => match[0].toLocaleLowerCase("pt").replace(/\s+/g, "").replace(",", "."))
-  .filter(token => /[%€]|euros?|days?|months?|years?|dias?|meses?|anos?/iu.test(token));
+// A figure has to be compared across two languages and two number conventions, because
+// the post is written in English and the source it cites is Portuguese. Comparing the raw
+// text meant "120 days" never matched "120 dias", "8500 euros" never matched "8.500
+// euros", and "250 euros" never matched "250 EUR" — so a claim the source stated plainly
+// was recorded as unconfirmed. Every figure is reduced to a number and a canonical unit
+// before anything is compared.
+const UNIT_ALIASES: Array<{ canonical: string; pattern: RegExp }> = [
+  { canonical: "pct", pattern: /^(?:%|per ?cento?|percent)$/iu },
+  { canonical: "eur", pattern: /^(?:€|eur|euros?)$/iu },
+  { canonical: "day", pattern: /^(?:days?|dias?)$/iu },
+  { canonical: "month", pattern: /^(?:months?|m[êe]s|meses)$/iu },
+  { canonical: "year", pattern: /^(?:years?|anos?)$/iu },
+];
+
+const canonicalUnit = (raw: string) => UNIT_ALIASES.find(alias => alias.pattern.test(raw.trim()))?.canonical ?? "";
+
+/**
+ * Reads "8.500", "8,500", "8500" as the same number. A single separator followed by
+ * exactly three digits is a thousands separator in both conventions; anything else is a
+ * decimal point. Getting this backwards would turn 8.500 euros into 8.5, so it is the one
+ * place worth being fussy.
+ */
+function numericValue(raw: string): string {
+  const digits = raw.replace(/[^\d.,]/g, "");
+  if (!digits) return "";
+  const separators = digits.match(/[.,]/g) ?? [];
+  let normalised = digits;
+  if (separators.length > 1) {
+    normalised = digits.replace(/[.,](?=\d{3}\b)/g, "").replace(",", ".");
+  } else if (separators.length === 1) {
+    normalised = /[.,]\d{3}$/.test(digits) ? digits.replace(/[.,]/, "") : digits.replace(",", ".");
+  }
+  const value = Number(normalised);
+  return Number.isFinite(value) ? String(value) : "";
+}
+
+const normalizedNumberTokens = (value: string) =>
+  [...value.matchAll(/(?:€\s*)?(\d[\d.,]*)\s*(%|€|euros?|eur|days?|dias?|months?|meses|m[êe]s|years?|anos?|per ?cento?|percent)?/giu)]
+    .map(match => {
+      const unit = canonicalUnit(match[2] ?? "") || (/^€/.test(match[0]) ? "eur" : "");
+      const number = numericValue(match[1]);
+      return unit && number ? `${number}${unit}` : "";
+    })
+    .filter(Boolean);
+
 
 export function isSensitiveClaim(value: EvidenceClaim | string) {
   const text = typeof value === "string" ? value : `${value.claim} ${value.evidenceQuote}`;
@@ -63,24 +105,27 @@ export function assessEvidenceReliability(input: { topic: string; category?: str
       const tokens = normalizedNumberTokens(`${claim.claim} ${claim.evidenceQuote}`);
       const confirmingHosts = new Set<string>();
       for (const source of official) {
-        const text = (source.excerpts || []).join(" ").toLocaleLowerCase("pt").replace(/\s+/g, "").replaceAll(",", ".");
-        if (!tokens.length || tokens.every(token => text.includes(token))) confirmingHosts.add(hostname(source.url));
+        // Both sides are reduced to number-and-unit before comparing, so an English post
+        // and its Portuguese source agree about "120 days" and "120 dias".
+        const theirs = new Set(normalizedNumberTokens((source.excerpts || []).join(" ")));
+        if (!tokens.length || tokens.every(token => theirs.has(token))) confirmingHosts.add(hostname(source.url));
       }
       // The figure still has to appear in the evidence — that check is not relaxed, only
       // the number of places it must appear in. Where the authority itself states it, its
       // word is the confirmation; otherwise two independent officials must agree.
       const confirmedByAuthority = restsOnItsAuthority && primary.some(source => {
-        const text = (source.excerpts || []).join(" ").toLocaleLowerCase("pt").replace(/\s+/g, "").replaceAll(",", ".");
-        return !tokens.length || tokens.every(token => text.includes(token));
+        const theirs = new Set(normalizedNumberTokens((source.excerpts || []).join(" ")));
+        return !tokens.length || tokens.every(token => theirs.has(token));
       });
       // Resting on the authority waives the need for a second source. It does not waive a
       // disagreement between them. If another official page quotes a different figure of
       // the same kind — 29,6% where the claim says 21,4% — one of them is stale or has
       // been misread, and publishing either as settled is what this gate exists to stop.
-      const units = new Set(tokens.map(token => token.replace(/[\d.]/g, "")).filter(Boolean));
+      const unitOf = (token: string) => token.replace(/[\d.]/g, "");
+      const units = new Set(tokens.map(unitOf).filter(Boolean));
       const contradicting = official.some(source => {
         const theirs = normalizedNumberTokens((source.excerpts || []).join(" "));
-        const comparable = theirs.filter(token => units.has(token.replace(/[\d.]/g, "")));
+        const comparable = theirs.filter(token => units.has(unitOf(token)));
         return comparable.length > 0 && !comparable.some(token => tokens.includes(token));
       });
       if (contradicting) {

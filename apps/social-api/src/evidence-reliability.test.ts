@@ -34,5 +34,29 @@ describe("evidence reliability", () => {
     });
     expect(result.passed).toBe(true);
   });
+
+  // The post is written in English and cites a Portuguese source, so every figure has to
+  // survive a change of language and of number convention before it can be compared.
+  // Without this, "120 days" never matched "120 dias" and a claim the source stated
+  // plainly was recorded as unconfirmed.
+  const acrossLanguages: Array<[string, string, string, boolean]> = [
+    ["a thousands separator", "The exemption applies below 8500 euros.", "O limite e de 8.500 euros por ano.", true],
+    ["a decimal comma", "The rate is 21.4%.", "A taxa e de 21,4%.", true],
+    ["euros written as a code", "You pay 250 euros.", "O valor e de 250 EUR.", true],
+    ["days against dias", "You have 120 days to contest.", "prazo de 120 dias contados.", true],
+    ["months against meses", "within 36 months of the sale", "no prazo de 36 meses apos a venda", true],
+    ["a figure the source contradicts", "The rate is 29.6%.", "A taxa e de 21,4%.", false],
+  ];
+
+  for (const [label, claimText, excerpt, expected] of acrossLanguages) {
+    it(`${expected ? "accepts" : "rejects"} ${label}`, () => {
+      const result = assessEvidenceReliability({
+        topic: "IRS deduction limits", category: "irs",
+        claims: [{ claim: claimText, evidenceQuote: excerpt }],
+        sources: [{ url: "https://info.portaldasfinancas.gov.pt/faq", tier: "official", excerpts: [excerpt] }],
+      });
+      expect(result.passed).toBe(expected);
+    });
+  }
 });
 

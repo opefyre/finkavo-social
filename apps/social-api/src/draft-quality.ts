@@ -13,7 +13,16 @@ const nonLatinSentenceScript = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Kata
 const sourceTrivia = /\b(?:which (?:law|regulation).*(?:page|site)|official page (?:flags|highlights|names|references)|(?:law|regulation) (?:named|mentioned) (?:on|by) the page|keep (?:these )?(?:official )?(?:law|regulation|source) names handy)\b/i;
 const sourceCentricCover = /\b(?:what|which|see|find|discover)\b.{0,45}\b(?:guide|page|portal|source)\b.{0,35}\b(?:lists?|mentions?|names?|says?|shows?|recognises?)\b|\b(?:official routes?|options? (?:listed|mentioned)|guide highlights?)\b/i;
 const engagementOnly = /^(?:(?:save|share|follow|bookmark)(?: this| us| finkavo| for more| and)?[ .,!]*)+$/i;
-const practicalAction = /\b(?:apply|check|choose|compare|contact|download|enrol|find|keep|prepare|register|request|review|submit|use|visit|verify)\b/i;
+// The rule is that the last slide must leave the reader something to do, and that is
+// right. Expressing it as nineteen permitted verbs was not: "File by 30 June", "Confirm
+// your NIF before signing" and "Ask Financas for the form" are all exactly what the rule
+// wants and all three were refused, because file, confirm and ask were not on the list.
+// It threw away a third of the drafts on one morning. The list now covers how the action
+// is actually phrased. "save" is deliberately absent: it is the one verb that reads as an
+// instruction and as engagement bait in equal measure, and allowing it would let a slide
+// whose only advice is "save this post" count as a practical next step. "keep" carries
+// the honest version of that meaning.
+const practicalAction = /\b(?:apply|ask|book|bring|calculate|call|check|choose|claim|collect|compare|complete|confirm|contact|count|declare|deduct|download|enrol|enter|file|fill|find|gather|include|keep|log|mark|note|obtain|pay|prepare|present|print|provide|register|renew|report|request|review|schedule|send|show|sign|start|submit|update|upload|use|verify|visit|write)\b/i;
 const contextSignals = [
   /\b(?:is|means|refers to|stands for|a type of|the term)\b/i,
   /\b(?:for|if you|people who|residents?|workers?|parents?|students?|businesses?|who can|who needs)\b/i,
