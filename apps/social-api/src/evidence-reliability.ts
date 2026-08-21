@@ -57,7 +57,7 @@ function numericValue(raw: string): string {
   return Number.isFinite(value) ? String(value) : "";
 }
 
-const normalizedNumberTokens = (value: string) =>
+export const normalizedNumberTokens = (value: string) =>
   [...value.matchAll(/(?:€\s*)?(\d[\d.,]*)\s*(%|€|euros?|eur|days?|dias?|months?|meses|m[êe]s|years?|anos?|per ?cento?|percent)?/giu)]
     .map(match => {
       const unit = canonicalUnit(match[2] ?? "") || (/^€/.test(match[0]) ? "eur" : "");

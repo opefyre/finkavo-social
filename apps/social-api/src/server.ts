@@ -19,6 +19,7 @@ import { composeInstagramCaption } from "./caption.js";
 import { loadAnnualPlan, rowsForDate, invalidatePlanCache } from "./annual-plan.js";
 import { findFactCard } from "./fact-cards.js";
 import { anchorQuote } from "./evidence-anchor.js";
+import { validateReelFrames } from "./reel-quality.js";
 import { authenticatedReviewer } from "./access-auth.js";
 import { findDuplicate, type DuplicateCandidate } from "./duplicate.js";
 import { editorialIdentity } from "./editorial-identity.js";
@@ -1498,12 +1499,26 @@ const server = http.createServer(async (req, res) => {
             ${checked.hook}, ${checked.caption}, ${checked.callToAction}, ${tx.json(checked.hashtags)}, ${tx.json(checked.slides)}, ${model}, ${checked.category}, ${checked.riskLevel}, ${checked.postIntent}, ${tx.json(checked.searchKeywords)},${selectedConcept.subject_family},${selectedConcept.user_question},${selectedConcept.content_intent},${selectedConcept.occurrence_key},${selectedConcept.planned_for})
           RETURNING *
         `;
+        // The reel is checked on its own terms — its figures against the evidence, its
+        // copy against the time it is on screen — and a failure only costs the reel. A
+        // carousel that passed every gate is not thrown away because the short version of
+        // it came out wrong; the post goes out without one and the reason is kept, which
+        // is also how we learn which rule keeps catching things.
+        const reelFrames = checked.reel?.frames ?? [];
+        // The same excerpts the claims were checked against, rebuilt here because the
+        // copy used during generation lives inside the attempt loop.
+        const reelCorpus = evidenceSources.flatMap(entry => entry.excerpts as string[]).join("\n").replace(/\s+/g, " ");
+        const reelVerdict = reelFrames.length ? validateReelFrames(reelFrames, reelCorpus) : { ok: false as const, reason: "the model wrote no reel for this post" };
+        const reelToStore = reelVerdict.ok ? reelFrames : null;
+        const reelRejected = reelVerdict.ok ? null : reelVerdict.reason;
+
         const [revision] = await tx`
           INSERT INTO social_post_revision (post_id, revision_number, locale, template_version, hook, caption, call_to_action,
-            hashtags, slides, alt_texts, source_bundle, evidence_hash, content_hash, model, prompt_version, post_intent, search_keywords)
+            hashtags, slides, alt_texts, source_bundle, evidence_hash, content_hash, model, prompt_version, post_intent, search_keywords, reel_frames, reel_rejected_reason)
           VALUES (${post.id}, 1, 'en', 'finkavo-v3', ${checked.hook}, ${checked.caption}, ${checked.callToAction},
             ${tx.json(checked.hashtags)}, ${tx.json(checked.slides)}, ${tx.json(checked.slides.map((slide) => slide.altText))},
-            ${tx.json(sourceBundle)}, ${evidenceHash}, ${contentHash}, ${model}, 'v2', ${checked.postIntent}, ${tx.json(checked.searchKeywords)}) RETURNING *
+            ${tx.json(sourceBundle)}, ${evidenceHash}, ${contentHash}, ${model}, 'v2', ${checked.postIntent}, ${tx.json(checked.searchKeywords)},
+            ${reelToStore ? tx.json(reelToStore) : null}, ${reelRejected}) RETURNING *
         `;
         await tx`UPDATE social_post SET current_revision_id = ${revision.id} WHERE id = ${post.id}`;
         for (const claim of checked.claims) {
@@ -1515,7 +1530,7 @@ const server = http.createServer(async (req, res) => {
           await tx`INSERT INTO social_claim_evidence (claim_id, document_id, source_url, source_title, publisher, locale, retrieved_at, content_hash, supporting_excerpt)
             VALUES (${savedClaim.id}, ${String(claimSource.documentId)}, ${String(claimSource.url)}, ${String(claimSource.title)}, ${claimSource.publisher ? String(claimSource.publisher) : null}, ${String(claimSource.locale)}, ${String(claimSource.retrievedAt)}, ${String(claimSource.contentHash)}, ${claim.evidenceQuote})`;
         }
-        await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'draft.created', ${tx.json({ tokens: usedTokens, model, revisionId: revision.id, evidenceHash, contentHash })})`;
+        await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'draft.created', ${tx.json({ tokens: usedTokens, reelFrames: reelToStore ? reelToStore.length : 0, reelRejected, model, revisionId: revision.id, evidenceHash, contentHash })})`;
         // Clearing the notes here matters: the rewrite they asked for now exists, and
         // leaving them set would re-apply the same correction to every later draft.
         if (selectedConcept?.id) await tx`UPDATE social_post_concept SET status='used', revision_feedback=NULL, updated_at=now() WHERE id=${selectedConcept.id}`;
