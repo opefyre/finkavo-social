@@ -33,7 +33,15 @@ const contextSignals = [
 const acronymDefinitions:Record<string,RegExp>={
   AIMA:/agency for integration,? migration and asylum/i,AT:/tax authority/i,IRS:/personal income tax/i,IVA:/value[- ]added tax/i,
   NIF:/tax identification number/i,NISS:/social security identification number/i,PLA:/portuguese (?:host|welcoming) language/i,
-  PLNM:/portuguese as a non[- ]native language/i,SNS:/national health service/i,IMT:/institute for mobility and transport/i,
+  PLNM:/portuguese as a non[- ]native language/i,SNS:/national health service/i,
+  // IMT is two different things and the property one is far commoner here: the
+  // municipal tax on transferring a property. Accepting only the transport institute
+  // failed posts that had used the acronym perfectly correctly.
+  IMT:/(?:property|municipal) transfer tax|tax on (?:the )?transfer of propert|institute for mobility and transport/i,
+  IMI:/municipal property tax/i,IUC:/(?:road|vehicle) tax/i,IBAN:/international bank account number/i,
+  NIPC:/(?:corporate|company|legal person) tax identification number/i,
+  CIRS:/personal income tax code/i,ACT:/(?:authority for )?working conditions/i,
+  OECD:/organisation for economic/i,
 };
 const stopWords=new Set(["about","after","before","from","guide","official","portugal","post","the","this","what","when","where","which","with","your"]);
 const words=(value:string)=>new Set((value.toLocaleLowerCase("en").match(/[a-z]{3,}/g)||[]).filter(word=>!stopWords.has(word)));
@@ -47,7 +55,7 @@ export function validateStandaloneValue(draft: StandaloneCandidate) {
   if(sourceCentricCover.test(`${cover.title} ${cover.body} ${draft.hook}`))throw new Error("Slide 1 describes a source instead of a useful standalone topic");
   const publicCopy=[...draft.slides.flatMap(slide=>[slide.eyebrow||"",slide.title||"",slide.body||"",...(slide.items||[])]),draft.hook,draft.caption].join(" ");
   const acronyms=[...new Set(publicCopy.match(/\b[A-Z]{2,6}\b/g)||[])].filter(value=>!["EU","ID","URL"].includes(value));
-  for(const acronym of acronyms){const escaped=acronym.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");const defined=(acronymDefinitions[acronym]?.test(publicCopy)??false)||new RegExp(`(?:[A-Za-z][A-Za-z -]{4,}\\(${escaped}\\)|\\b${escaped}\\b\\s*(?:means|is|stands for|—|:)\\s*[A-Za-z])`).test(publicCopy);if(!defined)throw new Error(`${acronym} must be defined for a standalone reader`);}
+  for(const acronym of acronyms){const escaped=acronym.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");const defined=(acronymDefinitions[acronym]?.test(publicCopy)??false)||new RegExp(`(?:[A-Za-z][A-Za-z -]{4,}\\(${escaped}\\)|\\b${escaped}\\b\\s*(?:means|is|stands for|—|:)\\s*[A-Za-z])`).test(publicCopy);if(!defined)throw new Error(`${acronym} must be defined for a standalone reader — write it out in full followed by the acronym in brackets, as in "Municipal Property Tax (${acronym})", the first time it appears`);}
   const signals=contextSignals.filter(pattern=>pattern.test(publicCopy)).length;
   if(signals<3)throw new Error("The post lacks enough standalone context, audience, purpose, or practical action");
   const content=draft.slides.slice(1,-1).map(slide=>`${slide.title||""} ${slide.body||""} ${(slide.items||[]).join(" ")}`);

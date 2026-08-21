@@ -13,6 +13,7 @@ import { BufferError, createScheduledPost, deletePost as deleteBufferPost, findM
 import { notifyDiscord, notifyDiscordReview } from "./discord.js";
 import { renderReviewPreview } from "./preview.js";
 import { retryDecision } from "./retry-policy.js";
+import { classifyGenerationFailure, countsAsAttempt, shouldRetireConcept } from "./block-reason.js";
 import { expandCalendar, loadEditorialCalendar, selectDailyMix } from "./planner.js";
 import { assertEnglishUserCopy, validateSocialDraft } from "./draft-quality.js";
 import { composeInstagramCaption } from "./caption.js";
@@ -123,14 +124,32 @@ const classifyTopic = (value: unknown) => {
 // act on. Political debate about a reform is not an administrative change, and this is
 // what keeps "CIP wants to debate Social Security reform" out of the queue.
 const NEWS_INSTITUTIONS = /\b(?:aima|sef|autoridade tribut[áa]ria|financ[ae]s|seguran[çc]a social|seg-social|sns|servi[çc]o nacional de sa[úu]de|irn|conservat[óo]ria|imt|act|iefp|ihru|ersar?|erse|anacom|banco de portugal|di[áa]rio da rep[úu]blica|governo|minist[ée]rio|parlamento|assembleia da rep[úu]blica|c[âa]mara municipal|junta de freguesia|tax authority|social security|immigration)\b/i;
-const NEWS_SUBJECTS = /\b(?:irs|iva|imi|aimi|iuc|imt|isv|nif|niss|seguran[çc]a social|visto|vistos|autoriza[çc][ãa]o de resid[êe]ncia|resid[êe]ncia|nacionalidade|cidadania|imigra[çc][ãa]o|reagrupamento|abono|pens[ãa]o|pens[õo]es|subs[íi]dio|presta[çc][ãa]o|licen[çc]a|arrendamento|renda|habita[çc][ãa]o|contrato de trabalho|despedimento|desemprego|sal[áa]rio m[íi]nimo|escalon?[õo]?es|dedu[çc][ãa]o|imposto|impostos|taxa|taxas|coima|prazo|prazos|declara[çc][ãa]o|reembolso|apoio|tax|pension|benefit|deadline|residence permit|citizenship)\b/i;
-const NEWS_CHANGE = /\b(?:novo|nova|novos|novas|altera|altera[çc][ãa]o|altera[çc][õo]es|muda|mudan[çc]a|entra em vigor|aprovad[oa]|publicad[oa]|aumenta|aumento|sobe|desce|reduz|redu[çc][ãa]o|atualiza|atualiza[çc][ãa]o|passa a|deixa de|fim d[oae]|acaba|prazo|prorroga|adia|suspende|obrigat[óo]ri[oa]|regras|decreto|portaria|lei n|orçamento do estado|changes?|new rules?|deadline|comes into force|approved)\b/i;
+const NEWS_SUBJECTS = /\b(?:irs|iva|imi|aimi|iuc|imt|isv|nif|niss|seguran[çc]a social|visto|vistos|autoriza[çc][ãa]o de resid[êe]ncia|resid[êe]ncia|nacionalidade|cidadania|imigra[çc][ãa]o|reagrupamento|abono|pens[ãa]o|pens[õo]es|subs[íi]dio|presta[çc][ãa]o|licen[çc]a|arrendamento|renda|habita[çc][ãa]o|contrato de trabalho|despedimento|desemprego|sal[áa]rio m[íi]nimo|escalon?[õo]?es|dedu[çc][ãa]o|imposto|impostos|taxa|taxas|coima|prazo|prazos|declara[çc][ãa]o|reembolso|apoio|tax|pension|benefit|deadline|residence permit|citizenship|bilhete de identidade|cart[ãa]o de cidad[ãa]o|cart[ãa]o de resid[êe]ncia|certificado de resid[êe]ncia|pensionista|pensionistas|prova de vida|bonifica[çc][ãa]o|complemento|reagrupamento familiar|carteira digital|situa[çc][ãa]o fiscal|fatura|e-fatura|recibo|iban|d[ée]bito direto|seguran[çc]a social direta|portal das finan[çc]as|chave m[óo]vel digital|id card|direct debit)\b/i;
+const NEWS_CHANGE = /\b(?:novo|nova|novos|novas|altera|altera[çc][ãa]o|altera[çc][õo]es|muda|mudan[çc]a|entra em vigor|aprovad[oa]|publicad[oa]|aumenta|aumento|sobe|desce|reduz|redu[çc][ãa]o|atualiza|atualiza[çc][ãa]o|passa a|deixa de|fim d[oae]|acaba|prazo|prorroga|adia|suspende|obrigat[óo]ri[oa]|regras|decreto|portaria|lei n|orçamento do estado|changes?|new rules?|deadline|comes into force|approved|autom[áa]tic[oa]|automaticamente|j[áa] pode|j[áa] est[áa]|passa a estar|dispon[íi]vel|renova[çc][ãa]o|renovar|online|digital|na app|self[- ]service|automatic(?:ally)?|now available)\b/i;
+
+// A scam impersonating a public institution is the single most actionable thing a
+// personal-finance account can post, and it never contains a change verb. "Mensagens
+// fraudulentas enviadas em nome da Segurança Social" was dropped for that reason alone.
+const NEWS_ALERT = /\b(?:alerta|fraudulent[ao]s?|fraude|burla|burl[õo]es|phishing|smishing|esquema|falso|falsa|scam|fake|impersonat)\b/i;
+
+// Discovery sometimes hands over a headline that is a date, a bare number or the literal
+// string "default" — the page had no usable title. Those became concepts, were judged for
+// relevance and were retired as if a decision had been made about them. They are simply
+// unusable, and saying so keeps the relevance statistics honest.
+const usableHeadline = (text: string) => {
+  const letters = text.replace(/[^\p{L}]/gu, "");
+  if (letters.length < 12) return false;
+  if (/^\s*default\s*$/i.test(text)) return false;
+  return text.trim().split(/\s+/).length >= 3;
+};
 
 const newsRelevant = (title: unknown, category: unknown) => {
   const text = String(title || "");
+  if (!usableHeadline(text)) return false;
   if (String(category || "general") !== "general") return true;
   const named = NEWS_INSTITUTIONS.test(text) || NEWS_SUBJECTS.test(text);
-  return named && NEWS_CHANGE.test(text);
+  if (!named) return false;
+  return NEWS_CHANGE.test(text) || NEWS_ALERT.test(text);
 };
 const officialDomains = ["aima.gov.pt", "diariodarepublica.pt", "dre.pt", "gov.pt", "portaldasfinancas.gov.pt", "seg-social.pt", "irn.justica.gov.pt", "bportugal.pt", "sns24.gov.pt", "ine.pt", "dgeste.mec.pt", "act.gov.pt"];
 const isOfficialUrl = (value:string) => { try { const hostname=new URL(value).hostname.replace(/^www\./,""); return officialDomains.some(domain=>hostname===domain||hostname.endsWith(`.${domain}`)); } catch { return false; } };
@@ -313,6 +332,36 @@ setBufferCallObserver(({ kind, status, quota }) => {
 // still the right reading of "no".
 const MAX_REVISION_ROUNDS = 2;
 
+// A post lost after generation is a debt against that day, and the debt is recorded
+// rather than inferred. Recovery reads these to know a slot is owed even when its own
+// arithmetic already looks satisfied, and anything still open when the day closes is
+// escalated instead of forgotten.
+// Whether the bank still holds a usable topic for a day, which separates "we ran out of
+// road" from "we ran out of ideas" in the alert.
+const conceptsRemainingFor = async (day: string) => {
+  const [row] = await sql`
+    SELECT count(*) AS count FROM social_post_concept c
+    WHERE c.status='planned' AND c.planned_for=${day}
+      AND EXISTS (SELECT 1 FROM social_topic_evidence_bundle b WHERE b.id=c.evidence_bundle_id AND b.verification_state='verified' AND b.expires_at>now())`;
+  return Number(row.count) > 0;
+};
+
+async function requestReplacement(tx: typeof sql, input: { publishDate: unknown; reason: string; postId?: unknown; jobId?: unknown }) {
+  // The day the slot belongs to, preferred over today: a post lost at 23:50 is a debt
+  // against the day it was planned for, not against tomorrow.
+  let publishDate = input.publishDate ? String(input.publishDate).slice(0, 10) : "";
+  if (!publishDate && input.postId) {
+    const [post] = await tx`SELECT planned_for FROM social_post WHERE id=${String(input.postId)}`;
+    if (post?.planned_for) publishDate = String(post.planned_for).slice(0, 10);
+  }
+  if (!publishDate) publishDate = lisbonDate(new Date());
+  await tx`
+    INSERT INTO social_replacement_request (publish_date, reason, source_post_id, source_job_id)
+    VALUES (${publishDate}, ${input.reason.slice(0, 300)}, ${input.postId ? String(input.postId) : null}, ${input.jobId ? String(input.jobId) : null})
+    ON CONFLICT (source_job_id) WHERE source_job_id IS NOT NULL AND status='open' DO NOTHING`;
+  await tx`INSERT INTO social_event (event_type, payload) VALUES ('publish.replacement_requested', ${tx.json({ publishDate, reason: input.reason.slice(0, 300), postId: input.postId ? String(input.postId) : null, jobId: input.jobId ? String(input.jobId) : null })})`;
+}
+
 async function applyRejection(tx: typeof sql, postId: string, topic: string, plannedFor: unknown, comment: string | null) {
   const notes = (comment ?? "").trim();
   const [concept] = await tx`
@@ -323,7 +372,7 @@ async function applyRejection(tx: typeof sql, postId: string, topic: string, pla
   const rewrite = Boolean(notes) && Boolean(concept) && round < MAX_REVISION_ROUNDS;
 
   if (!rewrite) {
-    const concepts = await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE topic=${topic} AND planned_for=${plannedFor as string} RETURNING plan_slot_id`;
+    const concepts = await tx`UPDATE social_post_concept SET status='blocked',blocked_kind='reviewer',blocked_reason=${notes ? `reviewer rejected after ${round} rewrite round(s): ${notes.slice(0, 200)}` : "reviewer rejected with no rewrite notes"},blocked_at=now(),updated_at=now() WHERE topic=${topic} AND planned_for=${plannedFor as string} RETURNING plan_slot_id`;
     for (const row of concepts) if (row.plan_slot_id) await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${row.plan_slot_id}`;
     return { rewrite: false as const, round };
   }
@@ -1057,7 +1106,7 @@ const server = http.createServer(async (req, res) => {
         await sql`
           INSERT INTO social_post_concept (document_id, topic, category, risk_level, priority, timeliness, fingerprint, status, planned_for, occurrence_id, campaign_stage, reason, expires_at, repeat_allowed, score)
           VALUES (${document?.id ?? null}, ${`${item.title} — ${item.campaignStage}`}, ${item.category}, ${item.riskLevel}, ${item.score}, 'deadline', ${item.fingerprint}, ${conceptStatus}, ${item.publishDate}, ${occurrence.id}, ${item.campaignStage}, ${`Recurring obligation due ${item.dueDate}; ${item.audience}`}, ${`${item.dueDate}T23:59:59Z`}, true, ${item.score})
-          ON CONFLICT (fingerprint) DO UPDATE SET document_id=excluded.document_id, status=CASE WHEN social_post_concept.status IN ('used','planned') THEN social_post_concept.status WHEN excluded.document_id IS NOT NULL THEN 'eligible' ELSE 'blocked' END, planned_for=excluded.planned_for, reason=excluded.reason, expires_at=excluded.expires_at, score=excluded.score, updated_at=now()
+          ON CONFLICT (fingerprint) DO UPDATE SET document_id=excluded.document_id, status=CASE WHEN social_post_concept.status IN ('used','planned') THEN social_post_concept.status WHEN excluded.document_id IS NOT NULL THEN 'eligible' ELSE 'blocked' END, blocked_kind=CASE WHEN excluded.document_id IS NULL THEN 'no_source' ELSE NULL END, blocked_reason=CASE WHEN excluded.document_id IS NULL THEN 'no verified official document matches the rule source URL yet' ELSE NULL END, planned_for=excluded.planned_for, reason=excluded.reason, expires_at=excluded.expires_at, score=excluded.score, updated_at=now()
         `;
         if (document) eligible++; else blocked++;
       }
@@ -1068,6 +1117,23 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && url.pathname === "/v1/planning/daily") {
       const { date, capacity } = PlanningSchema.parse(await readJson(req));
       const planningDate = date || new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Lisbon", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+      // A concept is only ever looked at on its own planned_for date. Anything that was
+      // planned but not reached — five slots a day against a larger bank, or a day where
+      // generation ran short — was simply never seen again, still carrying verified
+      // evidence. That is the quiet half of how the bank drains: not topics rejected, but
+      // topics left behind. Carry those forward. The plan slot stays where it is, because
+      // generation reads it only for the brief, and the brief is still the right brief.
+      const carried = await sql`
+        UPDATE social_post_concept c SET planned_for=${planningDate}, updated_at=now()
+        WHERE c.status='planned' AND c.planned_for < ${planningDate}
+          AND EXISTS (SELECT 1 FROM social_topic_evidence_bundle b
+                      WHERE b.id=c.evidence_bundle_id AND b.verification_state='verified' AND b.expires_at>now())
+          AND NOT EXISTS (SELECT 1 FROM social_post p WHERE p.topic=c.topic AND p.status NOT IN ('blocked','rejected','failed'))
+        RETURNING c.id, c.topic`;
+      if (carried.length) {
+        await sql`INSERT INTO social_event (event_type, payload) VALUES ('planning.concepts_carried_forward', ${sql.json({ planningDate, carried: carried.length, topics: carried.slice(0, 10).map(row => String(row.topic)) })})`;
+      }
+
       const plan = await loadAnnualPlan();
       const selected = rowsForDate(plan, planningDate).slice(0, capacity);
       if (!selected.length) return send(res, 409, { error: "The requested date is outside the approved rolling annual plan" });
@@ -1179,7 +1245,12 @@ const server = http.createServer(async (req, res) => {
       for(const slot of heldSlots){
         const attemptedRows=await sql`SELECT topic FROM social_post_concept WHERE plan_slot_id=${slot.id}`;const attemptedTopics=new Set(attemptedRows.map(row=>String(row.topic)));const unused=eligible.filter(card=>!attemptedTopics.has(card.topic));
         const samePillar=unused.filter(card=>card.subjectFamily===slot.pillar);const pool=samePillar.length?samePillar:unused;if(!pool.length)break;
-        const card=pool[0];eligible=eligible.filter(item=>item.id!==card.id);const source=evidence.find(row=>row.canonicalUrl===card.sourcePolicy.canonicalUrl)!;const sources=[{documentId:String(source.document_id),url:card.sourcePolicy.canonicalUrl,title:String(source.title),publisher:String(source.authority),tier:'official',locale:'pt',retrievedAt:String(source.verifiedAt),contentHash:String(source.content_hash),relevanceScore:100,matchedTerms:card.evidenceTerms,excerpts:evidenceWindows(String(source.visible_text),card.evidenceTerms)}];const bundleHash=hash(sources);const [bundle]=await sql`INSERT INTO social_topic_evidence_bundle(plan_slot_id,bundle_hash,sources,verification_state,verified_at,expires_at) VALUES(${slot.id},${bundleHash},${sql.json(sources)},'verified',now(),now()+(${card.sourcePolicy.freshnessDays}::STRING||' days')::INTERVAL) ON CONFLICT(plan_slot_id,bundle_hash) DO UPDATE SET verification_state='verified',verified_at=now(),expires_at=excluded.expires_at RETURNING id`;const briefIdentity=hash({id:card.id,topic:card.topic,userQuestion:card.userQuestion,audience:card.audience,contentIntent:card.contentIntent}).slice(0,16);const fingerprint=`held-fallback:${slot.plan_version}:${day}:${slot.slot_number}:${briefIdentity}`;const [concept]=await sql`INSERT INTO social_post_concept(document_id,topic,category,risk_level,priority,timeliness,fingerprint,status,planned_for,reason,repeat_allowed,score,plan_slot_id,evidence_bundle_id,subject_family,user_question,content_intent) VALUES(${source.document_id},${card.topic},${card.subjectFamily},'medium',${100-Number(slot.slot_number)},'evergreen',${fingerprint},'planned',${day},${`Evidence hold replacement for: ${slot.topic}`},false,${100-Number(slot.slot_number)},${slot.id},${bundle.id},${card.subjectFamily},${card.userQuestion},${card.contentIntent}) ON CONFLICT(fingerprint) DO UPDATE SET document_id=excluded.document_id,topic=excluded.topic,category=excluded.category,evidence_bundle_id=excluded.evidence_bundle_id,subject_family=excluded.subject_family,user_question=excluded.user_question,content_intent=excluded.content_intent,status=CASE WHEN social_post_concept.status='used' THEN 'used' ELSE 'planned' END,updated_at=now() RETURNING id`;await sql`UPDATE social_editorial_plan_slot SET topic=${card.topic},pillar=${card.subjectFamily},audience=${card.audience},timing_class='evergreen',reserve_kind='evidence_hold_fallback',search_terms=${sql.json(card.evidenceTerms)},required_authority=${card.sourcePolicy.canonicalUrl},subject_family=${card.subjectFamily},user_question=${card.userQuestion},content_intent=${card.contentIntent},occurrence_key=NULL,campaign_stage='evidence_hold_fallback',brief=${sql.json(card)},status='evidence_ready',updated_at=now() WHERE id=${slot.id}`;await sql`INSERT INTO social_event(event_type,payload) VALUES('planning.held_replaced',${sql.json({slotId:slot.id,originalTopic:slot.topic,reserveId:card.id,replacementTopic:card.topic,conceptId:concept.id})})`;replacements.push({slotId:slot.id,originalTopic:slot.topic,reserveId:card.id,topic:card.topic});}
+        const card=pool[0];eligible=eligible.filter(item=>item.id!==card.id);const source=evidence.find(row=>row.canonicalUrl===card.sourcePolicy.canonicalUrl)!;const sources=[{documentId:String(source.document_id),url:card.sourcePolicy.canonicalUrl,title:String(source.title),publisher:String(source.authority),tier:'official',locale:'pt',retrievedAt:String(source.verifiedAt),contentHash:String(source.content_hash),relevanceScore:100,matchedTerms:card.evidenceTerms,excerpts:evidenceWindows(String(source.visible_text),card.evidenceTerms)}];const bundleHash=hash(sources);const [bundle]=await sql`INSERT INTO social_topic_evidence_bundle(plan_slot_id,bundle_hash,sources,verification_state,verified_at,expires_at) VALUES(${slot.id},${bundleHash},${sql.json(sources)},'verified',now(),now()+(${card.sourcePolicy.freshnessDays}::STRING||' days')::INTERVAL) ON CONFLICT(plan_slot_id,bundle_hash) DO UPDATE SET verification_state='verified',verified_at=now(),expires_at=excluded.expires_at RETURNING id`;const briefIdentity=hash({id:card.id,topic:card.topic,userQuestion:card.userQuestion,audience:card.audience,contentIntent:card.contentIntent}).slice(0,16);// The fingerprint deliberately excludes the day and the slot number. Including them
+        // minted a brand-new concept row every time a card was tried, so 29 reserve cards
+        // had spawned 224 rows — each later colliding with the one post that did get made
+        // from the card, and each blocked as a duplicate. One card is now one row, which
+        // keeps the blocked count honest instead of making the bank look exhausted.
+        const fingerprint=`held-fallback:${briefIdentity}`;const [concept]=await sql`INSERT INTO social_post_concept(document_id,topic,category,risk_level,priority,timeliness,fingerprint,status,planned_for,reason,repeat_allowed,score,plan_slot_id,evidence_bundle_id,subject_family,user_question,content_intent) VALUES(${source.document_id},${card.topic},${card.subjectFamily},'medium',${100-Number(slot.slot_number)},'evergreen',${fingerprint},'planned',${day},${`Evidence hold replacement for: ${slot.topic}`},false,${100-Number(slot.slot_number)},${slot.id},${bundle.id},${card.subjectFamily},${card.userQuestion},${card.contentIntent}) ON CONFLICT(fingerprint) DO UPDATE SET document_id=excluded.document_id,topic=excluded.topic,category=excluded.category,evidence_bundle_id=excluded.evidence_bundle_id,subject_family=excluded.subject_family,user_question=excluded.user_question,content_intent=excluded.content_intent,status=CASE WHEN social_post_concept.status='used' THEN 'used' ELSE 'planned' END,updated_at=now() RETURNING id`;await sql`UPDATE social_editorial_plan_slot SET topic=${card.topic},pillar=${card.subjectFamily},audience=${card.audience},timing_class='evergreen',reserve_kind='evidence_hold_fallback',search_terms=${sql.json(card.evidenceTerms)},required_authority=${card.sourcePolicy.canonicalUrl},subject_family=${card.subjectFamily},user_question=${card.userQuestion},content_intent=${card.contentIntent},occurrence_key=NULL,campaign_stage='evidence_hold_fallback',brief=${sql.json(card)},status='evidence_ready',updated_at=now() WHERE id=${slot.id}`;await sql`INSERT INTO social_event(event_type,payload) VALUES('planning.held_replaced',${sql.json({slotId:slot.id,originalTopic:slot.topic,reserveId:card.id,replacementTopic:card.topic,conceptId:concept.id})})`;replacements.push({slotId:slot.id,originalTopic:slot.topic,reserveId:card.id,topic:card.topic});}
       return send(res,200,{date:day,held:heldSlots.length,replaced:replacements.length,replacements});
     }
 
@@ -1555,8 +1626,29 @@ const server = http.createServer(async (req, res) => {
         }
       }
       if (!checked) {
-        await sql.begin(async tx=>{await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE id=${selectedConcept.id}`;if(selectedConcept.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${selectedConcept.plan_slot_id}`;await tx`INSERT INTO social_event (event_type, payload) VALUES ('generation.failed', ${tx.json({ documentId,conceptId:selectedConcept.id,planSlotId:selectedConcept.plan_slot_id,error: lastGenerationError })})`;});
-        return send(res, 422, { error: "Structured generation failed after the initial attempt and two targeted repairs", detail: lastGenerationError });
+        // A failed generation used to retire the topic outright. That is how a bank of
+        // 153 topics fell to 45 eligible: a Groq timeout, a token-per-minute pause or a
+        // truncated JSON body read exactly like "this subject is unusable". Now the
+        // failure is classified first — infrastructure never counts against the topic,
+        // and everything else has to fail MAX_GENERATION_ATTEMPTS times on different
+        // runs before the concept is retired.
+        const failure = classifyGenerationFailure(lastGenerationError);
+        const priorAttempts = Number(selectedConcept.generation_attempts ?? 0);
+        const attempts = priorAttempts + (countsAsAttempt(failure) ? 1 : 0);
+        const retire = shouldRetireConcept(failure, attempts);
+        await sql.begin(async tx => {
+          if (retire) {
+            await tx`UPDATE social_post_concept SET status='blocked',blocked_kind=${failure.kind},blocked_reason=${failure.reason},blocked_at=now(),generation_attempts=${attempts},updated_at=now() WHERE id=${selectedConcept.id}`;
+            if (selectedConcept.plan_slot_id) await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${selectedConcept.plan_slot_id}`;
+          } else {
+            // Back into the bank. The slot returns to evidence_ready so the very next
+            // generation run can pick this topic straight back up.
+            await tx`UPDATE social_post_concept SET status='planned',generation_attempts=${attempts},blocked_kind=NULL,blocked_reason=NULL,updated_at=now() WHERE id=${selectedConcept.id}`;
+            if (selectedConcept.plan_slot_id) await tx`UPDATE social_editorial_plan_slot SET status='evidence_ready',updated_at=now() WHERE id=${selectedConcept.plan_slot_id}`;
+          }
+          await tx`INSERT INTO social_event (event_type, payload) VALUES ('generation.failed', ${tx.json({ documentId, conceptId: selectedConcept.id, planSlotId: selectedConcept.plan_slot_id, error: lastGenerationError, kind: failure.kind, attempts, retired: retire })})`;
+        });
+        return send(res, 422, { error: "Structured generation failed after the initial attempt and two targeted repairs", detail: lastGenerationError, kind: failure.kind, attempts, retired: retire });
       }
       const reliability=assessEvidenceReliability({topic:checked.topic,category:checked.category,claims:checked.claims,sources:evidenceSources.map(s=>({url:String(s.url),title:String(s.title),publisher:s.publisher?String(s.publisher):null,tier:String(s.tier),retrievedAt:String(s.retrievedAt),excerpts:(s.excerpts as string[])||[]}))});
       const sourceBundle = evidenceSources.map(s=>({documentId:String(s.documentId),url:String(s.url),title:String(s.title),publisher:s.publisher?String(s.publisher):null,locale:String(s.locale),retrievedAt:String(s.retrievedAt),contentHash:String(s.contentHash),tier:String(s.tier),excerpts:(s.excerpts as string[])||[],reliability}));
@@ -1565,7 +1657,7 @@ const server = http.createServer(async (req, res) => {
       const duplicate = await findRecentDuplicate({ topic: checked.topic, category: checked.category, audience: "English-speaking people in Portugal", postIntent: checked.postIntent, content_hash: contentHash, subject_family: selectedConcept.subject_family, user_question: selectedConcept.user_question, content_intent: selectedConcept.content_intent, occurrence_key: selectedConcept.occurrence_key });
       if (duplicate) {
         await sql.begin(async tx => {
-          await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE id=${selectedConcept.id}`;
+          await tx`UPDATE social_post_concept SET status='blocked',blocked_kind='duplicate',blocked_reason=${`${duplicate.reason} (already covered by post ${String(duplicate.post.id).slice(0, 8)})`},blocked_at=now(),updated_at=now() WHERE id=${selectedConcept.id}`;
           if(selectedConcept.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${selectedConcept.plan_slot_id}`;
           await tx`INSERT INTO social_event(event_type,payload) VALUES('quality.duplicate_blocked',${tx.json({ conceptId: String(selectedConcept.id), duplicateOf: String(duplicate.post.id), reason: duplicate.reason, stage: 'generation' })})`;
         });
@@ -1716,7 +1808,7 @@ const server = http.createServer(async (req, res) => {
             continue;
           }
           const postId=generated.ok&&generated.result.post&&typeof generated.result.post==='object'?String((generated.result.post as Record<string,unknown>).id||''):'';
-          if(postId){const reviewed=await internalApi("POST",`/v1/posts/${postId}/request-review`,{expiresInMinutes:180});reviews.push({postId,ok:reviewed.ok,status:reviewed.status,error:reviewed.ok?null:String(reviewed.result.error||"review request failed")});if(!reviewed.ok)await sql.begin(async tx=>{await tx`UPDATE social_post SET status='failed',updated_at=now() WHERE id=${postId} AND status='draft'`;const concepts=await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE topic=${String(concept.topic||"")} AND planned_for=${day} RETURNING plan_slot_id`;for(const row of concepts)if(row.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${row.plan_slot_id}`;await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${postId},'review.handoff_failed',${tx.json({conceptId:concept.id,error:String(reviewed.result.error||"review request failed")})})`;});}
+          if(postId){const reviewed=await internalApi("POST",`/v1/posts/${postId}/request-review`,{expiresInMinutes:180});reviews.push({postId,ok:reviewed.ok,status:reviewed.status,error:reviewed.ok?null:String(reviewed.result.error||"review request failed")});if(!reviewed.ok)await sql.begin(async tx=>{await tx`UPDATE social_post SET status='failed',updated_at=now() WHERE id=${postId} AND status='draft'`;const concepts=await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE topic=${String(concept.topic||"")} AND planned_for=${day} RETURNING plan_slot_id`;for(const row of concepts)if(row.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${row.plan_slot_id}`;await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${postId},'review.handoff_failed',${tx.json({conceptId:concept.id,error:String(reviewed.result.error||"review request failed")})})`;await requestReplacement(tx,{publishDate:day,reason:`review handoff failed: ${String(reviewed.result.error||"review request failed")}`,postId});});}
         }
         if (budgetExhausted) break;
       }
@@ -1731,8 +1823,50 @@ const server = http.createServer(async (req, res) => {
       }
       const ready = complete && reviews.every(review => review.ok);
       budgetExhausted = !complete && attemptsUsed >= input.dailyAttemptBudget;
-      await sql`INSERT INTO social_event(event_type,payload) VALUES('generation.day_recovery_completed',${sql.json({day,target:input.target,complete,ready,validPosts:posts.length,replacements,attempts,reviews,attemptsUsed,attemptBudget:input.dailyAttemptBudget,budgetExhausted})})`;
-      return send(res, 200, { date: day, target: input.target, ranOutOfTime: outOfTime(), complete, ready, alertRequired: budgetExhausted, validPosts: posts.length, replacements, posts, attempts, reviews, attemptsUsed, attemptBudget: input.dailyAttemptBudget, budgetExhausted });
+
+      // Settle the day's outstanding replacement debts. The day being back at target is
+      // what "filled" means — a specific post cannot be traced to a specific loss, and
+      // pretending otherwise would only make the record look more precise than it is.
+      // A post that was never made leaves the same hole as one that was lost, so it
+      // files the same debt. Without this the two failures were reported differently:
+      // a withdrawn post raised an alert, a day that simply came up short returned a
+      // flag in a response body that only the scheduler ever read.
+      const gap = Math.max(0, input.target - posts.length);
+      if (gap > 0) {
+        const [alreadyOwed] = await sql`SELECT count(*) AS count FROM social_replacement_request WHERE publish_date=${day} AND status='open'`;
+        for (let i = Number(alreadyOwed.count); i < gap; i++) {
+          await sql`INSERT INTO social_replacement_request (publish_date, reason) VALUES (${day}, ${`the day finished ${gap} post(s) short of ${input.target}`})`;
+        }
+      }
+      const owed = await sql`SELECT id, reason, source_post_id FROM social_replacement_request WHERE publish_date=${day} AND status='open' ORDER BY created_at`;
+      let replacementsFilled = 0;
+      let replacementsUnfillable = 0;
+      if (owed.length && complete) {
+        const settled = await sql`UPDATE social_replacement_request SET status='filled', updated_at=now() WHERE publish_date=${day} AND status='open' RETURNING id`;
+        replacementsFilled = settled.length;
+        await sql`INSERT INTO social_event(event_type,payload) VALUES('publish.replacement_filled',${sql.json({ day, filled: replacementsFilled })})`;
+      } else if (owed.length) {
+        // The day is short and cannot be worked any further this cycle. Whether that is
+        // because the bank is empty, the token budget is gone or the clock ran out, the
+        // one thing that must not happen is for it to pass unnoticed.
+        const exhausted = budgetExhausted || outOfTime() || !(await conceptsRemainingFor(day));
+        if (exhausted) {
+          const marked = await sql`UPDATE social_replacement_request SET status='unfillable', alerted_at=now(), updated_at=now() WHERE publish_date=${day} AND status='open' RETURNING id, reason`;
+          replacementsUnfillable = marked.length;
+          const cause = budgetExhausted ? "the day's generation budget was spent" : outOfTime() ? "the recovery run hit its time limit" : "no eligible topic remained in the bank";
+          await sql`INSERT INTO social_event(event_type,payload) VALUES('operations.alert_sent',${sql.json({ kind: 'replacement_unfillable', day, owed: marked.length, validPosts: posts.length, target: input.target, cause })})`;
+          await notifyDiscord("errors", `Finkavo: ${day} is short ${input.target - posts.length} post(s) and cannot be refilled`, {
+            day,
+            postsHeld: `${posts.length} of ${input.target}`,
+            replacementsOwed: marked.length,
+            cause,
+            lostBecause: marked.map(row => String(row.reason)).slice(0, 5).join("\n"),
+          });
+        }
+      }
+
+      await sql`INSERT INTO social_event(event_type,payload) VALUES('generation.day_recovery_completed',${sql.json({day,target:input.target,complete,ready,validPosts:posts.length,replacements,attempts,reviews,attemptsUsed,attemptBudget:input.dailyAttemptBudget,budgetExhausted,replacementsOwed:owed.length,replacementsFilled,replacementsUnfillable})})`;
+      return send(res, 200, { date: day, target: input.target, ranOutOfTime: outOfTime(), complete, ready, alertRequired: budgetExhausted || replacementsUnfillable > 0, validPosts: posts.length, replacements, posts, attempts, reviews, attemptsUsed, attemptBudget: input.dailyAttemptBudget, budgetExhausted, replacementsOwed: owed.length, replacementsFilled, replacementsUnfillable });
       } finally {
         recoveryDaysInProgress.delete(day);
       }
@@ -2194,7 +2328,7 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method === "POST" && url.pathname === "/v1/publish-jobs/reconcile-blocked") {
       const jobs = await sql`
-        SELECT j.*,jsonb_build_object('hook',p.hook,'caption',p.caption,'call_to_action',p.call_to_action,'hashtags',p.hashtags) AS post
+        SELECT j.*,p.planned_for,jsonb_build_object('hook',p.hook,'caption',p.caption,'call_to_action',p.call_to_action,'hashtags',p.hashtags) AS post
         FROM social_publish_job j JOIN social_post p ON p.id=j.post_id
         WHERE j.status='blocked' ORDER BY j.updated_at LIMIT 20
       `;
@@ -2262,7 +2396,7 @@ const server = http.createServer(async (req, res) => {
           const refresh = await refreshRevisionEvidence(String(job.post_id), String(job.revision_id));
           if (refresh.refreshed) reliability = await assessStoredRevision(String(job.post_id), String(job.revision_id), true);
         }
-        if(!reliability.passed){await sql.begin(async tx=>{await tx`UPDATE social_publish_job SET status='blocked',lease_owner=NULL,lease_expires_at=NULL,error_code='EVIDENCE_REVALIDATION_FAILED',error_message=${reliability.failures.join("; ")},updated_at=now() WHERE id=${job.id}`;await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${job.post_id}`;await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'evidence.reliability_blocked',${tx.json({stage:'pre_publish',jobId:job.id,...reliability})})`;});await notifyDiscord("errors","Publication blocked by evidence validation",{post:job.post_id,job:job.id,problems:reliability.failures.join("\n")});return send(res,422,{error:"Publication blocked by evidence validation",...reliability});}
+        if(!reliability.passed){await sql.begin(async tx=>{await tx`UPDATE social_publish_job SET status='blocked',lease_owner=NULL,lease_expires_at=NULL,error_code='EVIDENCE_REVALIDATION_FAILED',error_message=${reliability.failures.join("; ")},updated_at=now() WHERE id=${job.id}`;await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${job.post_id}`;await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'evidence.reliability_blocked',${tx.json({stage:'pre_publish',jobId:job.id,...reliability})})`;await requestReplacement(tx,{publishDate:job.planned_for??job.scheduled_at,reason:`evidence revalidation failed before publishing: ${reliability.failures.join("; ")}`,postId:job.post_id,jobId:job.id});});await notifyDiscord("errors","Publication blocked by evidence validation",{post:job.post_id,job:job.id,problems:reliability.failures.join("\n")});return send(res,422,{error:"Publication blocked by evidence validation",...reliability});}
         assertPublishableCopy(job.post as Record<string, unknown>);
         const channelId = process.env.BUFFER_CHANNEL_ID;
         if (!channelId) throw new BufferError("BUFFER_CHANNEL_ID is not configured", "CHANNEL_NOT_CONFIGURED", false);
@@ -2282,14 +2416,36 @@ const server = http.createServer(async (req, res) => {
           `;
           const parts = (reelRender?.output_files ?? []) as Array<{ key: string; mimeType?: string }>;
           const videoPart = parts.find(part => part.mimeType === "video/mp4");
-          const coverPart = parts.find(part => part.mimeType === "image/png");
           if (videoPart) {
+            // No thumbnailUrl. Buffer's schema accepts one and Instagram does not — the
+            // first reel came back "social networks do not accept custom video
+            // thumbnails" — so the cover frame is uploaded and kept but not offered.
+            // Instagram picks its own frame; the opening frame being a full-bleed title
+            // card is what makes that choice look deliberate anyway.
             video = {
               url: await createBufferMediaUrl(videoPart.key),
-              ...(coverPart ? { thumbnailUrl: await createBufferMediaUrl(coverPart.key) } : {}),
               title: String(job.post.topic ?? "").slice(0, 90),
             };
           } else {
+            // Falling back to the slides here was too eager, and it is how the first reel
+            // reached Buffer as a carousel: the encode was still running when the
+            // three-minute publish tick claimed the job, and "no video yet" was treated
+            // the same as "no video ever". A render still in flight is a reason to wait.
+            const [pending] = await sql`
+              SELECT status FROM social_render_job
+              WHERE post_id = ${job.post_id} AND revision_id = ${job.revision_id} AND kind = 'reel'
+                AND status IN ('pending','leased','retrying')
+              ORDER BY created_at DESC LIMIT 1
+            `;
+            if (pending) {
+              await sql.begin(async tx => {
+                await tx`UPDATE social_publish_job SET status='pending', lease_owner=NULL, lease_expires_at=NULL, available_at=now()+INTERVAL '3 minutes', updated_at=now() WHERE id=${job.id}`;
+                await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'reel.awaiting_render',${tx.json({ jobId: job.id, renderStatus: String(pending.status) })})`;
+              });
+              return send(res, 200, { job: null, waiting: "reel render in progress" });
+            }
+            // No render in flight and none completed: the encode is not coming, so the
+            // post goes out as the carousel it was also written as rather than not at all.
             await sql`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'reel.render_missing',${sql.json({ jobId: job.id })})`;
           }
         }
@@ -2422,7 +2578,7 @@ const server = http.createServer(async (req, res) => {
 
     if(req.method==="POST"&&url.pathname==="/v1/reliability/audit-queue"){
       const input=z.object({dryRun:z.boolean().default(true)}).parse(await readJson(req));
-      const rows=await sql`SELECT p.id,p.topic,p.status,p.current_revision_id,j.id AS job_id,j.status AS job_status,j.provider_post_id FROM social_post p LEFT JOIN LATERAL(SELECT * FROM social_publish_job WHERE post_id=p.id ORDER BY created_at DESC LIMIT 1)j ON true WHERE p.status NOT IN('published','rejected','failed','blocked') AND p.archived_at IS NULL AND p.current_revision_id IS NOT NULL`;
+      const rows=await sql`SELECT p.id,p.topic,p.status,p.planned_for,p.current_revision_id,j.id AS job_id,j.status AS job_status,j.provider_post_id FROM social_post p LEFT JOIN LATERAL(SELECT * FROM social_publish_job WHERE post_id=p.id ORDER BY created_at DESC LIMIT 1)j ON true WHERE p.status NOT IN('published','rejected','failed','blocked') AND p.archived_at IS NULL AND p.current_revision_id IS NOT NULL`;
       const checked=[];const blocked=[];const external=[];
       for(const row of rows){
         const assessment=await assessStoredRevision(String(row.id),String(row.current_revision_id),true);
@@ -2430,10 +2586,10 @@ const server = http.createServer(async (req, res) => {
         if(assessment.passed)continue;
         if(row.job_status==='scheduled'&&row.provider_post_id){
           const item={postId:row.id,topic:row.topic,bufferPostId:row.provider_post_id,failures:assessment.failures};external.push(item);
-          if(!input.dryRun){try{await deleteBufferPost(String(row.provider_post_id));await sql.begin(async tx=>{await tx`UPDATE social_publish_job SET status='blocked',provider_status='deleted_for_evidence_review',error_code='EVIDENCE_REVALIDATION_FAILED',error_message=${assessment.failures.join("; ")},updated_at=now() WHERE id=${row.job_id}`;await tx`UPDATE social_post SET status='blocked',buffer_post_id=NULL,updated_at=now() WHERE id=${row.id}`;const concepts=await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE topic=${row.topic} AND planned_for=(SELECT planned_for FROM social_post WHERE id=${row.id}) RETURNING plan_slot_id`;for(const concept of concepts)if(concept.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${concept.plan_slot_id}`;await tx`INSERT INTO social_event(post_id,event_type,payload)VALUES(${row.id},'evidence.buffer_post_deleted',${tx.json({bufferPostId:row.provider_post_id,...assessment})})`;});}catch(error){(item as Record<string,unknown>).deleteError=error instanceof Error?error.message:'Buffer deletion failed';}}
+          if(!input.dryRun){try{await deleteBufferPost(String(row.provider_post_id));await sql.begin(async tx=>{await tx`UPDATE social_publish_job SET status='blocked',provider_status='deleted_for_evidence_review',error_code='EVIDENCE_REVALIDATION_FAILED',error_message=${assessment.failures.join("; ")},updated_at=now() WHERE id=${row.job_id}`;await tx`UPDATE social_post SET status='blocked',buffer_post_id=NULL,updated_at=now() WHERE id=${row.id}`;const concepts=await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE topic=${row.topic} AND planned_for=(SELECT planned_for FROM social_post WHERE id=${row.id}) RETURNING plan_slot_id`;for(const concept of concepts)if(concept.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${concept.plan_slot_id}`;await tx`INSERT INTO social_event(post_id,event_type,payload)VALUES(${row.id},'evidence.buffer_post_deleted',${tx.json({bufferPostId:row.provider_post_id,...assessment})})`;await requestReplacement(tx,{publishDate:row.planned_for,reason:`queued Buffer post withdrawn on evidence review: ${assessment.failures.join("; ")}`,postId:row.id,jobId:row.job_id});});}catch(error){(item as Record<string,unknown>).deleteError=error instanceof Error?error.message:'Buffer deletion failed';}}
           continue;
         }
-        if(!input.dryRun){await sql.begin(async tx=>{if(row.job_id)await tx`UPDATE social_publish_job SET status='blocked',error_code='EVIDENCE_REVALIDATION_FAILED',error_message=${assessment.failures.join("; ")},updated_at=now() WHERE id=${row.job_id} AND status IN('pending','processing','retrying')`;await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${row.id}`;const concepts=await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE topic=${row.topic} AND planned_for=(SELECT planned_for FROM social_post WHERE id=${row.id}) RETURNING plan_slot_id`;for(const concept of concepts)if(concept.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${concept.plan_slot_id}`;await tx`INSERT INTO social_event(post_id,event_type,payload)VALUES(${row.id},'evidence.queue_audit_blocked',${tx.json(assessment)})`;});}
+        if(!input.dryRun){await sql.begin(async tx=>{if(row.job_id)await tx`UPDATE social_publish_job SET status='blocked',error_code='EVIDENCE_REVALIDATION_FAILED',error_message=${assessment.failures.join("; ")},updated_at=now() WHERE id=${row.job_id} AND status IN('pending','processing','retrying')`;await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${row.id}`;const concepts=await tx`UPDATE social_post_concept SET status='blocked',updated_at=now() WHERE topic=${row.topic} AND planned_for=(SELECT planned_for FROM social_post WHERE id=${row.id}) RETURNING plan_slot_id`;for(const concept of concepts)if(concept.plan_slot_id)await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${concept.plan_slot_id}`;await tx`INSERT INTO social_event(post_id,event_type,payload)VALUES(${row.id},'evidence.queue_audit_blocked',${tx.json(assessment)})`;await requestReplacement(tx,{publishDate:row.planned_for,reason:`queue audit blocked the post on evidence: ${assessment.failures.join("; ")}`,postId:row.id,jobId:row.job_id});});}
         blocked.push({postId:row.id,topic:row.topic,failures:assessment.failures});
       }
       if(external.length&&!input.dryRun)await notifyDiscord('errors','Buffer posts require evidence review before publication',{posts:external.map(item=>`${item.topic} — post ${item.postId}, Buffer ${item.bufferPostId}`).join('\n')});
@@ -2504,6 +2660,12 @@ const server = http.createServer(async (req, res) => {
       const [renderFailed]=await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${today} AND status='failed'`;if(Number(renderFailed.count)>0)alerts.push(`${renderFailed.count} planned post(s) failed rendering`);
       const [stranded]=await sql`SELECT count(*) AS count FROM social_post p WHERE p.status='rendered' AND p.rendered_at<now()-INTERVAL '15 minutes' AND NOT EXISTS(SELECT 1 FROM social_publish_job j WHERE j.post_id=p.id AND j.revision_id=p.approved_revision_id)`;if(Number(stranded.count)>0)alerts.push(`${stranded.count} rendered post(s) are missing an internal publish job`);
       const [localOverdue]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status IN ('pending','retrying') AND scheduled_at<now()`;if(Number(localOverdue.count)>0)alerts.push(`${localOverdue.count} internal queued post(s) need rescheduling`);
+      // A day that went short and could not be refilled is worth saying out loud every
+      // time the report runs, not once when it happened.
+      const unfillable=await sql`SELECT publish_date,count(*) AS count FROM social_replacement_request WHERE status='unfillable' AND publish_date>=current_date-INTERVAL '7 days' GROUP BY publish_date ORDER BY publish_date DESC`;
+      if(unfillable.length>0)alerts.push(`${unfillable.reduce((sum,row)=>sum+Number(row.count),0)} slot(s) went unfilled in the last 7 days:\n${unfillable.map(row=>`${String(row.publish_date).slice(0,10)} — ${row.count} post(s) short`).join('\n')}`);
+      const owedNow=await sql`SELECT count(*) AS count FROM social_replacement_request WHERE status='open' AND publish_date<=current_date`;
+      if(Number(owedNow.count)>0)alerts.push(`${owedNow.count} replacement post(s) are still owed for today or earlier`);
       const blockedPublish=await sql`SELECT j.id,p.id AS post_id,p.topic,j.scheduled_at,j.error_code FROM social_publish_job j JOIN social_post p ON p.id=j.post_id WHERE j.status='blocked' AND j.updated_at<now()-INTERVAL '24 hours' ORDER BY j.scheduled_at LIMIT 10`;if(blockedPublish.length>0)alerts.push(`${blockedPublish.length} ambiguous Buffer result(s) have remained unresolved for more than 24 hours:\n${blockedPublish.map(row=>`${row.topic} — post ${row.post_id}, job ${row.id}, ${row.error_code||'unknown error'}`).join('\n')}`);
       const [bufferQueued]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='scheduled' AND scheduled_at>now()`;if(Number(bufferQueued.count)>=bufferQueueSoftLimit)alerts.push(`Buffer handoff soft cap reached: ${bufferQueued.count}/${bufferQueueSoftLimit}`);
       // A post sitting in Buffer as a draft is waiting for a person, not running late, so it

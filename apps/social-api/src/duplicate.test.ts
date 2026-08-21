@@ -43,4 +43,24 @@ describe("duplicateReason", () => {
       { topic:"Quarterly IVA reminder",post_intent:"deadline_reminder",occurrence_key:"iva:2027-q2" },
     )).toBeNull();
   });
+
+  it("separates distinct rules that share one subject", () => {
+    // These two both say IRS and were both retired as repeats of each other. They are
+    // different rules, different figures and different evidence.
+    expect(duplicateReason(
+      { topic: "Rent and old mortgage interest, both at fifteen per cent on your IRS", postIntent: "evergreen_explainer" },
+      { topic: "Three hundred and sixty-five days that change a crypto gain on your IRS", post_intent: "evergreen_explainer" },
+    )).toBeNull();
+    expect(duplicateReason(
+      { topic: "What health and education expenses are actually worth on your IRS", postIntent: "evergreen_explainer" },
+      { topic: "The income floor below which IRS is not payable", post_intent: "evergreen_explainer" },
+    )).toBeNull();
+  });
+
+  it("still blocks a bare second explainer of the same instrument", () => {
+    expect(duplicateReason(
+      { topic: "How IRS works", postIntent: "evergreen_explainer" },
+      { topic: "What your IRS is, explained", post_intent: "evergreen_explainer" },
+    )).toContain("IRS");
+  });
 });
