@@ -3,36 +3,30 @@
 // The two formats do different jobs and the numbers say so plainly: a reel reaches about
 // 2.25 times what a single image does and 1.36 times a carousel, while a carousel earns
 // roughly nine times the saves. Reach finds people who have never heard of the account;
-// saves are what a follower does with something they intend to come back to. An account
+// saves are what a follower does with something they mean to come back to. An account
 // that only posts reels is found and forgotten, and one that only posts carousels is
-// useful to the people who already follow it and invisible to everyone else.
+// useful to the people it already has and invisible to everyone else. So one of five is
+// a reel.
 //
-// So the split follows what the post is for rather than a quota. Something with a date
-// and a consequence — a deadline, a change, a mistake that costs money — is worth
-// interrupting a stranger's scroll for, and loses nothing by being short. Something a
-// reader will want to find again in March is worth the slower format that keeps its
-// detail and gets saved.
+// Which one is not a question of subject. Any topic can be a reel — the sorting used to
+// be by intent, on the theory that deadlines suit short video and explainers do not, and
+// that was a guess dressed up as a rule. What actually decides whether four frames land
+// is whether there is a number to put on them: "30 June", "300 euros", "36 months" is
+// what the eye stops for and what gets remembered. A reel without one is four frames of
+// prose going past too quickly to read.
+//
+// So the preference is for the reel that has a figure, whatever it is about. A tax
+// deadline and a rule about rental receipts compete on the same terms, and the one with
+// the number wins.
 
 export type PostFormat = "reel" | "carousel";
-
-/**
- * Intents whose value is urgency: a date, a change, or a way to lose money. These are
- * what a reel is for — the whole point survives four frames, and the number is the post.
- */
-const URGENT_INTENTS = new Set([
-  "deadline_reminder",
-  "timely_news",
-  "regulatory_change",
-  "occasion",
-  "common_mistake",
-]);
 
 export type FormatDecision = { format: PostFormat; reason: string };
 
 export function choosePostFormat(input: {
-  contentIntent?: string | null;
-  postIntent?: string | null;
   hasValidReel: boolean;
+  /** How many of the reel's frames carry a figure — the thing a viewer remembers. */
+  reelFiguresCount?: number;
   reelsAlreadyOnDay: number;
   postsAlreadyOnDay?: number;
   postsPerDay?: number;
@@ -48,26 +42,23 @@ export function choosePostFormat(input: {
     return { format: "carousel", reason: `the day already has ${input.reelsAlreadyOnDay} reel(s), which is the cap` };
   }
 
-  const planned = String(input.contentIntent ?? "");
-  const chosen = String(input.postIntent ?? "");
-  const intent = URGENT_INTENTS.has(planned) ? planned : chosen;
-  if (URGENT_INTENTS.has(intent)) {
-    return { format: "reel", reason: `${intent} carries a date or a consequence, which is what a reel is for` };
-  }
-
-  // The floor. Preferring dated posts is the right instinct but it is only a preference,
-  // and a day made entirely of explainers was getting no reel at all — which is how a
-  // format meant to reach strangers ends up never running. Once there are no longer more
-  // slots left than reels still owed, the next post that can carry one does, whatever it
-  // is about. A quieter reel is worth more than the day's only chance at reach going
-  // unused.
   const stillOwed = wantedReels - input.reelsAlreadyOnDay;
   const slotsLeftAfterThis = Math.max(0, postsPerDay - (input.postsAlreadyOnDay ?? 0) - 1);
+  const figures = input.reelFiguresCount ?? 0;
+
+  // A reel built around a figure is taken as soon as it appears. Waiting for a better one
+  // when this one already has what the format runs on only risks the day ending without.
+  if (figures > 0) {
+    return { format: "reel", reason: `its reel carries ${figures} figure(s), which is what a viewer remembers` };
+  }
+
+  // Without a figure it waits, in case something with one turns up — but only while the
+  // day can still afford to wait. A reel of prose beats no reel at all.
   if (stillOwed > 0 && slotsLeftAfterThis < stillOwed) {
     return { format: "reel", reason: `the day still owes ${stillOwed} reel and has ${slotsLeftAfterThis} slot(s) left after this one` };
   }
 
-  return { format: "carousel", reason: `${intent || "evergreen"} rewards being saved and re-read, which a carousel does better` };
+  return { format: "carousel", reason: "its reel has no figure to build on, and the day can still wait for one that has" };
 }
 
 /** How many reels a day should carry, given how many posts it holds. */

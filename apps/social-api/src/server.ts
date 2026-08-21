@@ -2134,7 +2134,6 @@ const server = http.createServer(async (req, res) => {
         // the day's mix is knowable: how many reels it already holds decides whether this
         // one can be another.
         const [revisionRow] = await tx`SELECT reel_frames FROM social_post_revision WHERE id = ${post.revision_id}`;
-        const [conceptRow] = await tx`SELECT content_intent FROM social_post_concept WHERE topic = ${post.topic} ORDER BY updated_at DESC LIMIT 1`;
         const day = lisbonDate(new Date(scheduledAt));
         const [reelCount] = await tx`
           SELECT count(*) AS count FROM social_publish_job
@@ -2148,12 +2147,14 @@ const server = http.createServer(async (req, res) => {
           WHERE status NOT IN ('failed','blocked')
             AND scheduled_at >= ${`${day} 00:00:00+00`} AND scheduled_at < ${`${day} 23:59:59+00`}
         `;
+        const reelFrames = (Array.isArray(revisionRow?.reel_frames) ? revisionRow.reel_frames : []) as Array<{ figure?: string }>;
         const decided = choosePostFormat({
           postsAlreadyOnDay: Number(dayCount?.count ?? 0),
           postsPerDay: 5,
-          contentIntent: conceptRow?.content_intent ? String(conceptRow.content_intent) : null,
-          postIntent: post.post_intent ? String(post.post_intent) : null,
-          hasValidReel: Array.isArray(revisionRow?.reel_frames) && (revisionRow.reel_frames as unknown[]).length >= 3,
+          hasValidReel: reelFrames.length >= 3,
+          // What the eye stops for, and the only thing about a reel that predicts whether
+          // four frames land. The subject does not.
+          reelFiguresCount: reelFrames.filter(frame => String(frame.figure ?? "").trim()).length,
           reelsAlreadyOnDay: Number(reelCount?.count ?? 0),
         });
         const [created] = await tx`INSERT INTO social_publish_job (post_id, revision_id, render_job_id, idempotency_key, scheduled_at, available_at, format, format_reason) VALUES (${post.id}, ${post.revision_id}, ${post.render_job_id}, ${idempotencyKey}, ${scheduledAt}, ${availableAt.toISOString()}, ${decided.format}, ${decided.reason}) RETURNING *`;

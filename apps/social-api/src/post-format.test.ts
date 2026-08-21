@@ -1,72 +1,45 @@
 import { describe, expect, it } from "vitest";
 import { choosePostFormat, reelsPerDay } from "./post-format.js";
 
-const base = { hasValidReel: true, reelsAlreadyOnDay: 0 };
+const base = { hasValidReel: true, reelsAlreadyOnDay: 0, postsPerDay: 5 };
 
 describe("choosing the shape a post goes out in", () => {
-  it("sends a dated or costly post as a reel", () => {
-    for (const intent of ["deadline_reminder", "timely_news", "regulatory_change", "common_mistake"]) {
-      expect(choosePostFormat({ ...base, contentIntent: intent }).format).toBe("reel");
-    }
-  });
-
-  it("keeps an explainer as a carousel, because that is what gets saved", () => {
-    for (const intent of ["evergreen_explainer", "checklist", "audience_specific"]) {
-      expect(choosePostFormat({ ...base, contentIntent: intent }).format).toBe("carousel");
-    }
-  });
-
-  it("lets the plan's intent outrank the model's guess", () => {
-    // Planning knows the slot is a dated calendar event; the model is inferring from
-    // whatever evidence it happened to be handed.
-    const decision = choosePostFormat({ ...base, contentIntent: "deadline_reminder", postIntent: "evergreen_explainer" });
+  it("takes any topic whose reel has a figure", () => {
+    // Subject is not the test. A rental-receipt rule with a number in it makes a better
+    // reel than a deadline written as prose.
+    const decision = choosePostFormat({ ...base, reelFiguresCount: 2, postsAlreadyOnDay: 0 });
     expect(decision.format).toBe("reel");
+    expect(decision.reason).toContain("figure");
   });
 
-  it("falls back to a carousel when no reel survived its checks", () => {
-    const decision = choosePostFormat({ ...base, hasValidReel: false, contentIntent: "deadline_reminder" });
-    expect(decision).toEqual({ format: "carousel", reason: expect.stringContaining("no reel survived") });
+  it("waits for a figure while the day can still afford to", () => {
+    const early = choosePostFormat({ ...base, reelFiguresCount: 0, postsAlreadyOnDay: 1 });
+    expect(early.format).toBe("carousel");
   });
 
-  it("stops turning a whole day into reels", () => {
-    // A feed of nothing but reels is found and forgotten: most of the day has to be the
-    // format people keep.
-    const decision = choosePostFormat({ ...base, contentIntent: "deadline_reminder", reelsAlreadyOnDay: 1 });
-    expect(decision).toEqual({ format: "carousel", reason: expect.stringContaining("cap") });
-  });
-
-  it("gives a day of nothing but explainers a reel anyway", () => {
-    // Preferring dated posts is only a preference. A day made entirely of explainers was
-    // getting no reel at all, which is how the format meant to reach strangers ends up
-    // never running.
-    const lastChance = choosePostFormat({
-      ...base, contentIntent: "evergreen_explainer",
-      reelsAlreadyOnDay: 0, postsAlreadyOnDay: 4, postsPerDay: 5,
-    });
+  it("takes a reel without a figure rather than end the day with none", () => {
+    const lastChance = choosePostFormat({ ...base, reelFiguresCount: 0, postsAlreadyOnDay: 4 });
     expect(lastChance.format).toBe("reel");
     expect(lastChance.reason).toContain("still owes");
   });
 
-  it("waits for a better candidate while the day still has room", () => {
-    // Early in the day an explainer stays a carousel: a deadline may still turn up, and
-    // it would make the better reel.
-    const early = choosePostFormat({
-      ...base, contentIntent: "evergreen_explainer",
-      reelsAlreadyOnDay: 0, postsAlreadyOnDay: 1, postsPerDay: 5,
-    });
-    expect(early.format).toBe("carousel");
+  it("falls back to a carousel when no reel survived its checks", () => {
+    const decision = choosePostFormat({ ...base, hasValidReel: false, reelFiguresCount: 3, postsAlreadyOnDay: 4 });
+    expect(decision).toEqual({ format: "carousel", reason: expect.stringContaining("no reel survived") });
   });
 
-  it("gives every day one reel across a run of days", () => {
-    // The property that matters: five explainer-only posts a day still yield one reel.
-    for (const intents of [
-      ["evergreen_explainer", "checklist", "evergreen_explainer", "audience_specific", "evergreen_explainer"],
-      ["deadline_reminder", "evergreen_explainer", "checklist", "evergreen_explainer", "evergreen_explainer"],
-    ]) {
+  it("stops turning a whole day into reels", () => {
+    const decision = choosePostFormat({ ...base, reelFiguresCount: 3, reelsAlreadyOnDay: 1 });
+    expect(decision).toEqual({ format: "carousel", reason: expect.stringContaining("cap") });
+  });
+
+  it("gives every day exactly one reel, whatever the day is made of", () => {
+    // The property that matters, across a day with figures and a day without.
+    for (const figuresPerPost of [[0, 0, 0, 0, 0], [2, 1, 0, 3, 1], [0, 0, 3, 0, 0]]) {
       let reels = 0;
-      intents.forEach((intent, index) => {
+      figuresPerPost.forEach((figures, index) => {
         const decision = choosePostFormat({
-          hasValidReel: true, contentIntent: intent,
+          hasValidReel: true, reelFiguresCount: figures,
           reelsAlreadyOnDay: reels, postsAlreadyOnDay: index, postsPerDay: 5,
         });
         if (decision.format === "reel") reels += 1;
@@ -82,7 +55,6 @@ describe("choosing the shape a post goes out in", () => {
   });
 
   it("explains itself, because the choice shows up in the feed", () => {
-    const decision = choosePostFormat({ ...base, contentIntent: "deadline_reminder" });
-    expect(decision.reason).toContain("date or a consequence");
+    expect(choosePostFormat({ ...base, reelFiguresCount: 1, postsAlreadyOnDay: 0 }).reason).toBeTruthy();
   });
 });
