@@ -1527,6 +1527,11 @@ const server = http.createServer(async (req, res) => {
         // behind it to draw on. Working ahead turns a bad day into a smaller buffer
         // instead of an empty slot.
         lookaheadDays: z.number().int().min(0).max(7).default(0),
+        // n8n kills the request at its own timeout, which leaves the work half done and
+        // the day's lock still held, so the next tick is refused and the minute is lost.
+        // Stopping just short of that returns what was finished, releases the lock, and
+        // lets the following run carry on — the loop is resumable by design.
+        maxRunSeconds: z.number().int().min(30).max(3600).default(480),
       }).parse(await readJson(req));
       const requestedDay = input.date || lisbonDate(new Date());
 
@@ -1546,13 +1551,15 @@ const server = http.createServer(async (req, res) => {
       if (recoveryDaysInProgress.has(day)) return send(res, 409, { error: "Recovery is already running for this date; the next scheduled cycle will retry." });
       recoveryDaysInProgress.add(day);
       try {
+      const deadline = Date.now() + input.maxRunSeconds * 1000;
+      const outOfTime = () => Date.now() >= deadline;
       const attempts: Array<{ round: number; stage: string; ok: boolean; replacements?: number; conceptId?: string; topic?: string | null; status?: number; error?: string | null }> = [];
       const reviews: Array<{ postId: string; ok: boolean; status: number; error: string | null }> = [];
       let replacements = 0;
       const [attemptCount] = await sql`SELECT count(*) AS count FROM social_event WHERE event_type='generation.candidate_attempted' AND payload->>'day'=${day}`;
       let attemptsUsed = Number(attemptCount.count);
       let budgetExhausted = attemptsUsed >= input.dailyAttemptBudget;
-      for (let round = 1; round <= input.maxRounds; round++) {
+      for (let round = 1; round <= input.maxRounds && !outOfTime(); round++) {
         const [count] = await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${day} AND archived_at IS NULL AND status IN ('ready_for_review','approved','render_queued','rendered','scheduled','published')`;
         if (Number(count.count) >= input.target) break;
         let queue = await internalApi("GET", `/v1/planning/queue?date=${encodeURIComponent(day)}`);
@@ -1570,6 +1577,9 @@ const server = http.createServer(async (req, res) => {
         const missing = Math.max(0, input.target - Number(count.count));
         for (const concept of concepts.slice(0, Math.min(missing, input.maxConcepts))) {
           if (attemptsUsed >= input.dailyAttemptBudget) { budgetExhausted = true; break; }
+          // A single generation can take minutes on a free standby, so the check goes
+          // here rather than only between rounds.
+          if (outOfTime()) break;
           await sql`INSERT INTO social_event(event_type,payload) VALUES('generation.candidate_attempted',${sql.json({day,conceptId:concept.id,topic:concept.topic||null,attemptNumber:attemptsUsed+1,attemptBudget:input.dailyAttemptBudget})})`;
           attemptsUsed++;
           const generated = await internalApi("POST", "/v1/generate", { conceptId: concept.id });
@@ -1599,7 +1609,7 @@ const server = http.createServer(async (req, res) => {
       const ready = complete && reviews.every(review => review.ok);
       budgetExhausted = !complete && attemptsUsed >= input.dailyAttemptBudget;
       await sql`INSERT INTO social_event(event_type,payload) VALUES('generation.day_recovery_completed',${sql.json({day,target:input.target,complete,ready,validPosts:posts.length,replacements,attempts,reviews,attemptsUsed,attemptBudget:input.dailyAttemptBudget,budgetExhausted})})`;
-      return send(res, 200, { date: day, target: input.target, complete, ready, alertRequired: budgetExhausted, validPosts: posts.length, replacements, posts, attempts, reviews, attemptsUsed, attemptBudget: input.dailyAttemptBudget, budgetExhausted });
+      return send(res, 200, { date: day, target: input.target, ranOutOfTime: outOfTime(), complete, ready, alertRequired: budgetExhausted, validPosts: posts.length, replacements, posts, attempts, reviews, attemptsUsed, attemptBudget: input.dailyAttemptBudget, budgetExhausted });
       } finally {
         recoveryDaysInProgress.delete(day);
       }
