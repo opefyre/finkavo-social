@@ -346,6 +346,61 @@ const conceptsRemainingFor = async (day: string) => {
   return Number(row.count) > 0;
 };
 
+// Both scheduling paths go through here, because for a long time only one of them chose
+// a format at all. The manual route decided reel-or-carousel and queued the video; the
+// automated route — the one that actually runs every day — inserted the job with the
+// column left to its default and never queued a render. That is why four drafts carried
+// perfectly good reel frames and none of them ever became a reel: nothing on the path
+// they travelled ever looked.
+async function schedulePublishJob(tx: typeof sql, input: {
+  post: Record<string, unknown>;
+  scheduledAt: string;
+  availableAt: string;
+  idempotencyKey: string;
+}) {
+  const { post } = input;
+  const day = lisbonDate(new Date(input.scheduledAt));
+  const [revisionRow] = await tx`SELECT reel_frames FROM social_post_revision WHERE id = ${String(post.revision_id)}`;
+  const [reelCount] = await tx`
+    SELECT count(*) AS count FROM social_publish_job
+    WHERE format = 'reel' AND status NOT IN ('failed','blocked')
+      AND scheduled_at >= ${`${day} 00:00:00+00`} AND scheduled_at < ${`${day} 23:59:59+00`}`;
+  const [dayCount] = await tx`
+    SELECT count(*) AS count FROM social_publish_job
+    WHERE status NOT IN ('failed','blocked')
+      AND scheduled_at >= ${`${day} 00:00:00+00`} AND scheduled_at < ${`${day} 23:59:59+00`}`;
+  const reelFrames = (Array.isArray(revisionRow?.reel_frames) ? revisionRow.reel_frames : []) as Array<{ figure?: string }>;
+  const decided = choosePostFormat({
+    postsAlreadyOnDay: Number(dayCount?.count ?? 0),
+    postsPerDay: 5,
+    hasValidReel: reelFrames.length >= 3,
+    // What the eye stops for, and the only thing about a reel that predicts whether four
+    // frames land. The subject does not.
+    reelFiguresCount: reelFrames.filter(frame => String(frame.figure ?? "").trim()).length,
+    reelsAlreadyOnDay: Number(reelCount?.count ?? 0),
+  });
+  const [created] = await tx`
+    INSERT INTO social_publish_job (post_id, revision_id, render_job_id, idempotency_key, scheduled_at, available_at, format, format_reason)
+    VALUES (${String(post.id)}, ${String(post.revision_id)}, ${post.render_job_id ? String(post.render_job_id) : null}, ${input.idempotencyKey}, ${input.scheduledAt}, ${input.availableAt}, ${decided.format}, ${decided.reason})
+    RETURNING *`;
+
+  // Queued here rather than at handoff so the video is finished long before its slot
+  // arrives, instead of being encoded while a publish waits on it.
+  if (decided.format === "reel" && Array.isArray(revisionRow?.reel_frames)) {
+    const reelManifest = buildReelManifest(post, revisionRow.reel_frames as never);
+    const reelKey = `reel:${String(post.id)}:${String(post.revision_id)}`;
+    const [existingReel] = await tx`SELECT id FROM social_render_job WHERE idempotency_key = ${reelKey}`;
+    if (!existingReel) {
+      const [reelJob] = await tx`
+        INSERT INTO social_render_job (post_id, revision_id, idempotency_key, manifest, manifest_hash, kind)
+        VALUES (${String(post.id)}, ${String(post.revision_id)}, ${reelKey}, ${tx.json(reelManifest)}, ${hash(reelManifest)}, 'reel')
+        RETURNING id`;
+      await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${String(post.id)}, 'reel.render_queued', ${tx.json({ jobId: reelJob.id, frames: reelManifest.frames.length })})`;
+    }
+  }
+  return { job: created, decided };
+}
+
 async function requestReplacement(tx: typeof sql, input: { publishDate: unknown; reason: string; postId?: unknown; jobId?: unknown }) {
   // The day the slot belongs to, preferred over today: a post lost at 23:50 is a debt
   // against the day it was planned for, not against tomorrow.
@@ -1563,6 +1618,42 @@ const server = http.createServer(async (req, res) => {
           if (/\b(?:sources?|excerpts?|documents?)\b.{0,60}\b(?:do not|does not|don't|cannot|fail(?:s|ed)? to|not enough)\b/i.test(publicCopy)) throw new Error("Draft discusses missing evidence instead of delivering the predetermined topic");
           validateSocialDraft(candidate);
           const corpusText = evidenceSources.flatMap(s=>s.excerpts as string[]).join("\n").replace(/\s+/g, " ");
+
+          // The reel was checked only after the loop had finished, so "the model wrote no
+          // reel" was recorded and never acted on. Across four days that meant 26 of 30
+          // drafts carried no reel and the day had nothing to promote — the one-reel-a-day
+          // guarantee has no way to invent frames that were never written. The reel now
+          // gets a repair pass of its own.
+          //
+          // Only on the first attempt. A reel must never cost a post that is otherwise
+          // sound, which was the right instinct in the original design; it just needs one
+          // chance to be asked for again before we give up on it.
+          if (attempt === 1) {
+            const draftFrames = candidate.reel?.frames ?? [];
+            const draftVerdict = draftFrames.length
+              ? validateReelFrames(draftFrames, corpusText)
+              : { ok: false as const, reason: "no reel was written at all" };
+            // A reel with no figure is four frames of prose going past too fast to read,
+            // and the scheduler will pass over it in favour of one that has a number. Ask
+            // once. It is not fatal — if the second attempt still has none, the reel is
+            // kept and can still carry the day as a last resort.
+            const hasFigure = draftFrames.some(frame => String(frame.figure ?? "").trim());
+            if (draftVerdict.ok && !hasFigure) {
+              throw new Error(
+                "The reel has no figure. Put the number the post turns on — a deadline, a rate, a count of days — " +
+                "in the `figure` field of the frame it belongs to, with what it counts in `label`, and keep it out " +
+                "of that frame's `text`. Keep the carousel and the rest of the reel exactly as they are.",
+              );
+            }
+            if (!draftVerdict.ok) {
+              throw new Error(
+                `The reel is missing or unusable: ${draftVerdict.reason}. ` +
+                `Every post must also carry a reel of exactly four frames — one "hook", two "beat", one "payoff" — ` +
+                `each a short line of English under twelve words (ten for the payoff), where any figure shown is one ` +
+                `the excerpts state directly. Keep the carousel exactly as it is and add the reel.`,
+              );
+            }
+          }
           // The quote is taken from the source rather than trusted from the model. It
           // drifts partway through long Portuguese passages, and a sound draft used to be
           // discarded for it. Anchoring makes the evidence verbatim by construction; a
@@ -1992,9 +2083,9 @@ const server = http.createServer(async (req, res) => {
           const [existing] = await tx`SELECT id FROM social_publish_job WHERE post_id=${post.id} AND revision_id=${post.revision_id}`;
           if (existing) continue;
           const availableAt = publishAvailableAt(slot, now);
-          const [job] = await tx`INSERT INTO social_publish_job (post_id,revision_id,render_job_id,idempotency_key,scheduled_at,available_at) VALUES (${post.id},${post.revision_id},${post.render_job_id},${idempotencyKey},${slot.toISOString()},${availableAt.toISOString()}) RETURNING id`;
+          const { job, decided } = await schedulePublishJob(tx, { post: post as Record<string, unknown>, scheduledAt: slot.toISOString(), availableAt: availableAt.toISOString(), idempotencyKey });
           await tx`UPDATE social_post SET scheduled_at=${slot.toISOString()},updated_at=now() WHERE id=${post.id}`;
-          await tx`INSERT INTO social_event (post_id,event_type,payload) VALUES (${post.id},'publish.queued',${tx.json({ jobId: job.id, scheduledAt: slot.toISOString(), automated: true })})`;
+          await tx`INSERT INTO social_event (post_id,event_type,payload) VALUES (${post.id},'publish.queued',${tx.json({ jobId: job.id, scheduledAt: slot.toISOString(), automated: true, format: decided.format, formatReason: decided.reason })})`;
           scheduled.push({ postId: String(post.id), scheduledAt: slot.toISOString() });
           occupied.add(slot.toISOString());
         }
@@ -2272,53 +2363,16 @@ const server = http.createServer(async (req, res) => {
         assertPublishableCopy(post as Record<string, unknown>);
         const availableAt = publishAvailableAt(new Date(scheduledAt));
 
-        // Decided here, while the slot is being assigned, because that is the only moment
-        // the day's mix is knowable: how many reels it already holds decides whether this
-        // one can be another.
-        const [revisionRow] = await tx`SELECT reel_frames FROM social_post_revision WHERE id = ${post.revision_id}`;
-        const day = lisbonDate(new Date(scheduledAt));
-        const [reelCount] = await tx`
-          SELECT count(*) AS count FROM social_publish_job
-          WHERE format = 'reel' AND status NOT IN ('failed','blocked')
-            AND scheduled_at >= ${`${day} 00:00:00+00`} AND scheduled_at < ${`${day} 23:59:59+00`}
-        `;
-        // How full the day already is decides whether this post is the last chance to
-        // meet its reel, so the count matters as much as the intent.
-        const [dayCount] = await tx`
-          SELECT count(*) AS count FROM social_publish_job
-          WHERE status NOT IN ('failed','blocked')
-            AND scheduled_at >= ${`${day} 00:00:00+00`} AND scheduled_at < ${`${day} 23:59:59+00`}
-        `;
-        const reelFrames = (Array.isArray(revisionRow?.reel_frames) ? revisionRow.reel_frames : []) as Array<{ figure?: string }>;
-        const decided = choosePostFormat({
-          postsAlreadyOnDay: Number(dayCount?.count ?? 0),
-          postsPerDay: 5,
-          hasValidReel: reelFrames.length >= 3,
-          // What the eye stops for, and the only thing about a reel that predicts whether
-          // four frames land. The subject does not.
-          reelFiguresCount: reelFrames.filter(frame => String(frame.figure ?? "").trim()).length,
-          reelsAlreadyOnDay: Number(reelCount?.count ?? 0),
+        // Decided in one place for both scheduling paths — see schedulePublishJob. The
+        // day's mix is only knowable at the moment a slot is assigned, which is why the
+        // decision lives here rather than at generation time.
+        const { job: created, decided } = await schedulePublishJob(tx, {
+          post: post as Record<string, unknown>,
+          scheduledAt,
+          availableAt: availableAt.toISOString(),
+          idempotencyKey,
         });
-        const [created] = await tx`INSERT INTO social_publish_job (post_id, revision_id, render_job_id, idempotency_key, scheduled_at, available_at, format, format_reason) VALUES (${post.id}, ${post.revision_id}, ${post.render_job_id}, ${idempotencyKey}, ${scheduledAt}, ${availableAt.toISOString()}, ${decided.format}, ${decided.reason}) RETURNING *`;
         await tx`UPDATE social_post SET scheduled_at = ${scheduledAt}, updated_at = now() WHERE id = ${post.id}`;
-
-        // A reel is rendered by the same worker that renders slides, through the same
-        // queue, leases and retries — none of which care what comes out at the end. It is
-        // queued here rather than at handoff so the video is finished long before its slot
-        // arrives, instead of being encoded while a publish waits on it.
-        if (decided.format === "reel" && Array.isArray(revisionRow?.reel_frames)) {
-          const reelManifest = buildReelManifest(post as Record<string, unknown>, revisionRow.reel_frames as never);
-          const reelKey = `reel:${post.id}:${post.revision_id}`;
-          const [existingReel] = await tx`SELECT id FROM social_render_job WHERE idempotency_key = ${reelKey}`;
-          if (!existingReel) {
-            const [reelJob] = await tx`
-              INSERT INTO social_render_job (post_id, revision_id, idempotency_key, manifest, manifest_hash, kind)
-              VALUES (${post.id}, ${post.revision_id}, ${reelKey}, ${tx.json(reelManifest)}, ${hash(reelManifest)}, 'reel')
-              RETURNING id
-            `;
-            await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'reel.render_queued', ${tx.json({ jobId: reelJob.id, frames: reelManifest.frames.length })})`;
-          }
-        }
 
         await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'publish.queued', ${tx.json({ jobId: created.id, scheduledAt, format: decided.format, formatReason: decided.reason })})`;
         return created;

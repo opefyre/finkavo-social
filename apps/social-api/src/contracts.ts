@@ -145,11 +145,31 @@ export const draftJsonSchema = {
             type: "object", additionalProperties: false,
             required: ["type", "text", "kicker", "figure", "label"],
             properties: {
-              type: { type: "string", enum: ["hook", "beat", "payoff"] },
-              kicker: { type: ["string", "null"], maxLength: 40 },
-              figure: { type: ["string", "null"], maxLength: 24 },
-              label: { type: ["string", "null"], maxLength: 48 },
-              text: { type: "string", minLength: 1, maxLength: 140 },
+              // The fields carried no descriptions, and the model filled them the way an
+              // untitled form gets filled: everything went into `text`. Four of the first
+              // five reels wrote their number inside the sentence — "365 days start then" —
+              // leaving `figure` null, which is the one field the format is built around
+              // and the one the layout renders large.
+              type: {
+                type: "string", enum: ["hook", "beat", "payoff"],
+                description: "hook opens, beat carries the substance, payoff closes with what to do.",
+              },
+              kicker: {
+                type: ["string", "null"], maxLength: 40,
+                description: "Optional small line above the figure, e.g. \"Deadline\" or \"You keep\".",
+              },
+              figure: {
+                type: ["string", "null"], maxLength: 24,
+                description: "The number on its own, and nothing else: \"365\", \"15%\", \"30 June\", \"€300\". This is displayed large and is what a viewer remembers, so put the number here rather than inside the sentence. Null only when the frame genuinely has no number.",
+              },
+              label: {
+                type: ["string", "null"], maxLength: 48,
+                description: "What the figure counts, in a word or two: \"days\", \"of the rent\", \"to file\".",
+              },
+              text: {
+                type: "string", minLength: 1, maxLength: 140,
+                description: "The line of English under the figure. Do not repeat the figure here — it is already on screen above this line.",
+              },
             },
           },
         },
