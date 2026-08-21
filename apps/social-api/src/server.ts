@@ -2101,7 +2101,20 @@ const server = http.createServer(async (req, res) => {
         const mediaUrls = await Promise.all(storedFiles.map((file) => createBufferMediaUrl(file.key)));
         const hashtags = job.post.hashtags as string[];
         const text = composeInstagramCaption({ hook: String(job.post.hook), body: String(job.post.caption), callToAction: String(job.post.call_to_action), hashtags });
-        const providerPost = await createScheduledPost({ channelId, text, dueAt: new Date(job.scheduled_at as string).toISOString(), mediaUrls, saveToDraft: reviewMode === "buffer_draft" });
+        // Whether this arrives as a draft depends on whether a person has already said
+        // yes to it, not only on the mode. Thirteen posts were sitting approved on the
+        // board when the mode changed, and sending those as drafts would have asked for
+        // the same approval twice — the switch is about where the next yes comes from,
+        // not about discarding one already given. An approval recorded against
+        // buffer_draft_review is the machine standing in for that yes, so it does not
+        // count: those are exactly the posts that still need a person in Buffer.
+        const [priorApproval] = await sql`
+          SELECT reviewer FROM social_approval
+          WHERE post_id = ${job.post_id} AND decision = 'approved'
+          ORDER BY decided_at DESC LIMIT 1
+        `;
+        const approvedByAPerson = Boolean(priorApproval?.reviewer) && String(priorApproval.reviewer) !== "buffer_draft_review";
+        const providerPost = await createScheduledPost({ channelId, text, dueAt: new Date(job.scheduled_at as string).toISOString(), mediaUrls, saveToDraft: reviewMode === "buffer_draft" && !approvedByAPerson });
         const [saved] = await sql.begin(async (tx) => {
           const [updated] = await tx`UPDATE social_publish_job SET status = 'scheduled', provider_post_id = ${providerPost.id}, provider_status = ${providerPost.status || "scheduled"}, lease_owner = NULL, lease_expires_at = NULL, updated_at = now() WHERE id = ${job.id} AND status = 'processing' RETURNING *`;
           await tx`UPDATE social_publish_attempt SET finished_at = now(), outcome = 'scheduled', provider_correlation_id = ${providerPost.id} WHERE job_id = ${job.id} AND attempt_number = ${job.attempt_count}`;
