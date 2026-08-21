@@ -10,6 +10,8 @@ type Candidate = {
   editorialContext?: { topic: string; reason: string | null; campaignStage: string | null; plannedFor: string | null; expiresAt: string | null; purpose?: string; userQuestion?: string; requiredAnswers?: string[] };
   sources?: Array<{ title: string; sourceUrl: string; authority: string | null; fetchedAt: string; excerpts: string[] }>;
   repairFeedback?: string;
+  /** Whether this particular draft is worth paying for. Decided by the caller, not here. */
+  allowPaid?: boolean;
 };
 
 // Evidence excerpts are corpus chunks, and a chunk can be well over a thousand
@@ -75,7 +77,7 @@ export async function generateDraft(candidate: Candidate): Promise<{ draft: Draf
       "altText describes only the text, layout and approved icon actually in the slide. Never invent photos, people, charts or symbols the template will not render.",
       "If repairFeedback is supplied, fix exactly that problem while keeping the topic and evidence-bound meaning.",
     ].join(" "),
-  });
+  }, undefined, { allowPaid: Boolean(candidate.allowPaid) });
   // Hashtags must match ^#[A-Za-z0-9_]+$, and that pattern is stripped from the schema
   // the provider sees, so a model has no way to know it and writes "#IRS 2026" or
   // "#mais-info". Failing an otherwise sound draft over punctuation in its hashtags is

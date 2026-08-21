@@ -234,5 +234,66 @@ describe("free-tier pacing", () => {
     await generateStructured(REQUEST);
     expect(fetchMock.mock.calls.filter(c => String(c[0]).includes("openrouter"))).toHaveLength(before);
   });
+
+  // The danger with a paid API is never the price of one request, it is the number of
+  // them. These are the two things that make a runaway bill structurally impossible.
+  describe("the paid provider", () => {
+    const paidEnv = {
+      ...BASE_ENV,
+      LLM_PAID_ENABLED: "true",
+      OPENAI_API_KEY: "test-paid-key",
+      LLM_PAID_MAX_CALLS_PER_DAY: "2",
+      LLM_PAID_DAILY_TOKEN_CAP: "999999",
+    };
+    const refuseFree = async (url: string | URL) => String(url).includes("openai.com")
+      ? new Response(JSON.stringify({ output_text: '{"ok":"paid"}' }), { status: 200 })
+      : new Response("limit", { status: 429, headers: { "retry-after": "1800" } });
+
+    it("is never reached unless the caller asks", async () => {
+      const fetchMock = vi.fn(refuseFree);
+      globalThis.fetch = fetchMock as unknown as typeof fetch;
+      const { generateStructured, LlmRateLimitError } = await freshClient(paidEnv);
+      await expect(generateStructured(REQUEST)).rejects.toBeInstanceOf(LlmRateLimitError);
+      expect(fetchMock.mock.calls.filter(c => String(c[0]).includes("openai.com"))).toHaveLength(0);
+    });
+
+    it("stays off entirely unless it has been switched on", async () => {
+      const fetchMock = vi.fn(refuseFree);
+      globalThis.fetch = fetchMock as unknown as typeof fetch;
+      const { generateStructured, LlmRateLimitError } = await freshClient({ ...paidEnv, LLM_PAID_ENABLED: "false" });
+      await expect(generateStructured(REQUEST, undefined, { allowPaid: true })).rejects.toBeInstanceOf(LlmRateLimitError);
+      expect(fetchMock.mock.calls.filter(c => String(c[0]).includes("openai.com"))).toHaveLength(0);
+    });
+
+    it("answers when the free chain has refused and the caller asked", async () => {
+      globalThis.fetch = vi.fn(refuseFree) as unknown as typeof fetch;
+      const { generateStructured, llmDailyBudget } = await freshClient(paidEnv);
+      const result = await generateStructured(REQUEST, undefined, { allowPaid: true });
+      expect(result.text).toContain("paid");
+      expect(llmDailyBudget().paid.callsUsed).toBe(1);
+    });
+
+    it("stops at its daily call ceiling however often it is asked", async () => {
+      const fetchMock = vi.fn(refuseFree);
+      globalThis.fetch = fetchMock as unknown as typeof fetch;
+      const { generateStructured, LlmRateLimitError, llmDailyBudget } = await freshClient(paidEnv);
+      await generateStructured(REQUEST, undefined, { allowPaid: true });
+      await generateStructured(REQUEST, undefined, { allowPaid: true });
+      // The third is refused before it is sent, not after it is billed.
+      await expect(generateStructured(REQUEST, undefined, { allowPaid: true })).rejects.toBeInstanceOf(LlmRateLimitError);
+      expect(fetchMock.mock.calls.filter(c => String(c[0]).includes("openai.com"))).toHaveLength(2);
+      expect(llmDailyBudget().paid.callsUsed).toBe(2);
+    });
+
+    it("stops at its daily token ceiling as well as its call ceiling", async () => {
+      const fetchMock = vi.fn(refuseFree);
+      globalThis.fetch = fetchMock as unknown as typeof fetch;
+      const { generateStructured, LlmRateLimitError } = await freshClient({
+        ...paidEnv, LLM_PAID_MAX_CALLS_PER_DAY: "50", LLM_PAID_DAILY_TOKEN_CAP: "100",
+      });
+      await expect(generateStructured(REQUEST, undefined, { allowPaid: true })).rejects.toBeInstanceOf(LlmRateLimitError);
+      expect(fetchMock.mock.calls.filter(c => String(c[0]).includes("openai.com"))).toHaveLength(0);
+    });
+  });
 });
 

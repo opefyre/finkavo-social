@@ -136,6 +136,20 @@ const REQUESTS_PER_MINUTE = Number(process.env.LLM_REQUESTS_PER_MINUTE ?? 25);
 // drafts and no explanation. Tracked here so the limit is refused deliberately, with the
 // same deferral every other pacing decision uses, rather than discovered as a 429.
 const TOKENS_PER_DAY = Number(process.env.LLM_TOKENS_PER_DAY ?? 200_000);
+
+// The paid provider. Off unless switched on, last in the chain, and bounded twice — by
+// calls and by tokens — because the danger with a paid API is never the price of one
+// request, it is the number of them. Both ceilings are checked before a request is sent
+// rather than after it is billed, and a reservation counts against them, so the worst
+// case is the cap and not a surprise.
+//
+// Fifteen calls at roughly 3,100 tokens each is about five cents a day at gpt-5-mini
+// rates: enough to rescue a day that would otherwise come up short, too little to become
+// a bill worth noticing.
+const PAID_ENABLED = process.env.LLM_PAID_ENABLED === "true";
+const PAID_MAX_CALLS_PER_DAY = Number(process.env.LLM_PAID_MAX_CALLS_PER_DAY ?? 15);
+const PAID_DAILY_TOKEN_CAP = Number(process.env.LLM_PAID_DAILY_TOKEN_CAP ?? 80_000);
+let paidSpends: Spend[] = [];
 const DAY_MS = 24 * 60 * 60 * 1000;
 // Long enough to sit out a full token minute. A request costs about 4,500 of the 8,000,
 // so only one fits per minute and the second has to wait roughly sixty seconds — under a
@@ -259,6 +273,27 @@ function readProviderQuota(headers: Headers) {
   if (remaining < MIN_COMPLETION_TOKENS) blockProvider(Math.max(30, Math.min(resetSeconds, 600)));
 }
 
+function paidUsage(now: number) {
+  paidSpends = paidSpends.filter(spend => now - spend.at < DAY_MS);
+  return { calls: paidSpends.length, tokens: paidSpends.reduce((total, spend) => total + spend.tokens, 0) };
+}
+
+/**
+ * The paid provider, or nothing. Returns a config only when it is switched on, has a key,
+ * and is inside both of its daily ceilings — so a caller cannot reach it by accident and
+ * cannot exhaust it by looping.
+ */
+export function resolvePaidConfig(estimatedTokens = 4_000): LlmConfig | null {
+  if (!PAID_ENABLED) return null;
+  const defaults = DEFAULTS.openai;
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) return null;
+  const used = paidUsage(Date.now());
+  if (used.calls + 1 > PAID_MAX_CALLS_PER_DAY) return null;
+  if (used.tokens + estimatedTokens > PAID_DAILY_TOKEN_CAP) return null;
+  return { provider: "openai", apiKey, model: process.env.LLM_PAID_MODEL || defaults.model, baseUrl: defaults.baseUrl };
+}
+
 /** What the day has left, for health reporting. */
 export function llmDailyBudget() {
   const now = Date.now();
@@ -270,6 +305,14 @@ export function llmDailyBudget() {
       ? Math.max(0, lastKnownProviderSpend.limit - lastKnownProviderSpend.used)
       : Math.max(0, TOKENS_PER_DAY - spent),
     blockedUntil: providerBlockedUntil > now ? new Date(providerBlockedUntil).toISOString() : null,
+    paid: (() => {
+      const used = paidUsage(now);
+      return {
+        enabled: PAID_ENABLED,
+        callsUsed: used.calls, callsCap: PAID_MAX_CALLS_PER_DAY,
+        tokensUsed: used.tokens, tokensCap: PAID_DAILY_TOKEN_CAP,
+      };
+    })(),
     standbys: resolveFallbackConfigs().map(config => ({
       provider: config.provider,
       model: config.model,
@@ -354,6 +397,10 @@ export type StructuredRequest = {
 export async function generateStructured(
   request: StructuredRequest,
   config: LlmConfig = resolveLlmConfig(),
+  // Paid is never reached unless the caller says this particular piece of work is worth
+  // paying for. Free providers handle the ordinary day; this exists for the day that
+  // would otherwise end short, and the caller is the only thing that knows the difference.
+  options: { allowPaid?: boolean } = {},
 ): Promise<{ text: string; model: string; totalTokens: number | null }> {
   // The free tier's ceiling is per minute, so a burst — an initial generation plus two
   // repairs for the same topic — can exhaust it in seconds even though the daily volume
@@ -401,6 +448,26 @@ export async function generateStructured(
       throw error;
     }
   }
+  // Everything free has refused. Only now, and only if the caller asked for it.
+  if (options.allowPaid) {
+    const paid = resolvePaidConfig(estimated);
+    if (paid) {
+      const at = Date.now();
+      const spend: Spend = { at, tokens: estimated };
+      paidSpends.push(spend);
+      try {
+        const result = await callProvider(request, paid);
+        // Charged what it actually cost rather than what was reserved, so the day's
+        // ceiling measures spending and not caution.
+        if (result.totalTokens !== null) spend.tokens = result.totalTokens;
+        return { text: result.text, model: result.model, totalTokens: result.totalTokens };
+      } catch (error) {
+        spend.tokens = 0;
+        if (!(error instanceof LlmRateLimitError)) throw error;
+      }
+    }
+  }
+
   throw paced ?? new LlmRateLimitError("every provider is rate limited", 60);
 }
 

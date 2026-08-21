@@ -526,7 +526,7 @@ async function assessStoredEditorial(postId:string,revisionId:string){
   return editorialScore({topic:String(row.topic),hook:String(row.hook),caption:String(row.caption),callToAction:String(row.call_to_action),hashtags:row.hashtags as string[],slides,riskLevel:String(row.risk_level),subjectFamily:String(row.subject_family||""),userQuestion:String(row.user_question||""),contentIntent:String(row.content_intent||""),sources});
 }
 
-const GenerateSchema = z.object({ conceptId: z.string().uuid() });
+const GenerateSchema = z.object({ conceptId: z.string().uuid(), allowPaid: z.boolean().default(false)});
 // Five is the daily cadence the plan is built for, so it is the default. This defaulted
 // to 2 while the scheduler called it with no override, which silently capped the day at
 // two planned concepts no matter how many slots the plan held. Capacity remains a cap,
@@ -1385,6 +1385,10 @@ const server = http.createServer(async (req, res) => {
       let lastGenerationError = "";
       let usedTokens: number | null = null;
       const reviewerNotes = String(selectedConcept.revision_feedback ?? "").trim();
+      // Passed in by whoever asked for this draft. The generation endpoint does not decide
+      // to spend money; the loop that can see the day is short does. Read from the input
+      // already parsed above — the body is a stream and only gives itself up once.
+      const allowPaid = Boolean(generationInput.allowPaid);
       // Matching on the message text alone was fragile: local pacing says nothing a
       // rate-limit regex recognises, so a deferred request was read as an editorial
       // failure and retired a perfectly good brief. The type is the reliable signal.
@@ -1407,6 +1411,7 @@ const server = http.createServer(async (req, res) => {
             ...(reviewerNotes || lastGenerationError
               ? { repairFeedback: [reviewerNotes ? `The reviewer rejected the previous draft with these notes, which this rewrite must address: ${reviewerNotes}` : "", lastGenerationError].filter(Boolean).join(" ") }
               : {}),
+            allowPaid,
             ...(selectedConcept ? { editorialContext: { topic: String(selectedConcept.topic), reason: selectedConcept.reason ? String(selectedConcept.reason) : null, campaignStage: selectedConcept.campaign_stage ? String(selectedConcept.campaign_stage) : null, plannedFor: selectedConcept.planned_for ? String(selectedConcept.planned_for) : null, expiresAt: selectedConcept.expires_at ? String(selectedConcept.expires_at) : null, purpose:selectedConcept.brief?.purpose?String(selectedConcept.brief.purpose):undefined,userQuestion:selectedConcept.brief?.userQuestion?String(selectedConcept.brief.userQuestion):undefined,requiredAnswers:Array.isArray(selectedConcept.brief?.requiredAnswers)?selectedConcept.brief.requiredAnswers.map(String):undefined } } : {}),
           });
           const candidate = ensureKnownAcronymsAreDefined(DraftSchema.parse(generated.draft));
@@ -1629,7 +1634,17 @@ const server = http.createServer(async (req, res) => {
           if (outOfTime()) break;
           await sql`INSERT INTO social_event(event_type,payload) VALUES('generation.candidate_attempted',${sql.json({day,conceptId:concept.id,topic:concept.topic||null,attemptNumber:attemptsUsed+1,attemptBudget:input.dailyAttemptBudget})})`;
           attemptsUsed++;
-          const generated = await internalApi("POST", "/v1/generate", { conceptId: concept.id });
+          // Paying is a last resort in two senses: the free chain has to have refused
+          // first, which generateStructured enforces, and the day has to be genuinely
+          // short after the free budget has had a real go at it, which is this. Half the
+          // attempts spent and still under target is the line — before that, a shortfall
+          // is just a day in progress.
+          const spentHalfTheBudget = attemptsUsed >= Math.floor(input.dailyAttemptBudget / 2);
+          const stillShort = Number(count.count) < input.target;
+          const generated = await internalApi("POST", "/v1/generate", {
+            conceptId: concept.id,
+            allowPaid: spentHalfTheBudget && stillShort,
+          });
           attempts.push({ round, stage: "generation", conceptId: concept.id, topic: concept.topic || null, ok: generated.ok, status: generated.status, error: generated.ok ? null : String(generated.result.detail || generated.result.error || "generation failed") });
           // A provider outage is not an editorial attempt. Refunding it keeps the daily
           // budget meaningful: it should measure how many topics we tried, not how many
