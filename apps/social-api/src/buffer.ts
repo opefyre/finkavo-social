@@ -80,7 +80,7 @@ async function request<T>(query: string, variables: Record<string, unknown>, kin
 // was the only thing this could ever have sent.
 export type BufferVideo = { url: string; thumbnailUrl?: string; title?: string };
 
-export async function createScheduledPost(input: { channelId: string; text: string; dueAt?: string; mode?: "customScheduled" | "shareNow"; mediaUrls: string[]; video?: BufferVideo }) {
+export async function createScheduledPost(input: { channelId: string; text: string; dueAt?: string; mode?: "customScheduled" | "shareNow"; mediaUrls: string[]; video?: BufferVideo; saveToDraft?: boolean }) {
   const data = await request<{ createPost: { __typename: string; message?: string; post?: { id: string; status?: string; dueAt?: string } } }>(`
     mutation CreatePost($input: CreatePostInput!) {
       createPost(input: $input) {
@@ -96,6 +96,10 @@ export async function createScheduledPost(input: { channelId: string; text: stri
     mode: input.mode || "customScheduled",
     ...(input.dueAt ? { dueAt: input.dueAt } : {}),
     aiAssisted: true,
+    // A draft still carries its slot time. It sits in Buffer with the hour it is meant
+    // for already on it, so approving is moving it to the queue rather than deciding when
+    // it should go — the schedule is still the pipeline's, only the yes is not.
+    ...(input.saveToDraft ? { saveToDraft: true } : {}),
     metadata: { instagram: {
       type: input.video ? "reel" : "post",
       // A reel is shown in the reels tab; this also puts it on the profile grid, which

@@ -39,6 +39,13 @@ const reviewBaseUrl = process.env.REVIEW_BASE_URL;
 const reviewPathPrefix = (process.env.REVIEW_PATH_PREFIX || "").replace(/\/$/, "");
 const dailyPublishSlots = [[8, 30], [11, 30], [14, 30], [18, 0], [21, 0]] as const;
 const bufferHandoffHours = Math.min(48, Math.max(1, Number(process.env.BUFFER_HANDOFF_HOURS || 24)));
+// Where the yes comes from. "internal" is the board and the Discord approval link;
+// "buffer_draft" sends the post to Buffer as a draft on its slot and lets the owner
+// approve it in the Buffer app by moving it to the queue. The automated gates run either
+// way — they are what decides whether a post is fit to exist, and that judgement does not
+// move just because the human one does.
+const reviewMode = process.env.REVIEW_MODE === "buffer_draft" ? "buffer_draft" : "internal";
+
 const bufferQueueSoftLimit = Math.min(9, Math.max(1, Number(process.env.BUFFER_QUEUE_SOFT_LIMIT || 8)));
 const publishAvailableAt = (scheduledAt: Date, now = new Date()) => new Date(Math.max(now.getTime(), scheduledAt.getTime() - bufferHandoffHours * 60 * 60_000));
 const recoveryDaysInProgress = new Set<string>();
@@ -180,6 +187,13 @@ const ensureKnownAcronymsAreDefined = <T extends z.infer<typeof DraftSchema>>(ca
     CPPT:{test:/code of procedure and tax process/i,sentence:"CPPT is Portugal’s code of tax procedure."},
     VAT:{test:/value[- ]added tax/i,sentence:"VAT means value-added tax, called IVA in Portugal."},
     SEF:{test:/former immigration service/i,sentence:"SEF was Portugal’s former immigration service, replaced by AIMA."},
+    CPLP:{test:/community of portuguese[- ]language countries/i,sentence:"CPLP is the Community of Portuguese-Language Countries."},
+    IMT3:{test:/institute for mobility and transport/i,sentence:"IMT is Portugal’s Institute for Mobility and Transport."},
+    ISS:{test:/social security institute/i,sentence:"ISS is Portugal’s Social Security Institute."},
+    IRN:{test:/registries and notaries/i,sentence:"IRN is Portugal’s institute for registries and notaries."},
+    ACT:{test:/working conditions authority/i,sentence:"ACT is Portugal’s working conditions authority."},
+    SNS24:{test:/health advice line/i,sentence:"SNS24 is Portugal’s health advice line."},
+    ADSE:{test:/public employees.? health scheme/i,sentence:"ADSE is the health scheme for Portuguese public employees."},
   };
   let publicCopy=[candidate.hook,candidate.caption,...candidate.slides.flatMap(slide=>[slide.title,slide.body,...slide.items])].join(" ");
   const missing:string[]=[];
@@ -1447,8 +1461,11 @@ const server = http.createServer(async (req, res) => {
         if (evidenceSources.some(source=>source.deterministicFactCard===true)) {
           const mechanical = simpleDraft(String(selectedConcept.topic), evidenceSources.flatMap(source=>source.excerpts as string[]));
           try {
-            validateSocialDraft(mechanical);
-            checked = mechanical;
+            // The model's output goes through this before validation; the mechanical
+            // draft did not, so it failed on acronyms that would have been defined for it.
+            const expanded = ensureKnownAcronymsAreDefined(mechanical);
+            validateSocialDraft(expanded);
+            checked = expanded;
             model = "deterministic-fact-card-v1";
           } catch (error) {
             lastGenerationError = `mechanical fallback rejected: ${error instanceof Error ? error.message : "invalid"}`;
@@ -1772,6 +1789,28 @@ const server = http.createServer(async (req, res) => {
         return send(res, 409, { error: "Duplicate topic blocked", duplicateOf: duplicate.post.id, reason: duplicate.reason });
       }
       if(duplicate&&dryRun)return send(res,409,{error:"Duplicate topic blocked",dryRun:true,duplicateOf:duplicate.post.id,reason:duplicate.reason});
+      if (reviewMode === "buffer_draft") {
+        // Everything above this line still ran: the editorial score, the evidence
+        // reliability check and the duplicate check. What is skipped is only the preview
+        // render, the signed link and the Discord message, because the post is about to
+        // appear in Buffer where it can be read on the phone that would have opened them.
+        if (dryRun) return send(res, 200, { dryRun: true, mode: reviewMode, postId: String(previewSource.id), revisionId: String(previewSource.revision_id), quality });
+        await sql.begin(async tx => {
+          const [revision] = await tx`SELECT evidence_hash FROM social_post_revision WHERE id=${previewSource.revision_id}`;
+          await tx`
+            INSERT INTO social_approval (post_id, revision_id, evidence_hash, decision, reviewer, comment)
+            VALUES (${previewSource.id}, ${previewSource.revision_id}, ${String(revision?.evidence_hash ?? "")}, 'approved', 'buffer_draft_review', 'Gates passed; the owner approves this in Buffer by moving it out of drafts.')
+          `;
+          await tx`
+            UPDATE social_post SET status='approved', approved_revision_id=${previewSource.revision_id},
+              approved_at=now(), approved_by='buffer_draft_review', updated_at=now()
+            WHERE id=${previewSource.id} AND status='draft'
+          `;
+          await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${previewSource.id},'review.delegated_to_buffer',${tx.json({ revisionId: String(previewSource.revision_id), score: quality.score })})`;
+        });
+        return send(res, 200, { postId: String(previewSource.id), revisionId: String(previewSource.revision_id), mode: reviewMode, quality });
+      }
+
       const previewFiles = await renderReviewPreview(createRenderManifest(previewSource as Record<string, unknown>, {
         id: previewSource.revision_id,
         slides: previewSource.revision_slides,
@@ -2062,7 +2101,7 @@ const server = http.createServer(async (req, res) => {
         const mediaUrls = await Promise.all(storedFiles.map((file) => createBufferMediaUrl(file.key)));
         const hashtags = job.post.hashtags as string[];
         const text = composeInstagramCaption({ hook: String(job.post.hook), body: String(job.post.caption), callToAction: String(job.post.call_to_action), hashtags });
-        const providerPost = await createScheduledPost({ channelId, text, dueAt: new Date(job.scheduled_at as string).toISOString(), mediaUrls });
+        const providerPost = await createScheduledPost({ channelId, text, dueAt: new Date(job.scheduled_at as string).toISOString(), mediaUrls, saveToDraft: reviewMode === "buffer_draft" });
         const [saved] = await sql.begin(async (tx) => {
           const [updated] = await tx`UPDATE social_publish_job SET status = 'scheduled', provider_post_id = ${providerPost.id}, provider_status = ${providerPost.status || "scheduled"}, lease_owner = NULL, lease_expires_at = NULL, updated_at = now() WHERE id = ${job.id} AND status = 'processing' RETURNING *`;
           await tx`UPDATE social_publish_attempt SET finished_at = now(), outcome = 'scheduled', provider_correlation_id = ${providerPost.id} WHERE job_id = ${job.id} AND attempt_number = ${job.attempt_count}`;
@@ -2260,7 +2299,10 @@ const server = http.createServer(async (req, res) => {
       const [localOverdue]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status IN ('pending','retrying') AND scheduled_at<now()`;if(Number(localOverdue.count)>0)alerts.push(`${localOverdue.count} internal queued post(s) need rescheduling`);
       const blockedPublish=await sql`SELECT j.id,p.id AS post_id,p.topic,j.scheduled_at,j.error_code FROM social_publish_job j JOIN social_post p ON p.id=j.post_id WHERE j.status='blocked' AND j.updated_at<now()-INTERVAL '24 hours' ORDER BY j.scheduled_at LIMIT 10`;if(blockedPublish.length>0)alerts.push(`${blockedPublish.length} ambiguous Buffer result(s) have remained unresolved for more than 24 hours:\n${blockedPublish.map(row=>`${row.topic} — post ${row.post_id}, job ${row.id}, ${row.error_code||'unknown error'}`).join('\n')}`);
       const [bufferQueued]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='scheduled' AND scheduled_at>now()`;if(Number(bufferQueued.count)>=bufferQueueSoftLimit)alerts.push(`Buffer handoff soft cap reached: ${bufferQueued.count}/${bufferQueueSoftLimit}`);
-      const [overdue]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='scheduled' AND scheduled_at<now()-INTERVAL '20 minutes'`;if(Number(overdue.count)>0)alerts.push(`${overdue.count} publication confirmation(s) are overdue`);
+      // A post sitting in Buffer as a draft is waiting for a person, not running late, so it
+      // is not counted as an overdue confirmation. provider_status carries what Buffer last
+      // said about it: draft and needs_approval both mean the ball is with the owner.
+      const [overdue]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='scheduled' AND scheduled_at<now()-INTERVAL '20 minutes' AND coalesce(provider_status,'') NOT IN ('draft','needs_approval')`;if(Number(overdue.count)>0)alerts.push(`${overdue.count} publication confirmation(s) are overdue`);
       if(lisbonTime>='09:00'){const [batch]=await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${today} AND status NOT IN ('blocked','failed','rejected')`;if(Number(batch.count)<5){const [recovery]=await sql`SELECT payload FROM social_event WHERE event_type='generation.day_recovery_completed' AND payload->>'day'=${today} ORDER BY created_at DESC LIMIT 1`;if(recovery?.payload?.budgetExhausted===true){const failures=await sql`SELECT s.topic,e.payload->>'error' AS error FROM social_editorial_plan_slot s LEFT JOIN LATERAL (SELECT payload FROM social_event WHERE event_type='generation.failed' AND payload->>'planSlotId'=s.id::STRING ORDER BY created_at DESC LIMIT 1) e ON true WHERE s.publish_date=${today} AND s.status='held' ORDER BY s.slot_number`;alerts.push(`Daily recovery budget exhausted: ${batch.count}/5 posts ready after ${recovery.payload.attemptsUsed}/${recovery.payload.attemptBudget} candidate attempts${failures.length?`\n${failures.map(row=>`${row.topic}: ${row.error||'no verified replacement available'}`).join('\n')}`:''}`);}}}
       const signature=hash({today,alerts});let sent=false;if(alerts.length){const [existing]=await sql`SELECT id FROM social_event WHERE event_type='operations.alert_sent' AND payload->>'signature'=${signature} LIMIT 1`;if(!existing){sent=await notifyDiscord('errors','Finkavo pipeline alert',{date:today,problems:alerts.join('\n')});await sql`INSERT INTO social_event(event_type,payload) VALUES('operations.alert_sent',${sql.json({signature,alerts})})`;}}
       return send(res,200,{date:today,alerts,sent});
