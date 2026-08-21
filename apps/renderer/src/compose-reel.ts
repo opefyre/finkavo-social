@@ -70,10 +70,10 @@ export function frameDurations(frames: ReelFrame[], holdSeconds?: number): numbe
  * rejected or silently converted by some upload paths, and an empty track costs nothing.
  */
 export type ReelAudio = {
-  /** Path to a music bed. Trimmed to the video and faded, never looped mid-phrase. */
+  /** A bed under the whole reel, trimmed and faded. Supplied, licence-free. */
   musicPath?: string;
-  /** A short filtered-noise sweep on each frame change, generated rather than licensed. */
-  whoosh?: boolean;
+  /** A prepared sound placed on each frame change. Generated, so no licence applies. */
+  effectPath?: string;
 };
 
 export async function composeReel(
@@ -118,7 +118,7 @@ export async function composeReel(
 
   // Output is pinned to stereo at 44.1kHz. The generated sweep is mono and amix followed
   // it down, so a whoosh-only reel arrived mono while every other variant was stereo.
-  const wantsAudio = Boolean(audio.musicPath) || Boolean(audio.whoosh);
+  const wantsAudio = Boolean(audio.musicPath) || Boolean(audio.effectPath);
   if (wantsAudio) {
     // Silence the exact length of the video, mixed under everything else. Without it the
     // mix is only as long as its first source, so a whoosh-only reel ended after the
@@ -140,19 +140,18 @@ export async function composeReel(
     audioLabels.push("[bed]");
   }
 
-  if (audio.whoosh) {
-    // Pink noise through a band, with a fast attack and a short tail: a sweep, not a
-    // sound effect. One at each frame change, none at the start, so the first thing heard
-    // is the bed rather than a transition into nothing.
+  if (audio.effectPath) {
+    // The same prepared file at each cut rather than a fresh synthesis, so every reel
+    // using this effect sounds identical and a new one can be added by dropping a file in
+    // beside the others. None at the very start: the first sound should be the reel
+    // beginning, not a transition into nothing.
     let elapsed = 0;
     for (let index = 0; index < durations.length - 1; index++) {
       elapsed += durations[index]!;
       const at = Math.max(0, Math.round((elapsed - 0.08) * 1000));
       const input = frameFiles.length + audioInputCount++;
-      audioInputs.push("-f", "lavfi", "-i", "anoisesrc=d=0.45:c=pink:a=0.5:r=44100");
-      audioFilters.push(
-        `[${input}:a]highpass=f=420,lowpass=f=5200,afade=t=in:st=0:d=0.04,afade=t=out:st=0.10:d=0.30,volume=0.22,adelay=${at}|${at}[w${index}]`,
-      );
+      audioInputs.push("-i", audio.effectPath);
+      audioFilters.push(`[${input}:a]volume=0.5,adelay=${at}|${at}[w${index}]`);
       audioLabels.push(`[w${index}]`);
     }
   }
