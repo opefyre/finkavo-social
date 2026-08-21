@@ -504,6 +504,63 @@ function reviewPage(post: Record<string, unknown>, revision: Record<string, unkn
   :root{font-family:Inter,ui-sans-serif,system-ui;color:#143735;background:#f6f2ea}body{margin:0}.wrap{max-width:1080px;margin:auto;padding:32px 20px 64px}header{display:flex;justify-content:space-between;gap:20px;align-items:start}.pill{background:#f0aa70;padding:6px 10px;border-radius:99px;font-weight:700;text-transform:uppercase;font-size:12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:24px 0}article,.panel{background:white;border:1px solid #d7ddd8;border-radius:14px;padding:20px;box-shadow:0 5px 18px #1437350d}article small,.meta{color:#5c706c;font-size:13px}h1{font-size:clamp(30px,5vw,52px);margin:.35em 0}h3{font-size:22px}.caption{white-space:pre-wrap;line-height:1.6}a{color:#175e58}form{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin-top:20px}label{display:grid;gap:6px;flex:1;min-width:240px}textarea{min-height:70px;padding:10px;border:1px solid #aebbb7;border-radius:8px}button{border:0;border-radius:9px;padding:12px 20px;font-weight:800;cursor:pointer}.approve{background:#175e58;color:white}.reject{background:#9d3535;color:white}.warning{border-left:5px solid #f0aa70}.identity{font-size:13px;color:#5c706c}</style></head><body><main class="wrap"><header><div><span class="pill">${escapeHtml(post.risk_level)} risk · ${escapeHtml(post.category)}</span><h1>${escapeHtml(post.topic)}</h1><p>${escapeHtml(revision.hook)}</p></div><p class="identity">Reviewer: ${escapeHtml(reviewer)}</p></header><section class="panel warning"><strong>Approval is revision-bound.</strong> Any change to copy, slides, or evidence invalidates this decision.</section><section class="grid">${slideCards}</section><section class="panel"><h2>Final Instagram caption</h2><p class="caption">${escapeHtml(finalCaption)}</p><h2>Sources</h2><ul>${sourceItems}</ul><p class="meta">Evidence hash: ${escapeHtml(String(revision.evidence_hash).slice(0, 16))}…</p><form method="post" action="${escapeHtml(reviewPathPrefix)}/review/${escapeHtml(token)}/decision"><label>Optional review comment<textarea name="comment" maxlength="500"></textarea></label><button class="approve" name="decision" value="approved">Approve exact revision</button><button class="reject" name="decision" value="rejected">Reject</button></form></section></main></body></html>`;
 }
 
+/**
+ * Re-checks the sources behind a revision and, where they still say what the post quoted,
+ * records that they were checked just now.
+ *
+ * The freshness rule reads retrievedAt out of the revision's own source bundle, which is a
+ * snapshot taken when the draft was written and never moves again. Harmless while a post
+ * was generated and handed over inside a day; not harmless once generation started working
+ * days ahead, because a post written on Monday for Thursday arrived at handoff carrying
+ * Monday's timestamp and could never be anything but stale.
+ *
+ * What it does not do is compare the page to how it looked before. An official page gains
+ * a news item or a related-links block and its text changes by three thousand characters
+ * without a word of the part we quoted moving — refusing the post for that is not caution,
+ * it is superstition. The question worth asking is the one generation already asks: does
+ * the source still contain the sentence this post put in quotation marks? If it does, the
+ * evidence has been re-read and still holds. If it does not, the timestamp stays where it
+ * was and the post stays blocked, which is the entire point of the check.
+ */
+async function refreshRevisionEvidence(postId: string, revisionId: string): Promise<{ refreshed: number; changed: number }> {
+  const [row] = await sql`SELECT source_bundle FROM social_post_revision WHERE id=${revisionId} AND post_id=${postId}`;
+  const sources = (row?.source_bundle ?? []) as Array<Record<string, unknown>>;
+  if (!sources.length) return { refreshed: 0, changed: 0 };
+
+  const claims = await sql`SELECT evidence_quote FROM social_claim WHERE post_id=${postId} AND revision_id=${revisionId}`;
+  const quotes = claims.map(claim => String(claim.evidence_quote).replace(/\s+/g, " ").trim()).filter(Boolean);
+
+  let refreshed = 0;
+  let changed = 0;
+  const updated = await Promise.all(sources.map(async source => {
+    const documentId = source.documentId ? String(source.documentId) : "";
+    if (!documentId) return source;
+    const [document] = await sql`
+      SELECT last_verified_at FROM document
+      WHERE id=${documentId} AND verified_still_available=true
+        AND last_verified_at > now() - INTERVAL '24 hours'
+    `;
+    if (!document) return source;
+
+    const [body] = await sql`SELECT string_agg(text, chr(10) ORDER BY chunk_index) AS text FROM chunk WHERE document_id=${documentId}`;
+    const current = String(body?.text ?? "").replace(/\s+/g, " ");
+    // Only the quotes this source actually carried have to survive in it; another
+    // source's sentence being absent here says nothing about this one.
+    const carried = quotes.filter(quote => (source.excerpts as string[] | undefined)?.some(excerpt => excerpt.replace(/\s+/g, " ").includes(quote)) ?? true);
+    const stillThere = carried.every(quote => current.includes(quote));
+    if (!stillThere) { changed += 1; return source; }
+
+    refreshed += 1;
+    return { ...source, retrievedAt: String(document.last_verified_at) };
+  }));
+
+  if (refreshed) {
+    await sql`UPDATE social_post_revision SET source_bundle=${sql.json(updated as never)} WHERE id=${revisionId}`;
+    await sql`INSERT INTO social_event(post_id,event_type,payload) VALUES(${postId},'evidence.revision_refreshed',${sql.json({ revisionId, refreshed, changed })})`;
+  }
+  return { refreshed, changed };
+}
+
 async function assessStoredRevision(postId: string, revisionId: string, requireRecent = false) {
   const [row]=await sql`SELECT p.topic,p.category,r.source_bundle,r.created_at FROM social_post p JOIN social_post_revision r ON r.id=${revisionId} AND r.post_id=p.id WHERE p.id=${postId}`;
   if(!row)return {passed:false,sensitive:false,failures:["Post revision is unavailable"],checkedAt:new Date().toISOString(),requiredAuthority:null,sourceCount:0,officialHostCount:0};
@@ -2176,7 +2233,17 @@ const server = http.createServer(async (req, res) => {
       });
       if (!job) return send(res, 200, { job: null });
       try {
-        const reliability=await assessStoredRevision(String(job.post_id),String(job.revision_id),true);
+        // Read the sources again before deciding this post is stale. "Must be researched
+        // again" is an instruction, and until now nothing carried it out at handoff: the
+        // revision's timestamps were frozen when the draft was written, so a post
+        // generated days ahead could never be anything but too old. Refreshing only moves
+        // the timestamp when the source still hashes to what it hashed to — a source that
+        // has changed keeps its old one, and the post stays blocked, which is right.
+        let reliability = await assessStoredRevision(String(job.post_id), String(job.revision_id), true);
+        if (!reliability.passed && reliability.failures.some(failure => /older than 24 hours/.test(failure))) {
+          const refresh = await refreshRevisionEvidence(String(job.post_id), String(job.revision_id));
+          if (refresh.refreshed) reliability = await assessStoredRevision(String(job.post_id), String(job.revision_id), true);
+        }
         if(!reliability.passed){await sql.begin(async tx=>{await tx`UPDATE social_publish_job SET status='blocked',lease_owner=NULL,lease_expires_at=NULL,error_code='EVIDENCE_REVALIDATION_FAILED',error_message=${reliability.failures.join("; ")},updated_at=now() WHERE id=${job.id}`;await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${job.post_id}`;await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'evidence.reliability_blocked',${tx.json({stage:'pre_publish',jobId:job.id,...reliability})})`;});await notifyDiscord("errors","Publication blocked by evidence validation",{post:job.post_id,job:job.id,problems:reliability.failures.join("\n")});return send(res,422,{error:"Publication blocked by evidence validation",...reliability});}
         assertPublishableCopy(job.post as Record<string, unknown>);
         const channelId = process.env.BUFFER_CHANNEL_ID;
