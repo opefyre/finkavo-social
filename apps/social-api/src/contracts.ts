@@ -27,6 +27,26 @@ export const DraftSchema = z.object({
     claim: z.string().min(1).max(300),
     evidenceQuote: z.string().min(1).max(500),
   })).min(1).max(8),
+  // The reel version of the same post, written in the same call. A second call would
+  // double the token cost of every post on a tier that runs out mid-afternoon, and the
+  // model already has the evidence in front of it here.
+  //
+  // frames may be empty. A strict provider schema requires every property to be present,
+  // so absence is expressed there as an empty array rather than a missing key, and an
+  // empty one simply means this post goes out as a carousel — not a failure. Here it is
+  // optional, because a draft assembled in a test or by an owner edit has no reel and
+  // should not have to invent one.
+  reel: z.object({
+    frames: z.array(z.object({
+      type: z.enum(["hook", "beat", "payoff"]),
+      // Null on the wire means "does not apply"; an empty string means the model filled
+      // the field with nothing. Both become absent here so the renderer sees one shape.
+      kicker: z.string().max(40).nullish().transform(value => value || undefined),
+      figure: z.string().max(24).nullish().transform(value => value || undefined),
+      label: z.string().max(48).nullish().transform(value => value || undefined),
+      text: z.string().min(1).max(140),
+    })).max(5),
+  }).optional(),
 });
 
 export type Draft = z.infer<typeof DraftSchema>;
@@ -64,7 +84,7 @@ export function providerSchema(schema: unknown): unknown {
 export const draftJsonSchema = {
   type: "object",
   additionalProperties: false,
-  required: ["topic", "category", "riskLevel", "postIntent", "hook", "caption", "callToAction", "hashtags", "searchKeywords", "slides", "claims"],
+  required: ["topic", "category", "riskLevel", "postIntent", "hook", "caption", "callToAction", "hashtags", "searchKeywords", "slides", "claims", "reel"],
   properties: {
     topic: { type: "string", minLength: 1, maxLength: 120 },
     category: { type: "string", enum: ["aima", "residency", "visas", "irs", "nif", "niss", "social_security", "tax", "employment", "citizenship", "deadlines", "government", "immigration", "business", "housing", "general"] },
@@ -101,6 +121,28 @@ export const draftJsonSchema = {
         properties: {
           claim: { type: "string", minLength: 1, maxLength: 300 },
           evidenceQuote: { type: "string", minLength: 1, maxLength: 500 },
+        },
+      },
+    },
+    reel: {
+      type: "object", additionalProperties: false, required: ["frames"],
+      properties: {
+        frames: {
+          type: "array", maxItems: 5,
+          items: {
+            // Strict mode requires every property to appear in `required`, so a field
+            // that does not apply — a hook has no figure — is expressed as null rather
+            // than left out. Zod turns those nulls back into absent fields below.
+            type: "object", additionalProperties: false,
+            required: ["type", "text", "kicker", "figure", "label"],
+            properties: {
+              type: { type: "string", enum: ["hook", "beat", "payoff"] },
+              kicker: { type: ["string", "null"], maxLength: 40 },
+              figure: { type: ["string", "null"], maxLength: 24 },
+              label: { type: ["string", "null"], maxLength: 48 },
+              text: { type: "string", minLength: 1, maxLength: 140 },
+            },
+          },
         },
       },
     },
