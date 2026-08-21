@@ -320,14 +320,14 @@ async function noteProviderPacing(failure: BufferError) {
 // The token budget and the paid caps are only ceilings if they survive a restart, so
 // spend goes to the ledger as it happens and comes back at startup. Fire-and-forget on
 // the way out: a request must not fail because its bookkeeping did.
-setLlmSpendObserver(({ at, tokens, paid }) => {
-  void sql`INSERT INTO social_llm_spend (paid, tokens, created_at) VALUES (${paid}, ${Math.round(tokens)}, ${new Date(at).toISOString()})`.catch(() => {});
+setLlmSpendObserver(({ at, tokens, paid, provider }) => {
+  void sql`INSERT INTO social_llm_spend (paid, provider, tokens, created_at) VALUES (${paid}, ${provider ?? null}, ${Math.round(tokens)}, ${new Date(at).toISOString()})`.catch(() => {});
 });
 
 void (async () => {
   try {
-    const rows = await sql`SELECT paid, tokens, created_at FROM social_llm_spend WHERE created_at > now() - INTERVAL '24 hours' ORDER BY created_at`;
-    hydrateLlmSpend(rows.map(row => ({ at: new Date(String(row.created_at)).getTime(), tokens: Number(row.tokens), paid: Boolean(row.paid) })));
+    const rows = await sql`SELECT paid, provider, tokens, created_at FROM social_llm_spend WHERE created_at > now() - INTERVAL '24 hours' ORDER BY created_at`;
+    hydrateLlmSpend(rows.map(row => ({ at: new Date(String(row.created_at)).getTime(), tokens: Number(row.tokens), paid: Boolean(row.paid), provider: row.provider ? String(row.provider) : undefined })));
   } catch {
     // A budget that cannot be read is not a reason to refuse to start; the in-memory
     // window still applies and the next restart will try again.

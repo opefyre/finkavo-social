@@ -178,7 +178,7 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 // a restart no longer hands the day a fresh allowance. Kept as an observer rather than a
 // direct database call so this module stays free of the connection and the import cycle
 // that would come with it.
-type SpendReport = { at: number; tokens: number; paid: boolean };
+type SpendReport = { at: number; tokens: number; paid: boolean; provider?: string };
 let spendObserver: (report: SpendReport) => void = () => {};
 export function setLlmSpendObserver(observer: (report: SpendReport) => void) { spendObserver = observer; }
 
@@ -187,10 +187,17 @@ export function hydrateLlmSpend(rows: SpendReport[]) {
   const now = Date.now();
   for (const row of rows) {
     if (now - row.at >= DAY_MS) continue;
+    if (row.provider && METERED_PROVIDERS.has(row.provider.toLowerCase())) {
+      const list = meteredSpends.get(row.provider) ?? [];
+      list.push({ at: row.at, tokens: row.tokens });
+      meteredSpends.set(row.provider, list);
+      continue;
+    }
     (row.paid ? paidSpends : dailySpends).push({ at: row.at, tokens: row.tokens });
   }
   dailySpends.sort((left, right) => left.at - right.at);
   paidSpends.sort((left, right) => left.at - right.at);
+  for (const list of meteredSpends.values()) list.sort((left, right) => left.at - right.at);
 }
 
 function dailyTokens(now: number) {
@@ -355,6 +362,49 @@ export function llmDailyBudget() {
 // model on it, and says so in a header when it refuses. Without honouring that, each
 // generation spends a call per standby rediscovering the same exhaustion. Blocked until
 // the reset it names, the standbys are skipped and the concept defers cleanly instead.
+// Everything in the chain that is not provably free.
+//
+// OpenRouter is safe by construction — only models ending ":free" are ever selected — and
+// Groq's key is a free-tier account whose ceiling the provider enforces itself. Mistral is
+// neither: whether it bills depends on the plan behind the key, which this code cannot
+// see, and it sits second in the chain and did most of a day's generation. Relying on
+// "that account is on the free tier" is an assumption holding up a bill, so it is bounded
+// here instead.
+//
+// The ceiling is set against what a real day costs, not a guess: one generation walks the
+// chain up to three times and tries both Mistral models each pass, so a single draft can
+// spend six Mistral calls, and a day of forty attempts lands somewhere between 150 and
+// 250. Four hundred leaves a heavy day untouched while still stopping a loop, which is
+// the only thing this is for. Raise it with LLM_METERED_MAX_CALLS_PER_DAY if a legitimate
+// day ever reaches it — a refusal here shows up as a standby being skipped, not as an
+// error, so it would otherwise be quiet.
+const METERED_PROVIDERS = new Set(
+  (process.env.LLM_METERED_PROVIDERS ?? "mistral").split(",").map(entry => entry.trim().toLowerCase()).filter(Boolean),
+);
+const METERED_MAX_CALLS_PER_DAY = Number(process.env.LLM_METERED_MAX_CALLS_PER_DAY ?? 400);
+const meteredSpends = new Map<string, Spend[]>();
+
+function meteredUsage(provider: string, now: number) {
+  const kept = (meteredSpends.get(provider) ?? []).filter(spend => now - spend.at < DAY_MS);
+  meteredSpends.set(provider, kept);
+  return { calls: kept.length, tokens: kept.reduce((total, spend) => total + spend.tokens, 0) };
+}
+
+/** Whether a standby may be called, given what it has already been asked for today. */
+export function meteredAllows(provider: string, now = Date.now()) {
+  if (!METERED_PROVIDERS.has(provider.toLowerCase())) return true;
+  return meteredUsage(provider, now).calls < METERED_MAX_CALLS_PER_DAY;
+}
+
+function recordMetered(provider: string, tokens: number) {
+  if (!METERED_PROVIDERS.has(provider.toLowerCase())) return;
+  const at = Date.now();
+  const list = meteredSpends.get(provider) ?? [];
+  list.push({ at, tokens });
+  meteredSpends.set(provider, list);
+  spendObserver({ at, tokens, paid: false, provider });
+}
+
 const standbyBlockedUntil = new Map<string, number>();
 /** What the provider last told us about its own day, which outranks our local count. */
 let lastKnownProviderSpend: { used: number; limit: number } | null = null;
@@ -465,9 +515,15 @@ export async function generateStructured(
   // the account, not the request, so the same work is offered to the free standby models
   // in turn. Only a pacing failure gets here: a malformed request would fail identically
   // everywhere and should surface as itself rather than be retried four more times.
-  for (const fallback of resolveFallbackConfigs().filter(config => standbyAvailable(config.provider))) {
+  for (const fallback of resolveFallbackConfigs().filter(config => standbyAvailable(config.provider) && meteredAllows(config.provider))) {
     try {
+      // Counted before the call, so a request that never returns still costs its place in
+      // the day's allowance. A ceiling that only counts successes is not a ceiling.
+      recordMetered(fallback.provider, estimated);
       const result = await callProvider(request, fallback);
+      if (result.totalTokens !== null && result.totalTokens > 0) {
+        recordMetered(fallback.provider, result.totalTokens - estimated);
+      }
       return { text: result.text, model: result.model, totalTokens: result.totalTokens };
     } catch (error) {
       // A standby with its own limit reached, or one that cannot hold the schema, just
