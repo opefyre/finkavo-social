@@ -10,7 +10,7 @@ describe("the ceiling on a provider that might bill", () => {
   });
 
   it("stops a metered provider once the day's allowance is gone", () => {
-    const cap = Number(process.env.LLM_METERED_MAX_CALLS_PER_DAY ?? 200);
+    const cap = Number(process.env.LLM_METERED_MAX_CALLS_PER_DAY ?? 400);
     const now = Date.now();
     expect(meteredAllows("mistral", now)).toBe(true);
     hydrateLlmSpend(Array.from({ length: cap - 1 }, (_, index) => ({

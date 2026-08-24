@@ -473,6 +473,19 @@ export type StructuredRequest = {
  * validate it themselves so that a schema-shaped but semantically wrong response still
  * goes through the normal repair loop.
  */
+// A provider refusing its own model's output is not the same as a bad request. Groq
+// validates what gpt-oss produces against the schema and answers 400 "Generated JSON does
+// not match the expected schema" when it falls short — a statement about that model on
+// that prompt, not about the request, and precisely the case another model may handle.
+// Treating it as fatal meant one provider's weak moment ended the generation with a full
+// bank and most of the day's tokens unspent, while the standbys that had been writing
+// perfectly good drafts all week were never asked.
+const MODEL_OUTPUT_FAILURE = /generated json does not match|failed_generation|does not validate with|no structured output|response_format/i;
+export const isModelOutputFailureForTest = (error: unknown) => isModelOutputFailure(error);
+function isModelOutputFailure(error: unknown) {
+  return error instanceof Error && MODEL_OUTPUT_FAILURE.test(error.message);
+}
+
 export async function generateStructured(
   request: StructuredRequest,
   config: LlmConfig = resolveLlmConfig(),
@@ -503,6 +516,9 @@ export async function generateStructured(
     } catch (error) {
       // A refused request still cost the provider nothing, so release the reservation.
       settle(0);
+      // Hand it to the standbys rather than ending here: this model could not produce
+      // conforming output, which says nothing about whether another one can.
+      if (isModelOutputFailure(error)) break;
       if (!(error instanceof LlmRateLimitError)) throw error;
       blockProvider(error.retryAfterSeconds ?? 65);
       // One inline retry, and only when the wait is short enough to hold the caller for.
@@ -511,10 +527,11 @@ export async function generateStructured(
     }
   }
 
-  // The primary is rate limited or out of tokens for the day. That is a statement about
-  // the account, not the request, so the same work is offered to the free standby models
-  // in turn. Only a pacing failure gets here: a malformed request would fail identically
-  // everywhere and should surface as itself rather than be retried four more times.
+  // The primary is rate limited, out of tokens for the day, or could not hold the schema.
+  // All three are statements about that provider rather than about the request, so the
+  // same work is offered to the free standby models in turn. A genuinely malformed
+  // request still surfaces as itself: it fails identically everywhere and is thrown above
+  // rather than retried four more times.
   for (const fallback of resolveFallbackConfigs().filter(config => standbyAvailable(config.provider) && meteredAllows(config.provider))) {
     try {
       // Counted before the call, so a request that never returns still costs its place in

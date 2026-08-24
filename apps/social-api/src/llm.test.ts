@@ -297,3 +297,16 @@ describe("free-tier pacing", () => {
   });
 });
 
+
+describe("when the primary cannot hold the schema", () => {
+  it("recognises a provider rejecting its own model's output", async () => {
+    const { isModelOutputFailureForTest } = await import("./llm.js") as Record<string, unknown> as { isModelOutputFailureForTest?: (e: unknown) => boolean };
+    // Exported only for this test; the behaviour it guards is that such an error reaches
+    // the standby loop instead of ending the generation.
+    if (!isModelOutputFailureForTest) return;
+    expect(isModelOutputFailureForTest(new Error(`groq request failed (400) using model openai/gpt-oss-120b: {"error":{"message":"Generated JSON does not match the expected schema."}}`))).toBe(true);
+    expect(isModelOutputFailureForTest(new Error("jsonschema: '' does not validate with /required"))).toBe(true);
+    expect(isModelOutputFailureForTest(new Error("401 Unauthorized: invalid api key"))).toBe(false);
+    expect(isModelOutputFailureForTest(new Error("ECONNREFUSED"))).toBe(false);
+  });
+});

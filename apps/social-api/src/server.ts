@@ -1318,7 +1318,14 @@ const server = http.createServer(async (req, res) => {
       // evidence. That is the quiet half of how the bank drains: not topics rejected, but
       // topics left behind. Carry those forward. The plan slot stays where it is, because
       // generation reads it only for the brief, and the brief is still the right brief.
-      const carried = await sql`
+      // Only when planning today. This endpoint is also called for the next fortnight, to
+      // build the window ahead — and carrying forward on those runs walked the entire bank
+      // one day further into the future on each call, until sixty-five topics with live
+      // evidence were parked on a date two weeks out and today had nothing to generate
+      // from. The day reported "no eligible topic remained in the bank" while the bank was
+      // full. Sweeping up what a past day did not reach is a thing you do for the day you
+      // are actually living in.
+      const carried = planningDate !== lisbonDate(new Date()) ? [] : await sql`
         UPDATE social_post_concept c SET planned_for=${planningDate}, updated_at=now()
         WHERE c.status='planned' AND c.planned_for < ${planningDate}
           AND EXISTS (SELECT 1 FROM social_topic_evidence_bundle b
