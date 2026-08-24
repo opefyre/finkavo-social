@@ -461,6 +461,41 @@ async function returnConceptForRepair(tx: typeof sql, input: { topic: string; pl
   return { retired: retire, attempts };
 }
 
+
+// A post the evidence gate stopped before it ever reached Buffer has no way out on its
+// own. The gate re-reads its sources every audit and reaches the same verdict, so it sits
+// blocked, is counted as a lost slot, and is announced again every day — four of them ran
+// for three days that way. Give it a disposition instead: after a grace period the draft
+// is archived and its topic goes back to the bank with the gate's own complaint attached,
+// so the next attempt is written against fresh evidence rather than the same stale
+// bundle. The topic is not the problem; that particular draft of it was.
+const EVIDENCE_BLOCK_GRACE_HOURS = Number(process.env.EVIDENCE_BLOCK_GRACE_HOURS ?? 24);
+
+async function retireEvidenceBlockedPosts() {
+  const stuck = await sql`
+    SELECT j.id AS job_id, p.id AS post_id, p.topic, p.planned_for, j.error_message
+    FROM social_publish_job j JOIN social_post p ON p.id = j.post_id
+    WHERE j.status = 'blocked' AND j.provider_post_id IS NULL
+      AND j.error_code = 'EVIDENCE_REVALIDATION_FAILED'
+      AND j.updated_at < now() - (${EVIDENCE_BLOCK_GRACE_HOURS}::STRING || ' hours')::INTERVAL
+    ORDER BY j.updated_at LIMIT 20`;
+  const retired: string[] = [];
+  for (const row of stuck) {
+    await sql.begin(async tx => {
+      await tx`UPDATE social_publish_job SET status='failed', updated_at=now() WHERE id=${row.job_id}`;
+      await tx`UPDATE social_post SET status='failed', archived_at=now(), updated_at=now() WHERE id=${row.post_id}`;
+      await returnConceptForRepair(tx, {
+        topic: String(row.topic),
+        plannedFor: row.planned_for,
+        reason: `The previous draft was stopped before publishing and its evidence never cleared: ${String(row.error_message ?? "evidence revalidation failed").slice(0, 240)}. Research the topic again and write it against current sources.`,
+      });
+      await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${row.post_id}, 'evidence.blocked_post_retired', ${tx.json({ jobId: row.job_id, topic: String(row.topic), reason: String(row.error_message ?? "") })})`;
+    });
+    retired.push(String(row.topic));
+  }
+  return retired;
+}
+
 async function requestReplacement(tx: typeof sql, input: { publishDate: unknown; reason: string; postId?: unknown; jobId?: unknown }) {
   // The day the slot belongs to, preferred over today: a post lost at 23:50 is a debt
   // against the day it was planned for, not against tomorrow.
@@ -2827,7 +2862,10 @@ const server = http.createServer(async (req, res) => {
         blocked.push({postId:row.id,topic:row.topic,failures:assessment.failures});
       }
       if(external.length&&!input.dryRun)await notifyDiscord('Buffer posts require evidence review before publication',{posts:external.map(item=>`${item.topic} — post ${item.postId}, Buffer ${item.bufferPostId}`).join('\n')});
-      return send(res,200,{dryRun:input.dryRun,checked:checked.length,passed:checked.filter(item=>item.passed).length,blocked,external});
+      // Anything that has sat blocked past the grace period is dispositioned here rather
+      // than left to be re-announced tomorrow.
+      const retiredStale = input.dryRun ? [] : await retireEvidenceBlockedPosts();
+      return send(res,200,{retiredStale,dryRun:input.dryRun,checked:checked.length,passed:checked.filter(item=>item.passed).length,blocked,external});
     }
 
     if(req.method==="POST"&&url.pathname==="/v1/editorial/audit-review"){
@@ -2889,7 +2927,10 @@ const server = http.createServer(async (req, res) => {
     if(req.method==="POST"&&url.pathname==="/v1/alerts/check"){
       ReportSchema.parse(await readJson(req));const now=new Date();const today=lisbonDate(now);const lisbonTime=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Lisbon',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(now);const alerts:string[]=[];
       const [renderer]=await sql`SELECT last_seen_at FROM social_renderer_heartbeat ORDER BY last_seen_at DESC LIMIT 1`;if(!renderer||now.getTime()-new Date(String(renderer.last_seen_at)).getTime()>5*60_000)alerts.push('Renderer heartbeat is stale');
-      const [failed]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='failed' AND updated_at>now()-INTERVAL '24 hours'`;if(Number(failed.count)>0)alerts.push(`${failed.count} publish schedule(s) failed in the last 24 hours`);
+      // Archived posts are ones we deliberately retired — an evidence-blocked draft given up
+      // on rather than a schedule that broke. Counting them here meant tidying up four stuck
+      // posts immediately raised an alert about having done so.
+      const [failed]=await sql`SELECT count(*) AS count FROM social_publish_job j WHERE j.status='failed' AND j.updated_at>now()-INTERVAL '24 hours' AND EXISTS (SELECT 1 FROM social_post p WHERE p.id=j.post_id AND p.archived_at IS NULL)`;if(Number(failed.count)>0)alerts.push(`${failed.count} publish schedule(s) failed in the last 24 hours`);
       const [renderFailed]=await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${today} AND status='failed'`;if(Number(renderFailed.count)>0)alerts.push(`${renderFailed.count} planned post(s) failed rendering`);
       const [stranded]=await sql`SELECT count(*) AS count FROM social_post p WHERE p.status='rendered' AND p.rendered_at<now()-INTERVAL '15 minutes' AND NOT EXISTS(SELECT 1 FROM social_publish_job j WHERE j.post_id=p.id AND j.revision_id=p.approved_revision_id)`;if(Number(stranded.count)>0)alerts.push(`${stranded.count} rendered post(s) are missing an internal publish job`);
       const [localOverdue]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status IN ('pending','retrying') AND scheduled_at<now()`;if(Number(localOverdue.count)>0)alerts.push(`${localOverdue.count} internal queued post(s) need rescheduling`);
@@ -2897,7 +2938,16 @@ const server = http.createServer(async (req, res) => {
       // here. Neither is a fault anyone can act on — a day that came up short has
       // already said so once, at the time, and repeating it daily for a week is how a
       // channel stops being read. What is left below is only what is actually broken.
-      const blockedPublish=await sql`SELECT j.id,p.id AS post_id,p.topic,j.scheduled_at,j.error_code FROM social_publish_job j JOIN social_post p ON p.id=j.post_id WHERE j.status='blocked' AND j.updated_at<now()-INTERVAL '24 hours' ORDER BY j.scheduled_at LIMIT 10`;if(blockedPublish.length>0)alerts.push(`${blockedPublish.length} ambiguous Buffer result(s) have remained unresolved for more than 24 hours:\n${blockedPublish.map(row=>`${row.topic} — post ${row.post_id}, job ${row.id}, ${row.error_code||'unknown error'}`).join('\n')}`);
+      // Two different things were being reported as one, in the words of the rarer of
+      // them. "Ambiguous" means a handoff came back unclear and nobody knows whether
+      // Buffer published it — that needs a person to look. A post stopped by the evidence
+      // gate never reached Buffer at all and needs its evidence fixed or the post
+      // retired. Four of the latter spent three days being announced as the former.
+      const blockedPublish=await sql`SELECT j.id,p.id AS post_id,p.topic,j.scheduled_at,j.error_code,j.provider_post_id FROM social_publish_job j JOIN social_post p ON p.id=j.post_id WHERE j.status='blocked' AND j.updated_at<now()-INTERVAL '24 hours' ORDER BY j.scheduled_at LIMIT 10`;
+      const ambiguous=blockedPublish.filter(row=>row.provider_post_id);
+      const evidenceStopped=blockedPublish.filter(row=>!row.provider_post_id);
+      if(ambiguous.length>0)alerts.push(`${ambiguous.length} Buffer handoff(s) came back ambiguous and need checking against Buffer before retrying:\n${ambiguous.map(row=>`${row.topic} — post ${row.post_id}, job ${row.id}, ${row.error_code||'unknown error'}`).join('\n')}`);
+      if(evidenceStopped.length>0)alerts.push(`${evidenceStopped.length} post(s) were stopped by the evidence gate before reaching Buffer and have not cleared in 24 hours:\n${evidenceStopped.map(row=>`${row.topic} — post ${row.post_id}`).join('\n')}`);
       // A post sitting in Buffer as a draft is waiting for a person, not running late, so it
       // is not counted as an overdue confirmation. provider_status carries what Buffer last
       // said about it: draft and needs_approval both mean the ball is with the owner.
