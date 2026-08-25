@@ -44,7 +44,10 @@ export const DraftSchema = z.object({
       kicker: z.string().max(40).nullish().transform(value => value || undefined),
       figure: z.string().max(24).nullish().transform(value => value || undefined),
       label: z.string().max(48).nullish().transform(value => value || undefined),
-      text: z.string().min(1).max(140),
+      // 320, matching the wire schema. Left at 140 this rejected as too_big exactly the
+      // frames the new floors were asking for, so a reel written to the right weight
+      // failed parsing and the post fell back to the sparse version it had before.
+      text: z.string().min(1).max(320),
     })).max(5),
   }).optional(),
 });
@@ -136,6 +139,10 @@ export const draftJsonSchema = {
         // number and validateReelFrames judges what arrives. A reel forced out of a topic
         // that has none fails its checks and is dropped, and the post still goes out as a
         // carousel — which is the outcome the prompt was politely asking for anyway.
+        //
+        // The frames carry the same weight of copy as the carousel slides. A reel that
+        // only shows headlines gives a viewer nothing to stop for; one that holds a real
+        // paragraph is read, replayed and saved.
         frames: {
           type: "array", minItems: 4, maxItems: 4,
           items: {
@@ -167,8 +174,11 @@ export const draftJsonSchema = {
                 description: "What the figure counts, in a word or two: \"days\", \"of the rent\", \"to file\".",
               },
               text: {
-                type: "string", minLength: 1, maxLength: 140,
-                description: "The line of English under the figure. Do not repeat the figure here — it is already on screen above this line.",
+                // Enforced by the provider before the draft ever reaches us, which is worth more
+                // than any amount of instruction: asked in prose for a full sentence the model
+                // kept returning six words, then ten. Seventy characters is about twelve words.
+                type: "string", minLength: 70, maxLength: 320,
+                description: "The English copy for this frame, written as fully as a carousel slide: complete sentences, not a caption. A hook runs 12 to 22 words; a beat 22 to 42; a payoff 15 to 32. The frame deliberately holds more than a viewer can read while it passes, so they stop the video to finish it — a frame of six words gives them no reason to stop and is rejected. Example of a beat: \"Miss this date and the tax authority can call in the entire remaining bill at once, rather than letting you keep paying it in parts across the year as you had planned.\" Do not repeat the figure in this text — it is already on screen above the line.",
               },
             },
           },

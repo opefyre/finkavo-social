@@ -20,15 +20,28 @@ describe("copy written to the length of the cut", () => {
     expect(parsed.holdSeconds).toBe(HOLD_SECONDS);
   });
 
-  it("refuses a beat nobody could finish reading, and says how long it may be", () => {
-    const long = manifest({
+  it("accepts a beat written to the weight of a carousel slide", () => {
+    // The frame is meant to hold more than 1.7 seconds allows, so the viewer stops to
+    // finish it. Forty-odd words is a slide, and a slide is the point.
+    const full = manifest({
+      frames: [
+        { type: "hook", headline: "Your IMI instalment is due this month, and August is the one people forget" },
+        { type: "beat", figure: "31 August", body: "Miss this date and the tax authority can call in the entire remaining bill at once, rather than letting you keep paying it in parts across the year as you had planned when the first instalment fell due." },
+        { type: "payoff", headline: "Check your IMI notice before the month ends", action: "Portal das Financas has the instalment and the direct debit, and the charge only happens automatically if you set that up earlier." },
+      ],
+    });
+    expect(() => ReelManifestSchema.parse(full)).not.toThrow();
+  });
+
+  it("refuses more than the frame can typeset, and says how much it may hold", () => {
+    const overflowing = manifest({
       frames: [
         { type: "hook", headline: "Your IMI instalment is due this month." },
-        { type: "beat", figure: "31 August", body: "Miss it and the whole remaining bill can fall due at once, not just the instalment." },
+        { type: "beat", figure: "31 August", body: Array.from({ length: 60 }, () => "word").join(" ") },
         { type: "payoff", headline: "Check your IMI notice.", action: "Portal das Financas, before the 31st." },
       ],
     });
-    expect(() => ReelManifestSchema.parse(long)).toThrow(/beat body must be 12 words or fewer/);
+    expect(() => ReelManifestSchema.parse(overflowing)).toThrow(/beat body must be 42 words or fewer/);
   });
 
   it("refuses a figure that is really a sentence", () => {

@@ -51,16 +51,23 @@ body{font-family:"Noto Sans",Arial,sans-serif;background:var(--bg);color:var(--f
 .top,.copy,.foot{position:relative;z-index:2}
 .top{display:flex;align-items:center;gap:20px}
 .top img{width:64px;height:64px;object-fit:contain}
+/* Retypeset for copy that carries. The frames used to hold six or eight words and the
+   type was sized to match — a 190px figure over a 56px line. Now a beat can run to forty
+   words, which is a short paragraph, so the scale comes down and the measure goes up:
+   920px of an 1080px frame, line-height loosened to 1.34 so a block of text reads as
+   text rather than as a stack of headlines. Everything still clears comfortably on a
+   phone; the figure stays the largest thing on the frame because it is still the part
+   the eye lands on first. */
 .top span{font-size:30px;font-weight:900;letter-spacing:.18em}
 .copy{margin:auto 0;display:flex;flex-direction:column;justify-content:center}
 /* Type is sized for a phone held at arm's length with the sound off. */
-.kicker{font-size:34px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:0 0 32px}
-h1.hook{font-family:"Fraunces",Georgia,serif;font-size:112px;line-height:.96;letter-spacing:-.03em;font-weight:900;margin:0;text-wrap:balance}
-.figure{font-family:"Fraunces",Georgia,serif;font-size:190px;line-height:.9;letter-spacing:-.045em;font-weight:900;color:var(--accent);margin:0 0 18px}
-.label{font-size:36px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--fg);opacity:.82;margin:0 0 34px}
-.beat{font-size:56px;line-height:1.2;font-weight:750;margin:0;max-width:760px;text-wrap:pretty}
-h1.payoff{font-family:"Fraunces",Georgia,serif;font-size:92px;line-height:1;letter-spacing:-.025em;font-weight:900;margin:0 0 40px;text-wrap:balance}
-.action{font-size:52px;line-height:1.22;font-weight:800;color:var(--accent);margin:0;max-width:760px;border-top:5px solid var(--accent);padding-top:34px}
+.kicker{font-size:30px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:0 0 32px}
+h1.hook{font-family:"Fraunces",Georgia,serif;font-size:78px;line-height:1.06;letter-spacing:-.025em;font-weight:900;margin:0;text-wrap:balance;max-width:920px}
+.figure{font-family:"Fraunces",Georgia,serif;font-size:132px;line-height:.9;letter-spacing:-.045em;font-weight:900;color:var(--accent);margin:0 0 18px}
+.label{font-size:32px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--fg);opacity:.82;margin:0 0 34px}
+.beat{font-size:46px;line-height:1.34;font-weight:650;margin:0;max-width:920px;text-wrap:pretty}
+h1.payoff{font-family:"Fraunces",Georgia,serif;font-size:60px;line-height:1.1;letter-spacing:-.02em;font-weight:900;margin:0 0 30px;text-wrap:balance}
+.action{font-size:44px;line-height:1.32;font-weight:750;color:var(--accent);margin:0;max-width:920px;border-top:5px solid var(--accent);padding-top:34px}
 .foot{display:flex;align-items:center;justify-content:space-between;gap:28px;font-size:26px;font-weight:750;opacity:.86}
 .src{max-width:640px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bar{position:absolute;left:96px;right:${SAFE_RIGHT}px;bottom:${SAFE_BOTTOM - 64}px;height:8px;border-radius:8px;background:rgba(247,243,235,.20);z-index:2}

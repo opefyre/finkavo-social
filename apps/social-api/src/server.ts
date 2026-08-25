@@ -1810,7 +1810,11 @@ const server = http.createServer(async (req, res) => {
           // Only on the first attempt. A reel must never cost a post that is otherwise
           // sound, which was the right instinct in the original design; it just needs one
           // chance to be asked for again before we give up on it.
-          if (attempt === 1) {
+          // Two passes, not one. A single nudge was not enough: the model would come back
+          // with six-word frames again and the reel would be dropped, so the format quietly
+          // reverted to the headlines it had before. The last attempt still accepts whatever
+          // arrives, because a reel must never cost a post that is otherwise sound.
+          if (attempt <= 2) {
             const draftFrames = candidate.reel?.frames ?? [];
             const draftVerdict = draftFrames.length
               ? validateReelFrames(draftFrames, corpusText)
@@ -1830,9 +1834,11 @@ const server = http.createServer(async (req, res) => {
             if (!draftVerdict.ok) {
               throw new Error(
                 `The reel is missing or unusable: ${draftVerdict.reason}. ` +
-                `Every post must also carry a reel of exactly four frames — one "hook", two "beat", one "payoff" — ` +
-                `each a short line of English under twelve words (ten for the payoff), where any figure shown is one ` +
-                `the excerpts state directly. Keep the carousel exactly as it is and add the reel.`,
+                `Every post must also carry a reel of exactly four frames — one "hook", two "beat", one "payoff". ` +
+                `Write each frame as fully as a carousel slide: the hook 12 to 22 words, each beat 22 to 42, the payoff ` +
+                `15 to 32, in complete sentences. The frame should hold more than a viewer can read as it passes, so ` +
+                `they stop the video to finish it. Any figure shown must be one the excerpts state directly. ` +
+                `Keep the carousel exactly as it is and add the reel.`,
               );
             }
           }

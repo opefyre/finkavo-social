@@ -14,7 +14,37 @@ export type ReelFrameDraft = {
   text: string;
 };
 
-const WORD_CAP: Record<ReelFrameDraft["type"], number> = { hook: 12, beat: 12, payoff: 10 };
+// A reel used to carry about a quarter of what its carousel carried — 6.8 words a frame
+// against 26.4 a slide — because the caps were set to what a viewer could read while the
+// frame went past. That optimises for the wrong thing. A frame nobody can finish in 1.7
+// seconds is a frame they stop to read, and a stopped viewer is a longer view, a replay,
+// and something worth saving. The reel should say what the carousel says.
+//
+// The ceilings below are what the layout can typeset legibly at 1080x1920, not what can
+// be read at speed. The floors matter as much: a model given room to write a sentence
+// will still hand back four words if nothing stops it, which is how this drifted in the
+// first place.
+const WORD_CAP: Record<ReelFrameDraft["type"], number> = { hook: 22, beat: 42, payoff: 32 };
+// The hook floor rises with the others so it stays consistent with the 70-character
+// minimum the wire schema now enforces: roughly twelve words, which is a full opening
+// line rather than a headline.
+// The model writes to whatever floor it is given and stops there — six words when there
+// was none, ten when the floor was fourteen, sixteen when it was raised. So the floor
+// is set where the copy should actually land: a beat at the weight of a carousel slide,
+// which measured 26 words. The hook stays shorter because an opening line is a
+// different job, and it is bounded below by the 70-character minimum on the wire.
+// Settable without a deploy, because this is the one number that decides whether the
+// reel reads like a carousel or like a headline, and it is a judgement about the account
+// rather than about the code. A beat floor of 14 is measured — it produced 16-word beats
+// and 59-word reels. Twenty-two aims at carousel parity, which is what the format is for,
+// but the model has to agree: it writes to whatever floor it is given and stops there, so
+// too high a floor means reels get dropped and posts go out as carousels instead. Lower
+// REEL_MIN_BEAT_WORDS if that starts happening.
+const WORD_FLOOR: Record<ReelFrameDraft["type"], number> = {
+  hook: Number(process.env.REEL_MIN_HOOK_WORDS ?? 12),
+  beat: Number(process.env.REEL_MIN_BEAT_WORDS ?? 22),
+  payoff: Number(process.env.REEL_MIN_PAYOFF_WORDS ?? 15),
+};
 const words = (value: string) => value.trim().split(/\s+/).filter(Boolean).length;
 const normalise = (value: string) => value.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").replace(/\s+/g, " ").trim();
 
@@ -53,8 +83,11 @@ export function validateReelFrames(frames: ReelFrameDraft[], corpusText: string)
   for (const [index, frame] of frames.entries()) {
     const position = `frame ${index + 1} (${frame.type})`;
     const count = words(frame.text);
+    if (count < WORD_FLOOR[frame.type]) {
+      return fail(`${position} has only ${count} words; a ${frame.type} frame needs at least ${WORD_FLOOR[frame.type]} so there is something worth pausing on`);
+    }
     if (count > WORD_CAP[frame.type]) {
-      return fail(`${position} has ${count} words and there is time for ${WORD_CAP[frame.type]}`);
+      return fail(`${position} has ${count} words and the frame can typeset ${WORD_CAP[frame.type]}`);
     }
     if (frame.figure && words(frame.figure) > 3) {
       return fail(`${position} has a figure of ${words(frame.figure)} words; a figure is three words at most`);

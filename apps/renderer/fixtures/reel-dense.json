@@ -1,0 +1,29 @@
+{
+ "topic": "The August IMI instalment closes on the 31st",
+ "visualStyle": "peach_deadline",
+ "sourceLabel": "Autoridade Tributaria e Aduaneira",
+ "frames": [
+  {
+   "type": "hook",
+   "kicker": "10 days left",
+   "headline": "Your IMI instalment is due this month, and August is the one almost everyone forgets"
+  },
+  {
+   "type": "beat",
+   "figure": "31 August",
+   "label": "The deadline",
+   "body": "Miss this date and the tax authority can call in the entire remaining bill at once, rather than letting you keep paying it in parts across the year as you had planned."
+  },
+  {
+   "type": "beat",
+   "figure": "3",
+   "label": "Not two instalments",
+   "body": "The bill is split across May, August and November whenever it passes the threshold, and the middle one is the instalment people miss because nothing else lands in that month to remind them."
+  },
+  {
+   "type": "payoff",
+   "headline": "Check what you owe before the month ends",
+   "action": "The instalment is only charged automatically if you set up direct debit when the first one fell due, so check the portal rather than assuming it is handled."
+  }
+ ]
+}

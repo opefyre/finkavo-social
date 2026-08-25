@@ -12,29 +12,33 @@ export const HOLD_SECONDS = 1.7;
 
 const words = (value: string) => value.trim().split(/\s+/).filter(Boolean).length;
 
+// These ceilings are what the layout can typeset legibly at 1080x1920, not what can be
+// read in the time the frame is on screen. The frame is deliberately fuller than 1.7
+// seconds allows: a viewer who cannot finish it stops the video, and a stopped video is a
+// longer view and a likelier save than one that slid past with six words on it.
 const atMost = (limit: number, field: string) =>
   z.string().min(1).refine(value => words(value) <= limit, {
-    message: `${field} must be ${limit} words or fewer: at ${HOLD_SECONDS}s a frame there is no time to read more`,
+    message: `${field} must be ${limit} words or fewer, which is what the frame can typeset legibly`,
   });
 
 export const ReelFrameSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("hook"),
     kicker: atMost(4, "kicker").optional(),
-    headline: atMost(12, "hook headline"),
+    headline: atMost(22, "hook headline"),
   }),
   z.object({
     type: z.literal("beat"),
     // The figure is what the eye lands on and what gets remembered, so it earns its space
     // by being short: "31 August", "€25", "36 months".
     figure: atMost(3, "figure").optional(),
-    label: atMost(5, "label").optional(),
-    body: atMost(12, "beat body"),
+    label: atMost(6, "label").optional(),
+    body: atMost(42, "beat body"),
   }),
   z.object({
     type: z.literal("payoff"),
-    headline: atMost(8, "payoff headline"),
-    action: atMost(10, "payoff action"),
+    headline: atMost(20, "payoff headline"),
+    action: atMost(32, "payoff action"),
   }),
 ]);
 
