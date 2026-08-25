@@ -93,14 +93,12 @@ export function validateReelFrames(frames: ReelFrameDraft[], corpusText: string)
       return fail(`${position} has a figure of ${words(frame.figure)} words; a figure is three words at most`);
     }
 
-    // The figure is the largest thing on the frame. Repeating it underneath spends the
-    // only other line saying what the viewer has already read.
-    if (frame.figure) {
-      const figure = normalise(frame.figure);
-      if (figure && normalise(frame.text).includes(figure)) {
-        return fail(`${position} repeats its figure "${frame.figure}" in the text below it`);
-      }
-    }
+    // There used to be a rule here forbidding the text from repeating its own figure. It
+    // was right when a frame was six words and the figure would have been most of it. Now
+    // that every frame clears a floor of at least twelve words, no frame is terse enough
+    // for that to be a waste — and inside a sentence, naming the figure is how the
+    // sentence works. The rule could no longer fire, so it is gone rather than left as a
+    // branch nothing reaches.
 
     for (const { acronym, say } of SPELL_OUT) {
       if (acronym.test(`${frame.text} ${frame.label ?? ""} ${frame.kicker ?? ""}`)) {

@@ -33,10 +33,13 @@ describe("what a reel is allowed to say", () => {
     expect(validateReelFrames(crossing, CORPUS)).toEqual({ ok: true });
   });
 
-  it("refuses copy that repeats its own figure underneath it", () => {
+  it("lets a sentence name its own figure", () => {
+    // At six words, repeating the figure underneath wasted the only other line. In a
+    // sentence it is the sentence.
     const result = validateReelFrames(withFrames({ text: "File by 30 June or the split is lost for the whole year, and the deduction goes to one household instead of being shared between both parents." }, 1), CORPUS);
-    expect(result).toEqual({ ok: false, reason: expect.stringContaining("repeats its figure") });
+    expect(result).toEqual({ ok: true });
   });
+
 
   it("refuses an acronym a viewer cannot look up mid-scroll", () => {
     const result = validateReelFrames(withFrames({ text: "Register the household on the AT portal before the window closes, because the split follows what is recorded there." }, 3), CORPUS);
