@@ -55,11 +55,15 @@ describe("copy written to the length of the cut", () => {
     expect(() => ReelManifestSchema.parse(wordy)).toThrow(/figure must be 3 words or fewer/);
   });
 
-  it("holds every frame for the same short beat, so five frames stay under nine seconds", () => {
+  it("holds every frame for the same beat, and keeps five of them inside a scroll", () => {
+    // Long enough that the reveal finishes and the copy sits still for a moment — the
+    // pause is what a viewer catches — and short enough that the whole reel is still
+    // something you fall into rather than commit to.
     const parsed = ReelManifestSchema.parse(manifest());
     const durations = frameDurations(parsed.frames, parsed.holdSeconds);
     expect(new Set(durations).size).toBe(1);
     expect(durations[0]).toBeCloseTo(HOLD_SECONDS, 2);
-    expect(HOLD_SECONDS * 5).toBeLessThan(9);
+    expect(HOLD_SECONDS).toBeGreaterThan(1.9);
+    expect(HOLD_SECONDS * 5).toBeLessThan(13);
   });
 });

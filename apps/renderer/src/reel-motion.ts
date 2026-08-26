@@ -143,8 +143,8 @@ h1.payoff{font-family:"Fraunces",Georgia,serif;font-size:60px;line-height:1.1;le
     at(scene, [{opacity:0},{opacity:1}], start, 340);
     at(scene, [{transform:"translate3d(0,54px,0)"},{transform:"translate3d(0,0,0)"}], start, 620);
     if (!isLast) {
-      at(scene, [{opacity:1},{opacity:0}], start + HOLD - 300, 300, "cubic-bezier(.4,0,1,1)");
-      at(scene, [{transform:"translate3d(0,0,0)"},{transform:"translate3d(0,-46px,0)"}], start + HOLD - 300, 300, "cubic-bezier(.4,0,1,1)");
+      at(scene, [{opacity:1},{opacity:0}], start + HOLD - 340, 340, "cubic-bezier(.4,0,1,1)");
+      at(scene, [{transform:"translate3d(0,0,0)"},{transform:"translate3d(0,-46px,0)"}], start + HOLD - 340, 340, "cubic-bezier(.4,0,1,1)");
     }
 
     var kicker = scene.querySelector(".kicker");
@@ -157,20 +157,26 @@ h1.payoff{font-family:"Fraunces",Georgia,serif;font-size:60px;line-height:1.1;le
     // most conspicuous treatment in the reel.
     var typed = scene.querySelectorAll(".c");
     if (typed.length) {
-      var perChar = Math.min(16, Math.max(6, 900 / typed.length));
+      // Typing occupies a little over half the frame, whatever the line's length, so a
+      // short hook does not finish in a blink and a long one does not still be typing
+      // when the frame leaves.
+      var typeWindow = HOLD * 0.56;
+      var perChar = Math.min(30, Math.max(11, typeWindow / typed.length));
       [].forEach.call(typed, function(c, n){
-        at(c, [{opacity:0},{opacity:1}], start + 220 + n * perChar, 1);
+        at(c, [{opacity:0},{opacity:1}], start + 240 + n * perChar, 90);
       });
     }
 
     var figure = scene.querySelector(".figure");
     if (figure) {
       at(figure, [{opacity:0},{opacity:1}], start + 90, 220);
-      at(figure, [{transform:"translate3d(0,26px,0) scale(.92)"},{transform:"translate3d(0,0,0) scale(1)"}], start + 90, 700);
+      at(figure, [{transform:"translate3d(0,26px,0) scale(.92)"},{transform:"translate3d(0,0,0) scale(1)"}], start + 90, 820);
       var target = figure.getAttribute("data-count");
       if (target !== null) {
+        // Slow enough to watch the number climb. Counting to forty in six-tenths of a
+        // second only registers as a flicker.
         counters.push({ el: figure.querySelector(".num"), to: Number(target),
-                        digits: figure.getAttribute("data-digits") || "", from: start + 120, dur: 620 });
+                        digits: figure.getAttribute("data-digits") || "", from: start + 140, dur: 900 });
       }
     }
 
@@ -184,15 +190,21 @@ h1.payoff{font-family:"Fraunces",Georgia,serif;font-size:60px;line-height:1.1;le
     // fade would drop forty words on screen at once; staggering gives the eye a path
     // through it and makes the pause feel like reading rather than waiting.
     var ws = scene.querySelectorAll(".w");
-    var lead = scene.querySelector(".figure") ? 420 : 260;
-    var perWord = Math.min(30, Math.max(11, 620 / Math.max(1, ws.length)));
+    var lead = scene.querySelector(".figure") ? 520 : 300;
+    // The reveal is timed to finish at about seventy per cent of the frame, whatever the
+    // word count, which leaves the last stretch of the hold with the copy sitting still.
+    // That pause is what someone catches; a reveal that runs right up to the exit reads
+    // as motion rather than as text. Bounded so a very long frame does not become a
+    // flicker and a very short one does not crawl.
+    var revealWindow = Math.max(300, HOLD * 0.70 - lead);
+    var perWord = Math.min(85, Math.max(34, revealWindow / Math.max(1, ws.length)));
     [].forEach.call(ws, function(w, n){
-      at(w, [{opacity:0},{opacity:1}], start + lead + n * perWord, 240);
-      at(w, [{transform:"translate3d(0,16px,0)"},{transform:"translate3d(0,0,0)"}], start + lead + n * perWord, 420);
+      at(w, [{opacity:0},{opacity:1}], start + lead + n * perWord, 300);
+      at(w, [{transform:"translate3d(0,18px,0)"},{transform:"translate3d(0,0,0)"}], start + lead + n * perWord, 520);
     });
 
     var action = scene.querySelector(".action");
-    if (action) at(action, [{opacity:0},{opacity:1}], start + 520, 300);
+    if (action) at(action, [{opacity:0},{opacity:1}], start + 620, 380);
   });
 
   var countEl = document.querySelector(".count");

@@ -8,7 +8,14 @@ import { z } from "zod";
 // comfortably, because a limit tight enough to be correct on average is tight enough to
 // reject most drafts. The message on each one names the number so a rewrite has something
 // to aim at instead of guessing.
-export const HOLD_SECONDS = 1.7;
+// At 1.7 seconds the words arrived at roughly thirty-three a second against a reading
+// speed of four or five, so a frame was a blur and then it was gone: the copy finished
+// revealing with a quarter of a second left before it began sliding out, which is not
+// long enough to register that there is anything to stop for. The extra half-second is
+// spent on the reveal itself and on a beat of stillness after it. The frame still holds
+// far more than can be read in the time it is up — that is the point — but it now reads
+// as deliberate rather than frantic.
+export const HOLD_SECONDS = Number(process.env.REEL_HOLD_SECONDS ?? 2.3);
 
 const words = (value: string) => value.trim().split(/\s+/).filter(Boolean).length;
 
