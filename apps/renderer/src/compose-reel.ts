@@ -184,3 +184,64 @@ export async function composeReel(
 
   return { path: outputPath, seconds: Math.round(seconds * 100) / 100 };
 }
+
+
+/**
+ * Encodes a captured motion sequence.
+ *
+ * Nothing needs a zoom or a crossfade here: the movement is already in the pixels, one
+ * image per thirtieth of a second. That makes this the simple case — point ffmpeg at the
+ * numbered sequence, lay the sound underneath, and stop. The still-per-frame composer
+ * above stays for the fallback path, where a slow crop is the only motion available.
+ */
+export async function composeReelMotion(
+  sequenceDirectory: string,
+  frameCount: number,
+  fps: number,
+  outputPath: string,
+  audio: ReelAudio = {},
+): Promise<{ path: string; seconds: number }> {
+  if (!ffmpegPath) throw new Error("ffmpeg-static did not provide a binary for this platform");
+  if (frameCount < 1) throw new Error("A motion reel needs at least one captured frame");
+  await mkdir(path.dirname(outputPath), { recursive: true });
+
+  const seconds = frameCount / fps;
+  const audioInputs: string[] = [];
+  const audioLabels: string[] = [];
+  const audioFilters: string[] = [];
+
+  // A silent bed the full length of the video, so a shorter sound cannot decide where the
+  // audio track ends and leave the tail of the reel silent — or worse, truncated.
+  audioInputs.push("-f", "lavfi", "-t", seconds.toFixed(3), "-i", "anullsrc=channel_layout=stereo:sample_rate=44100");
+  audioFilters.push(`[1:a]anull[base]`);
+  audioLabels.push("[base]");
+
+  const track = audio.musicPath || audio.effectPath;
+  if (track) {
+    audioInputs.push("-i", track);
+    const gain = audio.musicPath ? 0.32 : 0.5;
+    audioFilters.push(`[2:a]volume=${gain},atrim=0:${seconds.toFixed(3)},afade=t=out:st=${Math.max(0, seconds - 0.6).toFixed(3)}:d=0.6[bed]`);
+    audioLabels.push("[bed]");
+  }
+  audioFilters.push(`${audioLabels.join("")}amix=inputs=${audioLabels.length}:normalize=0:duration=first,aformat=channel_layouts=stereo,alimiter[a]`);
+
+  await run(ffmpegPath, [
+    "-y", "-hide_banner", "-loglevel", "error",
+    "-framerate", String(fps),
+    "-i", path.join(sequenceDirectory, "t-%05d.png"),
+    ...audioInputs,
+    "-filter_complex", audioFilters.join(";"),
+    "-map", "0:v", "-map", "[a]",
+    "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+    // yuv420p is what phones and Instagram's transcoder expect; without it the video
+    // plays as a green rectangle on a good share of devices.
+    "-pix_fmt", "yuv420p",
+    "-profile:v", "high", "-level", "4.1",
+    "-r", String(fps),
+    "-c:a", "aac", "-b:a", "128k", "-shortest",
+    "-movflags", "+faststart",
+    outputPath,
+  ], { maxBuffer: 1024 * 1024 * 16 });
+
+  return { path: outputPath, seconds: Math.round(seconds * 100) / 100 };
+}

@@ -3,6 +3,7 @@ import path from "node:path";
 import { chromium } from "playwright";
 import type { ReelManifest } from "./reel-schema.js";
 import { renderReelFrame, REEL_HEIGHT, REEL_WIDTH } from "./reel-template.js";
+import { renderReelMotion } from "./reel-motion.js";
 
 async function loadAssets() {
   const assetRoot = path.resolve(process.env.RENDER_ASSET_ROOT || "branding/assets");
@@ -68,6 +69,68 @@ export async function renderReel(manifest: ReelManifest, root: string): Promise<
       }
     }
     return outputs;
+  } finally {
+    await browser.close();
+  }
+}
+
+
+/** Frames per second of the captured sequence. Thirty is what Instagram plays back at. */
+export const MOTION_FPS = 30;
+
+/**
+ * Photographs the animated reel one tick at a time.
+ *
+ * The page holds the whole reel and exposes `__seek(ms)`, which puts every animation at
+ * exactly that moment and pauses it. Stepping the clock ourselves rather than recording
+ * in real time is what makes this reproducible: no dropped frames, no dependence on how
+ * fast the machine happens to be, and the same millisecond always yields the same pixel.
+ */
+export async function renderReelMotionFrames(manifest: ReelManifest, root: string): Promise<{ files: string[]; fps: number; durationMs: number }> {
+  const directory = path.resolve(root, "motion");
+  await mkdir(directory, { recursive: true });
+  const assets = await loadAssets();
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const page = await browser.newPage({ viewport: { width: REEL_WIDTH, height: REEL_HEIGHT }, deviceScaleFactor: 1 });
+    await page.setContent(renderReelMotion(manifest, assets), { waitUntil: "load" });
+    await page.evaluate(async () => {
+      await Promise.all([document.fonts.load('900 16px "Fraunces"'), document.fonts.load('900 16px "Noto Sans"')]);
+      await document.fonts.ready;
+    });
+
+    const durationMs = await page.evaluate(() => (window as unknown as { __duration: number }).__duration);
+
+    // Overflow is checked at the moment each scene is fully revealed, because a scene is
+    // deliberately clipped while it animates in and would report a false positive earlier.
+    const holdMs = durationMs / manifest.frames.length;
+    for (let index = 0; index < manifest.frames.length; index++) {
+      await page.evaluate(t => (window as unknown as { __seek: (ms: number) => void }).__seek(t), index * holdMs + holdMs * 0.75);
+      // Measured as a box against the band between the logo and the progress bar. An
+      // earlier version compared scrollHeight with clientHeight and failed everything:
+      // the word spans rest on a translate that pushes them out of the scroll box while
+      // they are still animating in, so every scene looked overflowing and none was.
+      const overflow = await page.evaluate(() => {
+        const HEADER_BOTTOM = 200;
+        const BAR_TOP = 1740;
+        return [...document.querySelectorAll<HTMLElement>(".scene")].some(scene => {
+          const box = scene.getBoundingClientRect();
+          return box.height > 0 && (box.bottom > BAR_TOP || box.top < HEADER_BOTTOM);
+        });
+      });
+      if (overflow) throw new Error(`Reel frame ${index + 1} runs outside the safe band between the logo and the progress bar; shorten the copy`);
+    }
+
+    const files: string[] = [];
+    const totalTicks = Math.round((durationMs / 1000) * MOTION_FPS);
+    for (let tick = 0; tick < totalTicks; tick++) {
+      await page.evaluate(t => (window as unknown as { __seek: (ms: number) => void }).__seek(t), (tick / MOTION_FPS) * 1000);
+      const file = path.join(directory, `t-${String(tick).padStart(5, "0")}.png`);
+      await page.screenshot({ path: file, type: "png" });
+      files.push(file);
+    }
+    await page.close();
+    return { files, fps: MOTION_FPS, durationMs };
   } finally {
     await browser.close();
   }

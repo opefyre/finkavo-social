@@ -26,6 +26,27 @@ function body(frame: ReelFrame): string {
   }
 }
 
+// Shared with the motion template so both draw from one set of tokens. The theme class
+// sits on the element that paints the ground, which is why each theme redefines --bg
+// rather than relying on body.
+export function reelFontFaces(assets: RenderAssets): string {
+  return [
+    `@font-face{font-family:"Fraunces";font-style:normal;font-weight:300 900;font-display:block;src:url("${assets.frauncesLatinExtDataUrl}") format("woff2")}`,
+    `@font-face{font-family:"Fraunces";font-style:normal;font-weight:300 900;font-display:block;src:url("${assets.frauncesLatinDataUrl}") format("woff2")}`,
+    `@font-face{font-family:"Noto Sans";font-style:normal;font-weight:400 900;font-display:block;src:url("${assets.notoLatinExtDataUrl}") format("woff2")}`,
+    `@font-face{font-family:"Noto Sans";font-style:normal;font-weight:400 900;font-display:block;src:url("${assets.notoLatinDataUrl}") format("woff2")}`,
+  ].join("\n");
+}
+
+export function reelThemeCss(): string {
+  return `:root{--petrol:#14332f;--deep:#0a2320;--cream:#eeeae1;--paper:#f7f3eb;--mint:#daf0e6;--ink:#1b2b29;--muted:#586663;--peach:#e3a171;--bg:var(--deep);--fg:var(--paper);--accent:var(--mint)}
+.theme-cream_guide{--bg:#f7f3eb;--fg:var(--ink);--accent:var(--petrol)}
+.theme-mint_checklist{--bg:#daf0e6;--fg:var(--ink);--accent:var(--petrol)}
+.theme-peach_deadline{--bg:#efb78e;--fg:var(--ink);--accent:var(--petrol)}
+.theme-ink_alert{--bg:#102b28;--fg:var(--paper);--accent:var(--peach)}
+.theme-petrol_editorial{--bg:var(--deep);--fg:var(--paper);--accent:var(--mint)}`;
+}
+
 export function renderReelFrame(manifest: ReelManifest, index: number, assets: RenderAssets): string {
   const frame = manifest.frames[index];
   if (!frame) throw new Error(`Reel has no frame at index ${index}`);

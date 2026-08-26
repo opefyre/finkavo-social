@@ -4,8 +4,8 @@ import { readFile, stat } from "node:fs/promises";
 import { renderManifestSchema, type RenderManifest } from "./schema.js";
 import { renderManifest } from "./render.js";
 import { ReelManifestSchema } from "./reel-schema.js";
-import { renderReel } from "./render-reel.js";
-import { composeReel } from "./compose-reel.js";
+import { renderReel, renderReelMotionFrames } from "./render-reel.js";
+import { composeReel, composeReelMotion } from "./compose-reel.js";
 import { chooseSound, loadSoundLibrary } from "./sound-library.js";
 import path from "node:path";
 
@@ -40,6 +40,8 @@ async function processOne() {
     if (job.kind === "reel") {
       const reel = ReelManifestSchema.parse(job.manifest);
       const workDir = path.join(outputRoot, "reels", job.id);
+      // The stills are still rendered, because the first of them is the cover Instagram
+      // is handed and because they are what the fallback below composes from.
       const framePaths = await renderReel(reel, workDir);
 
       // The soundtrack is chosen from the post itself, so a re-render after an edit does
@@ -48,7 +50,21 @@ async function processOne() {
       const library = await loadSoundLibrary(assetRoot);
       const sound = chooseSound(reel.topic, library);
       const audio = sound?.kind === "music" ? { musicPath: sound.path } : sound ? { effectPath: sound.path } : {};
-      const video = await composeReel(reel, framePaths, path.join(workDir, "reel.mp4"), audio);
+      // Photograph the animated reel and encode the sequence. If anything in that path
+      // fails — a browser that will not start, a timeline that will not settle — the
+      // stills and their slow crop are still a publishable reel, and a post going out
+      // looking like last week beats a post not going out at all.
+      let video: { path: string; seconds: number };
+      try {
+        const motion = await renderReelMotionFrames(reel, workDir);
+        video = await composeReelMotion(
+          path.join(workDir, "motion"), motion.files.length, motion.fps,
+          path.join(workDir, "reel.mp4"), audio,
+        );
+      } catch (error) {
+        process.stdout.write(`${JSON.stringify({ level: "warn", message: "motion render failed; composing from stills", jobId: job.id, error: error instanceof Error ? error.message : String(error) })}\n`);
+        video = await composeReel(reel, framePaths, path.join(workDir, "reel.mp4"), audio);
+      }
 
       // Two files: the video, and the opening frame as its cover. Left to itself
       // Instagram picks a frame mid-zoom with the text half-scaled.
