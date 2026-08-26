@@ -41,7 +41,17 @@ const sql = postgres(databaseUrl, { max: 5, idle_timeout: 20, connect_timeout: 1
 const port = Number(process.env.SOCIAL_API_PORT || 4320);
 const reviewBaseUrl = process.env.REVIEW_BASE_URL;
 const reviewPathPrefix = (process.env.REVIEW_PATH_PREFIX || "").replace(/\/$/, "");
-const dailyPublishSlots = [[8, 30], [11, 30], [14, 30], [18, 0], [21, 0]] as const;
+// When a finished post is actually handed to Buffer. This is a different list from the
+// editorial plan's slots and it is the one that decides the times you see in the app, so
+// cutting the plan to two posts a day without moving this left posts still being spread
+// across five old times. Same hours as the plan now: late morning and early evening.
+const dailyPublishSlots: ReadonlyArray<readonly [number, number]> = (process.env.PUBLISH_SLOTS || "11:00,18:00")
+  .split(",").map(entry => entry.trim()).filter(Boolean)
+  .map(entry => {
+    const [hour, minute] = entry.split(":");
+    return [Number(hour), Number(minute ?? 0)] as const;
+  })
+  .filter(([hour, minute]) => Number.isFinite(hour) && Number.isFinite(minute));
 const bufferHandoffHours = Math.min(48, Math.max(1, Number(process.env.BUFFER_HANDOFF_HOURS || 24)));
 // Where the yes comes from. "internal" is the board and the Discord approval link;
 // "buffer_draft" sends the post to Buffer as a draft on its slot and lets the owner
@@ -2005,7 +2015,13 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && url.pathname === "/v1/generation/recover-day") {
       const input = z.object({
         date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-        target: z.number().int().min(1).max(5).default(postsPerDay),
+        // Clamped to the configured cadence rather than trusted. The scheduler that calls
+        // this holds its own copy of the number and was still asking for five a hundred
+        // and eighteen times a day after the cadence moved to two — so every run judged
+        // the day three short, kept generating against a bank that did not need it, and
+        // raised an alert about a shortfall that was not one. The cadence is a setting on
+        // this side; a caller asking for more than it is a caller that has not been told.
+        target: z.number().int().min(1).max(5).default(postsPerDay).transform(value => Math.min(value, postsPerDay)),
         maxRounds: z.number().int().min(1).max(8).default(6),
         maxConcepts: z.number().int().min(1).max(5).default(postsPerDay),
         // This is a runaway guard, not a production target. Capped at 20 it decided the
@@ -2947,7 +2963,9 @@ const server = http.createServer(async (req, res) => {
       // on rather than a schedule that broke. Counting them here meant tidying up four stuck
       // posts immediately raised an alert about having done so.
       const [failed]=await sql`SELECT count(*) AS count FROM social_publish_job j WHERE j.status='failed' AND j.updated_at>now()-INTERVAL '24 hours' AND EXISTS (SELECT 1 FROM social_post p WHERE p.id=j.post_id AND p.archived_at IS NULL)`;if(Number(failed.count)>0)alerts.push(`${failed.count} publish schedule(s) failed in the last 24 hours`);
-      const [renderFailed]=await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${today} AND status='failed'`;if(Number(renderFailed.count)>0)alerts.push(`${renderFailed.count} planned post(s) failed rendering`);
+      // Archived means retired on purpose, the same as in the publish-failure count above.
+      // A post we gave up on is not a renderer that broke.
+      const [renderFailed]=await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${today} AND status='failed' AND archived_at IS NULL`;if(Number(renderFailed.count)>0)alerts.push(`${renderFailed.count} planned post(s) failed rendering`);
       const [stranded]=await sql`SELECT count(*) AS count FROM social_post p WHERE p.status='rendered' AND p.rendered_at<now()-INTERVAL '15 minutes' AND NOT EXISTS(SELECT 1 FROM social_publish_job j WHERE j.post_id=p.id AND j.revision_id=p.approved_revision_id)`;if(Number(stranded.count)>0)alerts.push(`${stranded.count} rendered post(s) are missing an internal publish job`);
       const [localOverdue]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status IN ('pending','retrying') AND scheduled_at<now()`;if(Number(localOverdue.count)>0)alerts.push(`${localOverdue.count} internal queued post(s) need rescheduling`);
       // The seven-day shortfall tally and the still-owed count both used to be listed
