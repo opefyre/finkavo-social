@@ -23,10 +23,22 @@ const words = (value: string) =>
     .map((word, index) => `<span class="w" data-i="${index}">${escapeHtml(word)}</span>`)
     .join(" ");
 
-/** Characters, for the typed opening line. Spaces stay unwrapped so wrapping still works. */
-const chars = (value: string) =>
-  [...value.trim()].map((character, index) =>
-    character === " " ? " " : `<span class="c" data-i="${index}">${escapeHtml(character)}</span>`).join("");
+/**
+ * Characters, for the typed opening line, grouped into words.
+ *
+ * The grouping is the whole point. Each character has to be its own box so it can be
+ * revealed on its own, but a browser is allowed to break a line between two inline-block
+ * boxes — and with one box per character that means a break between any two letters, so
+ * the hook could split a word anywhere. Wrapping each word in a nowrap box restores what
+ * a word is, while leaving the letters inside it individually animatable.
+ */
+const chars = (value: string) => {
+  let index = 0;
+  return value.trim().split(/\s+/).filter(Boolean).map(word => {
+    const letters = [...word].map(character => `<span class="c" data-i="${index++}">${escapeHtml(character)}</span>`).join("");
+    return `<span class="word">${letters}</span>`;
+  }).join(" ");
+};
 
 // A figure like "40 hours" or "31 August" counts its number and keeps its unit. One that
 // carries no number at all — "Both parents" — simply arrives.
@@ -97,7 +109,13 @@ h1.payoff{font-family:"Fraunces",Georgia,serif;font-size:60px;line-height:1.1;le
 
 /* Every revealed unit starts hidden. Without this the first captured frame shows the
    whole page before any animation has had a chance to hide it. */
-.w,.c{display:inline-block;opacity:0;will-change:transform,opacity}
+/* white-space:nowrap is load-bearing. Each word is an inline-block so it can be
+   transformed on its own, and an inline-block shrinks to fit whatever space is left on
+   the line — so a word arriving near the right edge was laid out narrow and then wrapped
+   inside its own box, splitting "employers" into "employ" and "ers" on two lines. Kept
+   atomic, the box moves to the next line whole, which is what a word does. */
+.w,.c{display:inline-block;white-space:nowrap;opacity:0;will-change:transform,opacity}
+.word{display:inline-block;white-space:nowrap}
 .kicker,.label,.figure{opacity:0}
 .action{opacity:0}
 

@@ -119,6 +119,27 @@ export async function renderReelMotionFrames(manifest: ReelManifest, root: strin
         });
       });
       if (overflow) throw new Error(`Reel frame ${index + 1} runs outside the safe band between the logo and the progress bar; shorten the copy`);
+
+      // A word laid out across two lines is a rendering fault, not a copy problem, and it
+      // is invisible in the markup — it only exists once the browser has done the line
+      // breaking. A span that wraps reports more than one client rect, which is a
+      // reliable way to catch it from outside.
+      const split = await page.evaluate(() => {
+        const stage = document.querySelector(".scenes")!.getBoundingClientRect();
+        const faults: string[] = [];
+        for (const span of document.querySelectorAll<HTMLElement>(".w, .c")) {
+          const rects = span.getClientRects();
+          if (!rects.length) continue;
+          // Two rects means the browser broke the word over a line end.
+          if (rects.length > 1) { faults.push(`${span.textContent} (split)`); continue; }
+          // With nowrap it cannot split, so a word too long for the measure runs off the
+          // edge instead — same defect, different symptom, and the one the first version
+          // of this check walked straight past.
+          if (rects[0]!.right > stage.right + 1) faults.push(`${span.textContent} (overflows)`);
+        }
+        return faults.slice(0, 3);
+      });
+      if (split.length) throw new Error(`Reel frame ${index + 1} cannot set ${split.join(", ")} within the measure`);
     }
 
     const files: string[] = [];
