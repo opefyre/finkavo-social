@@ -2811,7 +2811,14 @@ const server = http.createServer(async (req, res) => {
       const jobs = await sql`
         SELECT * FROM social_publish_job
         WHERE status = 'scheduled'
-          AND scheduled_at <= now()
+          -- Due posts, and posts still recorded as waiting on the owner whatever their
+          -- time. Only asking about due posts meant a draft approved into the queue days
+          -- early was never asked about again: our copy said "draft" until its slot came
+          -- round, so reports described work as awaiting approval that had been approved,
+          -- and the overdue check skipped it on the same false grounds. There are only
+          -- ever a handful in that state, so this costs almost nothing against the daily
+          -- Buffer allowance.
+          AND (scheduled_at <= now() OR coalesce(provider_status,'') IN ('draft','needs_approval'))
           AND (last_provider_check_at IS NULL
                OR last_provider_check_at < now() - (${BUFFER_MONITOR_RECHECK_MINUTES}::STRING || ' minutes')::INTERVAL)
         ORDER BY scheduled_at
@@ -2825,6 +2832,17 @@ const server = http.createServer(async (req, res) => {
         try {
           const providerPost = await getBufferPost(String(job.provider_post_id));
           if (!providerPost) continue;
+
+          // Buffer owns what happens to a post once it has it, and that includes the
+          // post's state, not only its time. Ours was written at handoff and never
+          // touched again, so a draft the owner had already approved into the queue
+          // still read as "draft" here — days later, in reports and in the overdue
+          // check, which deliberately ignores drafts on the grounds that the ball is
+          // with the owner. It was not. Take whatever Buffer says.
+          if (providerPost.status && providerPost.status !== job.provider_status) {
+            await sql`UPDATE social_publish_job SET provider_status=${providerPost.status}, updated_at=now() WHERE id=${job.id}`;
+            await sql`INSERT INTO social_event (post_id, event_type, payload) VALUES (${job.post_id}, 'publish.provider_status_changed', ${sql.json({ jobId: job.id, from: job.provider_status ?? null, to: providerPost.status })})`;
+          }
 
           // The owner reschedules from the Buffer app, and nothing brought that back
           // here. Our copy kept the original slot, the confirmation check then read the
