@@ -5,8 +5,8 @@
 // roughly nine times the saves. Reach finds people who have never heard of the account;
 // saves are what a follower does with something they mean to come back to. An account
 // that only posts reels is found and forgotten, and one that only posts carousels is
-// useful to the people it already has and invisible to everyone else. So one of five is
-// a reel.
+// useful to the people it already has and invisible to everyone else. So one of the two
+// fixed posts each day is a reel.
 //
 // Which one is not a question of subject. Any topic can be a reel — the sorting used to
 // be by intent, on the theory that deadlines suit short video and explainers do not, and
@@ -33,7 +33,7 @@ export function choosePostFormat(input: {
   reelsPerDay?: number;
   maxReelsPerDay?: number;
 }): FormatDecision {
-  const postsPerDay = input.postsPerDay ?? 5;
+  const postsPerDay = input.postsPerDay ?? 2;
   const wantedReels = input.reelsPerDay ?? 1;
   const maxReels = input.maxReelsPerDay ?? wantedReels;
 

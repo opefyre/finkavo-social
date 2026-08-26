@@ -50,6 +50,10 @@ const bufferHandoffHours = Math.min(48, Math.max(1, Number(process.env.BUFFER_HA
 // move just because the human one does.
 const reviewMode = process.env.REVIEW_MODE === "buffer_draft" ? "buffer_draft" : "internal";
 
+// How many fixed posts a day the pipeline is trying to land. News items are extra and
+// arrive whenever they break, so a day can exceed this; it is the floor the recovery
+// loop works towards, not a ceiling on the feed.
+const postsPerDay = Math.min(5, Math.max(1, Number(process.env.POSTS_PER_DAY || 2)));
 const bufferQueueSoftLimit = Math.min(9, Math.max(1, Number(process.env.BUFFER_QUEUE_SOFT_LIMIT || 8)));
 const publishAvailableAt = (scheduledAt: Date, now = new Date()) => new Date(Math.max(now.getTime(), scheduledAt.getTime() - bufferHandoffHours * 60 * 60_000));
 const recoveryDaysInProgress = new Set<string>();
@@ -1375,6 +1379,12 @@ const server = http.createServer(async (req, res) => {
       const selected = rowsForDate(plan, planningDate).slice(0, capacity);
       if (!selected.length) return send(res, 409, { error: "The requested date is outside the approved rolling annual plan" });
       await sql`UPDATE social_editorial_plan_slot SET status='replaced',updated_at=now() WHERE publish_date=${planningDate} AND plan_version<>${plan.version} AND status IN ('planned','researching','evidence_ready','held')`;
+      // Retiring by version only works when the version moved. Cutting the day from five
+      // posts to two changed the shape of the plan without changing its number, so the
+      // upsert refreshed slots one and two and left three, four and five sitting there —
+      // the day still had five slots and the old times. Anything beyond what today's plan
+      // asks for is retired on its slot number too, whatever version wrote it.
+      await sql`UPDATE social_editorial_plan_slot SET status='replaced',updated_at=now() WHERE publish_date=${planningDate} AND slot_number>${selected.length} AND status IN ('planned','researching','evidence_ready','held')`;
       const planned = [];
       for (const item of selected) {
         const derivedIdentity = editorialIdentity(item);
@@ -1382,7 +1392,7 @@ const server = http.createServer(async (req, res) => {
         const [slot] = await sql`
           INSERT INTO social_editorial_plan_slot (plan_version,publish_date,publish_time,slot_number,pillar,angle,topic,audience,risk_level,timing_class,reserve_kind,search_terms,required_authority,occurrence_number,subject_family,user_question,content_intent,occurrence_key,campaign_stage,brief)
           VALUES (${plan.version},${item.date},${item.time},${item.slot},${item.pillar},${item.angle},${item.title},${item.audience},${item.risk},${item.timing},${item.reserve},${sql.json(item.evidenceTerms.split("|").map(v=>v.trim()).filter(Boolean))},${item.authority},${item.occurrence},${identity.subjectFamily},${identity.userQuestion},${identity.contentIntent},${identity.occurrenceKey},${identity.campaignStage},${sql.json(item.brief)})
-          ON CONFLICT (plan_version,publish_date,slot_number) DO UPDATE SET topic=excluded.topic,audience=excluded.audience,risk_level=excluded.risk_level,timing_class=excluded.timing_class,search_terms=excluded.search_terms,required_authority=excluded.required_authority,subject_family=excluded.subject_family,user_question=excluded.user_question,content_intent=excluded.content_intent,occurrence_key=excluded.occurrence_key,campaign_stage=excluded.campaign_stage,brief=excluded.brief,updated_at=now()
+          ON CONFLICT (plan_version,publish_date,slot_number) DO UPDATE SET publish_time=excluded.publish_time,topic=excluded.topic,audience=excluded.audience,risk_level=excluded.risk_level,timing_class=excluded.timing_class,search_terms=excluded.search_terms,required_authority=excluded.required_authority,subject_family=excluded.subject_family,user_question=excluded.user_question,content_intent=excluded.content_intent,occurrence_key=excluded.occurrence_key,campaign_stage=excluded.campaign_stage,brief=excluded.brief,updated_at=now()
           RETURNING *
         `;
         planned.push(slot);
@@ -1995,9 +2005,9 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && url.pathname === "/v1/generation/recover-day") {
       const input = z.object({
         date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-        target: z.number().int().min(1).max(5).default(5),
+        target: z.number().int().min(1).max(5).default(postsPerDay),
         maxRounds: z.number().int().min(1).max(8).default(6),
-        maxConcepts: z.number().int().min(1).max(5).default(5),
+        maxConcepts: z.number().int().min(1).max(5).default(postsPerDay),
         // This is a runaway guard, not a production target. Capped at 20 it decided the
         // day was over while slots were still empty: five posts at the observed pass rate
         // needs more tries than that, and stopping short is the one outcome the schedule
@@ -2958,7 +2968,7 @@ const server = http.createServer(async (req, res) => {
       // is not counted as an overdue confirmation. provider_status carries what Buffer last
       // said about it: draft and needs_approval both mean the ball is with the owner.
       const [overdue]=await sql`SELECT count(*) AS count FROM social_publish_job WHERE status='scheduled' AND scheduled_at<now()-INTERVAL '20 minutes' AND coalesce(provider_status,'') NOT IN ('draft','needs_approval')`;if(Number(overdue.count)>0)alerts.push(`${overdue.count} publication confirmation(s) are overdue`);
-      if(lisbonTime>='09:00'){const [batch]=await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${today} AND status NOT IN ('blocked','failed','rejected')`;if(Number(batch.count)<5){const [recovery]=await sql`SELECT payload FROM social_event WHERE event_type='generation.day_recovery_completed' AND payload->>'day'=${today} ORDER BY created_at DESC LIMIT 1`;if(recovery?.payload?.budgetExhausted===true){const failures=await sql`SELECT s.topic,e.payload->>'error' AS error FROM social_editorial_plan_slot s LEFT JOIN LATERAL (SELECT payload FROM social_event WHERE event_type='generation.failed' AND payload->>'planSlotId'=s.id::STRING ORDER BY created_at DESC LIMIT 1) e ON true WHERE s.publish_date=${today} AND s.status='held' ORDER BY s.slot_number`;alerts.push(`Daily recovery budget exhausted: ${batch.count}/5 posts ready after ${recovery.payload.attemptsUsed}/${recovery.payload.attemptBudget} candidate attempts${failures.length?`\n${failures.map(row=>`${row.topic}: ${row.error||'no verified replacement available'}`).join('\n')}`:''}`);}}}
+      if(lisbonTime>='09:00'){const [batch]=await sql`SELECT count(*) AS count FROM social_post WHERE planned_for=${today} AND status NOT IN ('blocked','failed','rejected')`;if(Number(batch.count)<postsPerDay){const [recovery]=await sql`SELECT payload FROM social_event WHERE event_type='generation.day_recovery_completed' AND payload->>'day'=${today} ORDER BY created_at DESC LIMIT 1`;if(recovery?.payload?.budgetExhausted===true){const failures=await sql`SELECT s.topic,e.payload->>'error' AS error FROM social_editorial_plan_slot s LEFT JOIN LATERAL (SELECT payload FROM social_event WHERE event_type='generation.failed' AND payload->>'planSlotId'=s.id::STRING ORDER BY created_at DESC LIMIT 1) e ON true WHERE s.publish_date=${today} AND s.status='held' ORDER BY s.slot_number`;alerts.push(`Daily recovery budget exhausted: ${batch.count}/${postsPerDay} posts ready after ${recovery.payload.attemptsUsed}/${recovery.payload.attemptBudget} candidate attempts${failures.length?`\n${failures.map(row=>`${row.topic}: ${row.error||'no verified replacement available'}`).join('\n')}`:''}`);}}}
       const signature=hash({today,alerts});let sent=false;if(alerts.length){const [existing]=await sql`SELECT id FROM social_event WHERE event_type='operations.alert_sent' AND payload->>'signature'=${signature} LIMIT 1`;if(!existing){sent=await notifyDiscord('Finkavo pipeline alert',{date:today,problems:alerts.join('\n')});await sql`INSERT INTO social_event(event_type,payload) VALUES('operations.alert_sent',${sql.json({signature,alerts})})`;}}
       return send(res,200,{date:today,alerts,sent});
     }

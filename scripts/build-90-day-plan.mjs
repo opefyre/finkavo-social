@@ -13,7 +13,11 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { PILLAR_TERMS, deriveEvidenceTerms } from "./lib/evidence-terms.mjs";
 
-const SLOT_TIMES = ["08:30", "11:30", "14:30", "18:00", "21:00"];
+// Two fixed posts a day, morning and evening. Five was a volume the bank could not
+// feed and the free token budget could not pay for — most days came up short, which
+// reads worse than posting twice and always landing it. News still goes out whenever
+// it breaks, on top of these.
+const SLOT_TIMES = ["11:00", "18:00"];
 const NEWS_FLEX_SLOT = 3; // zero-based: the 18:00 slot is reserved for verified news
 // Portugal-admin content is intrinsically high risk: the standard marks tax, legal,
 // deadline, fee and eligibility content high, which is 73% of the bank. A cap of 2 a day
