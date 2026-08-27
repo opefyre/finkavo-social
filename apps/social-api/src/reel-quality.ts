@@ -24,7 +24,7 @@ export type ReelFrameDraft = {
 // be read at speed. The floors matter as much: a model given room to write a sentence
 // will still hand back four words if nothing stops it, which is how this drifted in the
 // first place.
-const WORD_CAP: Record<ReelFrameDraft["type"], number> = { hook: 22, beat: 42, payoff: 32 };
+export const WORD_CAP: Record<ReelFrameDraft["type"], number> = { hook: 22, beat: 42, payoff: 32 };
 // The hook floor rises with the others so it stays consistent with the 70-character
 // minimum the wire schema now enforces: roughly twelve words, which is a full opening
 // line rather than a headline.
@@ -40,7 +40,7 @@ const WORD_CAP: Record<ReelFrameDraft["type"], number> = { hook: 22, beat: 42, p
 // but the model has to agree: it writes to whatever floor it is given and stops there, so
 // too high a floor means reels get dropped and posts go out as carousels instead. Lower
 // REEL_MIN_BEAT_WORDS if that starts happening.
-const WORD_FLOOR: Record<ReelFrameDraft["type"], number> = {
+export const WORD_FLOOR: Record<ReelFrameDraft["type"], number> = {
   hook: Number(process.env.REEL_MIN_HOOK_WORDS ?? 12),
   beat: Number(process.env.REEL_MIN_BEAT_WORDS ?? 22),
   payoff: Number(process.env.REEL_MIN_PAYOFF_WORDS ?? 15),
