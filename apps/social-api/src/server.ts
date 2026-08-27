@@ -1750,8 +1750,17 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === "POST" && url.pathname === "/v1/generate") {
+      // Stage timing. A generation that never returns looks identical from outside to one
+      // that is merely slow, and the process sitting at zero per cent CPU says only that
+      // it is waiting — not for what. This says for what.
+      const genStarted = Date.now();
+      const mark = (stage: string, extra?: Record<string, unknown>) =>
+        console.log(JSON.stringify({ level: "info", at: "generate", stage, ms: Date.now() - genStarted, ...extra }));
+      mark("entered");
       const generationInput = GenerateSchema.parse(await readJson(req));
+      mark("body-parsed");
       const [selectedConcept] = await sql`SELECT c.*,b.sources,b.bundle_hash,b.expires_at,s.brief FROM social_post_concept c LEFT JOIN social_topic_evidence_bundle b ON b.id=c.evidence_bundle_id AND b.verification_state='verified' AND b.expires_at>now() LEFT JOIN social_editorial_plan_slot s ON s.id=c.plan_slot_id WHERE c.id=${generationInput.conceptId} AND c.status='planned'`;
+      mark("concept-loaded", { found: Boolean(selectedConcept) });
       if (!selectedConcept) return send(res,409,{error:"Concept is not planned or its evidence is unavailable"});
       let evidenceSources=(selectedConcept.sources || []) as Array<Record<string,unknown>>;
       if(selectedConcept.plan_slot_id&&!evidenceSources.length)return send(res,409,{error:"Planned content requires a current verified topic-specific evidence bundle"});
@@ -1767,6 +1776,7 @@ const server = http.createServer(async (req, res) => {
         `;
         if (document) evidenceSources=[{ documentId:document.id,url:document.source_url,title:document.title,publisher:document.source_authority,tier:document.source_tier,locale:document.original_lang,retrievedAt:document.retrieved_at,contentHash:document.content_hash,relevanceScore:50,excerpts:document.excerpts }];
       }
+      mark("evidence-resolved", { sources: evidenceSources.length });
       if (!evidenceSources.length) return send(res,409,{error:"Concept has no current verified source material"});
       const source=evidenceSources[0]; const documentId=String(source.documentId);
       let checked: z.infer<typeof DraftSchema> | null = null;
@@ -1782,14 +1792,33 @@ const server = http.createServer(async (req, res) => {
       // rate-limit regex recognises, so a deferred request was read as an editorial
       // failure and retired a perfectly good brief. The type is the reliable signal.
       let lastErrorWasPacing = false;
+      // The whole request, not just one provider call.
+      //
+      // Three attempts, each walking a chain of five providers, is easily ten minutes
+      // when they are slow — and the scheduler that drives this gives up at nine. So a
+      // generation could never finish inside the window that started it: the day made
+      // attempt after attempt, none of them completing, and produced nothing for a day
+      // and a half while looking, from outside, like a pipeline that had stopped. Bounded
+      // here, an attempt that runs long defers and the concept keeps its place for the
+      // next tick.
+      const generationDeadline = Date.now() + Number(process.env.GENERATION_MAX_SECONDS ?? 240) * 1000;
+
       // A fact-card source used to skip the model outright and ship simpleDraft(). That
       // guaranteed a blocked post: the mechanical draft never carries a real caption or
       // standalone value, so the pre-Discord gate rejected every one and the slot was
       // spent for nothing. The model runs first now and simpleDraft() waits underneath as
       // the fallback. Accuracy is not what was protecting these posts anyway — the
       // verbatim-quote and evidence-reliability checks below apply to model output too.
-      for (let attempt = 1; !checked && attempt <= 3; attempt++) {
+      // Started only when the remaining budget can hold a whole attempt. Checking the
+      // deadline alone let an attempt begin a second before it and then run its full
+      // length past it, which is how a request bounded at two hundred seconds still took
+      // more than six hundred. An attempt is the chain plus, at most, one paid call.
+      const attemptBudgetMs = Number(process.env.LLM_CHAIN_DEADLINE_MS ?? 70_000)
+        + Number(process.env.LLM_FALLBACK_TIMEOUT_MS ?? 240_000)
+        + 15_000;
+      for (let attempt = 1; !checked && attempt <= 3 && Date.now() + attemptBudgetMs <= generationDeadline; attempt++) {
         try {
+          mark("model-call-start", { attempt });
           const generated = await generateDraft({
             title: String(selectedConcept.topic), sourceUrl: String(source.url),
             authority: source.publisher ? String(source.publisher) : null,
@@ -1803,6 +1832,7 @@ const server = http.createServer(async (req, res) => {
             allowPaid,
             ...(selectedConcept ? { editorialContext: { topic: String(selectedConcept.topic), reason: selectedConcept.reason ? String(selectedConcept.reason) : null, campaignStage: selectedConcept.campaign_stage ? String(selectedConcept.campaign_stage) : null, plannedFor: selectedConcept.planned_for ? String(selectedConcept.planned_for) : null, expiresAt: selectedConcept.expires_at ? String(selectedConcept.expires_at) : null, purpose:selectedConcept.brief?.purpose?String(selectedConcept.brief.purpose):undefined,userQuestion:selectedConcept.brief?.userQuestion?String(selectedConcept.brief.userQuestion):undefined,requiredAnswers:Array.isArray(selectedConcept.brief?.requiredAnswers)?selectedConcept.brief.requiredAnswers.map(String):undefined } } : {}),
           });
+          mark("model-returned", { attempt, model: generated.model });
           const candidate = ensureKnownAcronymsAreDefined(DraftSchema.parse(generated.draft));
           const sourceLabel = String(
             evidenceSources.find((item) => item.publisher)?.publisher ||
@@ -1962,6 +1992,7 @@ const server = http.createServer(async (req, res) => {
         });
         return send(res, 409, { error: "Duplicate topic blocked", duplicateOf: duplicate.post.id, reason: duplicate.reason });
       }
+      mark("validated");
       const inserted = await sql.begin(async (tx) => {
         const [post] = await tx`
           INSERT INTO social_post (topic, source_document_id, source_url, source_title, source_authority, source_fetched_at,
@@ -3018,7 +3049,13 @@ const server = http.createServer(async (req, res) => {
   } catch (error) {
     const clientError = error instanceof z.ZodError || (error instanceof SyntaxError);
     const message = error instanceof Error ? error.message : "Unknown error";
-    console.error(JSON.stringify({ level: "error", message }));
+    // "fetch failed" on its own is undiagnosable — it is what undici throws for every
+    // network fault, and the reason lives on the cause. Six hundred of those in the log
+    // said nothing about which host, which port, or why. The cause and the route go with
+    // it now.
+    const cause = error instanceof Error && error.cause ? String((error.cause as { message?: string }).message ?? error.cause) : undefined;
+    const stack = error instanceof Error && !cause ? String(error.stack ?? "").split("\n").slice(1, 4).join(" | ") : undefined;
+    console.error(JSON.stringify({ level: "error", message, cause, route: `${req.method} ${req.url ?? ""}`.slice(0, 120), stack }));
     return send(res, clientError ? 400 : 500, { error: clientError ? message : "Internal server error" });
   }
 });

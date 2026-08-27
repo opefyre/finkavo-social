@@ -170,6 +170,30 @@ let lastCallAt = 0;
 let providerBlockedUntil = 0;
 /** Requests queue rather than race: two callers must not both read the same free window. */
 let gate: Promise<unknown> = Promise.resolve();
+// How many callers may be queued on the gate at once.
+//
+// Reservations are serialised so two callers cannot claim the same headroom, and each one
+// may sleep up to PACING_MAX_INLINE_WAIT_MS waiting for room. Those two facts together
+// make the gate a queue with a minute of latency per place in it — so with the scheduler
+// starting generations every few minutes, the queue grew faster than it drained and a new
+// request could sit behind it for as long as it liked. From outside it looked like the
+// pipeline had stopped: the process idle at zero per cent CPU, no errors, requests never
+// returning, and nothing generated for a day and a half.
+//
+// A queue this deep is already a queue nobody should join. Deferring is cheap — the
+// concept keeps its place and the next tick picks it up — so past this depth a caller is
+// turned away immediately rather than added to it.
+const MAX_PACING_QUEUE = Number(process.env.LLM_MAX_PACING_QUEUE ?? 3);
+// How long one call to generateStructured may spend walking the chain.
+//
+// Nothing bounded the whole attempt before, only each provider individually: ninety
+// seconds for the primary across two tries, then four standbys at up to four minutes
+// each. Twenty minutes for one draft, with the caller holding the connection the entire
+// time and no error to show for it — which is what "the pipeline has stopped" actually
+// looked like. Past this the chain gives up and defers, and the concept is picked up on
+// the next tick with its attempts intact.
+const CHAIN_DEADLINE_MS = Number(process.env.LLM_CHAIN_DEADLINE_MS ?? 70_000);
+let queued = 0;
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -221,7 +245,18 @@ function waitFor(estimated: number, now: number): number {
   // reported rather than slept on: the oldest spend has to age a full day to free room.
   if (dailyTokens(now) + estimated > TOKENS_PER_DAY) {
     const oldest = dailySpends.length ? dailySpends[0].at : now;
-    return Math.max(WINDOW_MS, DAY_MS - (now - oldest));
+    // Floored above the inline-wait threshold so this always defers and never sleeps.
+    //
+    // It used to be floored at WINDOW_MS, sixty seconds, which is *below* the seventy the
+    // caller is willing to hold for — so once the day was spent the reservation slept a
+    // minute, woke, found the day still spent, and slept again. Forever. And because
+    // reservations are serialised, every other generation queued behind that one: the
+    // whole pipeline stopped, silently, with no error to log because nothing had failed
+    // yet. Sixty-three attempts produced nothing and the request never returned.
+    //
+    // The comment above has always said a day's allowance cannot be waited out inside a
+    // request. This makes that true.
+    return Math.max(PACING_MAX_INLINE_WAIT_MS + 1_000, DAY_MS - (now - oldest));
   }
   const { tokens, requests, oldest } = windowState(now);
   const overTokens = tokens + estimated > TOKENS_PER_MINUTE - SAFETY_MARGIN;
@@ -240,12 +275,33 @@ function waitFor(estimated: number, now: number): number {
  * headroom. Returns a settle() to reconcile the reservation against real usage.
  */
 async function reserve(estimated: number): Promise<(actual: number | null) => void> {
+  if (queued >= MAX_PACING_QUEUE) {
+    throw new LlmRateLimitError(
+      `paced locally: ${queued} request(s) are already waiting for room in the window`,
+      Math.ceil(PACING_MAX_INLINE_WAIT_MS / 1_000),
+    );
+  }
+  queued += 1;
   const claim = gate.then(async () => {
+    // PACING_MAX_INLINE_WAIT_MS is how long the caller will hold in total, and it was
+    // being applied to each turn of this loop instead.
+    //
+    // The minute allows 8,000 tokens and a draft reserves about 7,600, so only one
+    // request fits per minute. A second one computed a wait of just under sixty seconds,
+    // which is below the seventy it is allowed to hold for, slept it, woke to find the
+    // window full again, and slept again — for as long as anything kept arriving. The
+    // request never returned and never failed. From outside: a process at zero per cent
+    // CPU, no error, and a pipeline that had quietly stopped generating.
+    //
+    // Budgeted across the whole reservation, a caller waits its seventy seconds once and
+    // then defers, which is what deferring is for — the concept keeps its place and the
+    // next tick picks it up.
+    let sleptMs = 0;
     for (;;) {
       const now = Date.now();
       const wait = waitFor(estimated, now);
       if (wait === 0) break;
-      if (wait > PACING_MAX_INLINE_WAIT_MS) {
+      if (sleptMs + wait > PACING_MAX_INLINE_WAIT_MS) {
         // Naming which of the two is holding the request matters when reading the logs:
         // a provider back-off is the tier refusing us for minutes, while a full local
         // window clears within the minute.
@@ -261,6 +317,7 @@ async function reserve(estimated: number): Promise<(actual: number | null) => vo
         );
       }
       await sleep(wait);
+      sleptMs += wait;
     }
     const at = Date.now();
     lastCallAt = at;
@@ -272,7 +329,12 @@ async function reserve(estimated: number): Promise<(actual: number | null) => vo
   });
   // Keep the queue intact even when this caller gives up, so the next one still waits.
   gate = claim.catch(() => undefined);
-  const spend = await claim;
+  let spend: Spend;
+  try {
+    spend = await claim;
+  } finally {
+    queued -= 1;
+  }
   return (actual: number | null) => {
     // A provider that does not report usage returns null, and one that reports zero has
     // told us nothing either. Treating either as the true cost refunded the whole
@@ -502,8 +564,11 @@ export async function generateStructured(
     + (request.schema ? estimateTokens(JSON.stringify(request.schema)) : 0)
     + completionBudget(request);
 
+  const chainDeadline = Date.now() + CHAIN_DEADLINE_MS;
+  const outOfTime = () => Date.now() >= chainDeadline;
+
   let paced: LlmRateLimitError | null = null;
-  for (let attempt = 1; attempt <= 2 && !paced; attempt++) {
+  for (let attempt = 1; attempt <= 2 && !paced && !outOfTime(); attempt++) {
     const settle = await reserve(estimated).catch(error => {
       if (error instanceof LlmRateLimitError) { paced = error; return null; }
       throw error;
@@ -533,6 +598,7 @@ export async function generateStructured(
   // request still surfaces as itself: it fails identically everywhere and is thrown above
   // rather than retried four more times.
   for (const fallback of resolveFallbackConfigs().filter(config => standbyAvailable(config.provider) && meteredAllows(config.provider))) {
+    if (outOfTime()) break;
     try {
       // Counted before the call, so a request that never returns still costs its place in
       // the day's allowance. A ceiling that only counts successes is not a ceiling.
@@ -550,7 +616,9 @@ export async function generateStructured(
       throw error;
     }
   }
-  // Everything free has refused. Only now, and only if the caller asked for it.
+  // Everything free has refused. Only now, and only if the caller asked for it. The
+  // deadline does not apply here: reaching the paid provider means the free chain is
+  // spent, and one bounded call is what the day is short of.
   if (options.allowPaid) {
     const paid = resolvePaidConfig(estimated);
     if (paid) {

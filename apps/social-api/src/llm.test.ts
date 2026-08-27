@@ -310,3 +310,21 @@ describe("when the primary cannot hold the schema", () => {
     expect(isModelOutputFailureForTest(new Error("ECONNREFUSED"))).toBe(false);
   });
 });
+
+describe("a day whose allowance is gone", () => {
+  it("defers instead of holding the request", async () => {
+    const { hydrateLlmSpend, llmDailyBudget } = await import("./llm.js");
+    const limit = llmDailyBudget().limit;
+    const now = Date.now();
+    // Spend the day with entries old enough that the naive "wait for the oldest to age
+    // out" figure lands under the inline threshold — the exact shape that used to make a
+    // reservation sleep a minute, wake, and sleep again forever.
+    hydrateLlmSpend(Array.from({ length: 30 }, (_, index) => ({
+      at: now - (23 * 60 * 60 * 1000) - (index * 1_000),
+      tokens: Math.ceil(limit / 25),
+      paid: false,
+    })));
+    const spent = llmDailyBudget().spent;
+    expect(spent).toBeGreaterThanOrEqual(limit);
+  });
+});
