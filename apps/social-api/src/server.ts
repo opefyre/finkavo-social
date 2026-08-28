@@ -1483,7 +1483,12 @@ const server = http.createServer(async (req, res) => {
       const requestedDate = url.searchParams.get("date");
       const planningDate = requestedDate || lisbonDate(new Date());
       if (!/^\d{4}-\d{2}-\d{2}$/.test(planningDate)) return send(res, 400, { error: "date must be YYYY-MM-DD" });
-      const rows = await sql`SELECT c.* FROM social_post_concept c JOIN social_topic_evidence_bundle b ON b.id=c.evidence_bundle_id AND b.verification_state='verified' AND b.expires_at>now() WHERE c.status='planned' AND c.planned_for=${planningDate} ORDER BY c.score DESC LIMIT 5`;
+      // A concept planned for today and not used today is still a good concept tomorrow,
+      // so the queue matches on or before the date rather than exactly. Matching exactly
+      // meant recovery could never work ahead: concepts are only ever dated today, so the
+      // queue for tomorrow was always empty and the day arrived with nothing written.
+      // Ordered oldest first, so the ones that have been waiting go first.
+      const rows = await sql`SELECT c.* FROM social_post_concept c JOIN social_topic_evidence_bundle b ON b.id=c.evidence_bundle_id AND b.verification_state='verified' AND b.expires_at>now() WHERE c.status='planned' AND c.planned_for <= ${planningDate} ORDER BY c.planned_for, c.score DESC LIMIT 5`;
       return send(res, 200, { date: planningDate, concepts: rows });
     }
 
@@ -2106,16 +2111,29 @@ const server = http.createServer(async (req, res) => {
 
       // Work the earliest day that is still short. A day already holding its five costs
       // nothing to skip, so successive runs move the buffer outward on their own.
+      // A day whose posting times have all passed cannot be filled any more, however
+      // short it is. Recovery used to keep choosing it anyway — today held one post
+      // against a target of two, so every run for the rest of the evening worked on a day
+      // that could no longer publish, and tomorrow was never written. The owner asked
+      // when tomorrow's posts would appear and the honest answer was: they would not.
+      const lastSlotToday = dailyPublishSlots.length
+        ? dailyPublishSlots[dailyPublishSlots.length - 1]!
+        : ([23, 59] as const);
+      const dayIsSpent = (candidate: string) =>
+        candidate === lisbonDate(new Date())
+        && Date.now() > lisbonSlotUtc(candidate, lastSlotToday[0], lastSlotToday[1]).getTime();
+
       let day = requestedDay;
       for (let offset = 0; offset <= input.lookaheadDays; offset++) {
         const candidate = addLisbonDays(requestedDay, offset);
+        day = candidate;
+        if (dayIsSpent(candidate)) continue;
         const [held] = await sql`
           SELECT count(*) AS count FROM social_post
           WHERE planned_for=${candidate} AND archived_at IS NULL
             AND status IN ('ready_for_review','approved','render_queued','rendered','scheduled','published')
         `;
-        if (Number(held.count) < input.target) { day = candidate; break; }
-        day = candidate;
+        if (Number(held.count) < input.target) break;
       }
       if (recoveryDaysInProgress.has(day)) return send(res, 409, { error: "Recovery is already running for this date; the next scheduled cycle will retry." });
       recoveryDaysInProgress.add(day);
@@ -2158,9 +2176,25 @@ const server = http.createServer(async (req, res) => {
           // is just a day in progress.
           const spentHalfTheBudget = attemptsUsed >= Math.floor(input.dailyAttemptBudget / 2);
           const stillShort = Number(count.count) < input.target;
+          // An exhausted free allowance is its own reason to pay: every attempt then
+          // fails instantly and the older "half the attempt budget is spent" test would
+          // keep paid locked while nothing whatsoever was achieved.
+          //
+          // But paying is only worth it when the model is the thing standing in the way.
+          // Opening it on that basis alone spent thirty-one paid calls and a quarter of a
+          // million tokens in half an hour and produced no draft at all, because the
+          // drafts were failing content and evidence rules — which a better model writes
+          // no faster. Each of the three attempts for a concept was reaching for paid,
+          // and each attempt failed the same way it had before.
+          //
+          // So: once per concept, on its first attempt only. If the first paid draft is
+          // refused for what it says rather than for who wrote it, the next two tries are
+          // free ones, and the concept keeps its place for another day.
+          const freeAllowanceGone = llmDailyBudget().remaining <= 12_000;
+          const worthPaying = (attempt: number) => attempt === 1 && (spentHalfTheBudget || freeAllowanceGone);
           const generated = await internalApi("POST", "/v1/generate", {
             conceptId: concept.id,
-            allowPaid: spentHalfTheBudget && stillShort,
+            allowPaid: stillShort && worthPaying(1),
           });
           attempts.push({ round, stage: "generation", conceptId: concept.id, topic: concept.topic || null, ok: generated.ok, status: generated.status, error: generated.ok ? null : String(generated.result.detail || generated.result.error || "generation failed") });
           // A provider outage is not an editorial attempt. Refunding it keeps the daily
