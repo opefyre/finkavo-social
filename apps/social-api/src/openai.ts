@@ -1,5 +1,6 @@
 import { DraftSchema, draftJsonSchema, providerSchema, type Draft } from "./contracts.js";
 import { WORD_CAP, WORD_FLOOR } from "./reel-quality.js";
+import { renderLimitBriefing } from "./render-limits.js";
 import { generateStructured } from "./llm.js";
 
 type Candidate = {
@@ -66,6 +67,7 @@ export async function generateDraft(candidate: Candidate): Promise<{ draft: Draf
       "Repeat recurring deadlines when the candidate is a new filing period; prior coverage is not a reason to omit it.",
       "Every body, item, quote and CTA is a complete thought ending in . ? ! or ). Sentence case, never all-caps. Slide copy is clean English paraphrase, never a raw corpus fragment, Markdown, chunk labels such as D1, or dangling quotes.",
       "altText describes only the text, layout and approved icon actually in the slide. Never invent photos, people, charts or symbols the template will not render.",
+      renderLimitBriefing(),
       // These sat at the top for a while, shouted, because the reel kept coming back
       // empty. The cause turned out to be a missing field in the schema — the model had
       // nowhere to write one — and by the time that was fixed the emphasis was still here,

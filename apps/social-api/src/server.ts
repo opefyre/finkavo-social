@@ -14,6 +14,7 @@ import { notifyDiscord } from "./discord.js";
 import { renderReviewPreview } from "./preview.js";
 import { retryDecision } from "./retry-policy.js";
 import { classifyGenerationFailure, countsAsAttempt, shouldRetireConcept, MAX_GENERATION_ATTEMPTS } from "./block-reason.js";
+import { RENDER_LIMITS, renderLimitFailures, renderLimitBriefing } from "./render-limits.js";
 import { expandCalendar, loadEditorialCalendar, selectDailyMix } from "./planner.js";
 import { assertEnglishUserCopy, validateSocialDraft } from "./draft-quality.js";
 import { composeInstagramCaption } from "./caption.js";
@@ -920,13 +921,13 @@ const evidenceWindows=(text:string,terms:string[])=>{const normalized=text.repla
 function createRenderManifest(post: Record<string, unknown>, revision: Record<string, unknown>) {
   const raw = revision.slides as Array<Record<string, unknown>>;
   const slides = raw.map((slide, index) => {
-    const base = { eyebrow: fit(slide.eyebrow, 42), title: fit(slide.title, 82), sourceLabel: fit(slide.sourceLabel || post.source_authority || "Finkavo source-backed guide", 80) };
+    const base = { eyebrow: fit(slide.eyebrow, RENDER_LIMITS.eyebrow), title: fit(slide.title, RENDER_LIMITS.title), sourceLabel: fit(slide.sourceLabel || post.source_authority || "Finkavo source-backed guide", 80) };
     const type = String(slide.type || (index === 0 ? "cover" : index === raw.length - 1 ? "summary" : "content"));
     const icon = String(slide.icon || "document");
-    if (type === "cover") return { ...base, type, icon, category: fit(post.category || "Portugal", 32), subtitle: fit(slide.body, 150) };
-    if (type === "summary") return { ...base, type, icon, body: fit(slide.body, 300), cta: fit(revision.call_to_action, 80) };
-    if (type === "bullets" || type === "steps") return { ...base, type, icon, items: (slide.items as unknown[]).map((item) => fit(item, 130)).slice(0, 5) };
-    return { ...base, type: "content", icon, body: fit(slide.body, 420), ...(slide.highlight ? { highlight: fit(slide.highlight, 80) } : {}) };
+    if (type === "cover") return { ...base, type, icon, category: fit(post.category || "Portugal", RENDER_LIMITS.category), subtitle: fit(slide.body, RENDER_LIMITS.coverSubtitle) };
+    if (type === "summary") return { ...base, type, icon, body: fit(slide.body, RENDER_LIMITS.summaryBody), cta: fit(revision.call_to_action, RENDER_LIMITS.callToAction) };
+    if (type === "bullets" || type === "steps") return { ...base, type, icon, items: (slide.items as unknown[]).map((item) => fit(item, RENDER_LIMITS.item)).slice(0, 5) };
+    return { ...base, type: "content", icon, body: fit(slide.body, RENDER_LIMITS.contentBody), ...(slide.highlight ? { highlight: fit(slide.highlight, RENDER_LIMITS.highlight) } : {}) };
   });
   const visualStyle = selectVisualStyle(post);
   return { schemaVersion: 1, postId: String(post.id), revisionId: String(revision.id), locale: "en", templateVersion: "finkavo-v3", visualStyle, slides };
@@ -1849,6 +1850,16 @@ const server = http.createServer(async (req, res) => {
           const publicCopy=[candidate.hook,candidate.caption,...candidate.slides.flatMap(slide=>[slide.title,slide.body,...slide.items])].join(" ");
           if (/\b(?:sources?|excerpts?|documents?)\b.{0,60}\b(?:do not|does not|don't|cannot|fail(?:s|ed)? to|not enough)\b/i.test(publicCopy)) throw new Error("Draft discusses missing evidence instead of delivering the predetermined topic");
           validateSocialDraft(candidate);
+          // The renderer's own contract, applied here rather than at render time. A slide
+          // that is too long to draw used to pass every gate, spend its tokens, and die
+          // in the manifest — fatally, and after the cost. Checked here it is just
+          // another repairable defect, and the model is told exactly which field.
+          const tooLong = renderLimitFailures(candidate.slides as unknown as Array<Record<string, unknown>>, candidate.callToAction);
+          if (tooLong.length) {
+            throw new Error(
+              `These are too long to fit the template: ${tooLong.map(f => `${f.field} is ${f.length} characters and the limit is ${f.limit}`).join("; ")}. Shorten them without losing the meaning.`,
+            );
+          }
           const corpusText = evidenceSources.flatMap(s=>s.excerpts as string[]).join("\n").replace(/\s+/g, " ");
 
           // The reel was checked only after the loop had finished, so "the model wrote no
@@ -2775,7 +2786,24 @@ const server = http.createServer(async (req, res) => {
             }
             // No render in flight and none completed: the encode is not coming, so the
             // post goes out as the carousel it was also written as rather than not at all.
-            await sql`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'reel.render_missing',${sql.json({ jobId: job.id })})`;
+            //
+            // But it goes out *as a carousel*, on the record. It used to keep format='reel'
+            // while publishing five images, so the job said reel, the day's reel quota was
+            // counted as met, and the only way to find out otherwise was to ask Buffer what
+            // it had actually received. One went out that way on 27 August and I reported it
+            // as a published reel because our own row said so.
+            await sql`
+              UPDATE social_publish_job
+              SET format='carousel',
+                  format_reason=${'the reel render failed, so this went out as the carousel it was also written as'},
+                  updated_at=now()
+              WHERE id=${job.id}`;
+            await sql`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'reel.render_missing',${sql.json({ jobId: job.id, downgradedTo: 'carousel' })})`;
+            await notifyDiscord("Reel downgraded to carousel: its video never rendered", {
+              post: String(job.post_id),
+              topic: String(job.post?.topic ?? ""),
+              note: "The day may now be short of its reel.",
+            });
           }
         }
         const hashtags = job.post.hashtags as string[];
