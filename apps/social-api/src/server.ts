@@ -7,7 +7,7 @@ import postgres from "postgres";
 import { z } from "zod";
 import { DraftSchema } from "./contracts.js";
 import { generateDraft } from "./openai.js";
-import { LlmRateLimitError, llmDailyBudget, setLlmSpendObserver, hydrateLlmSpend} from "./llm.js";
+import { LlmRateLimitError, llmDailyBudget, setLlmSpendObserver, hydrateLlmSpend, setMonthlyPaidUsage} from "./llm.js";
 import { createBufferMediaUrl, createUploadUrl, uploadRenderedObject, verifyUploadedObject, type RenderFileInput } from "./storage.js";
 import { BufferError, createScheduledPost, deletePost as deleteBufferPost, findMatchingScheduledPost, getPost as getBufferPost, setBufferCallObserver } from "./buffer.js";
 import { notifyDiscord } from "./discord.js";
@@ -15,6 +15,7 @@ import { renderReviewPreview } from "./preview.js";
 import { retryDecision } from "./retry-policy.js";
 import { classifyGenerationFailure, countsAsAttempt, shouldRetireConcept, MAX_GENERATION_ATTEMPTS } from "./block-reason.js";
 import { RENDER_LIMITS, renderLimitFailures, renderLimitBriefing } from "./render-limits.js";
+import { runSelfTest } from "./selftest.js";
 import { expandCalendar, loadEditorialCalendar, selectDailyMix } from "./planner.js";
 import { assertEnglishUserCopy, validateSocialDraft } from "./draft-quality.js";
 import { composeInstagramCaption } from "./caption.js";
@@ -335,6 +336,22 @@ async function noteProviderPacing(failure: BufferError) {
 // The token budget and the paid caps are only ceilings if they survive a restart, so
 // spend goes to the ledger as it happens and comes back at startup. Fire-and-forget on
 // the way out: a request must not fail because its bookkeeping did.
+// The month's paid spend, refreshed from the ledger. A daily cap alone cannot bound a
+// bill; this is the number that decides whether the worst case is five pounds or fifty.
+const refreshMonthlyPaid = async () => {
+  try {
+    const [row] = await sql`
+      SELECT count(*) FILTER (WHERE tokens > 0) AS calls, coalesce(sum(tokens), 0) AS tokens
+      FROM social_llm_spend
+      WHERE paid = true AND created_at >= date_trunc('month', now())`;
+    setMonthlyPaidUsage({ calls: Number(row?.calls ?? 0), tokens: Number(row?.tokens ?? 0) });
+  } catch {
+    // Leave the last known figure in place: a ledger we cannot read is not a licence to spend.
+  }
+};
+void refreshMonthlyPaid();
+setInterval(() => { void refreshMonthlyPaid(); }, 5 * 60_000).unref();
+
 setLlmSpendObserver(({ at, tokens, paid, provider }) => {
   void sql`INSERT INTO social_llm_spend (paid, provider, tokens, created_at) VALUES (${paid}, ${provider ?? null}, ${Math.round(tokens)}, ${new Date(at).toISOString()})`.catch(() => {});
 });
@@ -3044,6 +3061,47 @@ const server = http.createServer(async (req, res) => {
       const [performance]=await sql`SELECT count(*) FILTER (WHERE status='published') AS published,count(*) FILTER (WHERE status IN ('blocked','failed','rejected')) AS unsuccessful,count(*) FILTER (WHERE status='approved') AS approved FROM social_post WHERE created_at>now()-INTERVAL '30 days'`;
       const [coverage]=await sql`SELECT count(*) AS active_slots,count(*) FILTER (WHERE s.status='held') AS held FROM social_editorial_plan_slot s WHERE s.publish_date BETWEEN ${today} AND ${end} AND s.plan_version=(SELECT max(current_slot.plan_version) FROM social_editorial_plan_slot current_slot WHERE current_slot.publish_date=s.publish_date)`;
       const details={window:`${today} to ${end}`,plannedBriefs:upcoming.length,activeSlots:Number(coverage.active_slots),held:Number(coverage.held),published30d:Number(performance.published),unsuccessful30d:Number(performance.unsuccessful),approved30d:Number(performance.approved)};return send(res,200,details);
+    }
+
+    // Runs after every deploy and on the hour. Each check corresponds to something that
+    // actually broke this week and was found by the owner rather than by us; the whole
+    // point is that the pipeline notices its own failures within the hour.
+    if (req.method === "POST" && url.pathname === "/v1/selftest") {
+      const today = lisbonDate(new Date());
+      const checks = await runSelfTest({
+        sql,
+        today,
+        postsPerDay,
+        rendererBaseUrl: process.env.RENDERER_BASE_URL || "http://127.0.0.1:4310",
+        rendererToken: process.env.RENDERER_API_TOKEN,
+        bufferReachable: async () => {
+          // A read against the configured channel. Cheap, and it exercises the same
+          // credential and host the handoff uses rather than merely pinging something.
+          const channelId = process.env.BUFFER_CHANNEL_ID;
+          if (!channelId) return false;
+          try {
+            await findMatchingScheduledPost({ channelId, text: "finkavo selftest probe", dueAt: new Date(Date.now() + 86_400_000).toISOString() });
+            return true;
+          } catch {
+            return false;
+          }
+        },
+      });
+      const faults = checks.filter(check => !check.ok && check.severity === "fault");
+      const warnings = checks.filter(check => !check.ok && check.severity === "warning");
+      const healthy = faults.length === 0;
+
+      // Deduplicated on what is wrong, so a fault that persists says so once rather than
+      // every hour — the mistake the shortfall alert made.
+      if (faults.length) {
+        const signature = hash({ today, faults: faults.map(fault => fault.name) });
+        const [seen] = await sql`SELECT id FROM social_event WHERE event_type='selftest.failed' AND payload->>'signature'=${signature} LIMIT 1`;
+        if (!seen) {
+          await notifyDiscord("Pipeline self-test failed", Object.fromEntries(faults.map(fault => [fault.name, fault.detail])));
+          await sql`INSERT INTO social_event (event_type, payload) VALUES ('selftest.failed', ${sql.json({ signature, faults, warnings })})`;
+        }
+      }
+      return send(res, healthy ? 200 : 503, { healthy, checks });
     }
 
     if(req.method==="POST"&&url.pathname==="/v1/alerts/check"){

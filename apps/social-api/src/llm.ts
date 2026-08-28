@@ -147,8 +147,26 @@ const TOKENS_PER_DAY = Number(process.env.LLM_TOKENS_PER_DAY ?? 200_000);
 // rates: enough to rescue a day that would otherwise come up short, too little to become
 // a bill worth noticing.
 const PAID_ENABLED = process.env.LLM_PAID_ENABLED === "true";
-const PAID_MAX_CALLS_PER_DAY = Number(process.env.LLM_PAID_MAX_CALLS_PER_DAY ?? 15);
-const PAID_DAILY_TOKEN_CAP = Number(process.env.LLM_PAID_DAILY_TOKEN_CAP ?? 80_000);
+const PAID_MAX_CALLS_PER_DAY = Number(process.env.LLM_PAID_MAX_CALLS_PER_DAY ?? 60);
+const PAID_DAILY_TOKEN_CAP = Number(process.env.LLM_PAID_DAILY_TOKEN_CAP ?? 320_000);
+
+// A daily cap does not bound a bill. Sixty calls a day is also eighteen hundred a month,
+// and the month is the number that arrives on a card. This is the ceiling that actually
+// answers "what is the worst this can cost me": whichever of the two binds first stops
+// the spending, and the monthly one is deliberately far below thirty times the daily —
+// the daily allowance exists to absorb a bad afternoon, not to be spent every afternoon.
+const PAID_MAX_CALLS_PER_MONTH = Number(process.env.LLM_PAID_MAX_CALLS_PER_MONTH ?? 400);
+const PAID_MONTHLY_TOKEN_CAP = Number(process.env.LLM_PAID_MONTHLY_TOKEN_CAP ?? 2_400_000);
+
+// Read from the ledger rather than held in memory, because a month cannot be kept in a
+// rolling array and must survive every restart in it.
+let monthlyPaid = { calls: 0, tokens: 0 };
+export function setMonthlyPaidUsage(usage: { calls: number; tokens: number }) {
+  monthlyPaid = { calls: Math.max(0, usage.calls), tokens: Math.max(0, usage.tokens) };
+}
+export function monthlyPaidUsage() {
+  return { ...monthlyPaid, callsCap: PAID_MAX_CALLS_PER_MONTH, tokensCap: PAID_MONTHLY_TOKEN_CAP };
+}
 let paidSpends: Spend[] = [];
 const DAY_MS = 24 * 60 * 60 * 1000;
 // Long enough to sit out a full token minute. A request costs about 4,500 of the 8,000,
@@ -389,6 +407,9 @@ export function resolvePaidConfig(estimatedTokens = 4_000): LlmConfig | null {
   const used = paidUsage(Date.now());
   if (used.calls + 1 > PAID_MAX_CALLS_PER_DAY) return null;
   if (used.tokens + estimatedTokens > PAID_DAILY_TOKEN_CAP) return null;
+  // The month binds too, and independently.
+  if (monthlyPaid.calls + 1 > PAID_MAX_CALLS_PER_MONTH) return null;
+  if (monthlyPaid.tokens + estimatedTokens > PAID_MONTHLY_TOKEN_CAP) return null;
   return { provider: "openai", apiKey, model: process.env.LLM_PAID_MODEL || defaults.model, baseUrl: defaults.baseUrl };
 }
 
@@ -407,6 +428,7 @@ export function llmDailyBudget() {
       const used = paidUsage(now);
       return {
         enabled: PAID_ENABLED,
+        month: monthlyPaidUsage(),
         callsUsed: used.calls, callsCap: PAID_MAX_CALLS_PER_DAY,
         tokensUsed: used.tokens, tokensCap: PAID_DAILY_TOKEN_CAP,
       };
