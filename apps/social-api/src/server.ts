@@ -2295,7 +2295,20 @@ const server = http.createServer(async (req, res) => {
             continue;
           }
           if (existing) continue;
-          const manifest = createRenderManifest(row as Record<string, unknown>, { id: row.revision_id, slides: row.revision_slides, call_to_action: row.revision_cta });
+          // One post whose copy breaks a render contract used to take the whole batch with
+          // it. createRenderManifest enforces per-field character limits and throws, and this
+          // call sat outside the guard that already wraps the copy check above — so a single
+          // over-long cover subtitle aborted the transaction and every approved post behind
+          // it stopped moving. Three were stuck for a day that way, which reads from Buffer
+          // as an empty Drafts folder with no explanation.
+          let manifest: ReturnType<typeof createRenderManifest>;
+          try {
+            manifest = createRenderManifest(row as Record<string, unknown>, { id: row.revision_id, slides: row.revision_slides, call_to_action: row.revision_cta } as never);
+          } catch (error) {
+            await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${row.id}`;
+            await tx`INSERT INTO social_event (post_id,event_type,payload) VALUES (${row.id},'quality.blocked',${tx.json({ stage: 'render_manifest', reason: error instanceof Error ? error.message : 'render contract' })})`;
+            continue;
+          }
           const [job] = await tx`INSERT INTO social_render_job (post_id,revision_id,idempotency_key,manifest,manifest_hash) VALUES (${row.id},${row.revision_id},${idempotencyKey},${tx.json(manifest)},${hash(manifest)}) RETURNING id`;
           await tx`UPDATE social_post SET status='render_queued',updated_at=now() WHERE id=${row.id}`;
           await tx`INSERT INTO social_event (post_id,event_type,payload) VALUES (${row.id},'render.queued',${tx.json({ jobId: job.id, revisionId: row.revision_id, automated: true })})`;
