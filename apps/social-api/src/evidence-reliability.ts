@@ -11,12 +11,39 @@ export type EvidenceClaim = { claim: string; evidenceQuote: string };
 
 const sensitivePattern = /(?:\b\d+(?:[.,]\d+)?\s*(?:%|€|euros?|days?|months?|years?|dias?|meses?|anos?)\b|€\s*\d|\b(?:rate|deadline|threshold|minimum|maximum|exemption|eligible|eligibility|mandatory|must|required|law|regulation|article|taxa|prazo|limite|isenção|obrigatóri[oa]|lei|regulamento|artigo)\b)/iu;
 
-const authorityRules: Array<{ pattern: RegExp; domains: string[]; label: string }> = [
-  { pattern: /social_security|seguran[çc]a social|contribut|niss|independent.worker|self.employed|freelancer/iu, domains: ["seg-social.pt"], label: "Segurança Social" },
-  { pattern: /\b(?:irs|iva|nif|imi|aimi|iuc|tax|fiscal|finan[çc]as)\b/iu, domains: ["portaldasfinancas.gov.pt"], label: "Autoridade Tributária" },
-  { pattern: /aima|immigration|residen|migrant|visa|visto/iu, domains: ["aima.gov.pt"], label: "AIMA" },
-  { pattern: /citizenship|nationality|nacionalidade|civil registry/iu, domains: ["justica.gov.pt", "irn.justica.gov.pt"], label: "Justiça / IRN" },
-  { pattern: /employment|labour|labor|contrato de trabalho|worker rights/iu, domains: ["act.gov.pt"], label: "ACT" },
+// `enforce` separates the two jobs a rule does. An enforced rule both grants the
+// single-source waiver and *demands* its authority be present — citing anything else is a
+// failure. That demand is only defensible where the agency is genuinely the sole voice on
+// the subject, so it stays on the five original rules and nothing else.
+//
+// The rules below it are waiver-only. They exist because measuring the plan showed 74 of
+// 109 slots matched no rule at all: annual leave, sick pay, overtime and parental leave
+// all missed ACT's /employment|labour|labor/ pattern, and health, banking, vehicles,
+// telecom and condominium law had no rule in the first place. Every one of those topics
+// therefore needed two independent official hosts for any claim carrying a figure — which
+// is most claims worth making. Marking them `enforce: false` grants the waiver without
+// inventing a new way to fail: a topic that already passes on two independent sources goes
+// on passing, because the "responsible authority is missing" check skips them.
+const authorityRules: Array<{ pattern: RegExp; domains: string[]; label: string; enforce?: boolean }> = [
+  { pattern: /social_security|seguran[çc]a social|contribut|niss|independent.worker|self.employed|freelancer/iu, domains: ["seg-social.pt"], label: "Segurança Social", enforce: true },
+  { pattern: /\b(?:irs|iva|nif|imi|aimi|iuc|tax|fiscal|finan[çc]as)\b/iu, domains: ["portaldasfinancas.gov.pt"], label: "Autoridade Tributária", enforce: true },
+  { pattern: /aima|immigration|residen|migrant|visa|visto/iu, domains: ["aima.gov.pt"], label: "AIMA", enforce: true },
+  { pattern: /citizenship|nationality|nacionalidade|civil registry/iu, domains: ["justica.gov.pt", "irn.justica.gov.pt"], label: "Justiça / IRN", enforce: true },
+  { pattern: /employment|labour|labor|contrato de trabalho|worker rights/iu, domains: ["act.gov.pt"], label: "ACT", enforce: true },
+
+  { pattern: /\b(?:annual leave|f[ée]rias|feriado|public holiday|holiday pay|sick (?:pay|leave|note)|subs[íi]dio|overtime|horas extraordin[áa]rias|parental leave|licen[çc]a parental|maternity|paternity|fixed.term|contrato a termo|contract|contrato|dismissal|despedimento|notice period|training|forma[çc][ãa]o|working student|trabalhador.estudante|harassment|ass[ée]dio|rest day|dia de descanso|probation|per[íi]odo experimental|payslip|recibo de vencimento|minimum wage|sal[áa]rio m[íi]nimo|employer|employee|employ|working from home|teletrabalho|declara[çc][ãa]o trimestral|job start)(?:s|es)?\b/iu, domains: ["act.gov.pt", "seg-social.pt"], label: "ACT / Segurança Social" },
+  { pattern: /\b(?:sns|sns24|adse|health|sa[úu]de|hospital|clinic|prescription|receita m[ée]dica|taxas? moderadoras?|user fee|medical|doctor|dentist|vaccin|vacina)(?:s|es)?\b/iu, domains: ["sns.gov.pt", "sns24.gov.pt", "adse.gov.pt", "adse.pt", "dgs.pt", "min-saude.pt"], label: "SNS / ADSE" },
+  { pattern: /\b(?:iban|bank account|conta banc[áa]ria|mortgage|cr[ée]dito habita[çc][ãa]o|interest rate|taxa de juro|deposit|dep[óo]sito|banco de portugal|bportugal|mb way|transfer[êe]ncia|euribor|spread)(?:s|es)?\b/iu, domains: ["bportugal.pt", "clientebancario.bportugal.pt"], label: "Banco de Portugal" },
+  { pattern: /\b(?:driving licence|driving license|driving test|foreign licence|carta de condu[çc][ãa]o|vehicle|ve[íi]culo|autom[óo]vel|inspe[çc][ãa]o|matr[íi]cula|imt|ansr|number plate|registration certificate)(?:s|es)?\b/iu, domains: ["imt-ip.pt", "ansr.pt"], label: "IMT / ANSR" },
+  { pattern: /\b(?:telecom|operator|anacom|lock.?in|fideliza[çc][ãa]o|tarif[áa]rio|mobile plan|portabilidade|broadband|internet plan)(?:s|es)?\b/iu, domains: ["anacom.pt"], label: "ANACOM" },
+  { pattern: /\b(?:condominium|cond[óo]mini|lease|arrendamento|landlord|senhorio|tenant|inquilino|rent|rental|renda|reserve fund|fundo de reserva|habita[çc][ãa]o|eviction|lodging)(?:s|es)?\b/iu, domains: ["portaldahabitacao.gov.pt", "portaldahabitacao.pt", "ihru.pt", "portaldasfinancas.gov.pt"], label: "Habitação" },
+  { pattern: /\b(?:marriage|casamento|registry|registo|citizen card|cart[ãa]o de cidad[ãa]o|card renewal|certificate|certid[ãa]o|birth|nascimento|death|[óo]bito)(?:s|es)?\b/iu, domains: ["justica.gov.pt", "irn.justica.gov.pt"], label: "Justiça / IRN (orientação)" },
+  { pattern: /\b(?:consumer|consumidor|warranty|garantia|refund|reembolso|livro de reclama[çc][õo]es|complaint book|right of withdrawal|direito de livre resolu[çc][ãa]o)(?:s|es)?\b/iu, domains: ["consumidor.gov.pt", "asae.gov.pt"], label: "DGC / ASAE" },
+  // Deliberately last and deliberately broad. The enforced Autoridade Tributária rule above
+  // keeps its narrow pattern because it *demands* its domain; this one only offers the
+  // waiver, so it can catch the tax-shaped topics that rule misses — "taxed" rather than
+  // "tax", a deduction, a Modelo, an instalment — without imposing anything.
+  { pattern: /\b(?:tax(?:ed|able|ation)?|deduction|dedu[çc][ãa]o|declara[çc][ãa]o|modelo \d+|instalment|installment|presta[çc][ãa]o|filing|withholding|reten[çc][ãa]o|income|rendimento|allowance|escal[ãa]o|bracket)(?:s|es)?\b/iu, domains: ["portaldasfinancas.gov.pt", "info.portaldasfinancas.gov.pt"], label: "Autoridade Tributária (orientação)" },
 ];
 
 // Diário da República publishes the law itself. Every rule above names the agency that
@@ -129,7 +156,7 @@ export function assessEvidenceReliability(input: { topic: string; category?: str
   const restsOnItsAuthority = primary.length > 0;
   if (sensitiveClaims.length) {
     if (!restsOnItsAuthority && (official.length < 2 || distinctOfficialHosts.length < 2)) failures.push("Sensitive claims require two independent official sources");
-    if (rule && !official.some(source => speaksWithAuthority(source.url, rule.domains))) failures.push(`The responsible authority (${rule.label}) is missing`);
+    if (rule?.enforce && !official.some(source => speaksWithAuthority(source.url, rule.domains))) failures.push(`The responsible authority (${rule.label}) is missing`);
     for (const claim of sensitiveClaims) {
       const tokens = normalizedNumberTokens(`${claim.claim} ${claim.evidenceQuote}`);
       const confirmingHosts = new Set<string>();
