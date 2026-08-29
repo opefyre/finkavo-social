@@ -399,17 +399,30 @@ function paidUsage(now: number) {
  * and is inside both of its daily ceilings — so a caller cannot reach it by accident and
  * cannot exhaust it by looping.
  */
+// Whether a config costs money, wherever it sits in the chain.
+//
+// The ceilings were written for the last-resort path, so making a paid provider the
+// *primary* walked straight past them: resolvePaidConfig was never consulted, and every
+// generation billed without any of the counters that exist to bound the bill. Given the
+// whole point of those counters, that is the last thing this should get wrong.
+export const isPaidProvider = (provider: string) => provider === "openai";
+
+/** Whether a paid call may be made now, and why not if not. */
+function paidAllowance(estimatedTokens: number): { allowed: boolean; reason?: string } {
+  const used = paidUsage(Date.now());
+  if (used.calls + 1 > PAID_MAX_CALLS_PER_DAY) return { allowed: false, reason: `the paid day's ${PAID_MAX_CALLS_PER_DAY}-call ceiling is reached` };
+  if (used.tokens + estimatedTokens > PAID_DAILY_TOKEN_CAP) return { allowed: false, reason: `the paid day's ${PAID_DAILY_TOKEN_CAP}-token ceiling is reached` };
+  if (monthlyPaid.calls + 1 > PAID_MAX_CALLS_PER_MONTH) return { allowed: false, reason: `the paid month's ${PAID_MAX_CALLS_PER_MONTH}-call ceiling is reached` };
+  if (monthlyPaid.tokens + estimatedTokens > PAID_MONTHLY_TOKEN_CAP) return { allowed: false, reason: `the paid month's ${PAID_MONTHLY_TOKEN_CAP}-token ceiling is reached` };
+  return { allowed: true };
+}
+
 export function resolvePaidConfig(estimatedTokens = 4_000): LlmConfig | null {
   if (!PAID_ENABLED) return null;
   const defaults = DEFAULTS.openai;
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) return null;
-  const used = paidUsage(Date.now());
-  if (used.calls + 1 > PAID_MAX_CALLS_PER_DAY) return null;
-  if (used.tokens + estimatedTokens > PAID_DAILY_TOKEN_CAP) return null;
-  // The month binds too, and independently.
-  if (monthlyPaid.calls + 1 > PAID_MAX_CALLS_PER_MONTH) return null;
-  if (monthlyPaid.tokens + estimatedTokens > PAID_MONTHLY_TOKEN_CAP) return null;
+  if (!paidAllowance(estimatedTokens).allowed) return null;
   return { provider: "openai", apiKey, model: process.env.LLM_PAID_MODEL || defaults.model, baseUrl: defaults.baseUrl };
 }
 
@@ -597,8 +610,26 @@ export async function generateStructured(
     });
     if (!settle) break;
     try {
+      // A paid primary is still paid. Checked here so the ceilings hold wherever the
+      // provider sits in the chain, and refused as a pacing deferral so the caller treats
+      // it the way it treats any other "not now" — the concept keeps its place.
+      if (isPaidProvider(config.provider)) {
+        const allowance = paidAllowance(estimated);
+        if (!allowance.allowed) {
+          settle(0);
+          throw new LlmRateLimitError(`paid ceiling reached: ${allowance.reason}`, 3600);
+        }
+      }
       const result = await callProvider(request, config);
       settle(result.totalTokens);
+      if (isPaidProvider(config.provider)) {
+        // Recorded against the paid counters, not the free ones, so the bill is what the
+        // ledger says it is.
+        const at = Date.now();
+        const billed = result.totalTokens && result.totalTokens > 0 ? result.totalTokens : estimated;
+        paidSpends.push({ at, tokens: billed });
+        spendObserver({ at, tokens: billed, paid: true });
+      }
       return { text: result.text, model: result.model, totalTokens: result.totalTokens };
     } catch (error) {
       // A refused request still cost the provider nothing, so release the reservation.

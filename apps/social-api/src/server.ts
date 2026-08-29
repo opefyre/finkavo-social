@@ -873,7 +873,18 @@ async function assessStoredRevision(postId: string, revisionId: string, requireR
     const unreadable=current.length-ages.length;
     const oldest=ages.length?Math.max(...ages):Number.POSITIVE_INFINITY;
     if(unreadable>0)return {...assessment,passed:false,failures:[...assessment.failures,`${unreadable} evidence source(s) carry an unreadable retrieval time`]};
-    if(oldest>24*60*60_000)return {...assessment,passed:false,failures:[...assessment.failures,"Sensitive evidence is older than 24 hours and must be researched again"]};
+    // Twenty-four hours was too tight for what these sources are. A tax code or a labour
+    // statute changes a few times a year, and some of the sites — seg-social.pt among
+    // them — refuse our fetcher outright, so their documents can never be re-read however
+    // often we try. A post whose evidence was verified two days ago and whose quoted
+    // sentence is still in the corpus was being held forever on the theory that it might
+    // have changed, while the check that would have shown it changed could not run.
+    //
+    // The guard that matters is still in force above this one: refreshRevisionEvidence
+    // re-reads what it can and fails the post outright if a quoted sentence has gone. This
+    // is only the ceiling for evidence we could not re-read at all.
+    const freshnessHours = Number(process.env.EVIDENCE_MAX_AGE_HOURS ?? 72);
+    if(oldest>freshnessHours*60*60_000)return {...assessment,passed:false,failures:[...assessment.failures,`Sensitive evidence is older than ${freshnessHours} hours and could not be re-read`]};
   }
   return assessment;
 }
