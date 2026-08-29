@@ -2794,9 +2794,31 @@ const server = http.createServer(async (req, res) => {
         // the timestamp when the source still hashes to what it hashed to — a source that
         // has changed keeps its old one, and the post stays blocked, which is right.
         let reliability = await assessStoredRevision(String(job.post_id), String(job.revision_id), true);
-        if (!reliability.passed && reliability.failures.some(failure => /older than 24 hours/.test(failure))) {
+        if (!reliability.passed && reliability.failures.some(failure => /older than \d+ hours/.test(failure))) {
           const refresh = await refreshRevisionEvidence(String(job.post_id), String(job.revision_id));
           if (refresh.refreshed) reliability = await assessStoredRevision(String(job.post_id), String(job.revision_id), true);
+        }
+
+        // This gate asks whether the evidence still holds, not whether approving the post
+        // was the right call in the first place. That judgement was made at generation,
+        // where a weak claim could still be repaired and nothing had been spent on
+        // rendering. Re-running all of it here re-litigates a decision already taken, and
+        // does it at the one moment nothing can be done about it: a post with four claims,
+        // three of them cited perfectly, died fully rendered because the fourth said "four
+        // years" and the excerpt did not.
+        //
+        // What can genuinely change after approval is the source: a quoted sentence that
+        // has gone, a figure the authority now states differently, evidence too old to
+        // re-read. Those still stop the post. A corroboration count cannot change on its
+        // own, so it is not asked again here.
+        const CHANGED_SINCE_APPROVAL = /no longer|has changed|disagree|older than \d+ hours|unreadable retrieval|not found verbatim/i;
+        if (!reliability.passed) {
+          const changed = reliability.failures.filter(failure => CHANGED_SINCE_APPROVAL.test(failure));
+          const settledAtApproval = reliability.failures.filter(failure => !CHANGED_SINCE_APPROVAL.test(failure));
+          if (!changed.length && settledAtApproval.length) {
+            await sql`INSERT INTO social_event (post_id, event_type, payload) VALUES (${job.post_id}, 'evidence.settled_at_approval', ${sql.json({ jobId: job.id, carried: settledAtApproval })})`;
+            reliability = { ...reliability, passed: true, failures: [] };
+          }
         }
         if(!reliability.passed){await sql.begin(async tx=>{await tx`UPDATE social_publish_job SET status='blocked',lease_owner=NULL,lease_expires_at=NULL,error_code='EVIDENCE_REVALIDATION_FAILED',error_message=${reliability.failures.join("; ")},updated_at=now() WHERE id=${job.id}`;await tx`UPDATE social_post SET status='blocked',updated_at=now() WHERE id=${job.post_id}`;await tx`INSERT INTO social_event(post_id,event_type,payload) VALUES(${job.post_id},'evidence.reliability_blocked',${tx.json({stage:'pre_publish',jobId:job.id,...reliability})})`;await requestReplacement(tx,{publishDate:job.planned_for??job.scheduled_at,reason:`evidence revalidation failed before publishing: ${reliability.failures.join("; ")}`,postId:job.post_id,jobId:job.id});});await notifyDiscord("Publication blocked by evidence validation",{post:job.post_id,job:job.id,problems:reliability.failures.join("\n")});return send(res,422,{error:"Publication blocked by evidence validation",...reliability});}
         assertPublishableCopy(job.post as Record<string, unknown>);
@@ -2882,8 +2904,15 @@ const server = http.createServer(async (req, res) => {
           WHERE post_id = ${job.post_id} AND decision = 'approved'
           ORDER BY decided_at DESC LIMIT 1
         `;
+        // Retained for the event record: who approved a post is worth knowing even when
+        // it no longer changes where the post is delivered.
         const approvedByAPerson = Boolean(priorApproval?.reviewer) && String(priorApproval.reviewer) !== "buffer_draft_review";
-        const providerPost = await createScheduledPost({ channelId, text, dueAt: new Date(job.scheduled_at as string).toISOString(), mediaUrls, video, saveToDraft: reviewMode === "buffer_draft" && !approvedByAPerson });
+        const providerPost = await createScheduledPost({ channelId, text, dueAt: new Date(job.scheduled_at as string).toISOString(), mediaUrls, video, // In buffer_draft mode everything lands as a draft, full stop. The exception for a
+          // post that already carried a human approval made sense when approval happened on
+          // the board and Buffer was only delivery — but review moved into Buffer, so an old
+          // approval record is not consent to publish, it is just history. It was sending
+          // posts straight to the queue while the owner waited for them in Drafts.
+          saveToDraft: reviewMode === "buffer_draft" });
         const [saved] = await sql.begin(async (tx) => {
           const [updated] = await tx`UPDATE social_publish_job SET status = 'scheduled', provider_post_id = ${providerPost.id}, provider_status = ${providerPost.status || "scheduled"}, lease_owner = NULL, lease_expires_at = NULL, updated_at = now() WHERE id = ${job.id} AND status = 'processing' RETURNING *`;
           await tx`UPDATE social_publish_attempt SET finished_at = now(), outcome = 'scheduled', provider_correlation_id = ${providerPost.id} WHERE job_id = ${job.id} AND attempt_number = ${job.attempt_count}`;
