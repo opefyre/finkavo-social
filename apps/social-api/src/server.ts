@@ -319,13 +319,17 @@ const simpleDraft = (topic:string, facts:string[]): z.infer<typeof DraftSchema> 
   const category=subject.toUpperCase()==="NIF"?"nif":subject.toUpperCase()==="NISS"?"niss":["IUC","IMI"].includes(subject.toUpperCase())?"tax":"general";
   const hook=`Portugal basics: understand ${subject} and what you should do next.`;
   const content=facts.slice(0,5).map(finishSentence);
-  return DraftSchema.parse({topic,category,riskLevel:"medium",postIntent:"evergreen_explainer",hook,caption:content.slice(0,4).join("\n\n"),callToAction:"Save this Portugal guide for later.",hashtags:["#Finkavo","#Portugal","#PortugalAdmin",`#${subject.replace(/[^A-Za-z0-9]/g,"")}`],searchKeywords:[`${subject} Portugal`,`${subject} explained`],slides:[
+  // Through the same repair the model's drafts get. Without it this fallback rejected
+  // itself: with no specific subject in the topic, `subject` is "Portugal admin", whose
+  // hashtag is "#Portugaladmin" — which collides with the literal "#PortugalAdmin" beside
+  // it once the uniqueness rule lowercases both. Every such fallback failed on it.
+  return DraftSchema.parse(repairMechanicalDefects({topic,category,riskLevel:"medium",postIntent:"evergreen_explainer",hook,caption:content.slice(0,4).join("\n\n"),callToAction:"Save this Portugal guide for later.",hashtags:["#Finkavo","#Portugal","#PortugalAdmin",`#${subject.replace(/[^A-Za-z0-9]/g,"")}`],searchKeywords:[`${subject} Portugal`,`${subject} explained`],slides:[
     {type:"cover",icon:"document",eyebrow:"Portugal basics",title:`What is ${subject}?`,body:`A plain-English guide to ${subject} in Portugal.`,items:[],highlight:"",sourceLabel:"",altText:`Cover explaining ${subject} in Portugal.`},
     {type:"content",icon:"document",eyebrow:"Definition",title:`${subject}, explained`,body:content[0],items:[],highlight:"",sourceLabel:"",altText:`Definition of ${subject}.`},
     {type:"content",icon:"people",eyebrow:"Why it matters",title:"Where it is used",body:content[1]||content[0],items:[],highlight:"",sourceLabel:"",altText:`Common uses of ${subject}.`},
     {type:"content",icon:"warning",eyebrow:"Good to know",title:"Avoid this mistake",body:content[2]||content[0],items:[],highlight:"",sourceLabel:"",altText:`Important practical note about ${subject}.`},
     {type:"summary",icon:"check",eyebrow:"Quick recap",title:`Remember ${subject}`,body:content[4]||content[3]||content[0],items:[],highlight:"",sourceLabel:"",altText:`Summary of the ${subject} guide.`},
-  ],claims:content.map(fact=>({claim:fact,evidenceQuote:fact}))});
+  ],claims:content.map(fact=>({claim:fact,evidenceQuote:fact}))}));
 };
 
 const send = (res: http.ServerResponse, status: number, body: unknown) => {
