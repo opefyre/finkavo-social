@@ -55,11 +55,24 @@ export function classifyGenerationFailure(rawError: unknown): FailureClass {
 // a week of perfectly good topics.
 export const MAX_GENERATION_ATTEMPTS = 5;
 
+// Not charging infrastructure an attempt was right, but it left nothing at all holding the
+// other end: a concept whose evidence bundle reliably truncates the model's JSON, or whose
+// every call times out, is never judged and so never retires. One concept was attempted 84
+// times with its counter reading 6. It is not a bad topic — it is a topic this pipeline
+// cannot currently get through the model, and after enough tries that distinction stops
+// mattering, because it is spending the day's calls and starving everything behind it.
+//
+// So there are two ceilings. Five *judged* failures still retire a topic on its merits.
+// Twenty attempts of any kind retire it as unworkable, which is deliberately far enough
+// above five that a bad provider afternoon cannot reach it.
+export const MAX_TOTAL_ATTEMPTS = 20;
+
 export function countsAsAttempt(failure: FailureClass): boolean {
   return failure.kind !== "infrastructure";
 }
 
-export function shouldRetireConcept(failure: FailureClass, attemptsAfterThisOne: number): boolean {
+export function shouldRetireConcept(failure: FailureClass, attemptsAfterThisOne: number, totalAttemptsAfterThisOne = 0): boolean {
+  if (totalAttemptsAfterThisOne >= MAX_TOTAL_ATTEMPTS) return true;
   if (!countsAsAttempt(failure)) return false;
   return attemptsAfterThisOne >= MAX_GENERATION_ATTEMPTS;
 }
