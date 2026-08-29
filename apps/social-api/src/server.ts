@@ -197,6 +197,66 @@ const topicMatchesPlan = (draftTopic: string, plannedTopic: string) => {
   const planned=new Set(tokens(plannedTopic)); return tokens(draftTopic).some(token=>planned.has(token));
 };
 const finishSentence = (value:string) => value.trim() && !/[.!?)]$/.test(value.trim()) ? `${value.trim()}.` : value.trim();
+
+// An over-long evidence quote is the model being generous, not wrong, and it was the
+// single largest mechanical cause of lost drafts — 43 failures in a fortnight, six of them
+// retiring the concept outright. Every one died before DraftSchema.parse returned, so the
+// repair pass never saw it and the tokens were spent for nothing.
+//
+// Trimming is safe here in a way it would not be for prose: the quote's whole job is to be
+// findable verbatim in the source, and *any contiguous slice of a verbatim string is still
+// verbatim*. So a shorter quote still anchors. The window is taken from the first digit
+// where there is one — the figure is the part a reader is being asked to trust, and a
+// prefix that stops short of it would anchor fine while proving nothing.
+const trimQuoteKeepingItVerbatim = (quote:string, limit:number) => {
+  const value = quote.trim();
+  if (value.length <= limit) return value;
+  const firstDigit = value.search(/\d/);
+  // Start far enough back that the figure and its lead-in survive, but never mid-word.
+  let from = firstDigit < 0 ? 0 : Math.max(0, Math.min(firstDigit - 120, value.length - limit));
+  if (from > 0) { const space = value.indexOf(" ", from); from = space < 0 ? 0 : space + 1; }
+  const slice = value.slice(from, from + limit);
+  const lastSpace = slice.lastIndexOf(" ");
+  return (slice.length < limit || lastSpace < limit * 0.6 ? slice : slice.slice(0, lastSpace)).trim();
+};
+
+// Mechanical defects are typos, not editorial failures. Repaired in place before the schema
+// is applied, so a draft that is sound in substance is not thrown away — and does not spend
+// another paid call — over a quote that ran long or a hashtag written twice.
+const repairMechanicalDefects = (draft:unknown) => {
+  if (!draft || typeof draft !== "object") return draft;
+  const value = draft as Record<string, unknown>;
+  if (Array.isArray(value.claims)) {
+    value.claims = value.claims.map(entry => {
+      if (!entry || typeof entry !== "object") return entry;
+      const claim = entry as Record<string, unknown>;
+      if (typeof claim.evidenceQuote === "string") claim.evidenceQuote = trimQuoteKeepingItVerbatim(claim.evidenceQuote, 500);
+      if (typeof claim.claim === "string" && claim.claim.length > 300) claim.claim = finishSentence(claim.claim.slice(0, 300).replace(/\s+\S*$/, ""));
+      return claim;
+    });
+  }
+  // A repeated hashtag is a typo that was costing whole drafts. Keep the first of each and
+  // the order the model chose; the caption rule still speaks up if too few survive.
+  if (Array.isArray(value.hashtags)) {
+    const seen = new Set<string>();
+    value.hashtags = (value.hashtags as unknown[]).filter(tag => {
+      if (typeof tag !== "string") return false;
+      const key = tag.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).slice(0, 8);
+  }
+  if (Array.isArray(value.searchKeywords)) {
+    const seen = new Set<string>();
+    value.searchKeywords = (value.searchKeywords as unknown[])
+      .filter(term => typeof term === "string" && term.trim().length >= 2)
+      .map(term => (term as string).trim().slice(0, 60))
+      .filter(term => { const key = term.toLowerCase(); if (seen.has(key)) return false; seen.add(key); return true; })
+      .slice(0, 6);
+  }
+  return value;
+};
 const ensureKnownAcronymsAreDefined = <T extends z.infer<typeof DraftSchema>>(candidate:T) => {
   const definitions:Record<string,{test:RegExp;sentence:string}>={
     AIMA:{test:/agency for integration,? migration and asylum/i,sentence:"AIMA is Portugal’s Agency for Integration, Migration and Asylum."},
@@ -478,16 +538,17 @@ const refusalReason = (result: Record<string, unknown>) => {
 
 async function returnConceptForRepair(tx: typeof sql, input: { topic: string; plannedFor: unknown; reason: string }) {
   const [concept] = await tx`
-    SELECT id, plan_slot_id, generation_attempts FROM social_post_concept
+    SELECT id, plan_slot_id, generation_attempts, total_generation_attempts FROM social_post_concept
     WHERE topic=${input.topic} AND planned_for=${input.plannedFor as string} ORDER BY updated_at DESC LIMIT 1`;
   if (!concept) return { retired: false, attempts: 0 };
   const attempts = Number(concept.generation_attempts ?? 0) + 1;
+  const totalAttempts = Number(concept.total_generation_attempts ?? 0) + 1;
   const retire = attempts >= MAX_GENERATION_ATTEMPTS;
   if (retire) {
-    await tx`UPDATE social_post_concept SET status='blocked',blocked_kind='content_quality',blocked_reason=${input.reason.slice(0, 300)},blocked_at=now(),generation_attempts=${attempts},updated_at=now() WHERE id=${concept.id as string}`;
+    await tx`UPDATE social_post_concept SET status='blocked',blocked_kind='content_quality',blocked_reason=${input.reason.slice(0, 300)},blocked_at=now(),generation_attempts=${attempts},total_generation_attempts=${totalAttempts},updated_at=now() WHERE id=${concept.id as string}`;
     if (concept.plan_slot_id) await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${concept.plan_slot_id}`;
   } else {
-    await tx`UPDATE social_post_concept SET status='planned',revision_feedback=${input.reason.slice(0, 500)},generation_attempts=${attempts},blocked_kind=NULL,blocked_reason=NULL,updated_at=now() WHERE id=${concept.id as string}`;
+    await tx`UPDATE social_post_concept SET status='planned',revision_feedback=${input.reason.slice(0, 500)},generation_attempts=${attempts},total_generation_attempts=${totalAttempts},blocked_kind=NULL,blocked_reason=NULL,updated_at=now() WHERE id=${concept.id as string}`;
     if (concept.plan_slot_id) await tx`UPDATE social_editorial_plan_slot SET status='evidence_ready',updated_at=now() WHERE id=${concept.plan_slot_id}`;
   }
   return { retired: retire, attempts };
@@ -944,7 +1005,39 @@ const BoardActionSchema = z.object({
     slides: z.array(z.object({ title: z.string().min(2).max(82), body: z.string().max(320) })).min(3).max(7),
   }).optional(),
 });
-const evidenceWindows=(text:string,terms:string[])=>{const normalized=text.replace(/\s+/g," ").trim();const windows:string[]=[];for(const term of terms){const at=normalized.toLocaleLowerCase("pt").indexOf(term.toLocaleLowerCase("pt"));if(at>=0)windows.push(normalized.slice(Math.max(0,at-350),Math.min(normalized.length,at+1650)));}if(!windows.length)windows.push(normalized.slice(0,2000));return [...new Set(windows)].slice(0,6);};
+// indexOf stopped at the *first* mention of each term, so a page that states the figure
+// further down — in the second table, in the exception, in the row that actually applies —
+// handed the writer an opening window that did not contain it. The claim then failed the
+// anchor check over a number the source stated plainly. Every occurrence is a candidate
+// now, and the six slots go to the windows carrying the most search terms and the most
+// figures. Windows are capped and merged so the budget is the same as before: six windows
+// of two thousand characters, six different parts of the page rather than six views of one.
+const evidenceWindows=(text:string,terms:string[])=>{
+  const normalized=text.replace(/\s+/g," ").trim();
+  const haystack=normalized.toLocaleLowerCase("pt");
+  const lowered=[...new Set(terms.map(term=>term.toLocaleLowerCase("pt")).filter(Boolean))];
+  const starts:number[]=[];
+  for(const term of lowered){
+    let at=haystack.indexOf(term);
+    for(let found=0;at>=0&&found<20;found++){starts.push(at);at=haystack.indexOf(term,at+term.length);}
+  }
+  if(!starts.length)return [normalized.slice(0,2000)];
+  const merged:Array<{from:number;to:number}>=[];
+  for(const at of [...new Set(starts)].sort((a,b)=>a-b)){
+    const from=Math.max(0,at-350),to=Math.min(normalized.length,at+1650);
+    const last=merged[merged.length-1];
+    // Overlapping windows are the same evidence twice, but merging without a ceiling walks
+    // a window across a whole page when the term recurs throughout it.
+    if(last&&from<=last.to&&Math.max(last.to,to)-last.from<=2000)last.to=Math.max(last.to,to);
+    else merged.push({from,to});
+  }
+  return merged
+    .map(window=>{const body=haystack.slice(window.from,window.to);return {...window,score:lowered.filter(term=>body.includes(term)).length*100+Math.min((body.match(/\d/g)||[]).length,60)};})
+    .sort((a,b)=>b.score-a.score||a.from-b.from)
+    .slice(0,6)
+    .sort((a,b)=>a.from-b.from)
+    .map(window=>normalized.slice(window.from,window.to));
+};
 
 function createRenderManifest(post: Record<string, unknown>, revision: Record<string, unknown>) {
   const raw = revision.slides as Array<Record<string, unknown>>;
@@ -1867,7 +1960,7 @@ const server = http.createServer(async (req, res) => {
             ...(selectedConcept ? { editorialContext: { topic: String(selectedConcept.topic), reason: selectedConcept.reason ? String(selectedConcept.reason) : null, campaignStage: selectedConcept.campaign_stage ? String(selectedConcept.campaign_stage) : null, plannedFor: selectedConcept.planned_for ? String(selectedConcept.planned_for) : null, expiresAt: selectedConcept.expires_at ? String(selectedConcept.expires_at) : null, purpose:selectedConcept.brief?.purpose?String(selectedConcept.brief.purpose):undefined,userQuestion:selectedConcept.brief?.userQuestion?String(selectedConcept.brief.userQuestion):undefined,requiredAnswers:Array.isArray(selectedConcept.brief?.requiredAnswers)?selectedConcept.brief.requiredAnswers.map(String):undefined } } : {}),
           });
           mark("model-returned", { attempt, model: generated.model });
-          const candidate = ensureKnownAcronymsAreDefined(DraftSchema.parse(generated.draft));
+          const candidate = ensureKnownAcronymsAreDefined(DraftSchema.parse(repairMechanicalDefects(generated.draft)));
           const sourceLabel = String(
             evidenceSources.find((item) => item.publisher)?.publisher ||
             evidenceSources[0]?.title ||
@@ -2008,18 +2101,22 @@ const server = http.createServer(async (req, res) => {
         const failure = classifyGenerationFailure(lastGenerationError);
         const priorAttempts = Number(selectedConcept.generation_attempts ?? 0);
         const attempts = priorAttempts + (countsAsAttempt(failure) ? 1 : 0);
-        const retire = shouldRetireConcept(failure, attempts);
+        // Every attempt counts here, infrastructure included, so a concept that can never
+        // get through the model stops eventually instead of spending the day's calls.
+        const totalAttempts = Number(selectedConcept.total_generation_attempts ?? 0) + 1;
+        const retire = shouldRetireConcept(failure, attempts, totalAttempts);
+        const unworkable = retire && !countsAsAttempt(failure);
         await sql.begin(async tx => {
           if (retire) {
-            await tx`UPDATE social_post_concept SET status='blocked',blocked_kind=${failure.kind},blocked_reason=${failure.reason},blocked_at=now(),generation_attempts=${attempts},updated_at=now() WHERE id=${selectedConcept.id}`;
+            await tx`UPDATE social_post_concept SET status='blocked',blocked_kind=${unworkable ? "infrastructure" : failure.kind},blocked_reason=${unworkable ? `Retired after ${totalAttempts} attempts without ever reaching judgement: ${failure.reason}`.slice(0, 400) : failure.reason},blocked_at=now(),generation_attempts=${attempts},total_generation_attempts=${totalAttempts},updated_at=now() WHERE id=${selectedConcept.id}`;
             if (selectedConcept.plan_slot_id) await tx`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${selectedConcept.plan_slot_id}`;
           } else {
             // Back into the bank. The slot returns to evidence_ready so the very next
             // generation run can pick this topic straight back up.
-            await tx`UPDATE social_post_concept SET status='planned',generation_attempts=${attempts},blocked_kind=NULL,blocked_reason=NULL,updated_at=now() WHERE id=${selectedConcept.id}`;
+            await tx`UPDATE social_post_concept SET status='planned',generation_attempts=${attempts},total_generation_attempts=${totalAttempts},blocked_kind=NULL,blocked_reason=NULL,updated_at=now() WHERE id=${selectedConcept.id}`;
             if (selectedConcept.plan_slot_id) await tx`UPDATE social_editorial_plan_slot SET status='evidence_ready',updated_at=now() WHERE id=${selectedConcept.plan_slot_id}`;
           }
-          await tx`INSERT INTO social_event (event_type, payload) VALUES ('generation.failed', ${tx.json({ documentId, conceptId: selectedConcept.id, planSlotId: selectedConcept.plan_slot_id, error: lastGenerationError, kind: failure.kind, attempts, retired: retire })})`;
+          await tx`INSERT INTO social_event (event_type, payload) VALUES ('generation.failed', ${tx.json({ documentId, conceptId: selectedConcept.id, planSlotId: selectedConcept.plan_slot_id, error: lastGenerationError, kind: failure.kind, attempts, totalAttempts, retired: retire, unworkable })})`;
         });
         return send(res, 422, { error: "Structured generation failed after the initial attempt and two targeted repairs", detail: lastGenerationError, kind: failure.kind, attempts, retired: retire });
       }
