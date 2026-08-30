@@ -15,6 +15,7 @@ import { renderReviewPreview } from "./preview.js";
 import { retryDecision } from "./retry-policy.js";
 import { classifyGenerationFailure, countsAsAttempt, shouldRetireConcept, MAX_GENERATION_ATTEMPTS } from "./block-reason.js";
 import { RENDER_LIMITS, renderLimitFailures, renderLimitBriefing } from "./render-limits.js";
+import { repairMechanicalDefects } from "./draft-repair.js";
 import { runSelfTest } from "./selftest.js";
 import { expandCalendar, loadEditorialCalendar, selectDailyMix } from "./planner.js";
 import { assertEnglishUserCopy, validateSocialDraft } from "./draft-quality.js";
@@ -198,65 +199,6 @@ const topicMatchesPlan = (draftTopic: string, plannedTopic: string) => {
 };
 const finishSentence = (value:string) => value.trim() && !/[.!?)]$/.test(value.trim()) ? `${value.trim()}.` : value.trim();
 
-// An over-long evidence quote is the model being generous, not wrong, and it was the
-// single largest mechanical cause of lost drafts — 43 failures in a fortnight, six of them
-// retiring the concept outright. Every one died before DraftSchema.parse returned, so the
-// repair pass never saw it and the tokens were spent for nothing.
-//
-// Trimming is safe here in a way it would not be for prose: the quote's whole job is to be
-// findable verbatim in the source, and *any contiguous slice of a verbatim string is still
-// verbatim*. So a shorter quote still anchors. The window is taken from the first digit
-// where there is one — the figure is the part a reader is being asked to trust, and a
-// prefix that stops short of it would anchor fine while proving nothing.
-const trimQuoteKeepingItVerbatim = (quote:string, limit:number) => {
-  const value = quote.trim();
-  if (value.length <= limit) return value;
-  const firstDigit = value.search(/\d/);
-  // Start far enough back that the figure and its lead-in survive, but never mid-word.
-  let from = firstDigit < 0 ? 0 : Math.max(0, Math.min(firstDigit - 120, value.length - limit));
-  if (from > 0) { const space = value.indexOf(" ", from); from = space < 0 ? 0 : space + 1; }
-  const slice = value.slice(from, from + limit);
-  const lastSpace = slice.lastIndexOf(" ");
-  return (slice.length < limit || lastSpace < limit * 0.6 ? slice : slice.slice(0, lastSpace)).trim();
-};
-
-// Mechanical defects are typos, not editorial failures. Repaired in place before the schema
-// is applied, so a draft that is sound in substance is not thrown away — and does not spend
-// another paid call — over a quote that ran long or a hashtag written twice.
-const repairMechanicalDefects = (draft:unknown) => {
-  if (!draft || typeof draft !== "object") return draft;
-  const value = draft as Record<string, unknown>;
-  if (Array.isArray(value.claims)) {
-    value.claims = value.claims.map(entry => {
-      if (!entry || typeof entry !== "object") return entry;
-      const claim = entry as Record<string, unknown>;
-      if (typeof claim.evidenceQuote === "string") claim.evidenceQuote = trimQuoteKeepingItVerbatim(claim.evidenceQuote, 500);
-      if (typeof claim.claim === "string" && claim.claim.length > 300) claim.claim = finishSentence(claim.claim.slice(0, 300).replace(/\s+\S*$/, ""));
-      return claim;
-    });
-  }
-  // A repeated hashtag is a typo that was costing whole drafts. Keep the first of each and
-  // the order the model chose; the caption rule still speaks up if too few survive.
-  if (Array.isArray(value.hashtags)) {
-    const seen = new Set<string>();
-    value.hashtags = (value.hashtags as unknown[]).filter(tag => {
-      if (typeof tag !== "string") return false;
-      const key = tag.toLowerCase();
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    }).slice(0, 8);
-  }
-  if (Array.isArray(value.searchKeywords)) {
-    const seen = new Set<string>();
-    value.searchKeywords = (value.searchKeywords as unknown[])
-      .filter(term => typeof term === "string" && term.trim().length >= 2)
-      .map(term => (term as string).trim().slice(0, 60))
-      .filter(term => { const key = term.toLowerCase(); if (seen.has(key)) return false; seen.add(key); return true; })
-      .slice(0, 6);
-  }
-  return value;
-};
 const ensureKnownAcronymsAreDefined = <T extends z.infer<typeof DraftSchema>>(candidate:T) => {
   const definitions:Record<string,{test:RegExp;sentence:string}>={
     AIMA:{test:/agency for integration,? migration and asylum/i,sentence:"AIMA is Portugal’s Agency for Integration, Migration and Asylum."},

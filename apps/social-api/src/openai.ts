@@ -2,6 +2,7 @@ import { DraftSchema, draftJsonSchema, providerSchema, type Draft } from "./cont
 import { WORD_CAP, WORD_FLOOR } from "./reel-quality.js";
 import { renderLimitBriefing } from "./render-limits.js";
 import { generateStructured } from "./llm.js";
+import { repairMechanicalDefects } from "./draft-repair.js";
 
 type Candidate = {
   title: string;
@@ -167,5 +168,8 @@ export async function generateDraft(candidate: Candidate): Promise<{ draft: Draf
     draft.slides = tidyAltText(tidyProse(draft.slides));
     draft.callToAction = endAtLastCompleteSentence(draft.callToAction);
   }
-  return { draft: DraftSchema.parse(parsed), model, totalTokens };
+  // Repaired before validation, not after: this parse is the first gate the model's
+  // output meets, so a defect fixed only downstream in the generation route never got the
+  // chance — the draft was already dead here.
+  return { draft: DraftSchema.parse(repairMechanicalDefects(parsed)), model, totalTokens };
 }
