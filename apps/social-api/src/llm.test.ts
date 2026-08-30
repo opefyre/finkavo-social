@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { parseResetDuration } from "./llm.js";
 
 // The gate keeps its window in module state, so each case imports a fresh copy.
 async function freshClient(env: Record<string, string>) {
@@ -326,5 +327,26 @@ describe("a day whose allowance is gone", () => {
     })));
     const spent = llmDailyBudget().spent;
     expect(spent).toBeGreaterThanOrEqual(limit);
+  });
+});
+
+describe("provider reset durations", () => {
+  // "585ms" was read as 585 minutes, because the fallback pattern matched the "585m"
+  // inside it. Every refusal then became the maximum block on a window that had already
+  // refilled, which is what made generation crawl.
+  it("reads milliseconds as milliseconds, not minutes", () => {
+    expect(parseResetDuration("585ms")).toBeCloseTo(0.585, 3);
+    expect(parseResetDuration("585ms")).toBeLessThan(1);
+  });
+  it("reads plain seconds and compound durations", () => {
+    expect(parseResetDuration("2.5s")).toBeCloseTo(2.5, 3);
+    expect(parseResetDuration("1m26.4s")).toBeCloseTo(86.4, 1);
+    expect(parseResetDuration("1h2m3s")).toBeCloseTo(3723, 1);
+    expect(parseResetDuration("7m")).toBeCloseTo(420, 1);
+  });
+  it("falls back rather than returning nonsense", () => {
+    expect(parseResetDuration("")).toBe(60);
+    expect(parseResetDuration("nonsense")).toBe(60);
+    expect(parseResetDuration("30")).toBe(30);
   });
 });

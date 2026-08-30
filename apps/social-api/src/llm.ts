@@ -382,6 +382,31 @@ async function reserve(estimated: number, provider: string): Promise<(actual: nu
 // standby's fifty on the overflow. Groq reports the truth on every response; believing
 // it over our own arithmetic is the difference between deferring once and burning both
 // providers to discover the same fact.
+// Groq writes this header as a compound duration: "585ms", "2.5s", "1m26.4s". The old
+// parser tried seconds-only, then fell through to a bare /([\d.]+)m/ — which matches the
+// "585m" *inside* "585ms" and read a 585-millisecond reset as 585 minutes. Clamped to ten
+// minutes and then to the three-minute cap, every refusal became a three-minute block on a
+// window that had already refilled before the next request could be built. That is the
+// whole reason generation crawled: the limit was real, its duration was off by 60,000x.
+export function parseResetDuration(raw: string): number {
+  const value = raw.trim().toLowerCase();
+  if (!value) return 60;
+  // Milliseconds first: "ms" ends in "s", so any seconds pattern matches it by accident.
+  const ms = /^([\d.]+)ms$/.exec(value);
+  if (ms) return Number(ms[1]) / 1000;
+  let total = 0;
+  let matched = false;
+  for (const [, amount, unit] of value.matchAll(/([\d.]+)(h|m(?!s)|s)/g)) {
+    const n = Number(amount);
+    if (!Number.isFinite(n)) continue;
+    matched = true;
+    total += unit === "h" ? n * 3600 : unit === "m" ? n * 60 : n;
+  }
+  if (matched) return total;
+  const bare = Number(value);
+  return Number.isFinite(bare) ? bare : 60;
+}
+
 function readProviderQuota(headers: Headers, provider: string) {
   // A missing header is not a reading of zero. Number(null) is 0, so treating an absent
   // value as a number would have every provider that omits it look permanently exhausted.
@@ -390,9 +415,7 @@ function readProviderQuota(headers: Headers, provider: string) {
   const remaining = Number(raw);
   const resetRaw = headers.get("x-ratelimit-reset-tokens") ?? "";
   if (!Number.isFinite(remaining)) return;
-  const seconds = /^([\d.]+)s$/.exec(resetRaw)?.[1];
-  const minutes = /^([\d.]+)m/.exec(resetRaw)?.[1];
-  const resetSeconds = seconds ? Number(seconds) : minutes ? Number(minutes) * 60 : 60;
+  const resetSeconds = parseResetDuration(resetRaw);
   // Not enough left for a real draft is the same as none: reserve the window rather than
   // sending a request that will be refused, and re-check when it says capacity returns.
   if (remaining < MIN_COMPLETION_TOKENS) blockProvider(provider, Math.max(30, Math.min(resetSeconds, 600)));
