@@ -15,7 +15,15 @@ import { z } from "zod";
 // spent on the reveal itself and on a beat of stillness after it. The frame still holds
 // far more than can be read in the time it is up — that is the point — but it now reads
 // as deliberate rather than frantic.
-export const HOLD_SECONDS = Number(process.env.REEL_HOLD_SECONDS ?? 2.3);
+// At 2.3 the copy finished revealing and the frame left almost immediately after, so each
+// section still read as motion rather than as something to stop on. The extra second is
+// stillness and nothing else: REEL_STILL_SECONDS is subtracted before the reveal and the
+// typing are paced, so both run at exactly the speed they did before and the whole of the
+// addition lands after the last word arrives, with the copy sitting there to be read.
+export const HOLD_SECONDS = Number(process.env.REEL_HOLD_SECONDS ?? 3.3);
+
+// How much of each frame is stillness after the copy has finished arriving.
+export const STILL_SECONDS = Number(process.env.REEL_STILL_SECONDS ?? 1.0);
 
 const words = (value: string) => value.trim().split(/\s+/).filter(Boolean).length;
 

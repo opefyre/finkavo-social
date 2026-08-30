@@ -1,5 +1,5 @@
 import type { ReelManifest, ReelFrame } from "./reel-schema.js";
-import { HOLD_SECONDS } from "./reel-schema.js";
+import { HOLD_SECONDS, STILL_SECONDS } from "./reel-schema.js";
 import type { RenderAssets } from "./template.js";
 import { REEL_WIDTH, REEL_HEIGHT, reelThemeCss, reelFontFaces } from "./reel-template.js";
 
@@ -74,6 +74,11 @@ function frameMarkup(frame: ReelFrame, index: number): string {
 
 export function renderReelMotion(manifest: ReelManifest, assets: RenderAssets): string {
   const hold = (manifest.holdSeconds ?? HOLD_SECONDS) * 1000;
+  // Stillness is carved out of the frame rather than added to the reveal: everything that
+  // paces the copy is measured against `pace`, so lengthening the hold buys a pause and
+  // never a slower animation.
+  const still = Math.min(Math.max(STILL_SECONDS * 1000, 0), Math.max(0, hold - 600));
+  const pace = hold - still;
   const total = manifest.frames.length;
   const duration = hold * total;
 
@@ -134,6 +139,7 @@ h1.payoff{font-family:"Fraunces",Georgia,serif;font-size:60px;line-height:1.1;le
 <script>
 (function(){
   var HOLD = ${hold};
+  var PACE = ${pace};
   var TOTAL = ${total};
   var DURATION = ${duration};
   var EASE_OUT = "cubic-bezier(.16,1,.3,1)";
@@ -178,7 +184,7 @@ h1.payoff{font-family:"Fraunces",Georgia,serif;font-size:60px;line-height:1.1;le
       // Typing occupies a little over half the frame, whatever the line's length, so a
       // short hook does not finish in a blink and a long one does not still be typing
       // when the frame leaves.
-      var typeWindow = HOLD * 0.56;
+      var typeWindow = PACE * 0.56;
       var perChar = Math.min(30, Math.max(11, typeWindow / typed.length));
       [].forEach.call(typed, function(c, n){
         at(c, [{opacity:0},{opacity:1}], start + 240 + n * perChar, 90);
@@ -214,7 +220,7 @@ h1.payoff{font-family:"Fraunces",Georgia,serif;font-size:60px;line-height:1.1;le
     // That pause is what someone catches; a reveal that runs right up to the exit reads
     // as motion rather than as text. Bounded so a very long frame does not become a
     // flicker and a very short one does not crawl.
-    var revealWindow = Math.max(300, HOLD * 0.70 - lead);
+    var revealWindow = Math.max(300, PACE * 0.70 - lead);
     var perWord = Math.min(85, Math.max(34, revealWindow / Math.max(1, ws.length)));
     [].forEach.call(ws, function(w, n){
       at(w, [{opacity:0},{opacity:1}], start + lead + n * perWord, 300);
