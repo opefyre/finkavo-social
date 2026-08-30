@@ -185,7 +185,15 @@ let spends: Spend[] = [];
 let dailySpends: Spend[] = [];
 let lastCallAt = 0;
 /** Set when the provider itself tells us to back off; no request goes out before it. */
-let providerBlockedUntil = 0;
+// Keyed by provider. It used to be a single number, which meant a back-off earned by one
+// provider silenced every other one: OpenRouter's free tier answers 429 for the whole day
+// once its fifty requests are gone, and each time the chain reached it, it armed a global
+// three-minute block that also stopped Groq — which was healthy, had 7,900 tokens on the
+// clock, and was the only provider actually able to do the work. Twelve consecutive
+// recovery passes deferred every attempt with "the provider asked for a back-off" while
+// Groq sat idle and answered a hand probe instantly.
+const providerBlockedUntil = new Map<string, number>();
+const blockedUntilFor = (provider: string) => providerBlockedUntil.get(provider) ?? 0;
 /** Requests queue rather than race: two callers must not both read the same free window. */
 let gate: Promise<unknown> = Promise.resolve();
 // How many callers may be queued on the gate at once.
@@ -257,8 +265,9 @@ function windowState(now: number) {
 }
 
 /** Milliseconds until this request fits the window, or 0 if it fits now. */
-function waitFor(estimated: number, now: number): number {
-  if (now < providerBlockedUntil) return providerBlockedUntil - now;
+function waitFor(estimated: number, now: number, provider: string): number {
+  const blockedUntil = blockedUntilFor(provider);
+  if (now < blockedUntil) return blockedUntil - now;
   // A day's allowance cannot be waited out inside a request, so exhausting it is
   // reported rather than slept on: the oldest spend has to age a full day to free room.
   if (dailyTokens(now) + estimated > TOKENS_PER_DAY) {
@@ -292,7 +301,7 @@ function waitFor(estimated: number, now: number): number {
  * records the reservation. Serialised so concurrent callers cannot both claim the same
  * headroom. Returns a settle() to reconcile the reservation against real usage.
  */
-async function reserve(estimated: number): Promise<(actual: number | null) => void> {
+async function reserve(estimated: number, provider: string): Promise<(actual: number | null) => void> {
   if (queued >= MAX_PACING_QUEUE) {
     throw new LlmRateLimitError(
       `paced locally: ${queued} request(s) are already waiting for room in the window`,
@@ -317,15 +326,15 @@ async function reserve(estimated: number): Promise<(actual: number | null) => vo
     let sleptMs = 0;
     for (;;) {
       const now = Date.now();
-      const wait = waitFor(estimated, now);
+      const wait = waitFor(estimated, now, provider);
       if (wait === 0) break;
       if (sleptMs + wait > PACING_MAX_INLINE_WAIT_MS) {
         // Naming which of the two is holding the request matters when reading the logs:
         // a provider back-off is the tier refusing us for minutes, while a full local
         // window clears within the minute.
         const spentToday = dailyTokens(now);
-        const reason = now < providerBlockedUntil
-          ? `the provider asked for a ${Math.ceil((providerBlockedUntil - now) / 1000)}s back-off`
+        const reason = now < blockedUntilFor(provider)
+          ? `${provider} asked for a ${Math.ceil((blockedUntilFor(provider) - now) / 1000)}s back-off`
           : spentToday + estimated > TOKENS_PER_DAY
             ? `the ${TOKENS_PER_DAY}-token day is spent (${spentToday} used)`
             : `the ${TOKENS_PER_MINUTE}-token minute is full`;
@@ -373,7 +382,7 @@ async function reserve(estimated: number): Promise<(actual: number | null) => vo
 // standby's fifty on the overflow. Groq reports the truth on every response; believing
 // it over our own arithmetic is the difference between deferring once and burning both
 // providers to discover the same fact.
-function readProviderQuota(headers: Headers) {
+function readProviderQuota(headers: Headers, provider: string) {
   // A missing header is not a reading of zero. Number(null) is 0, so treating an absent
   // value as a number would have every provider that omits it look permanently exhausted.
   const raw = headers.get("x-ratelimit-remaining-tokens");
@@ -386,7 +395,7 @@ function readProviderQuota(headers: Headers) {
   const resetSeconds = seconds ? Number(seconds) : minutes ? Number(minutes) * 60 : 60;
   // Not enough left for a real draft is the same as none: reserve the window rather than
   // sending a request that will be refused, and re-check when it says capacity returns.
-  if (remaining < MIN_COMPLETION_TOKENS) blockProvider(Math.max(30, Math.min(resetSeconds, 600)));
+  if (remaining < MIN_COMPLETION_TOKENS) blockProvider(provider, Math.max(30, Math.min(resetSeconds, 600)));
 }
 
 function paidUsage(now: number) {
@@ -436,7 +445,11 @@ export function llmDailyBudget() {
     remaining: lastKnownProviderSpend
       ? Math.max(0, lastKnownProviderSpend.limit - lastKnownProviderSpend.used)
       : Math.max(0, TOKENS_PER_DAY - spent),
-    blockedUntil: providerBlockedUntil > now ? new Date(providerBlockedUntil).toISOString() : null,
+    blockedUntil: (() => {
+      const soonest = [...providerBlockedUntil.entries()].filter(([, until]) => until > now).sort((a, b) => a[1] - b[1])[0];
+      return soonest ? new Date(soonest[1]).toISOString() : null;
+    })(),
+    blockedProviders: Object.fromEntries([...providerBlockedUntil.entries()].filter(([, until]) => until > now).map(([name, until]) => [name, new Date(until).toISOString()])),
     paid: (() => {
       const used = paidUsage(now);
       return {
@@ -524,9 +537,9 @@ function noteStandbyRefusal(provider: string, resetHeader: string | null) {
 const PROVIDER_BLOCK_CAP_MS = Number(process.env.LLM_PROVIDER_BLOCK_CAP_MS ?? 180_000);
 
 /** Called when the provider returns a pacing signal, so every caller backs off, not one. */
-function blockProvider(seconds: number) {
+function blockProvider(provider: string, seconds: number) {
   const asked = Math.max(1, seconds) * 1000;
-  providerBlockedUntil = Math.max(providerBlockedUntil, Date.now() + Math.min(asked, PROVIDER_BLOCK_CAP_MS));
+  providerBlockedUntil.set(provider, Math.max(blockedUntilFor(provider), Date.now() + Math.min(asked, PROVIDER_BLOCK_CAP_MS)));
 }
 
 /**
@@ -604,7 +617,7 @@ export async function generateStructured(
 
   let paced: LlmRateLimitError | null = null;
   for (let attempt = 1; attempt <= 2 && !paced && !outOfTime(); attempt++) {
-    const settle = await reserve(estimated).catch(error => {
+    const settle = await reserve(estimated, config.provider).catch(error => {
       if (error instanceof LlmRateLimitError) { paced = error; return null; }
       throw error;
     });
@@ -638,9 +651,9 @@ export async function generateStructured(
       // conforming output, which says nothing about whether another one can.
       if (isModelOutputFailure(error)) break;
       if (!(error instanceof LlmRateLimitError)) throw error;
-      blockProvider(error.retryAfterSeconds ?? 65);
+      blockProvider(config.provider, error.retryAfterSeconds ?? 65);
       // One inline retry, and only when the wait is short enough to hold the caller for.
-      const waitMs = Math.max(0, providerBlockedUntilMs() - Date.now());
+      const waitMs = Math.max(0, providerBlockedUntilMs(config.provider) - Date.now());
       if (attempt >= 2 || waitMs > PACING_MAX_INLINE_WAIT_MS) { paced = error; break; }
     }
   }
@@ -700,8 +713,8 @@ export async function generateStructured(
 }
 
 /** Exposed for the retry decision above; the value itself stays private to the gate. */
-function providerBlockedUntilMs(): number {
-  return providerBlockedUntil;
+function providerBlockedUntilMs(provider: string): number {
+  return blockedUntilFor(provider);
 }
 
 async function callProvider(
@@ -781,7 +794,7 @@ async function callProvider(
     signal: timeout,
   });
   if (!response.ok) throw new Error(await describeFailure(response, config));
-  if (config.provider === "groq") readProviderQuota(response.headers);
+  if (config.provider === "groq") readProviderQuota(response.headers, config.provider);
   const result = await response.json() as {
     choices?: Array<{ message?: { content?: string } }>;
     usage?: { total_tokens?: number };
