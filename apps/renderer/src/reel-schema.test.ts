@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ReelManifestSchema, HOLD_SECONDS } from "./reel-schema.js";
+import { ReelManifestSchema, HOLD_SECONDS, STILL_SECONDS } from "./reel-schema.js";
 import { frameDurations } from "./compose-reel.js";
 
 const manifest = (overrides: Record<string, unknown> = {}) => ({
@@ -56,14 +56,20 @@ describe("copy written to the length of the cut", () => {
   });
 
   it("holds every frame for the same beat, and keeps five of them inside a scroll", () => {
-    // Long enough that the reveal finishes and the copy sits still for a moment — the
-    // pause is what a viewer catches — and short enough that the whole reel is still
-    // something you fall into rather than commit to.
+    // The old ceiling here was thirteen seconds for five frames, on the reasoning that a
+    // reel should be something you fall into rather than commit to. That was traded
+    // deliberately: at a 2.3s hold the copy finished arriving and the frame left, so a
+    // section read as motion and there was nothing to stop on — and a viewer stopping is
+    // the entire reason a frame carries more words than its hold allows. A second of
+    // stillness per section is worth the extra length, so five frames now run 16.5s.
+    // The reveal did not slow down to buy it; see `pace` in reel-motion.
     const parsed = ReelManifestSchema.parse(manifest());
     const durations = frameDurations(parsed.frames, parsed.holdSeconds);
     expect(new Set(durations).size).toBe(1);
     expect(durations[0]).toBeCloseTo(HOLD_SECONDS, 2);
     expect(HOLD_SECONDS).toBeGreaterThan(1.9);
-    expect(HOLD_SECONDS * 5).toBeLessThan(13);
+    expect(STILL_SECONDS).toBeGreaterThanOrEqual(0.8);
+    // Still bounded: a reel someone has to commit to is a reel they scroll past.
+    expect(HOLD_SECONDS * 5).toBeLessThanOrEqual(18);
   });
 });
