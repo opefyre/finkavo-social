@@ -39,6 +39,24 @@ const dedupe = (values: unknown[], cap: number, normalise: (value: string) => st
     .slice(0, cap);
 };
 
+// Slide prose is the one place a blind truncation would be wrong: cutting mid-clause can
+// invert a rule ("you do not pay IMI if" …), which matters more here than losing a draft.
+// So whole sentences are dropped from the end until it fits, and a body that is a single
+// over-long sentence is left exactly as written for the model's repair pass to rewrite —
+// there is no safe way to shorten that one mechanically.
+const trimToWholeSentences = (value: string, limit: number) => {
+  const text = value.trim();
+  if (text.length <= limit) return text;
+  const sentences = text.match(/[^.!?]+[.!?]+(?:\s|$)/g);
+  if (!sentences || sentences.length < 2) return text;
+  let kept = "";
+  for (const sentence of sentences) {
+    if ((kept + sentence).trim().length > limit) break;
+    kept += sentence;
+  }
+  return kept.trim() || text;
+};
+
 export const repairMechanicalDefects = (draft: unknown) => {
   if (!draft || typeof draft !== "object") return draft;
   const value = draft as Record<string, unknown>;
@@ -49,6 +67,15 @@ export const repairMechanicalDefects = (draft: unknown) => {
       if (typeof claim.evidenceQuote === "string") claim.evidenceQuote = trimQuoteKeepingItVerbatim(claim.evidenceQuote, 500);
       if (typeof claim.claim === "string" && claim.claim.length > 300) claim.claim = finishSentence(claim.claim.slice(0, 300).replace(/\s+\S*$/, ""));
       return claim;
+    });
+  }
+  if (Array.isArray(value.slides)) {
+    value.slides = value.slides.map(entry => {
+      if (!entry || typeof entry !== "object") return entry;
+      const slide = entry as Record<string, unknown>;
+      if (typeof slide.body === "string") slide.body = trimToWholeSentences(slide.body, 300);
+      if (Array.isArray(slide.items)) slide.items = slide.items.map(item => typeof item === "string" ? trimToWholeSentences(item, 110) : item);
+      return slide;
     });
   }
   // A repeated hashtag is a typo that was costing whole drafts. Keep the first of each and
