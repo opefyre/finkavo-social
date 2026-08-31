@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { validateReelFrames, type ReelFrameDraft } from "./reel-quality.js";
+import { validateReelFrames, WORD_CAP, WORD_FLOOR, type ReelFrameDraft } from "./reel-quality.js";
 
 const CORPUS = "O prazo de entrega da declaracao de IRS decorre de 1 de abril a 30 de junho. A deducao e de 300 euros por cada dependente. A reclamacao deve ser apresentada no prazo de 120 dias.";
 
@@ -9,7 +9,7 @@ const ok: ReelFrameDraft[] = [
   { type: "hook", text: "Separated parents in Portugal both claim the child, and most of them get the split wrong" },
   { type: "beat", figure: "30 June", label: "Filing closes", text: "Both parents have to file inside the window for the deduction to be shared between them. If one files late, the split collapses and the whole benefit lands in a single household instead of two." },
   { type: "beat", figure: "300 euros", label: "Per dependent", text: "This is the amount each dependent is worth before the split is applied, and it is the figure the tax authority uses when it works out what each parent is owed for the year." },
-  { type: "payoff", text: "Check the household details on the tax authority portal before the window closes, because the split follows what is registered there rather than what you agreed between yourselves." },
+  { type: "payoff", text: "Check the household details on the tax authority portal before the window closes, because the split follows the register." },
 ];
 
 const withFrames = (changes: Partial<ReelFrameDraft>, index: number): ReelFrameDraft[] =>
@@ -70,5 +70,24 @@ describe("what a reel is allowed to say", () => {
   it("refuses a figure that is really a sentence", () => {
     const result = validateReelFrames(withFrames({ figure: "three hundred euros per dependent" }, 2), CORPUS);
     expect(result).toEqual({ ok: false, reason: expect.stringContaining("three words at most") });
+  });
+});
+
+describe("caps agree with what the renderer will typeset", () => {
+  // These mirror apps/renderer/src/reel-schema.ts, which is applied at render time — long
+  // after a draft has passed every gate here and been approved. When the payoff cap sat at
+  // 32 against the renderer's 20, a 21-to-32-word payoff passed generation and then failed
+  // to render, and the post went out silently downgraded to a carousel. If the renderer's
+  // limits move, this is the test that should fail first.
+  const RENDERER_CAPS = { hook: 22, beat: 42, payoff: 20 };
+  it("never lets generation write more than the frame can hold", () => {
+    for (const [frame, limit] of Object.entries(RENDERER_CAPS)) {
+      expect(WORD_CAP[frame as keyof typeof RENDERER_CAPS]).toBeLessThanOrEqual(limit);
+    }
+  });
+  it("leaves a usable band between the floor and the cap", () => {
+    for (const frame of Object.keys(RENDERER_CAPS) as Array<keyof typeof RENDERER_CAPS>) {
+      expect(WORD_CAP[frame] - WORD_FLOOR[frame]).toBeGreaterThanOrEqual(4);
+    }
   });
 });

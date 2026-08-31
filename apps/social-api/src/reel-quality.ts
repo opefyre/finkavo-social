@@ -24,7 +24,15 @@ export type ReelFrameDraft = {
 // be read at speed. The floors matter as much: a model given room to write a sentence
 // will still hand back four words if nothing stops it, which is how this drifted in the
 // first place.
-export const WORD_CAP: Record<ReelFrameDraft["type"], number> = { hook: 22, beat: 42, payoff: 32 };
+// These must not exceed what apps/renderer/src/reel-schema.ts will typeset, because that
+// schema is applied at render time — long after the draft has passed every gate here and
+// been approved. The payoff sat at 32 against the renderer's 20, and a payoff frame's text
+// becomes the headline verbatim, so any payoff of 21 to 32 words passed generation and
+// then failed to render. The post still went out, silently downgraded to the carousel it
+// was also written as, and the only trace was a self-test line the next morning.
+//
+// hook headline 22, beat body 42, payoff headline 20 — mirrored from the renderer.
+export const WORD_CAP: Record<ReelFrameDraft["type"], number> = { hook: 22, beat: 42, payoff: 20 };
 // The hook floor rises with the others so it stays consistent with the 70-character
 // minimum the wire schema now enforces: roughly twelve words, which is a full opening
 // line rather than a headline.

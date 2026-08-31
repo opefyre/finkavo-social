@@ -1969,7 +1969,7 @@ const server = http.createServer(async (req, res) => {
                 `The reel is missing or unusable: ${draftVerdict.reason}. ` +
                 `Every post must also carry a reel of exactly four frames — one "hook", two "beat", one "payoff". ` +
                 `Write each frame as fully as a carousel slide: the hook 12 to 22 words, each beat 22 to 42, the payoff ` +
-                `15 to 32, in complete sentences. The frame should hold more than a viewer can read as it passes, so ` +
+                `15 to 20, in complete sentences. The frame should hold more than a viewer can read as it passes, so ` +
                 `they stop the video to finish it. Any figure shown must be one the excerpts state directly. ` +
                 `Keep the carousel exactly as it is and add the reel.`,
               );

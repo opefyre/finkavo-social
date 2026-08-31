@@ -1,4 +1,4 @@
-import { mkdir, readFile } from "node:fs/promises";
+import { mkdir, readFile, copyFile } from "node:fs/promises";
 import path from "node:path";
 import { chromium } from "playwright";
 import type { ReelManifest } from "./reel-schema.js";
@@ -77,6 +77,9 @@ export async function renderReel(manifest: ReelManifest, root: string): Promise<
 
 /** Frames per second of the captured sequence. Thirty is what Instagram plays back at. */
 export const MOTION_FPS = 30;
+// How long the still cover is held before the reel animates. Long enough to be the frame
+// Instagram grabs for the grid, short enough not to read as a stall on the way in.
+const COVER_SECONDS = Number(process.env.REEL_COVER_SECONDS ?? 0.8);
 
 /**
  * Photographs the animated reel one tick at a time.
@@ -143,15 +146,42 @@ export async function renderReelMotionFrames(manifest: ReelManifest, root: strin
     }
 
     const files: string[] = [];
+
+    // Instagram takes a Reel's grid thumbnail from its first frame, and the first frame of
+    // the animation is deliberately empty — every revealed unit starts hidden, so t=0 is
+    // the bare background. On the profile that rendered as a blank dark tile next to
+    // carousels showing their titles, which is the worst possible advertisement for a post
+    // whose whole argument is that it says something worth stopping for.
+    //
+    // A custom thumbnail is not an option: Instagram refuses one for video, which is what
+    // the earlier thumbnailUrl attempt ran into. So the cover is made part of the video —
+    // the hook, held still and fully typed, before the animation runs. It is captured at
+    // the same three-quarter point through the hold that the still renderer uses for its
+    // frames, which is after the typing finishes and before the exit begins.
+    const coverTicks = Math.max(0, Math.round(COVER_SECONDS * MOTION_FPS));
+    if (coverTicks > 0) {
+      await page.evaluate(t => (window as unknown as { __seek: (ms: number) => void }).__seek(t), holdMs * 0.75);
+      const cover = path.join(directory, `t-${String(0).padStart(5, "0")}.png`);
+      await page.screenshot({ path: cover, type: "png" });
+      files.push(cover);
+      // Copied rather than re-screenshotted: it is the same still, and a screenshot costs
+      // far more than a file copy at thirty of them a second.
+      for (let tick = 1; tick < coverTicks; tick++) {
+        const file = path.join(directory, `t-${String(tick).padStart(5, "0")}.png`);
+        await copyFile(cover, file);
+        files.push(file);
+      }
+    }
+
     const totalTicks = Math.round((durationMs / 1000) * MOTION_FPS);
     for (let tick = 0; tick < totalTicks; tick++) {
       await page.evaluate(t => (window as unknown as { __seek: (ms: number) => void }).__seek(t), (tick / MOTION_FPS) * 1000);
-      const file = path.join(directory, `t-${String(tick).padStart(5, "0")}.png`);
+      const file = path.join(directory, `t-${String(coverTicks + tick).padStart(5, "0")}.png`);
       await page.screenshot({ path: file, type: "png" });
       files.push(file);
     }
     await page.close();
-    return { files, fps: MOTION_FPS, durationMs };
+    return { files, fps: MOTION_FPS, durationMs: durationMs + coverTicks * (1000 / MOTION_FPS) };
   } finally {
     await browser.close();
   }
