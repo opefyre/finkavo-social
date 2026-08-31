@@ -85,6 +85,20 @@ export function renderReelMotion(manifest: ReelManifest, assets: RenderAssets): 
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><style>
 ${reelFontFaces(assets)}
 ${reelThemeCss()}
+/* The motion reel always plays on the deep ground: the atmosphere layer, the cream
+   headline and the grain are all drawn for it, and the theme class sits on .scenes, which
+   paints no background of its own. So a light theme contributed its dark accent without
+   ever contributing the light ground that accent was chosen against — petrol on cream_guide,
+   mint_checklist and peach_deadline — and the kicker, the payoff's action and its rule came
+   out dark on dark. Three of the five themes rendered them all but invisible, which only
+   became obvious once the first frame became the profile tile.
+   Remapped to the light tokens, keeping each theme's character against the ground it is
+   actually drawn on rather than the one it was defined for. --fg is pinned for the same
+   reason: nothing inside .scenes should inherit an ink meant for a cream page. */
+.scenes{--fg:var(--paper)}
+.scenes.theme-cream_guide{--accent:var(--mint)}
+.scenes.theme-mint_checklist{--accent:var(--mint)}
+.scenes.theme-peach_deadline{--accent:var(--peach)}
 *{box-sizing:border-box}
 html,body{margin:0;width:${REEL_WIDTH}px;height:${REEL_HEIGHT}px;overflow:hidden}
 body{font-family:"Noto Sans",Arial,sans-serif;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased}
