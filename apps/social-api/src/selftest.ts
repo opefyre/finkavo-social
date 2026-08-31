@@ -27,6 +27,11 @@ export async function runSelfTest(deps: Deps): Promise<Check[]> {
   const { sql, today, postsPerDay } = deps;
   const checks: Check[] = [];
 
+  const [landed] = await sql`
+    SELECT count(*) AS count FROM social_publish_job j
+    WHERE j.scheduled_at >= ${today} AND j.scheduled_at < (${today}::date + 1)
+      AND j.status NOT IN ('failed','blocked')`;
+
   // The carry-forward bug parked the whole bank two weeks in the future and today had
   // nothing to generate from, while the alert said the bank was empty. It was not.
   const [ready] = await sql`
@@ -34,9 +39,16 @@ export async function runSelfTest(deps: Deps): Promise<Check[]> {
     JOIN social_topic_evidence_bundle b ON b.id = c.evidence_bundle_id
     WHERE c.status = 'planned' AND c.planned_for <= ${today}
       AND b.verification_state = 'verified' AND b.expires_at > now()`;
+  // An empty bank only matters while the day still wants posts. Once the day's slots are
+  // filled the remaining concepts for it are used or blocked by definition, so the old
+  // unconditional version went red every afternoon on days that had gone perfectly — which
+  // is how a fault that means "today cannot be finished" got read as ordinary noise.
+  const dayIsShort = Number(landed.count) < postsPerDay;
   checks.push(Number(ready.count) > 0
     ? ok("bank has work for today", `${ready.count} concept(s) with live evidence`)
-    : bad("bank has work for today", "no planned concept for today carries verified, unexpired evidence"));
+    : dayIsShort
+      ? bad("bank has work for today", `today still wants ${postsPerDay - Number(landed.count)} post(s) and no planned concept carries verified, unexpired evidence`)
+      : ok("bank has work for today", "today is already covered, so the bank is not needed for it"));
 
   // The pacing deadlock stopped generation for a day and a half without one error. The
   // symptom was silence, so silence is what this looks for.
@@ -92,10 +104,6 @@ export async function runSelfTest(deps: Deps): Promise<Check[]> {
     : bad("Buffer answers", "Buffer did not respond"));
 
   // The point of the whole thing.
-  const [landed] = await sql`
-    SELECT count(*) AS count FROM social_publish_job j
-    WHERE j.scheduled_at >= ${today} AND j.scheduled_at < (${today}::date + 1)
-      AND j.status NOT IN ('failed','blocked')`;
   checks.push(Number(landed.count) >= postsPerDay
     ? ok("today is covered", `${landed.count} of ${postsPerDay} slot(s) filled`)
     : bad("today is covered", `${landed.count} of ${postsPerDay} slot(s) filled`, "warning"));
