@@ -123,7 +123,7 @@ async function main() {
       const worked = await processOne();
       if (!worked) await new Promise((resolve) => setTimeout(resolve, pollMs));
     } catch (error) {
-      console.error(JSON.stringify({ level: "error", workerId, message: error instanceof Error ? error.message : "agent failure" }));
+      console.error(JSON.stringify({ ts: new Date().toISOString(), level: "error", workerId, message: error instanceof Error ? error.message : "agent failure" }));
       await new Promise((resolve) => setTimeout(resolve, pollMs));
     }
   }

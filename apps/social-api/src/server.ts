@@ -15,6 +15,7 @@ import { renderReviewPreview } from "./preview.js";
 import { retryDecision } from "./retry-policy.js";
 import { classifyGenerationFailure, countsAsAttempt, shouldRetireConcept, MAX_GENERATION_ATTEMPTS } from "./block-reason.js";
 import { RENDER_LIMITS, renderLimitFailures, renderLimitBriefing } from "./render-limits.js";
+import { logLine } from "./log.js";
 import { repairMechanicalDefects } from "./draft-repair.js";
 import { runSelfTest } from "./selftest.js";
 import { expandCalendar, loadEditorialCalendar, selectDailyMix } from "./planner.js";
@@ -1861,7 +1862,7 @@ const server = http.createServer(async (req, res) => {
       // it is waiting — not for what. This says for what.
       const genStarted = Date.now();
       const mark = (stage: string, extra?: Record<string, unknown>) =>
-        console.log(JSON.stringify({ level: "info", at: "generate", stage, ms: Date.now() - genStarted, ...extra }));
+        console.log(logLine("info", { at: "generate", stage, ms: Date.now() - genStarted, ...extra }));
       mark("entered");
       const generationInput = GenerateSchema.parse(await readJson(req));
       mark("body-parsed");
@@ -3304,7 +3305,7 @@ const server = http.createServer(async (req, res) => {
     // it now.
     const cause = error instanceof Error && error.cause ? String((error.cause as { message?: string }).message ?? error.cause) : undefined;
     const stack = error instanceof Error && !cause ? String(error.stack ?? "").split("\n").slice(1, 4).join(" | ") : undefined;
-    console.error(JSON.stringify({ level: "error", message, cause, route: `${req.method} ${req.url ?? ""}`.slice(0, 120), stack }));
+    console.error(logLine("error", { message, cause, route: `${req.method} ${req.url ?? ""}`.slice(0, 120), stack }));
     return send(res, clientError ? 400 : 500, { error: clientError ? message : "Internal server error" });
   }
 });
@@ -3312,4 +3313,4 @@ const server = http.createServer(async (req, res) => {
 const shutdown = async () => { server.close(); await sql.end({ timeout: 5 }); };
 process.on("SIGTERM", shutdown);
 process.on("SIGINT", shutdown);
-server.listen(port, "127.0.0.1", () => console.log(JSON.stringify({ service: "social-api", port })));
+server.listen(port, "127.0.0.1", () => console.log(logLine("info", { service: "social-api", port })));
