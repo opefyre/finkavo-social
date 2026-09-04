@@ -28,6 +28,17 @@ launchctl kickstart -k "gui/$(id -u)/com.finkavo.social.api"
 launchctl kickstart -k "gui/$(id -u)/com.finkavo.social.renderer"
 sleep 8
 
+echo "==> prune orphaned build output"
+# tsc writes outputs but never removes them, so a deleted source leaves its .js behind and
+# the next deploy ships a module that no longer exists in the tree. Harmless until
+# something still imports it, at which point the running service and the source disagree.
+for app in social-api renderer; do
+  find "apps/$app/dist" -name '*.js' 2>/dev/null | while read -r out; do
+    src="apps/$app/src/${out#apps/$app/dist/}"
+    [[ -f "${src%.js}.ts" ]] || { echo "    removing orphan ${out}"; rm -f "$out" "${out%.js}.d.ts" "${out}.map"; }
+  done
+done
+
 echo "==> verify the artifact is newer than its sources"
 for app in social-api renderer; do
   stale=$(find "apps/$app/src" -name '*.ts' -newer "apps/$app/dist/server.js" 2>/dev/null | wc -l | tr -d ' ')
