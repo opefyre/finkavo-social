@@ -88,15 +88,6 @@ export async function runSelfTest(deps: Deps): Promise<Check[]> {
     }
   }
 
-  // A reel whose video failed to render published as five images while still recorded as a
-  // reel, so the day counted a reel it had not delivered.
-  const downgraded = await sql`
-    SELECT count(*) AS count FROM social_event
-    WHERE event_type = 'reel.render_missing' AND created_at > now() - INTERVAL '24 hours'`;
-  checks.push(Number(downgraded[0]?.count ?? 0) === 0
-    ? ok("reels render as reels", "no reel fell back to slides today")
-    : bad("reels render as reels", `${downgraded[0]!.count} reel(s) published as carousels because the video never rendered`, "warning"));
-
   // Our record of what Buffer holds drifted for days: posts approved into the queue still
   // read as drafts here, and the overdue check skips drafts.
   checks.push(await deps.bufferReachable()

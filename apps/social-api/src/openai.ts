@@ -1,5 +1,4 @@
 import { DraftSchema, draftJsonSchema, providerSchema, type Draft } from "./contracts.js";
-import { WORD_CAP, WORD_FLOOR } from "./reel-quality.js";
 import { renderLimitBriefing } from "./render-limits.js";
 import { generateStructured } from "./llm.js";
 import { repairMechanicalDefects } from "./draft-repair.js";
@@ -69,22 +68,13 @@ export async function generateDraft(candidate: Candidate): Promise<{ draft: Draf
       "Every body, item, quote and CTA is a complete thought ending in . ? ! or ). Sentence case, never all-caps. Slide copy is clean English paraphrase, never a raw corpus fragment, Markdown, chunk labels such as D1, or dangling quotes.",
       "altText describes only the text, layout and approved icon actually in the slide. Never invent photos, people, charts or symbols the template will not render.",
       renderLimitBriefing(),
-      // These sat at the top for a while, shouted, because the reel kept coming back
-      // empty. The cause turned out to be a missing field in the schema — the model had
-      // nowhere to write one — and by the time that was fixed the emphasis was still here,
-      // crowding out the post itself: gpt-oss started returning objects with the reel and
-      // none of the required top-level fields. Stated once, in its place, it behaves.
-      "Also write a reel of the same post: 4 frames, one hook, two beats, one payoff, in that order.",
       // Written from the validator's own numbers. This line said "read in 1.7 seconds,
       // max 12 words" long after the frames were widened to carry a carousel slide and
       // held for 2.3 — so the model was being told to write short and then rejected for
       // writing short. A prompt that restates a limit is a second copy of it, and the
       // second copy is the one that goes stale.
-      `A reel frame holds more than a viewer can read while it passes, so they stop the video to finish it: hook text ${WORD_FLOOR.hook}-${WORD_CAP.hook} words, beat text ${WORD_FLOOR.beat}-${WORD_CAP.beat}, payoff text ${WORD_FLOOR.payoff}-${WORD_CAP.payoff}. Write each frame as fully as a carousel slide, in complete sentences.`,
       "Put the number in the beat's figure field, 3 words at most — '30 June', '25 euros', '36 months' — and name it in label, 5 words at most.",
       "Use the beat's text to say what the figure means, or what happens if it is missed. Naming the figure again inside a full sentence is fine.",
-      "Spell out an institution the first time it appears in the reel: 'the tax authority', not 'AT'. A reel is watched without the caption.",
-      "Reel frames carry only facts the excerpts state directly. Return reel.frames empty only if the excerpts contain no date, amount, rate or duration at all.",
       "If repairFeedback is supplied, fix exactly that problem while keeping the topic and evidence-bound meaning.",
     ].join(" "),
   }, undefined, { allowPaid: Boolean(candidate.allowPaid) });

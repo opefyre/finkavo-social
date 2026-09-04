@@ -24,9 +24,7 @@ import { composeInstagramCaption } from "./caption.js";
 import { loadAnnualPlan, rowsForDate, invalidatePlanCache } from "./annual-plan.js";
 import { findFactCard } from "./fact-cards.js";
 import { anchorQuote } from "./evidence-anchor.js";
-import { validateReelFrames } from "./reel-quality.js";
 import { choosePostFormat } from "./post-format.js";
-import { buildReelManifest } from "./reel-manifest.js";
 import { authenticatedReviewer } from "./access-auth.js";
 import { findDuplicate, type DuplicateCandidate } from "./duplicate.js";
 import { editorialIdentity } from "./editorial-identity.js";
@@ -415,45 +413,14 @@ async function schedulePublishJob(tx: typeof sql, input: {
   idempotencyKey: string;
 }) {
   const { post } = input;
-  const day = lisbonDate(new Date(input.scheduledAt));
-  const [revisionRow] = await tx`SELECT reel_frames FROM social_post_revision WHERE id = ${String(post.revision_id)}`;
-  const [reelCount] = await tx`
-    SELECT count(*) AS count FROM social_publish_job
-    WHERE format = 'reel' AND status NOT IN ('failed','blocked')
-      AND scheduled_at >= ${`${day} 00:00:00+00`} AND scheduled_at < ${`${day} 23:59:59+00`}`;
-  const [dayCount] = await tx`
-    SELECT count(*) AS count FROM social_publish_job
-    WHERE status NOT IN ('failed','blocked')
-      AND scheduled_at >= ${`${day} 00:00:00+00`} AND scheduled_at < ${`${day} 23:59:59+00`}`;
-  const reelFrames = (Array.isArray(revisionRow?.reel_frames) ? revisionRow.reel_frames : []) as Array<{ figure?: string }>;
-  const decided = choosePostFormat({
-    postsAlreadyOnDay: Number(dayCount?.count ?? 0),
-    postsPerDay: 5,
-    hasValidReel: reelFrames.length >= 3,
-    // What the eye stops for, and the only thing about a reel that predicts whether four
-    // frames land. The subject does not.
-    reelFiguresCount: reelFrames.filter(frame => String(frame.figure ?? "").trim()).length,
-    reelsAlreadyOnDay: Number(reelCount?.count ?? 0),
-  });
+  // The pipeline publishes carousels only. Reels are made by hand, so there is no format
+  // to decide, no reel frames to read, and no per-day reel count to keep.
+  const decided = choosePostFormat();
   const [created] = await tx`
     INSERT INTO social_publish_job (post_id, revision_id, render_job_id, idempotency_key, scheduled_at, available_at, format, format_reason)
     VALUES (${String(post.id)}, ${String(post.revision_id)}, ${post.render_job_id ? String(post.render_job_id) : null}, ${input.idempotencyKey}, ${input.scheduledAt}, ${input.availableAt}, ${decided.format}, ${decided.reason})
     RETURNING *`;
 
-  // Queued here rather than at handoff so the video is finished long before its slot
-  // arrives, instead of being encoded while a publish waits on it.
-  if (decided.format === "reel" && Array.isArray(revisionRow?.reel_frames)) {
-    const reelManifest = buildReelManifest(post, revisionRow.reel_frames as never);
-    const reelKey = `reel:${String(post.id)}:${String(post.revision_id)}`;
-    const [existingReel] = await tx`SELECT id FROM social_render_job WHERE idempotency_key = ${reelKey}`;
-    if (!existingReel) {
-      const [reelJob] = await tx`
-        INSERT INTO social_render_job (post_id, revision_id, idempotency_key, manifest, manifest_hash, kind)
-        VALUES (${String(post.id)}, ${String(post.revision_id)}, ${reelKey}, ${tx.json(reelManifest)}, ${hash(reelManifest)}, 'reel')
-        RETURNING id`;
-      await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${String(post.id)}, 'reel.render_queued', ${tx.json({ jobId: reelJob.id, frames: reelManifest.frames.length })})`;
-    }
-  }
   return { job: created, decided };
 }
 
@@ -911,7 +878,10 @@ const GenerateSchema = z.object({ conceptId: z.string().uuid(), allowPaid: z.boo
 // to 2 while the scheduler called it with no override, which silently capped the day at
 // two planned concepts no matter how many slots the plan held. Capacity remains a cap,
 // not a quota: a slot without current evidence is still held rather than filled.
-const PlanningSchema = z.object({ date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), capacity: z.number().int().min(1).max(5).default(5) });
+// Capacity follows POSTS_PER_DAY. It used to default to 5 while generation targeted
+// POSTS_PER_DAY and publishing had its own slot list, so the three layers disagreed
+// about how big a day was and the surplus drafts simply queued up.
+const PlanningSchema = z.object({ date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), capacity: z.number().int().min(1).max(5).default(postsPerDay) });
 const ResearchSchema = z.object({ date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional() });
 const ReviewRequestSchema = z.object({ expiresInMinutes: z.number().int().min(5).max(1440).default(60), dryRun: z.boolean().default(false) });
 const RenderRequestSchema = z.object({ idempotencyKey: z.string().min(8).max(200) });
@@ -1968,47 +1938,9 @@ const server = http.createServer(async (req, res) => {
           }
           const corpusText = evidenceSources.flatMap(s=>s.excerpts as string[]).join("\n").replace(/\s+/g, " ");
 
-          // The reel was checked only after the loop had finished, so "the model wrote no
-          // reel" was recorded and never acted on. Across four days that meant 26 of 30
-          // drafts carried no reel and the day had nothing to promote — the one-reel-a-day
-          // guarantee has no way to invent frames that were never written. The reel now
-          // gets a repair pass of its own.
-          //
-          // Only on the first attempt. A reel must never cost a post that is otherwise
-          // sound, which was the right instinct in the original design; it just needs one
-          // chance to be asked for again before we give up on it.
-          // Two passes, not one. A single nudge was not enough: the model would come back
-          // with six-word frames again and the reel would be dropped, so the format quietly
-          // reverted to the headlines it had before. The last attempt still accepts whatever
-          // arrives, because a reel must never cost a post that is otherwise sound.
-          if (attempt <= 2) {
-            const draftFrames = candidate.reel?.frames ?? [];
-            const draftVerdict = draftFrames.length
-              ? validateReelFrames(draftFrames, corpusText)
-              : { ok: false as const, reason: "no reel was written at all" };
-            // A reel with no figure is four frames of prose going past too fast to read,
-            // and the scheduler will pass over it in favour of one that has a number. Ask
-            // once. It is not fatal — if the second attempt still has none, the reel is
-            // kept and can still carry the day as a last resort.
-            const hasFigure = draftFrames.some(frame => String(frame.figure ?? "").trim());
-            if (draftVerdict.ok && !hasFigure) {
-              throw new Error(
-                "The reel has no figure. Put the number the post turns on — a deadline, a rate, a count of days — " +
-                "in the `figure` field of the frame it belongs to, with what it counts in `label`, and keep it out " +
-                "of that frame's `text`. Keep the carousel and the rest of the reel exactly as they are.",
-              );
-            }
-            if (!draftVerdict.ok) {
-              throw new Error(
-                `The reel is missing or unusable: ${draftVerdict.reason}. ` +
-                `Every post must also carry a reel of exactly four frames — one "hook", two "beat", one "payoff". ` +
-                `Write each frame as fully as a carousel slide: the hook 12 to 22 words, each beat 22 to 42, the payoff ` +
-                `15 to 20, in complete sentences. The frame should hold more than a viewer can read as it passes, so ` +
-                `they stop the video to finish it. Any figure shown must be one the excerpts state directly. ` +
-                `Keep the carousel exactly as it is and add the reel.`,
-              );
-            }
-          }
+          // No reel repair. Reels are made by hand now, so the two extra round-trips this
+          // spent asking the model to rewrite frames — on a token budget that runs out
+          // mid-afternoon — bought nothing that would ever be rendered.
           // The quote is taken from the source rather than trusted from the model. It
           // drifts partway through long Portuguese passages, and a sound draft used to be
           // discarded for it. Anchoring makes the evidence verbatim by construction; a
@@ -2123,18 +2055,12 @@ const server = http.createServer(async (req, res) => {
             ${checked.hook}, ${checked.caption}, ${checked.callToAction}, ${tx.json(checked.hashtags)}, ${tx.json(checked.slides)}, ${model}, ${checked.category}, ${checked.riskLevel}, ${checked.postIntent}, ${tx.json(checked.searchKeywords)},${selectedConcept.subject_family},${selectedConcept.user_question},${selectedConcept.content_intent},${selectedConcept.occurrence_key},${selectedConcept.planned_for})
           RETURNING *
         `;
-        // The reel is checked on its own terms — its figures against the evidence, its
-        // copy against the time it is on screen — and a failure only costs the reel. A
-        // carousel that passed every gate is not thrown away because the short version of
-        // it came out wrong; the post goes out without one and the reason is kept, which
-        // is also how we learn which rule keeps catching things.
-        const reelFrames = checked.reel?.frames ?? [];
-        // The same excerpts the claims were checked against, rebuilt here because the
-        // copy used during generation lives inside the attempt loop.
-        const reelCorpus = evidenceSources.flatMap(entry => entry.excerpts as string[]).join("\n").replace(/\s+/g, " ");
-        const reelVerdict = reelFrames.length ? validateReelFrames(reelFrames, reelCorpus) : { ok: false as const, reason: "the model wrote no reel for this post" };
-        const reelToStore = reelVerdict.ok ? reelFrames : null;
-        const reelRejected = reelVerdict.ok ? null : reelVerdict.reason;
+        // The reel columns stay, so drafts written before reels were made by hand keep
+        // their frames and can still be read. Nothing writes to them now: validating a
+        // reel nobody asked for would have stamped "the model wrote no reel" on every
+        // post from here on, which is noise dressed as a finding.
+        const reelToStore = null;
+        const reelRejected = null;
 
         const [revision] = await tx`
           INSERT INTO social_post_revision (post_id, revision_number, locale, template_version, hook, caption, call_to_action,
@@ -2154,7 +2080,7 @@ const server = http.createServer(async (req, res) => {
           await tx`INSERT INTO social_claim_evidence (claim_id, document_id, source_url, source_title, publisher, locale, retrieved_at, content_hash, supporting_excerpt)
             VALUES (${savedClaim.id}, ${String(claimSource.documentId)}, ${String(claimSource.url)}, ${String(claimSource.title)}, ${claimSource.publisher ? String(claimSource.publisher) : null}, ${String(claimSource.locale)}, ${String(claimSource.retrievedAt)}, ${String(claimSource.contentHash)}, ${claim.evidenceQuote})`;
         }
-        await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'draft.created', ${tx.json({ tokens: usedTokens, reelFrames: reelToStore ? reelToStore.length : 0, reelRejected, model, revisionId: revision.id, evidenceHash, contentHash })})`;
+        await tx`INSERT INTO social_event (post_id, event_type, payload) VALUES (${post.id}, 'draft.created', ${tx.json({ tokens: usedTokens, model, revisionId: revision.id, evidenceHash, contentHash })})`;
         // Clearing the notes here matters: the rewrite they asked for now exists, and
         // leaving them set would re-apply the same correction to every later draft.
         if (selectedConcept?.id) await tx`UPDATE social_post_concept SET status='used', revision_feedback=NULL, updated_at=now() WHERE id=${selectedConcept.id}`;
@@ -3197,7 +3123,7 @@ const server = http.createServer(async (req, res) => {
     if(req.method==="POST"&&url.pathname==="/v1/maintenance/weekly"){
       await verifyReserveEvidence().catch(()=>null);
       ReportSchema.parse(await readJson(req));const today=lisbonDate(new Date());const end=addLisbonDays(today,13);const plan=await loadAnnualPlan();
-      let researched=0;for(let offset=0;offset<14;offset++){const day=addLisbonDays(today,offset);const headers={authorization:`Bearer ${apiToken}`,'content-type':'application/json'};const planned=await fetch(`http://127.0.0.1:${port}/v1/planning/daily`,{method:'POST',headers,body:JSON.stringify({date:day,capacity:5})});if(!planned.ok)continue;const evidenceRun=await fetch(`http://127.0.0.1:${port}/v1/evidence/research`,{method:'POST',headers,body:JSON.stringify({date:day})});if(evidenceRun.ok){const body=await evidenceRun.json() as {results?:unknown[]};researched+=body.results?.length||0;}}
+      let researched=0;for(let offset=0;offset<14;offset++){const day=addLisbonDays(today,offset);const headers={authorization:`Bearer ${apiToken}`,'content-type':'application/json'};const planned=await fetch(`http://127.0.0.1:${port}/v1/planning/daily`,{method:'POST',headers,body:JSON.stringify({date:day,capacity:postsPerDay})});if(!planned.ok)continue;const evidenceRun=await fetch(`http://127.0.0.1:${port}/v1/evidence/research`,{method:'POST',headers,body:JSON.stringify({date:day})});if(evidenceRun.ok){const body=await evidenceRun.json() as {results?:unknown[]};researched+=body.results?.length||0;}}
       const upcoming=plan.rows.filter(row=>row.date>=today&&row.date<=end);const identities=new Set<string>();const duplicateIdentities:string[]=[];
       for(const row of upcoming){const key=[row.brief.subjectFamily,row.brief.userQuestion,row.audience,row.brief.contentIntent,row.brief.occurrenceKey||row.brief.campaignStage||''].join('|');if(identities.has(key))duplicateIdentities.push(key);identities.add(key);}
       const repaired=await sql`UPDATE social_editorial_plan_slot s SET status='evidence_ready',updated_at=now() WHERE s.publish_date BETWEEN ${today} AND ${end} AND s.status='held' AND EXISTS (SELECT 1 FROM social_topic_evidence_bundle b WHERE b.plan_slot_id=s.id AND b.verification_state='verified' AND b.expires_at>now()) RETURNING s.id`;

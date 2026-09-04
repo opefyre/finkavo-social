@@ -87,7 +87,7 @@ export function providerSchema(schema: unknown): unknown {
 export const draftJsonSchema = {
   type: "object",
   additionalProperties: false,
-  required: ["topic", "category", "riskLevel", "postIntent", "hook", "caption", "callToAction", "hashtags", "searchKeywords", "slides", "claims", "reel"],
+  required: ["topic", "category", "riskLevel", "postIntent", "hook", "caption", "callToAction", "hashtags", "searchKeywords", "slides", "claims"],
   properties: {
     topic: { type: "string", minLength: 1, maxLength: 120 },
     category: { type: "string", enum: ["aima", "residency", "visas", "irs", "nif", "niss", "social_security", "tax", "employment", "citizenship", "deadlines", "government", "immigration", "business", "housing", "general"] },
@@ -127,63 +127,9 @@ export const draftJsonSchema = {
         },
       },
     },
-    reel: {
-      type: "object", additionalProperties: false, required: ["frames"],
-      properties: {
-        // Asked for in the prompt, the reel kept coming back empty: promoted to the top of
-        // the instructions gpt-oss started dropping the post's own fields, and left lower
-        // down Mistral simply skipped it. A schema does not need to be persuasive. Four
-        // frames are required here, so the model has to write them.
-        //
-        // This is safe to demand because it is not the last word: Zod below accepts any
-        // number and validateReelFrames judges what arrives. A reel forced out of a topic
-        // that has none fails its checks and is dropped, and the post still goes out as a
-        // carousel — which is the outcome the prompt was politely asking for anyway.
-        //
-        // The frames carry the same weight of copy as the carousel slides. A reel that
-        // only shows headlines gives a viewer nothing to stop for; one that holds a real
-        // paragraph is read, replayed and saved.
-        frames: {
-          type: "array", minItems: 4, maxItems: 4,
-          items: {
-            // Strict mode requires every property to appear in `required`, so a field
-            // that does not apply — a hook has no figure — is expressed as null rather
-            // than left out. Zod turns those nulls back into absent fields below.
-            type: "object", additionalProperties: false,
-            required: ["type", "text", "kicker", "figure", "label"],
-            properties: {
-              // The fields carried no descriptions, and the model filled them the way an
-              // untitled form gets filled: everything went into `text`. Four of the first
-              // five reels wrote their number inside the sentence — "365 days start then" —
-              // leaving `figure` null, which is the one field the format is built around
-              // and the one the layout renders large.
-              type: {
-                type: "string", enum: ["hook", "beat", "payoff"],
-                description: "hook opens, beat carries the substance, payoff closes with what to do.",
-              },
-              kicker: {
-                type: ["string", "null"], maxLength: 40,
-                description: "Optional small line above the figure, e.g. \"Deadline\" or \"You keep\".",
-              },
-              figure: {
-                type: ["string", "null"], maxLength: 24,
-                description: "The number on its own, and nothing else: \"365\", \"15%\", \"30 June\", \"€300\". This is displayed large and is what a viewer remembers, so put the number here rather than inside the sentence. Null only when the frame genuinely has no number.",
-              },
-              label: {
-                type: ["string", "null"], maxLength: 48,
-                description: "What the figure counts, in a word or two: \"days\", \"of the rent\", \"to file\".",
-              },
-              text: {
-                // Enforced by the provider before the draft ever reaches us, which is worth more
-                // than any amount of instruction: asked in prose for a full sentence the model
-                // kept returning six words, then ten. Seventy characters is about twelve words.
-                type: "string", minLength: 70, maxLength: 320,
-                description: "The English copy for this frame, written as fully as a carousel slide: complete sentences, not a caption. A hook runs 12 to 22 words; a beat 22 to 42; a payoff 15 to 32. The frame deliberately holds more than a viewer can read while it passes, so they stop the video to finish it — a frame of six words gives them no reason to stop and is rejected. Example of a beat: \"Miss this date and the tax authority can call in the entire remaining bill at once, rather than letting you keep paying it in parts across the year as you had planned.\" Do not repeat the figure in this text — it is already on screen above the line.",
-              },
-            },
-          },
-        },
-      },
-    },
+    // No reel. Reels are made by hand now, so asking the model for four extra frames
+    // spent tokens on a free tier that runs out mid-afternoon, and cost up to two extra
+    // repair round-trips per post enforcing frame rules nothing would ever render.
+    // The Zod schema still accepts a reel so drafts written before this still parse.
   },
 } as const;
