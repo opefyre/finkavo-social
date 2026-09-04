@@ -2890,7 +2890,7 @@ const server = http.createServer(async (req, res) => {
         // encode failed or is still running when the slot arrives, the post goes out as
         // the carousel it was also written as — the slides exist either way, so a missing
         // video costs the format and not the post.
-        let video: { url: string; thumbnailUrl?: string; title?: string } | undefined;
+        let video: { url: string; title?: string; thumbnailOffsetMs?: number } | undefined;
         if (String(job.format) === "reel") {
           const [reelRender] = await sql`
             SELECT output_files FROM social_render_job
@@ -2900,14 +2900,14 @@ const server = http.createServer(async (req, res) => {
           const parts = (reelRender?.output_files ?? []) as Array<{ key: string; mimeType?: string }>;
           const videoPart = parts.find(part => part.mimeType === "video/mp4");
           if (videoPart) {
-            // No thumbnailUrl. Buffer's schema accepts one and Instagram does not — the
-            // first reel came back "social networks do not accept custom video
-            // thumbnails" — so the cover frame is uploaded and kept but not offered.
-            // Instagram picks its own frame; the opening frame being a full-bleed title
-            // card is what makes that choice look deliberate anyway.
+            // A thumbnail image is refused, but an offset is honoured for Instagram, so
+            // the grid tile is chosen rather than guessed. 400ms sits inside the 0.8s
+            // the renderer holds the cover frame for; leaving it to Instagram is what
+            // produced tiles showing a half-scaled word mid-animation.
             video = {
               url: await createBufferMediaUrl(videoPart.key),
               title: String(job.post.topic ?? "").slice(0, 90),
+              thumbnailOffsetMs: 400,
             };
           } else {
             // Falling back to the slides here was too eager, and it is how the first reel

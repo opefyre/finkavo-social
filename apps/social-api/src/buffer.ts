@@ -78,7 +78,14 @@ async function request<T>(query: string, variables: Record<string, unknown>, kin
 // story, and AssetInput takes a video as readily as an image. Nothing here was blocked;
 // the type was simply pinned to "post" and every asset built as an image, so a carousel
 // was the only thing this could ever have sent.
-export type BufferVideo = { url: string; thumbnailUrl?: string; title?: string };
+/**
+ * Buffer rejects a thumbnail image outright — "social networks do not accept custom
+ * video thumbnail images". It picks the cover by offset into the video instead, and
+ * for Instagram that offset is honoured. The renderer holds the cover frame for the
+ * first REEL_COVER_SECONDS (0.8s) precisely so a fixed offset lands on it, which is
+ * what stops Instagram choosing its own mid-animation frame for the profile grid.
+ */
+export type BufferVideo = { url: string; title?: string; thumbnailOffsetMs?: number };
 
 export async function createScheduledPost(input: { channelId: string; text: string; dueAt?: string; mode?: "customScheduled" | "shareNow"; mediaUrls: string[]; video?: BufferVideo; saveToDraft?: boolean }) {
   const data = await request<{ createPost: { __typename: string; message?: string; post?: { id: string; status?: string; dueAt?: string } } }>(`
@@ -110,8 +117,10 @@ export async function createScheduledPost(input: { channelId: string; text: stri
     assets: input.video
       ? [{ video: {
           url: input.video.url,
-          ...(input.video.thumbnailUrl ? { thumbnailUrl: input.video.thumbnailUrl } : {}),
-          ...(input.video.title ? { metadata: { title: input.video.title } } : {}),
+          metadata: {
+            ...(input.video.title ? { title: input.video.title } : {}),
+            thumbnailOffset: input.video.thumbnailOffsetMs ?? 400,
+          },
         } }]
       : input.mediaUrls.map((url) => ({ image: { url } })),
   } });
