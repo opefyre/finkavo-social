@@ -57,6 +57,30 @@ const trimToWholeSentences = (value: string, limit: number) => {
   return kept.trim() || text;
 };
 
+/**
+ * Trim a short field to its limit at a word boundary.
+ *
+ * A title, eyebrow or call to action is a phrase, not prose, so the sentence-aware
+ * trimmer above is the wrong tool: there is usually no sentence to fall back to and it
+ * returns the original, over-length string. Cutting at the last whole word inside the
+ * limit is what a person would do.
+ *
+ * This is the single biggest reason drafts were being thrown away. Bodies and list items
+ * were already repaired here; titles were not, so a title 3 characters over its 82
+ * discarded an entire draft — evidence, claims, slides and all — and burned the attempt.
+ * Over ten days that was the largest category of generation failure by a wide margin.
+ */
+const trimToWholeWords = (value: unknown, max: number) => {
+  if (typeof value !== "string") return value;
+  const text = value.trim();
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max);
+  const atBoundary = cut.replace(/\s+\S*$/, "").trim();
+  // A single word longer than the whole limit has no boundary to cut at; keep the hard
+  // slice rather than returning nothing.
+  return (atBoundary.length >= Math.floor(max * 0.6) ? atBoundary : cut.trim()).replace(/[\s,;:.\u2013\u2014-]+$/, "");
+};
+
 export const repairMechanicalDefects = (draft: unknown) => {
   if (!draft || typeof draft !== "object") return draft;
   const value = draft as Record<string, unknown>;
@@ -75,9 +99,19 @@ export const repairMechanicalDefects = (draft: unknown) => {
       const slide = entry as Record<string, unknown>;
       if (typeof slide.body === "string") slide.body = trimToWholeSentences(slide.body, 300);
       if (Array.isArray(slide.items)) slide.items = slide.items.map(item => typeof item === "string" ? trimToWholeSentences(item, 110) : item);
+      // The short fields, which nothing was repairing.
+      slide.title = trimToWholeWords(slide.title, 82);
+      slide.eyebrow = trimToWholeWords(slide.eyebrow, 40);
+      slide.highlight = trimToWholeWords(slide.highlight, 70);
+      if (typeof slide.sourceLabel === "string") slide.sourceLabel = trimToWholeWords(slide.sourceLabel, 80);
+      if (typeof slide.altText === "string") slide.altText = trimToWholeSentences(slide.altText, 300);
       return slide;
     });
   }
+  value.hook = trimToWholeWords(value.hook, 180);
+  value.callToAction = trimToWholeWords(value.callToAction, 80);
+  value.topic = trimToWholeWords(value.topic, 120);
+
   // A repeated hashtag is a typo that was costing whole drafts. Keep the first of each and
   // the order the model chose; the caption rule still speaks up if too few survive.
   if (Array.isArray(value.hashtags)) value.hashtags = dedupe(value.hashtags, 8, tag => tag.toLowerCase());
