@@ -237,6 +237,21 @@ const ensureKnownAcronymsAreDefined = <T extends z.infer<typeof DraftSchema>>(ca
     ACT:{test:/working conditions authority/i,sentence:"ACT is Portugal’s working conditions authority."},
     SNS24:{test:/health advice line/i,sentence:"SNS24 is Portugal’s health advice line."},
     ADSE:{test:/public employees.? health scheme/i,sentence:"ADSE is the health scheme for Portuguese public employees."},
+    // Portuguese legal and admin shorthand. These are not obscure — they are how the
+    // sources themselves write, so the model reproduces them — and every one of them was
+    // discarding a finished draft because nothing here could name it. IAS and DL each
+    // cost a post today.
+    IAS:{test:/social support index/i,sentence:"IAS is Portugal’s social support index, the figure many benefits are calculated from."},
+    DL:{test:/decree[- ]law/i,sentence:"DL means Decreto-Lei, a Portuguese decree-law."},
+    CT:{test:/labour code/i,sentence:"CT is Portugal’s labour code, the Código do Trabalho."},
+    CC:{test:/civil code/i,sentence:"CC is Portugal’s civil code, the Código Civil."},
+    LGT:{test:/general tax law/i,sentence:"LGT is Portugal’s general tax law."},
+    RGIT:{test:/tax offences regime/i,sentence:"RGIT is Portugal’s regime for tax offences and their penalties."},
+    CIVA:{test:/value[- ]added tax code/i,sentence:"CIVA is Portugal’s value-added tax code."},
+    RGPD:{test:/data protection regulation/i,sentence:"RGPD is the European data protection regulation, known in English as the GDPR."},
+    IEFP:{test:/employment and vocational training/i,sentence:"IEFP is Portugal’s employment and vocational training institute."},
+    RMMG:{test:/guaranteed minimum monthly (?:wage|remuneration)/i,sentence:"RMMG means the guaranteed minimum monthly wage in Portugal."},
+    CRP:{test:/portuguese constitution|constitution of the portuguese republic/i,sentence:"CRP is the Constitution of the Portuguese Republic."},
   };
   let publicCopy=[candidate.hook,candidate.caption,...candidate.slides.flatMap(slide=>[slide.title,slide.body,...slide.items])].join(" ");
   const missing:string[]=[];
