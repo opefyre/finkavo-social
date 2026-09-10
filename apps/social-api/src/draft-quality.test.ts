@@ -112,3 +112,28 @@ describe("the final slide", () => {
       .toThrow(/final slide/i);
   });
 });
+
+describe("acronyms versus emphasis", () => {
+  const draft = (text: string) => ({
+    topic: "Sick leave in Portugal",
+    hook: "What sick leave pays in Portugal and when it starts for you",
+    caption: "A caption about sick leave in Portugal, who it is for and what to do next.",
+    slides: [
+      { title: "Sick leave in Portugal", body: "Who this is for and what to do." },
+      { title: "The waiting days", body: text },
+      { title: "What to do next", body: "Check your payslip and apply on time." },
+    ],
+  });
+
+  it("does not demand a definition for a word capitalised for emphasis", () => {
+    // This exact shape discarded a finished draft: the writer emphasised NOT and the
+    // gate reported an undefined acronym.
+    expect(() => validateStandaloneValue(draft("The first three days do NOT pay anything at all.") as never))
+      .not.toThrow(/NOT must be defined/);
+  });
+
+  it("still demands a definition for a real institutional acronym", () => {
+    expect(() => validateStandaloneValue(draft("You must register with the CPLP before you apply for it.") as never))
+      .toThrow(/CPLP must be defined/);
+  });
+});

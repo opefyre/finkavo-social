@@ -54,7 +54,19 @@ export function validateStandaloneValue(draft: StandaloneCandidate) {
   if(!cover||overlap(words(draft.topic),words(`${cover.title||""} ${cover.body||""}`))<1)throw new Error("Slide 1 must clearly name the post topic");
   if(sourceCentricCover.test(`${cover.title} ${cover.body} ${draft.hook}`))throw new Error("Slide 1 describes a source instead of a useful standalone topic");
   const publicCopy=[...draft.slides.flatMap(slide=>[slide.eyebrow||"",slide.title||"",slide.body||"",...(slide.items||[])]),draft.hook,draft.caption].join(" ");
-  const acronyms=[...new Set(publicCopy.match(/\b[A-Z]{2,6}\b/g)||[])].filter(value=>!["EU","ID","URL"].includes(value));
+  // Any run of 2-6 capitals used to count as an acronym, with three exemptions. So a
+  // writer emphasising a word — "the deadline does NOT move" — produced an undefined
+  // "acronym" and the whole draft was discarded. Capitalising for emphasis is ordinary
+  // English and cost finished posts.
+  //
+  // Two filters, because either alone leaks. A word that also appears in lower case
+  // somewhere in the copy is emphasis, not a term the reader needs explained; and the
+  // short function words below are never institutions.
+  const emphasised=new Set(["ALL","AND","ANY","ARE","BUT","CAN","DAY","FOR","FREE","FULL","HALF","HAS","IF","IS","IT","LESS","MAY","MORE","MUST","NEW","NEVER","NO","NOT","NOW","ONE","ONLY","OR","PER","SO","THE","TWO","UP","WHEN","WILL","YES","YOU","YOUR","EU","ID","URL"]);
+  const appearsLowercase=(token:string)=>new RegExp(`\\b${token.toLowerCase()}\\b`).test(publicCopy);
+  const acronyms=[...new Set(publicCopy.match(/\b[A-Z]{2,6}\b/g)||[])]
+    .filter(value=>!emphasised.has(value))
+    .filter(value=>!appearsLowercase(value));
   for(const acronym of acronyms){const escaped=acronym.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");const defined=(acronymDefinitions[acronym]?.test(publicCopy)??false)||new RegExp(`(?:[A-Za-z][A-Za-z -]{4,}\\(${escaped}\\)|\\b${escaped}\\b\\s*(?:means|is|stands for|—|:)\\s*[A-Za-z])`).test(publicCopy);if(!defined)throw new Error(`${acronym} must be defined for a standalone reader — write it out in full followed by the acronym in brackets, as in "Municipal Property Tax (${acronym})", the first time it appears`);}
   const signals=contextSignals.filter(pattern=>pattern.test(publicCopy)).length;
   if(signals<3)throw new Error("The post lacks enough standalone context, audience, purpose, or practical action");
