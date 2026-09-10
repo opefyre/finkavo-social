@@ -1467,6 +1467,9 @@ const server = http.createServer(async (req, res) => {
           const [openConcept]=await sql`SELECT id FROM social_post_concept WHERE plan_slot_id=${slot.id} AND status='planned' LIMIT 1`;
           if(currentBundle&&openConcept){results.push({slotId:slot.id,topic:slot.topic,state:'already_verified',bundleId:currentBundle.id});continue;}
           if(currentBundle&&!openConcept){
+            // Release the spent concept too, or the slot arrives at the reserve still
+            // occupied and the reserve's own insert collides on the same index.
+            await sql`UPDATE social_post_concept SET plan_slot_id=NULL,updated_at=now() WHERE plan_slot_id=${slot.id} AND status<>'planned'`;
             await sql`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${slot.id}`;
             await sql`INSERT INTO social_event (event_type,payload) VALUES ('planning.slot_held_for_spent_concept',${sql.json({ slotId: String(slot.id), topic: String(slot.topic ?? ''), reason: 'evidence is live but its concept is spent' })})`;
             results.push({slotId:slot.id,topic:slot.topic,state:'held',reason:'its concept is already spent; the reserve should replace this slot'});
@@ -1506,6 +1509,12 @@ const server = http.createServer(async (req, res) => {
         const bundleHash=hash(normalized); const freshnessDays=slot.risk_level==='high'?7:slot.risk_level==='medium'?30:90;
         const [bundle]=await sql`INSERT INTO social_topic_evidence_bundle (plan_slot_id,bundle_hash,sources,verification_state,verified_at,expires_at) VALUES (${slot.id},${bundleHash},${sql.json(normalized)},'verified',now(),now()+(${freshnessDays}::STRING||' days')::INTERVAL) ON CONFLICT (plan_slot_id,bundle_hash) DO UPDATE SET verification_state='verified',verified_at=now(),expires_at=excluded.expires_at RETURNING *`;
         const primary=normalized.find(s=>s.tier==='official')||normalized[0]; const fingerprint=`plan:${slot.plan_version}:${planningDate}:${slot.slot_number}`;
+        // A concept that has already been used has no claim on this slot, but it keeps
+        // pointing at it — and social_post_concept_plan_slot_idx counts every non-blocked
+        // row, so the spent one still occupies the index. Binding this slot's own concept
+        // then dies on a duplicate key and takes the whole research run with it, which is
+        // how a day ended with a held slot, no concept, and a 500 nobody read.
+        await sql`UPDATE social_post_concept SET plan_slot_id=NULL,updated_at=now() WHERE plan_slot_id=${slot.id} AND status<>'planned' AND fingerprint<>${fingerprint}`;
         const [concept]=await sql`INSERT INTO social_post_concept (document_id,topic,category,risk_level,priority,timeliness,fingerprint,status,planned_for,reason,repeat_allowed,score,plan_slot_id,evidence_bundle_id,subject_family,user_question,content_intent,occurrence_key) VALUES (${primary.documentId},${slot.topic},${slot.pillar},${slot.risk_level},${100-Number(slot.slot_number)},${slot.timing_class},${fingerprint},'planned',${planningDate},${`Predetermined annual-plan topic for ${slot.audience}`},true,${100-Number(slot.slot_number)},${slot.id},${bundle.id},${slot.subject_family},${slot.user_question},${slot.content_intent},${slot.occurrence_key}) ON CONFLICT (fingerprint) DO UPDATE SET document_id=excluded.document_id,evidence_bundle_id=excluded.evidence_bundle_id,subject_family=excluded.subject_family,user_question=excluded.user_question,content_intent=excluded.content_intent,occurrence_key=excluded.occurrence_key,plan_slot_id=excluded.plan_slot_id,status=CASE WHEN social_post_concept.status='used' THEN 'used' ELSE 'planned' END,updated_at=now() RETURNING *`;
         // Keeping a used concept used is right — a topic already published must not be
         // written again — but binding the slot to it and calling the slot ready is not.
