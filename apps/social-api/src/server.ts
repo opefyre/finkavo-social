@@ -1458,7 +1458,20 @@ const server = http.createServer(async (req, res) => {
       for (const slot of slots) {
         if(slot.status==='evidence_ready'){
           const [currentBundle]=await sql`SELECT id FROM social_topic_evidence_bundle WHERE plan_slot_id=${slot.id} AND verification_state='verified' AND expires_at>now() ORDER BY verified_at DESC LIMIT 1`;
-          if(currentBundle){results.push({slotId:slot.id,topic:slot.topic,state:'already_verified',bundleId:currentBundle.id});continue;}
+          // A live bundle is not enough to call a slot ready. It also needs a concept
+          // somebody can still generate from. A slot whose concept has been used holds
+          // evidence nobody can act on, and this early return declared it verified and
+          // skipped it — so the spent-concept handler below never ran, the reserve never
+          // saw the slot because the reserve only looks at held ones, and recovery found
+          // no work and reported none. Three days ended a post short in silence.
+          const [openConcept]=await sql`SELECT id FROM social_post_concept WHERE plan_slot_id=${slot.id} AND status='planned' LIMIT 1`;
+          if(currentBundle&&openConcept){results.push({slotId:slot.id,topic:slot.topic,state:'already_verified',bundleId:currentBundle.id});continue;}
+          if(currentBundle&&!openConcept){
+            await sql`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${slot.id}`;
+            await sql`INSERT INTO social_event (event_type,payload) VALUES ('planning.slot_held_for_spent_concept',${sql.json({ slotId: String(slot.id), topic: String(slot.topic ?? ''), reason: 'evidence is live but its concept is spent' })})`;
+            results.push({slotId:slot.id,topic:slot.topic,state:'held',reason:'its concept is already spent; the reserve should replace this slot'});
+            continue;
+          }
         }
         if(slot.timing_class==='must_reverify'){
           await sql`UPDATE social_editorial_plan_slot SET status='held',updated_at=now() WHERE id=${slot.id}`;
