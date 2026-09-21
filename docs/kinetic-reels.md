@@ -18,7 +18,6 @@ apps/renderer/kinetic/
   audio.py       sound effects + music bed, from formulas
   reels/         one file per reel (start from _template.reel.mjs)
   captions/      one caption per reel, <id>.txt
-  buffer/        list-posts.mjs, buffer-reel.mjs, check-post.mjs
   out/<id>/      renders (git-ignored)
 ```
 
@@ -35,7 +34,7 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt      # numpy 
 node render.mjs reels/_template.reel.mjs --check                          # should print "0 problem(s)"
 ```
 
-Playwright's Chromium, `ffmpeg-static` and the fonts/logo (`branding/assets`) come from the repo. The Buffer scripts read
+Playwright's Chromium, `ffmpeg-static` and the fonts/logo (`branding/assets`) come from the repo. The Buffer scripts (`scripts/buffer/`) read
 `BUFFER_API_KEY` and `BUFFER_CHANNEL_ID` from `~/.config/finkavo-social/services.env`.
 
 ---
@@ -46,7 +45,7 @@ The account has 160+ posts and repeats are the owner's biggest complaint. **Befo
 
 ```bash
 set -a; . ~/.config/finkavo-social/services.env; set +a
-node buffer/list-posts.mjs | cut -c1-140          # every post; SINCE=2026-09-21 limits it to recent ones
+node ../../../scripts/buffer/list-posts.mjs | cut -c1-140          # every post; SINCE=2026-09-21 limits it to recent ones
 ```
 
 Rules for a topic:
@@ -203,7 +202,7 @@ Source: <articles and pages actually opened>.
 #topic1 #topic2 #financas #viveremportugal #Finkavo
 ```
 
-**Maximum 5 hashtags**: three topic tags + `#viveremportugal` + `#Finkavo`. `buffer-reel.mjs` refuses more.
+**Maximum 5 hashtags**: three topic tags + `#viveremportugal` + `#Finkavo`. `create-reel-draft.mjs` refuses more.
 
 ---
 
@@ -220,14 +219,14 @@ npx wrangler r2 object put finkavo-social/$K --file /path/to/reel.mp4 --content-
 curl -sI -H "Range: bytes=0-1" https://social-media.finkavo.com/$K | head -1      # expect 206, and matching content-length
 
 # 2. create the Buffer draft (on the spare Mac, env loaded)
-node buffer/buffer-reel.mjs https://social-media.finkavo.com/$K captions/my-topic.txt 2026-09-23T08:00:00.000Z "Short title"
+node ../../../scripts/buffer/create-reel-draft.mjs https://social-media.finkavo.com/$K captions/my-topic.txt 2026-09-23T08:00:00.000Z "Short title"
 
 # 3. verify
-node buffer/check-post.mjs <postId>      # draft · due time · VideoAsset · tags=5
-node buffer/list-posts.mjs               # no two posts share a time
+node ../../../scripts/buffer/check-post.mjs <postId>      # draft · due time · VideoAsset · tags=5
+node ../../../scripts/buffer/list-posts.mjs               # no two posts share a time
 ```
 
-Only touch R2 to add the object. Do not touch the app's D1 corpus.
+Only touch R2 to add the object. Full details for the Buffer scripts: `scripts/buffer/README.md`. Do not touch the app's D1 corpus.
 
 ---
 

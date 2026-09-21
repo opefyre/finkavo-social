@@ -6,7 +6,8 @@ The editorial system is topic-first: a versioned rolling-year plan defines five 
 
 - `apps/social-api` — durable workflow state, evidence, approval, R2, Buffer, monitoring, and audit API
 - `apps/renderer` — deterministic 1080 × 1350 carousel renderer and outbound job agent
-- `apps/renderer/kinetic` — code-drawn 1080 × 1920 reels (keyframes, synthesised sound); how to make one: `docs/kinetic-reels.md`
+- `apps/renderer/kinetic`, `hand-carousels`, `photo-reels` — the hand-made reel and carousel kits (see `apps/renderer/README.md`); how to make a reel: `docs/kinetic-reels.md`
+- `scripts/buffer` — helpers to list posts and create Buffer drafts
 - `infrastructure/n8n` — self-hosted n8n configuration for the spare Mac
 - `workflows` — sanitized, version-controlled n8n exports
 - `config/sources.yaml` — free discovery sources and source policy
