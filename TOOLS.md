@@ -108,7 +108,7 @@ The scripts refuse more than 5 hashtags and never publish. Captions live next to
 
 `ssh finkavo-spare` (user `abolfazlshirkavand`; repo `~/social-posts-workflow`). Every render runs here.
 
-- Node: `export PATH=$HOME/.local/finkavo-node/bin:$PATH`. Secrets: `~/.config/finkavo-social/services.env` (`BUFFER_API_KEY`, `BUFFER_CHANNEL_ID`, …): load with `set -a; . <file>; set +a`; never print or commit them.
+- Node: `export PATH=$HOME/.local/finkavo-node/bin:$PATH`. Secrets: `~/.config/finkavo-social/services.env` (only `BUFFER_API_KEY` and `BUFFER_CHANNEL_ID`): load with `set -a; . <file>; set +a`; never print or commit them.
 - The shell is **bash 3.2** (no `declare -A`). Put awkward quoting in a script file, not inline over ssh. Foreground `sleep` is blocked; background jobs and poll.
 - Python for the reel sound: `tools/reel/.venv` (`python3 -m venv .venv && .venv/bin/pip install -r requirements.txt`).
 - Machine has 8 cores / 8 GB: the reel renderer uses 4 workers.
@@ -118,7 +118,9 @@ The scripts refuse more than 5 hashtags and never publish. Captions live next to
 
 The n8n + Social API + renderer-agent system that drafted, reviewed and scheduled carousels was **shut down and removed on
 21 Sep 2026** (owner's decision: no longer useful). The last commit that contains it is tagged **`pipeline-final`**
-(`git show pipeline-final:docs/pipeline/CONTEXT.md`). On the spare Mac its services are stopped and their LaunchAgent plists
-are parked in `~/Library/LaunchAgents.finkavo-disabled/`; its data is still on disk (n8n `~/.n8n`, backups
-`~/Backups/FinkavoSocial`, the CockroachDB store `/opt/homebrew/var/cockroach`, `~/social-posts-workflow/data`). Do not delete
-that data unless the owner says to. Never touch the app's D1 corpus (read-only).
+(`git show pipeline-final:docs/pipeline/CONTEXT.md`). Everything outside git was removed the same day: its services, n8n data,
+backups, the local CockroachDB, the Cloudflare tunnel `finkavo-social-approvals` and the `approve.finkavo.com` DNS record, and
+every key in `services.env` except the two Buffer values. Do not rebuild any of it. One leftover for the owner: the Cloudflare
+Access application "Finkavo Social Approvals" (Zero Trust → Access controls → Applications), which protects nothing now.
+Never touch the app's D1 corpus (read-only). Other projects share the spare Mac and the Cloudflare account (`elixiary`,
+`sohottakes`, Azshambe): leave their files, jobs and Access applications alone.
