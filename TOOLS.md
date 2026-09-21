@@ -6,7 +6,7 @@ Where the owner gives no detail, use the **defaults** shown and say which you us
 | Say | It does | Output |
 |---|---|---|
 | **`reel`** (`reel 5`, `reel 28 Sep–2 Oct`) | Topic → code-drawn reel → checked, rendered, verified → Buffer drafts | mp4 files, drafts at 09:00 |
-| **`carousel`** (`carousel 5`) | Topic → spec → checked slides → Buffer drafts | PNG slides, drafts at 18:00 |
+| **`carousel`** (`carousel 5`) | Topic → spec (v2 design) → checked slides → Buffer drafts | PNG slides, drafts at 18:00 |
 | **`topics`** (`topics 5`) | Picks and fact-checks topics that were never posted | topic briefs with sources |
 | **`queue`** | What is scheduled, drafted, sent and empty | table of slots |
 | **`publish`** | Takes finished media to R2 and creates the Buffer draft | draft IDs, verified |
@@ -70,14 +70,18 @@ first empty reel slots from `queue`, **09:00 Lisbon**.
 
 Done when: checks pass, mp4 frames looked at, loudness ≈ −14, drafts verified with `check-post`, sources pushed.
 
-## `carousel` — a photo carousel (1080 × 1350, 5–7 slides)
+## `carousel` — a carousel (1080 × 1350, 6–8 slides)
 
-Code: `tools/carousel/` (README there). Defaults: **5 carousels**, first empty carousel slots, **18:00 Lisbon**.
+Code and slide types: `tools/carousel/` (README there). **New batches use the v2 design**: flat, drawn in code, the reels' language
+(dark cover and end card, cream content slides, pills, icon tiles). No photo needed. v1 (photo + glass) built batches 1–3 and is kept
+only so those specs still build. Defaults: **5 carousels**, first empty carousel slots, **18:00 Lisbon**.
 
-1. `queue` → the dates. `topics` → the topics. Choose a photo from `img/`; check it for garbled text (crop with `photoPos`).
-2. Add entries to a new `specs/batch-N.mjs` (copy the shape of `specs/batch-2.mjs`; caption with 5 hashtags).
-3. Build on the spare Mac: `node build.mjs specs/batch-N.mjs` → `out/<id>/NN.png` + `out/<id>-caption.txt`. The build fails on grid-crop,
-   overflow, a "3" in a serif headline, or more than 5 hashtags. **Look at every slide** (`scp` them over).
+1. `queue` → the dates. `topics` → the topics.
+2. On the laptop: `cp tools/carousel/specs/_template-v2.mjs tools/carousel/specs/batch-N.mjs` (it has `export const DESIGN = "v2"` and every
+   slide type). One carousel per topic: a `cover` with the claim and a pilled number, slide 2 already useful, then `rows` / `steps` /
+   `versus` / `figure` as the facts need, and a `cta`. Caption with 5 hashtags and the full source list.
+3. On the spare Mac: `node build.mjs specs/batch-N.mjs --sheet` → `out/<id>/NN.png`, `out/<id>-caption.txt`, `out/<id>-sheet.png`.
+   The build fails on grid-crop, overflow, clipping or more than 5 hashtags. **Look at every slide** (`scp` the sheets over).
 4. `publish` (below), with the slides as the images. Commit the spec file and push.
 
 ## `publish` — media → R2 → Buffer draft
