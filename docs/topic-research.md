@@ -7,7 +7,7 @@ topics that are new, useful and correct.
 
 ```bash
 # on the spare Mac, env loaded (see TOOLS.md → queue)
-node scripts/buffer/list-posts.mjs | cut -c1-150
+node tools/buffer/list-posts.mjs | cut -c1-150
 ```
 
 Read every line. A topic is a repeat if a post already gives the same rule, even from a different angle (two IUC posts and

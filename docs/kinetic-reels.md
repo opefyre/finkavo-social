@@ -7,10 +7,10 @@ thinking, not rendering.
 frame from the time alone, ffmpeg encodes them, and `audio.py` synthesises every sound from formulas (numpy), so
 nothing needs licensing. No editing software, no stock footage, no AI video.
 
-**Where it lives.** `apps/renderer/kinetic/`. Renders run on the **spare Mac**, not the laptop.
+**Where it lives.** `tools/reel/`. Renders run on the **spare Mac**, not the laptop.
 
 ```
-apps/renderer/kinetic/
+tools/reel/
   engine.js      keyframe tracks, kinetic text, wipe/shake/flash/stamp, and the checks
   icons.js       the icon set, drawn in SVG
   std.js         shared scenes: the named habit, the send-line, dial, arrow
@@ -29,12 +29,13 @@ apps/renderer/kinetic/
 ssh finkavo-spare
 export PATH=$HOME/.local/finkavo-node/bin:$PATH
 cd ~/social-posts-workflow && git pull
-cd apps/renderer/kinetic
+(cd tools && npm ci)                                                    # playwright + ffmpeg-static
+cd tools/reel
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt      # numpy for the sound
 node render.mjs reels/_template.reel.mjs --check                          # should print "0 problem(s)"
 ```
 
-Playwright's Chromium, `ffmpeg-static` and the fonts/logo (`branding/assets`) come from the repo. The Buffer scripts (`scripts/buffer/`) read
+Playwright's Chromium is cached on the spare Mac; `ffmpeg-static` comes from `npm ci` and the fonts/logo from `branding/assets`. The Buffer scripts (`tools/buffer/`) read
 `BUFFER_API_KEY` and `BUFFER_CHANNEL_ID` from `~/.config/finkavo-social/services.env`.
 
 ---
@@ -45,7 +46,7 @@ The account has 160+ posts and repeats are the owner's biggest complaint. **Befo
 
 ```bash
 set -a; . ~/.config/finkavo-social/services.env; set +a
-node ../../../scripts/buffer/list-posts.mjs | cut -c1-140          # every post; SINCE=2026-09-21 limits it to recent ones
+node ../buffer/list-posts.mjs | cut -c1-140          # every post; SINCE=2026-09-21 limits it to recent ones
 ```
 
 Rules for a topic:
@@ -88,7 +89,7 @@ the named habit ≤ 3 words (2–3 lines). Digits are fine everywhere: the whole
 ## 3 · Write the reel file
 
 ```bash
-cd apps/renderer/kinetic
+cd tools/reel
 cp reels/_template.reel.mjs reels/my-topic.reel.mjs     # keep meta.id equal to the file name
 ```
 
@@ -219,14 +220,14 @@ npx wrangler r2 object put finkavo-social/$K --file /path/to/reel.mp4 --content-
 curl -sI -H "Range: bytes=0-1" https://social-media.finkavo.com/$K | head -1      # expect 206, and matching content-length
 
 # 2. create the Buffer draft (on the spare Mac, env loaded)
-node ../../../scripts/buffer/create-reel-draft.mjs https://social-media.finkavo.com/$K captions/my-topic.txt 2026-09-23@09:00 "Short title"
+node ../buffer/create-reel-draft.mjs https://social-media.finkavo.com/$K captions/my-topic.txt 2026-09-23@09:00 "Short title"
 
 # 3. verify
-node ../../../scripts/buffer/check-post.mjs <postId>      # draft · due time · VideoAsset · tags=5
-node ../../../scripts/buffer/list-posts.mjs               # no two posts share a time
+node ../buffer/check-post.mjs <postId>      # draft · due time · VideoAsset · tags=5
+node ../buffer/list-posts.mjs               # no two posts share a time
 ```
 
-Only touch R2 to add the object. Full details for the Buffer scripts: `scripts/buffer/README.md`. Do not touch the app's D1 corpus.
+Only touch R2 to add the object. Full details for the Buffer scripts: `tools/buffer/README.md`. Do not touch the app's D1 corpus.
 
 ---
 

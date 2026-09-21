@@ -1,20 +1,12 @@
 # Branding
 
-The renderer uses committed, non-secret copies of the approved Finkavo artwork:
+Fixed inputs the tools read (`tools/reel`, `tools/carousel`):
 
 ```text
-branding/assets/finkavo-logo-512.png
+assets/finkavo-logo-512.png                      the logo: never recreate it in CSS
+assets/fonts/fraunces-normal-latin(-ext).woff2   display serif: headlines only, never digits (its 3 reads as a 5)
+assets/fonts/noto-sans-normal-latin(-ext).woff2  everything else, including all numbers
 ```
 
-The app and existing Instagram posts establish this palette:
-
-- petrol: `#14332F`
-- petrol deep: `#0A2320`
-- page cream: `#EEEAE1`
-- mint: `#DAF0E6`
-- peach: `#E3A171`
-- ink: `#1B2B29`
-
-The PNG logo is a fixed input and must never be recreated in CSS. Backgrounds are deterministic editorial compositions built from the app palette: subtle grids, circles, and document-like line art. Do not use photography, stock images, or generated realistic scenes. CTAs are editorial text, never fake UI buttons.
-
-Typography matches the original Finkavo social campaign: self-hosted variable Fraunces for display headlines and self-hosted variable Noto Sans for supporting copy. The renderer embeds both Latin ranges, waits for them to load, and never uses condensed fonts, scaling transforms, or artificial font stretching.
+Palette used by the reels: deep `#06181a`, petrol `#0f2f33`, ink `#0b2a2c`, cream `#f6f1e7`, mint `#7fe0c0`, amber `#f3b072`,
+coral `#ff7d63`. The fonts are embedded in the page and awaited before any frame is drawn.

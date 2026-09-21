@@ -11,7 +11,6 @@ Where the owner gives no detail, use the **defaults** shown and say which you us
 | **`queue`** | What is scheduled, drafted, sent and empty | table of slots |
 | **`publish`** | Takes finished media to R2 and creates the Buffer draft | draft IDs, verified |
 | **`spare`** | How to work on the spare Mac | — |
-| **`pipeline`** | The automated n8n system (off): inspect, never start unasked | status |
 
 ---
 
@@ -20,7 +19,7 @@ Where the owner gives no detail, use the **defaults** shown and say which you us
 ```bash
 ssh finkavo-spare
 export PATH=$HOME/.local/finkavo-node/bin:$PATH; set -a; . ~/.config/finkavo-social/services.env; set +a
-cd ~/social-posts-workflow/scripts/buffer
+cd ~/social-posts-workflow/tools/buffer
 node gaps.mjs 14                 # next 14 days: reel 09:00 and carousel 18:00 slots, draft/scheduled/sent, empties, off-slot posts
 node gaps.mjs 10 2026-09-19      # from a given date
 node list-posts.mjs | cut -c1-150   # every post ever (SINCE=2026-09-01 limits it)
@@ -44,7 +43,7 @@ Default count: as many as the batch needs (reels 5, carousels 5). Update the bac
 
 ## `reel` — a code-drawn reel (≈ 36 s)
 
-Full guide: **`docs/kinetic-reels.md`** (API, checks, gotchas). Code: `apps/renderer/kinetic/`. Defaults: **5 reels**, on the
+Full guide: **`docs/kinetic-reels.md`** (API, checks, gotchas). Code: `tools/reel/`. Defaults: **5 reels**, on the
 first empty reel slots from `queue`, **09:00 Lisbon**.
 
 1. `queue` → the dates. `topics` → the topics.
@@ -52,28 +51,28 @@ first empty reel slots from `queue`, **09:00 Lisbon**.
    (5 scenes: hook · named habit · why · move · send-line + follow reason).
 3. Sync and check on the spare Mac (repeat until `0 problem(s)` and the stills look right):
    ```bash
-   rsync -a apps/renderer/kinetic/ finkavo-spare:~/social-posts-workflow/apps/renderer/kinetic/ --exclude out --exclude .venv
-   ssh finkavo-spare 'export PATH=$HOME/.local/finkavo-node/bin:$PATH; cd ~/social-posts-workflow/apps/renderer/kinetic &&
+   rsync -a tools/reel/ finkavo-spare:~/social-posts-workflow/tools/reel/ --exclude out --exclude .venv
+   ssh finkavo-spare 'export PATH=$HOME/.local/finkavo-node/bin:$PATH; cd ~/social-posts-workflow/tools/reel &&
      node render.mjs reels/<id>.reel.mjs --check &&
      node render.mjs reels/<id>.reel.mjs --stills 0,5.5,8.6,11.5,16,20,24.5,28,32,35.5 --sheet'
-   scp finkavo-spare:~/social-posts-workflow/apps/renderer/kinetic/out/<id>/sheet.png /tmp/<id>-sheet.png    # then look at it
+   scp finkavo-spare:~/social-posts-workflow/tools/reel/out/<id>/sheet.png /tmp/<id>-sheet.png    # then look at it
    ```
 4. Render all (background), then verify each mp4: loudness ≈ −14 LUFS, frames taken from the **mp4**:
    ```bash
-   ssh finkavo-spare 'cd ~/social-posts-workflow/apps/renderer/kinetic && nohup ./render-all.sh id1 id2 id3 > render-all.log 2>&1 &'
-   ssh finkavo-spare 'cat ~/social-posts-workflow/apps/renderer/kinetic/render-all.log'       # until ALL DONE
+   ssh finkavo-spare 'cd ~/social-posts-workflow/tools/reel && nohup ./render-all.sh id1 id2 id3 > render-all.log 2>&1 &'
+   ssh finkavo-spare 'cat ~/social-posts-workflow/tools/reel/render-all.log'       # until ALL DONE
    ```
 5. Copy the mp4s to `~/Desktop/finkavo-reels/` and **show them to the owner** (SendUserFile). Publish only after they have seen
    them, unless they said to push straight away.
 6. `publish` (below). Then commit `reels/<id>.reel.mjs` + `captions/<id>.txt` and push to `main`. Before the spare Mac pulls:
-   `ssh finkavo-spare 'cd ~/social-posts-workflow && git clean -fq apps/renderer/kinetic/reels apps/renderer/kinetic/captions && git pull -q'`.
+   `ssh finkavo-spare 'cd ~/social-posts-workflow && git clean -fq tools/reel/reels tools/reel/captions && git pull -q'`.
 7. Report (short): table of date · topic · draft status, the caveats you hedged, what the owner must do (schedule the drafts).
 
 Done when: checks pass, mp4 frames looked at, loudness ≈ −14, drafts verified with `check-post`, sources pushed.
 
 ## `carousel` — a photo carousel (1080 × 1350, 5–7 slides)
 
-Code: `apps/renderer/hand-carousels/` (README there). Defaults: **5 carousels**, first empty carousel slots, **18:00 Lisbon**.
+Code: `tools/carousel/` (README there). Defaults: **5 carousels**, first empty carousel slots, **18:00 Lisbon**.
 
 1. `queue` → the dates. `topics` → the topics. Choose a photo from `img/`; check it for garbled text (crop with `photoPos`).
 2. Add entries to a new `specs/batch-N.mjs` (copy the shape of `specs/batch-2.mjs`; caption with 5 hashtags).
@@ -111,17 +110,15 @@ The scripts refuse more than 5 hashtags and never publish. Captions live next to
 
 - Node: `export PATH=$HOME/.local/finkavo-node/bin:$PATH`. Secrets: `~/.config/finkavo-social/services.env` (`BUFFER_API_KEY`, `BUFFER_CHANNEL_ID`, …): load with `set -a; . <file>; set +a`; never print or commit them.
 - The shell is **bash 3.2** (no `declare -A`). Put awkward quoting in a script file, not inline over ssh. Foreground `sleep` is blocked; background jobs and poll.
-- Python for the reel sound: `apps/renderer/kinetic/.venv` (`python3 -m venv .venv && .venv/bin/pip install -r requirements.txt`).
+- Python for the reel sound: `tools/reel/.venv` (`python3 -m venv .venv && .venv/bin/pip install -r requirements.txt`).
 - Machine has 8 cores / 8 GB: the reel renderer uses 4 workers.
-- Code reaches it with `git pull` (or `rsync` while iterating; `git clean` those files before pulling).
+- Code reaches it with `git pull` (or `rsync` while iterating; `git clean` those files before pulling). Other projects' jobs also run on this Mac (`com.elixiary.*`, a `sohottakes` crontab): leave them alone.
 
-## `pipeline` — the automated system (off)
+## Retired: the automated pipeline
 
-n8n workflows + Social API + renderer agent, run as LaunchAgents on the spare Mac. **Switched off by the owner's decision:
-do not start, enable or edit it unless asked.** To inspect only:
-
-- Services: `ssh finkavo-spare 'launchctl list | grep finkavo'` (n8n, api, renderer, renderer-agent, cloudflared, backup).
-- Docs: `docs/pipeline/` (`CONTEXT.md` architecture, `OPERATIONS.md` runbook, `ANNUAL_CONTENT_STRATEGY.md`, `IMPLEMENTATION_TODO.md`).
-- Parts: `apps/social-api`, `apps/renderer/src`, `workflows/` (13 n8n exports), `infrastructure/`, `plans/`, `config/`, `scripts/` (plan builder and validators, `deploy-spare.sh`, `db-query.mjs`).
-- n8n access and the owner's session: read `docs/pipeline/OPERATIONS.md` before touching it. The app's D1 corpus is read-only.
-- Plan tooling: `pnpm plan:build`, `pnpm plan:validate`, `pnpm calendar:validate`.
+The n8n + Social API + renderer-agent system that drafted, reviewed and scheduled carousels was **shut down and removed on
+21 Sep 2026** (owner's decision: no longer useful). The last commit that contains it is tagged **`pipeline-final`**
+(`git show pipeline-final:docs/pipeline/CONTEXT.md`). On the spare Mac its services are stopped and their LaunchAgent plists
+are parked in `~/Library/LaunchAgents.finkavo-disabled/`; its data is still on disk (n8n `~/.n8n`, backups
+`~/Backups/FinkavoSocial`, the CockroachDB store `/opt/homebrew/var/cockroach`, `~/social-posts-workflow/data`). Do not delete
+that data unless the owner says to. Never touch the app's D1 corpus (read-only).
