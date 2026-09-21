@@ -245,5 +245,5 @@ Only touch R2 to add the object. Do not touch the app's D1 corpus.
 
 - The spare Mac's shell is bash 3.2: no `declare -A`. Put anything with awkward quoting in a script file, not inline over ssh.
 - Fraunces cannot render numerals (3 reads as 5). The engine uses Noto Sans throughout; `--check` fails if Fraunces ever holds a digit.
-- A render is deterministic: the same file gives the same frames and sound, so re-rendering after a small edit is safe.
+- A re-render of the same file gives bit-identical audio and visually identical video (measured PSNR 74 dB against the published reel), though not a byte-identical mp4. Re-rendering after a small edit is safe.
 - `--force` renders despite failed checks. Use it only to look at a problem, never to publish.
