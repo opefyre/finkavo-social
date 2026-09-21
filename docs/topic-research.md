@@ -78,13 +78,13 @@ instalments, foreign-income credit, NHR/IFICI, recibos verdes IVA and Social Sec
 **Done — carousels (23 Sep – 2 Oct 2026):** IRS deductions cheat sheet · first month checklist · what Finanças can seize · buying-a-home costs · baby checklist · foreign accounts (Anexo J quadro 11) · heirs' first steps (Balcão das Heranças) · tax residence tests · the cash ban · IVA exemption limits.
 Facts kept out because unconfirmed: refund offset for Segurança Social debts; bank freezing rules after a death; the IRS overall-cap values for 2026; a euro threshold for selling a seized home.
 
+**Done — carousels, v2 design (3–6 Oct 2026):** the six taxes a newcomer meets (IVA, IRS, IMT, Selo, IMI, IUC) · a family gift toward a home (Imposto do Selo, exempt for close family, 0,8% on a gifted property) · reporting your lease to Finanças (landlord's duty; tenant can report since Aug 2025) · does an old tax debt expire (8 years, not automatic).
+Lessons from writing them for a reader with no background: define every term on the slide where it first appears (Finanças, NIF, IRS, IMI, Portal); lead with the situation the reader recognises; say where sources disagree instead of picking a side; give one action.
+
 **Candidates (not yet researched unless stated):**
 
 | Topic | Note |
 |---|---|
-| Lease must be reported to Finanças within 30 days (CIRS art. 60) | check overlap with the rent-deduction and lease posts |
-| Tax debts expire after 8 years (LGT art. 48) | overlaps the Social Security debt post of 2 Sep: find a distinct angle |
-| Gifts (doações) and Imposto do Selo | overlaps the inheritance reel; angle: gifts between non-relatives |
 | Bank interest and dividends: 28% withheld at source | option to include in IRS; do not stray into investment advice |
 | Deadline falling on a weekend or holiday moves to the next working day | confirm the article for tax vs. procedural deadlines |
 | Paying Finanças: references, expiry, MB WAY | practical, low risk |
