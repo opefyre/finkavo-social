@@ -1,0 +1,18 @@
+Freelancers on Portugal's IVA exemption: there are two limits, and the second one applies in the middle of the year.
+
+The small-business exemption (CIVA, art. 53.º) currently works like this:
+
+· €15.000 — if your turnover last calendar year was €15.000 or less, you charge no IVA this year. If it was above €15.000, normal IVA applies from 1 January
+· €18.750 (the limit plus 25%) — if your turnover this year passes it, IVA applies at once, from the invoice that takes you over. It does not wait for next year
+
+Turnover here is net of IVA and leaves out sales of business assets.
+
+What to do: keep a running total as you invoice. If you pass a limit, file a change declaration (declaração de alterações) on the Portal das Finanças within 15 working days — counted from the end of the year in the first case, and from the date of the invoice that crossed €18.750 in the second.
+
+The limit has been €15.000 since the 2025 change (Decreto-Lei 35/2025). While you are exempt you also cannot deduct the IVA on your own purchases.
+
+Source: CIVA art. 53.º and 58.º; Ofício-Circulado 25062/2025; Portal das Finanças.
+
+Invoicing from Portugal? Ask Finkavo — every answer cites the law.
+
+#iva #recibosverdes #financas #viveremportugal #Finkavo

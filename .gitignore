@@ -23,3 +23,7 @@ secrets/
 # environment-specific, so committing it pins a stale date.
 plans/finkavo-90-day-plan.json
 plans/finkavo-reserve.json
+
+# Kinetic reels: renders and the python venv are local
+apps/renderer/kinetic/out/
+apps/renderer/kinetic/.venv/
