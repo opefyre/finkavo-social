@@ -1,7 +1,9 @@
 import { readFile } from "node:fs/promises";
-// node create-carousel-draft.mjs <captionPath> <dueAt ISO> <title> <imageUrl1> <imageUrl2> ...
+import { dueAt as toIso } from "./lisbon.mjs";
+// node create-carousel-draft.mjs <captionPath> <dueAt: ISO or 2026-09-23@18:00 Lisbon time> <title> <imageUrl1> <imageUrl2> ...
 // Creates a carousel DRAFT in Buffer (never publishes). Needs BUFFER_API_KEY and BUFFER_CHANNEL_ID.
-const [, , captionPath, dueAt, title, ...urls] = process.argv;
+const [, , captionPath, dueArg, title, ...urls] = process.argv;
+const dueAt = toIso(dueArg);
 if (urls.length < 2) { console.error("a carousel needs at least two images"); process.exit(1); }
 const text = (await readFile(captionPath, "utf8")).trim();
 const tags = text.match(/#[\p{L}\p{N}_]+/gu) || [];

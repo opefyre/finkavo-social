@@ -3,7 +3,7 @@
 // This logic used to live in n8n Code nodes, which meant the discovery feed list, the
 // canonical monitoring list, and the freshness window were configuration held inside two
 // separate workflow graphs. Moving it here lets n8n be a pure scheduler with a single
-// workflow, and keeps business rules in one testable place, as CONTEXT.md requires.
+// workflow, and keeps business rules in one testable place, as docs/pipeline/CONTEXT.md requires.
 
 // Google News RSS hands back news.google.com redirect wrappers rather than article
 // URLs. Sixty-nine of a hundred items collected in a day were those wrappers, and a

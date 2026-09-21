@@ -1,31 +1,38 @@
-# Finkavo Social Posts Workflow
+# Finkavo Social Posts
 
-Local-first automation for producing source-backed English Instagram carousels for Finkavo.
+Instagram content for Finkavo (Portuguese tax and admin, in plain English). Two systems live here.
 
-The editorial system is topic-first: a versioned rolling-year plan defines five daily subjects, then the corpus and official sources are retrieved only as evidence. See `ANNUAL_CONTENT_STRATEGY.md` and the generated calendar in `plans/`.
+## 1 · Making posts by hand — the current way
 
-- `apps/social-api` — durable workflow state, evidence, approval, R2, Buffer, monitoring, and audit API
-- `apps/renderer` — deterministic 1080 × 1350 carousel renderer and outbound job agent
-- `apps/renderer/kinetic`, `hand-carousels`, `photo-reels` — the hand-made reel and carousel kits (see `apps/renderer/README.md`); how to make a reel: `docs/kinetic-reels.md`
-- `scripts/buffer` — helpers to list posts and create Buffer drafts
-- `infrastructure/n8n` — self-hosted n8n configuration for the spare Mac
-- `workflows` — sanitized, version-controlled n8n exports
-- `config/sources.yaml` — free discovery sources and source policy
-- `branding` — project-local brand guidance
-- `CONTEXT.md` — reviewed architecture and operating rules
-- `ANNUAL_CONTENT_STRATEGY.md` — annual taxonomy, timing rules, verification policy, and five-post daily rhythm
-- `plans` — the 365-day, 1,825-slot human-readable and machine-readable editorial plan
+Named tools, each with a complete procedure in **[`TOOLS.md`](TOOLS.md)**: `reel`, `carousel`, `topics`, `queue`, `publish`, `spare`.
+Say the tool name and the details; everything else is written down.
 
-The production workflow includes recurring deadline and occasion campaigns, official-portal change monitoring, exact-evidence verification, daily topic planning, social-first structured copy, deterministic branded carousels, human-gated scheduling, active publish monitoring, Discord notifications, and a guarded Buffer contract test. Populated `.env` files, n8n data, credentials, and generated renders are ignored by Git.
+| Path | What |
+|---|---|
+| `TOOLS.md`, `CLAUDE.md` | The tool registry and the standing rules |
+| `apps/renderer/kinetic` | `reel` — 1080 × 1920 reels drawn in code. Guide: `docs/kinetic-reels.md` |
+| `apps/renderer/hand-carousels` | `carousel` — 1080 × 1350 photo carousels from spec files |
+| `scripts/buffer` | `queue` and `publish` — list, gaps, check, create drafts |
+| `docs/topic-research.md` | `topics` — how to choose and verify a topic, and the backlog |
+| `branding` | logo, fonts (and the music the pipeline uses) |
 
-## Prerequisites
+## 2 · The automated pipeline — switched off
+
+An n8n + Social API system that planned, drafted, reviewed and scheduled five carousels a day. Kept intact, not in use.
+Everything about it is under `docs/pipeline/` (`CONTEXT.md`, `ANNUAL_CONTENT_STRATEGY.md`, `IMPLEMENTATION_TODO.md`,
+`OPERATIONS.md`). Its parts: `apps/social-api`, `apps/renderer/src`, `workflows`, `infrastructure`, `plans`, `config`, and
+the `scripts/` that build and validate the plan.
+
+## Pipeline setup
+
+### Prerequisites
 
 - Node.js 22+
 - pnpm 11.7
 - No administrator-level runtime is required; the spare Mac uses the native user-local installer
 - Tailscale on both Macs
 
-## First setup
+### First setup
 
 1. Copy `.env.example` to `.env`.
 2. Generate new n8n, renderer, and Social API secrets; do not reuse unrelated application secrets.

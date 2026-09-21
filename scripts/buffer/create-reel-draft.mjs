@@ -1,6 +1,8 @@
 import { readFile } from "node:fs/promises";
-// argv: videoUrl captionPath dueAt title   — creates a reel DRAFT in Buffer (never publishes)
-const [, , videoUrl, captionPath, dueAt, title] = process.argv;
+import { dueAt as toIso } from "./lisbon.mjs";
+// argv: videoUrl captionPath dueAt title   (dueAt: ISO, or 2026-09-23@09:00 in Lisbon time)   — creates a reel DRAFT in Buffer (never publishes)
+const [, , videoUrl, captionPath, dueArg, title] = process.argv;
+const dueAt = toIso(dueArg);
 const text = (await readFile(captionPath, "utf8")).trim();
 const tags = text.match(/#[\p{L}\p{N}_]+/gu) || [];
 if (tags.length > 5) { console.error(`refusing: ${tags.length} hashtags`); process.exit(1); }

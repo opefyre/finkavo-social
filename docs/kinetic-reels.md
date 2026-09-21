@@ -208,7 +208,7 @@ Source: <articles and pages actually opened>.
 
 ## 7 · Publish (drafts only)
 
-Reels go out at **09:00 Lisbon** (08:00 Z in summer), carousels at **18:00**. Never two posts at the same time. List the
+Reels go out at **09:00 Lisbon**, carousels at **18:00**. Never two posts at the same time. List the
 target days first, and leave posts as drafts: the owner moves them to scheduled.
 
 ```bash
@@ -219,7 +219,7 @@ npx wrangler r2 object put finkavo-social/$K --file /path/to/reel.mp4 --content-
 curl -sI -H "Range: bytes=0-1" https://social-media.finkavo.com/$K | head -1      # expect 206, and matching content-length
 
 # 2. create the Buffer draft (on the spare Mac, env loaded)
-node ../../../scripts/buffer/create-reel-draft.mjs https://social-media.finkavo.com/$K captions/my-topic.txt 2026-09-23T08:00:00.000Z "Short title"
+node ../../../scripts/buffer/create-reel-draft.mjs https://social-media.finkavo.com/$K captions/my-topic.txt 2026-09-23@09:00 "Short title"
 
 # 3. verify
 node ../../../scripts/buffer/check-post.mjs <postId>      # draft · due time · VideoAsset · tags=5
