@@ -74,6 +74,10 @@ reduction · IMI 3-year exemption. **Done — carousels (18–22 Sep):** IMT Jov
 rent deduction · change of address. (Earlier months: NIF, IBAN, IUC, IMI instalments, crypto, capital gains on a home,
 instalments, foreign-income credit, NHR/IFICI, recibos verdes IVA and Social Security, and many more: always check Buffer.)
 
+**Done — kinetic reels (28 Sep – 2 Oct 2026):** fake Finanças messages · IRS refund offset against debts · banks report balances above €50.000 · IMI Familiar (€30/70/140, council choice) · marketplace seller reporting (DAC7).
+**Done — carousels (23 Sep – 2 Oct 2026):** IRS deductions cheat sheet · first month checklist · what Finanças can seize · buying-a-home costs · baby checklist · foreign accounts (Anexo J quadro 11) · heirs' first steps (Balcão das Heranças) · tax residence tests · the cash ban · IVA exemption limits.
+Facts kept out because unconfirmed: refund offset for Segurança Social debts; bank freezing rules after a death; the IRS overall-cap values for 2026; a euro threshold for selling a seized home.
+
 **Candidates (not yet researched unless stated):**
 
 | Topic | Note |
