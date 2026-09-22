@@ -62,11 +62,13 @@ first empty reel slots from `queue`, **09:00 Lisbon**.
    ssh finkavo-spare 'cd ~/social-posts-workflow/tools/reel && nohup ./render-all.sh id1 id2 id3 > render-all.log 2>&1 &'
    ssh finkavo-spare 'cat ~/social-posts-workflow/tools/reel/render-all.log'       # until ALL DONE
    ```
-5. Copy the mp4s to `~/Desktop/finkavo-reels/` and **show them to the owner** (SendUserFile). Publish only after they have seen
-   them, unless they said to push straight away.
-6. `publish` (below). Then commit `reels/<id>.reel.mjs` + `captions/<id>.txt` and push to `main`. Before the spare Mac pulls:
+5. `scp` each `reel.mp4` into the **repo itself**, at `tools/reel/out/<id>/reel.mp4` on the laptop (already git-ignored — no
+   Desktop folder needed) and **show them to the owner** (SendUserFile). Publish only after they have seen them, unless they
+   said to push straight away.
+6. `publish` (below), **then clean up the local media** (see the note at the end of `publish`) once R2 and the draft are verified.
+7. Commit `reels/<id>.reel.mjs` + `captions/<id>.txt` and push to `main`. Before the spare Mac pulls:
    `ssh finkavo-spare 'cd ~/social-posts-workflow && git clean -fq tools/reel/reels tools/reel/captions && git pull -q'`.
-7. Report (short): table of date · topic · draft status, the caveats you hedged, what the owner must do (schedule the drafts).
+8. Report (short): table of date · topic · draft status, the caveats you hedged, what the owner must do (schedule the drafts).
 
 Done when: checks pass, mp4 frames looked at, loudness ≈ −14, drafts verified with `check-post`, sources pushed.
 
@@ -82,7 +84,8 @@ only so those specs still build. Defaults: **5 carousels**, first empty carousel
    `versus` / `figure` as the facts need, and a `cta`. Caption with 5 hashtags and the full source list.
 3. On the spare Mac: `node build.mjs specs/batch-N.mjs --sheet` → `out/<id>/NN.png`, `out/<id>-caption.txt`, `out/<id>-sheet.png`.
    The build fails on grid-crop, overflow, clipping or more than 5 hashtags. **Look at every slide** (`scp` the sheets over).
-4. `publish` (below), with the slides as the images. Commit the spec file and push.
+4. `publish` (below), with the slides as the images, **then clean up the local media** (see the note at the end of `publish`).
+   Commit the spec file and push.
 
 ## `publish` — media → R2 → Buffer draft
 
@@ -107,6 +110,11 @@ node gaps.mjs 14                     # no two posts share a slot
 ```
 
 The scripts refuse more than 5 hashtags and never publish. Captions live next to the source: `captions/<id>.txt`.
+
+**Clean up the local media once R2 and the draft are verified.** R2 is the durable copy from here on — the mp4/pngs sitting in
+`tools/reel/out/<id>/` or `tools/carousel/out/<id>/` (laptop and spare Mac) have no further reason to exist once `curl` showed 206
+with the right content-length and `check-post` confirmed the draft. Delete both copies before moving to the next topic, so `out/`
+never becomes a second archive next to R2.
 
 ## `spare` — the spare Mac
 
