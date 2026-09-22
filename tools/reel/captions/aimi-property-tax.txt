@@ -1,0 +1,21 @@
+IMI is not the only property tax in Portugal. Above a threshold, there is a second one: AIMI (Adicional ao IMI).
+
+How it's built (CIMI art. 135.º-B, 135.º-C, 135.º-F):
+
+· It sums the taxable value (VPT) of the urban housing and building land you own, as of 1 January
+· For individuals, the first €600.000 of that total is deducted automatically — no application needed
+· Above the deduction, the rate is 0,7% up to €1.000.000, 1% on the next tranche up to €2.000.000, and 1,5% above that
+
+Commercial, industrial, service-use and rural property fall outside AIMI's scope entirely — this reel is about housing and building land.
+
+Finanças assesses AIMI itself in June from its own records, and payment is due in a single instalment in September. There is no separate return for most individual owners.
+
+What to do: check the total taxable value of your properties under "Imóveis" on the Portal das Finanças before June, so the September bill isn't a surprise.
+
+Hedges: married or de-facto couples can elect joint taxation to raise the deduction to €1.200.000 combined, but we did not confirm this figure against a primary source cleanly enough to put it on screen — treat it as likely but unverified until you check with Finanças. Companies and undivided estates follow different rates, not covered here.
+
+Source: CIMI art. 135.º-B, 135.º-C, 135.º-F (Portal das Finanças).
+
+Own property in Portugal? Ask Finkavo — every answer cites the law.
+
+#imi #aimi #financas #viveremportugal #Finkavo

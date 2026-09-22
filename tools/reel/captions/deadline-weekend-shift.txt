@@ -1,0 +1,18 @@
+A tax deadline lands on a Saturday. Does it move to Monday? Sometimes — it depends on how the deadline is written.
+
+Two different rules apply, from two different laws:
+
+· Tax procedure deadlines (CPPT art. 20.º n.º 1): counted continuously in calendar days, but if the last day falls on a day the tax services are closed — weekend or public holiday — it shifts to the next working day
+· General administrative deadlines up to 6 months (CPA art. 87.º): counted in working days throughout, with weekends and holidays skipped the whole way, not just at the end
+
+What this means in practice: a "15 days from notification" tax deadline shifts only its final day. A fixed date like "until 30 June" is a calendar date, not a counted term — it only shifts if 30 June itself lands on a closed day.
+
+What to do: read the exact wording of the deadline you're tracking before assuming a weekend saved you a day. If it names a fixed date, that date is the real one unless the date itself is a closed day.
+
+Hedges: this covers the general rule for tax and administrative deadlines. We did not verify a specific 2026 date that actually shifted this way — treat any date-specific claim you see elsewhere as unconfirmed until you check the Portal das Finanças calendar directly.
+
+Source: CPPT art. 20.º n.º 1; CPA art. 87.º (Portal das Finanças).
+
+Tracking a Finanças deadline? Ask Finkavo — every answer cites the law.
+
+#prazos #financas #impostos #viveremportugal #Finkavo

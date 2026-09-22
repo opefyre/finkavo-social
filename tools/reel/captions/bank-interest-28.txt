@@ -1,0 +1,15 @@
+Interest on your Portuguese bank account, and dividends from Portuguese securities, are taxed before the money reaches you.
+
+CIRS art. 71.º sets a flat 28% withholding at source (retenção liberatória) on this income for tax residents. It is "liberatória" — final. By default, nothing more is owed and nothing more needs to be declared.
+
+Why it can matter to you: if your overall income sits in a lower IRS bracket, that flat 28% can be more than you would owe under the normal progressive scale. You can choose "englobamento" — adding this income into your regular IRS return instead of accepting the flat rate — and the 28% already withheld counts as tax already paid.
+
+What to do: check the annual tax statement your bank or broker sends you (interest and tax withheld, per year). If your bracket is lower than 28%, ask about englobamento when you file.
+
+Hedges: non-residents can also face this withholding, sometimes reduced by a tax treaty — we did not cover that case here. State savings products (Certificados de Aforro/Tesouro) may follow different rules; we left them out because we could not confirm the details against a primary source. We also could not independently confirm which exact annex/box of the IRS return handles englobamento, so we describe it only as "ask when you file" rather than naming a specific box.
+
+Source: CIRS art. 71.º (Portal das Finanças).
+
+This is not personal investment advice — only a description of the tax rule. Ask Finkavo — every answer cites the law.
+
+#irs #impostos #financas #viveremportugal #Finkavo

@@ -81,15 +81,15 @@ Facts kept out because unconfirmed: refund offset for Segurança Social debts; b
 **Done — carousels, v2 design (3–6 Oct 2026):** the six taxes a newcomer meets (IVA, IRS, IMT, Selo, IMI, IUC) · a family gift toward a home (Imposto do Selo, exempt for close family, 0,8% on a gifted property) · reporting your lease to Finanças (landlord's duty; tenant can report since Aug 2025) · does an old tax debt expire (8 years, not automatic).
 Lessons from writing them for a reader with no background: define every term on the slide where it first appears (Finanças, NIF, IRS, IMI, Portal); lead with the situation the reader recognises; say where sources disagree instead of picking a side; give one action.
 
+**Done — kinetic reels (3–7 Oct 2026):** bank interest/dividends taxed at 28% at source, final, with englobamento as an opt-in (CIRS art. 71.º) · AIMI, the extra property tax above €600.000 individual VPT (CIMI art. 135.º-B/C/F) · a tax deadline only shifts off a weekend if it's a counted term, not a fixed date (CPPT art. 20.º vs CPA art. 87.º) · recibos verdes must be invoiced within 5 business days (CIVA art. 36.º, RGIT art. 123.º fine €150–€3.750) · PPR retirement-savings deduction, 20% capped by age, 5-year rule or 10%/year clawback (EBF art. 21.º).
+Facts kept off-screen because not cleanly confirmed at primary source: the €1.200.000 AIMI threshold for couples electing joint taxation (found only via a secondary CIMI mirror); the exact IRS-return box for choosing englobamento on bank interest; periodic/intra-EU invoicing deadline variants for recibos verdes; any 2025/2026 change to the PPR caps (none found).
+"Paying Finanças: references, expiry, MB WAY" was researched and dropped — official sources gave inconsistent channel lists per tax (MB WAY listed for IMI, not for IUC) and no confirmed universal expiry rule, so it didn't clear the two-source bar.
+
 **Candidates (not yet researched unless stated):**
 
 | Topic | Note |
 |---|---|
-| Bank interest and dividends: 28% withheld at source | option to include in IRS; do not stray into investment advice |
-| Deadline falling on a weekend or holiday moves to the next working day | confirm the article for tax vs. procedural deadlines |
-| Paying Finanças: references, expiry, MB WAY | practical, low risk |
 | Used car bought or sold: who owes IUC until it is registered | overlaps two IUC posts; needs a new angle |
-| Online marketplaces reporting sellers to Finanças (DAC7) | heavy caveats; only if the thresholds are confirmed |
-| PPR retirement-savings tax benefit | describe the rule only, never recommend |
+| Online marketplaces reporting sellers to Finanças (DAC7) | done as a reel 28 Sep–2 Oct; revisit only with a new angle |
 
 **Dropped:** no-debt certificate (validity conflict, see above). Revisit if Finanças' page is updated.
