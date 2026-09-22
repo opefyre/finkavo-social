@@ -85,11 +85,12 @@ Lessons from writing them for a reader with no background: define every term on 
 Facts kept off-screen because not cleanly confirmed at primary source: the €1.200.000 AIMI threshold for couples electing joint taxation (found only via a secondary CIMI mirror); the exact IRS-return box for choosing englobamento on bank interest; periodic/intra-EU invoicing deadline variants for recibos verdes; any 2025/2026 change to the PPR caps (none found).
 "Paying Finanças: references, expiry, MB WAY" was researched and dropped — official sources gave inconsistent channel lists per tax (MB WAY listed for IMI, not for IUC) and no confirmed universal expiry rule, so it didn't clear the two-source bar.
 
+**Done — kinetic reel (22 Sep 2026, filling a missed slot found on a queue audit):** selling a car — the buyer has 60 days to register the change of ownership (gov.pt vehicle-registration guides), and IUC keeps landing on whoever the registry still names as owner (IUC art. 3.º) until then; the seller can register the sale themselves with proof if the buyer doesn't. No specific article was found for the 60-day figure itself (only gov.pt's own guidance pages, opened directly) — noted in the caption.
+
 **Candidates (not yet researched unless stated):**
 
 | Topic | Note |
 |---|---|
-| Used car bought or sold: who owes IUC until it is registered | overlaps two IUC posts; needs a new angle |
 | Online marketplaces reporting sellers to Finanças (DAC7) | done as a reel 28 Sep–2 Oct; revisit only with a new angle |
 
 **Dropped:** no-debt certificate (validity conflict, see above). Revisit if Finanças' page is updated.

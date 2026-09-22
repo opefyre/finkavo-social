@@ -1,0 +1,15 @@
+Sold your car in Portugal? The paperwork isn't over until the registration changes hands too.
+
+IUC (Imposto Único de Circulação) art. 3.º ties the tax to whoever the vehicle registry names as owner — not who actually owns the car. If the sale isn't registered, the tax can keep landing on you.
+
+Official gov.pt guidance on registering a vehicle: the buyer has 60 days from the sale to register the change of ownership. Miss it, and the vehicle can face administrative seizure while it's still registered in the seller's name.
+
+What protects the seller: keep proof of the sale — a dated, signed document with both parties' NIF. If the buyer doesn't register within 60 days, the seller can register the change themselves, using that proof, without needing the buyer's cooperation.
+
+Hedges: we did not find a specific article number for the 60-day deadline itself (only for who owes IUC, and general seizure powers under the Código da Estrada) — treat the deadline as confirmed by gov.pt's own guidance, not by a cited law article. Rules may differ slightly when the sale goes through a dealer (stand) rather than directly between individuals; we did not cover that case.
+
+Source: Código do IUC art. 3.º; gov.pt vehicle registration guides (registar-veiculo-automovel-servico-automovel-online; comprar-registar-e-vender-um-veiculo-em-portugal).
+
+Sold or bought a car in Portugal? Ask Finkavo — every answer cites the law.
+
+#iuc #financas #impostos #viveremportugal #Finkavo
