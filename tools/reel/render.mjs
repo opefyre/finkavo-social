@@ -60,7 +60,7 @@ async function open(browser) {
 const browser = await chromium.launch();
 const page = await open(browser);
 const problems = await page.evaluate(() => E.check());
-const first = await page.evaluate(() => E.texts.filter(h => h.scene.i === 0 && h.tIn === 0 && h.words >= 3).length);
+const first = await page.evaluate(() => E.texts.filter(h => h.scene.i === 0 && h.tIn === 0 && h.words >= (E.kind === "episode" ? 2 : 3)).length);   // an episode hook can be two words: "Bank? Easy."
 if (!first) problems.push("FRAME0 the hook is not fully visible on frame 0");
 const p0 = await (async () => { await page.evaluate(() => E.render(0)); return page.screenshot({ type: "png" }); })();
 const p1 = await (async () => { await page.evaluate(() => E.render(0.5)); return page.screenshot({ type: "png" }); })();
