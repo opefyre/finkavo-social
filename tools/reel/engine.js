@@ -124,11 +124,11 @@ window.E = (() => {
   // ---------- kinetic text ----------
   // *word* = mint pill, *$word* = amber pill, *!word* = coral pill, | = line break.
   E.text = (parent, str, o = {}) => {
-    const { size = 56, weight = 900, color = "", lh = 1.06, ls = "", t = 0, stagger = .07, dur = .3, rise = 26, align = "left", font = "", instant = false, css = "", id = "", check = true, up = false } = o;
+    const { size = 56, weight = 900, color = "", lh = 1.06, ls = "", t = 0, stagger = .07, dur = .3, rise = 26, align = "left", font = "", instant = false, css = "", id = "", check = true, up = false, nowrap = false } = o;
     const block = E.el(parent, "tx", `font-size:${size}px;font-weight:${weight};line-height:${lh};text-align:${align};${color ? `color:${color};` : ""}${ls ? `letter-spacing:${ls};` : ""}${font ? `font-family:${font};` : ""}${up ? "text-transform:uppercase;" : ""}${css}`);
     let n = 0; const wordEls = [];
     for (const line of String(str).split("|")) {
-      const ln = E.el(block, "ln");
+      const ln = E.el(block, "ln", nowrap ? "text-wrap:nowrap;white-space:nowrap" : "");   // (.ln has text-wrap:balance, which would override an inherited nowrap)
       const re = /\*([^*]+)\*([^\s*]*)|(\S+)/g; let m;
       while ((m = re.exec(line))) {
         const span = document.createElement("span");
@@ -311,8 +311,7 @@ window.E = (() => {
       E.logo.style.padding = dk ? "8px" : "0";
       E.logo.style.width = E.logo.style.height = dk ? "128px" : "112px";
       E.logo.style.top = dk ? "62px" : "70px"; E.logo.style.right = dk ? "52px" : "60px";
-      E.prog.style.background = dk ? "rgba(246,241,231,.18)" : "rgba(11,42,44,.14)";
-      E.progFill.style.background = dk ? C.mint : C.mintD;
+      if (E.prog) { E.prog.style.background = dk ? "rgba(246,241,231,.18)" : "rgba(11,42,44,.14)"; E.progFill.style.background = dk ? C.mint : C.mintD; }
     }
   };
   E.sceneAt = t => { let r = E.scenes[0]; for (const S of E.scenes) if (t >= S.t0) r = S; return r; };
@@ -321,8 +320,10 @@ window.E = (() => {
   E.finish = (dur) => {
     E.dur = dur;
     E.logo = E.el(E.ui, "logo"); E.logo.innerHTML = `<img src="${E.assets.logo}" alt="">`;
-    E.prog = E.el(E.ui, "prog"); E.progFill = E.el(E.prog, "", "position:absolute;inset:0;border-radius:6px;transform-origin:0 50%");
-    E.K(E.progFill, "sx", [[0, 0.0001], [dur, 1, "lin"]]);
+    if (E.kind !== "episode") {                                                       // (an episode has no progress bar: Instagram draws its own)
+      E.prog = E.el(E.ui, "prog"); E.progFill = E.el(E.prog, "", "position:absolute;inset:0;border-radius:6px;transform-origin:0 50%");
+      E.K(E.progFill, "sx", [[0, 0.0001], [dur, 1, "lin"]]);
+    }
     E.render(0);
   };
 

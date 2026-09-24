@@ -2,7 +2,7 @@
 """cutout.py in.(webp|png) out.png — make a flat cream background transparent.
 Flood-fills from the image border over pixels close to the border colour, so cream inside the character
 (a polo shirt, a page) stays. Edge pixels get a soft alpha. Needs only PIL + numpy."""
-import sys
+import sys, os
 from collections import deque
 import numpy as np
 from PIL import Image, ImageFilter
@@ -36,6 +36,14 @@ soft = np.clip((dist - tol * .55) / (tol * .9), 0, 1) * 255
 alpha = np.where(edge & ~seen, np.minimum(alpha + 255, soft + 40).clip(0, 255), alpha)
 alpha = np.asarray(Image.fromarray(alpha.astype(np.uint8)).filter(ImageFilter.GaussianBlur(.8)))
 alpha = np.where(seen, 0, alpha)
+# FILLROWS=0.5: a near-cream feature (a white beard) can be flooded away together with the background. In the top part of the
+# image, treat everything between the outermost solid pixels of each row as the character.
+fr = os.environ.get("FILLROWS")
+if fr:
+    solid = alpha > 128
+    for y in range(int(h * float(fr))):
+        xs = np.flatnonzero(solid[y])
+        if len(xs) > 1: alpha[y, xs[0]:xs[-1] + 1] = 255
 out = Image.fromarray(np.dstack([a.astype(np.uint8), alpha.astype(np.uint8)]), "RGBA")
 bbox = out.getchannel("A").point(lambda v: 255 if v > 8 else 0).getbbox()
 import os

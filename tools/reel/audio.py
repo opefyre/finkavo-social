@@ -71,7 +71,21 @@ def s_nope():
 def s_riser():
     return peak(band_noise(1.0, 180, 3800, 1.6, 1.0, ramp=1.6)) * .55
 
-SFX = dict(whoosh=s_whoosh, swish=s_swish, pop=s_pop, thud=s_thud, slam=s_slam, ding=s_ding, tick=s_tick, sparkle=s_sparkle, nope=s_nope, riser=s_riser)
+def s_scratch():
+    # record scratch: a fast pitch dive and a quick swing back, over grainy noise
+    n1, n2 = int(.16 * SR), int(.11 * SR)
+    f = np.concatenate([np.linspace(1100, 140, n1), np.linspace(140, 620, n2)])
+    ph = 2 * np.pi * np.cumsum(f) / SR
+    saw = sum(np.sin(h * ph) / h for h in (1, 2, 3, 4))
+    grain = lowpass(rng.standard_normal(len(f)), 3)
+    e = np.concatenate([np.linspace(.2, 1, n1) ** .5, np.linspace(1, 0, n2) ** 1.3])
+    return peak((saw * .7 + grain * .9) * e) * .8
+def s_poof():
+    n = int(.7 * SR); t = T(n)
+    puff = band_noise(.7, 3000, 260, 1.1, 1.0)[:n] * np.exp(-t / .22)
+    low = sweep(.7, 90, 40, 9) * env(n, .004, .12)
+    return peak(puff * .8 + low * .5) * .8
+SFX = dict(scratch=s_scratch, poof=s_poof, whoosh=s_whoosh, swish=s_swish, pop=s_pop, thud=s_thud, slam=s_slam, ding=s_ding, tick=s_tick, sparkle=s_sparkle, nope=s_nope, riser=s_riser)
 cache = {}
 sfx = np.zeros((N, 2)); loud = []
 for k, ev in enumerate(sorted(meta["sounds"], key=lambda e: e["t"])):
@@ -81,7 +95,7 @@ for k, ev in enumerate(sorted(meta["sounds"], key=lambda e: e["t"])):
     i = int(round(ev["t"] * SR)); j = min(N, i + len(y))
     pan = 0.5 + (0.12 if k % 2 else -0.12)                       # a touch of alternating width
     sfx[i:j, 0] += y[:j - i] * np.cos(pan * np.pi / 2); sfx[i:j, 1] += y[:j - i] * np.sin(pan * np.pi / 2)
-    if name in ("whoosh", "thud", "slam", "ding", "sparkle", "nope", "riser"): loud.append(ev["t"])
+    if name in ("whoosh", "thud", "slam", "ding", "sparkle", "nope", "riser", "scratch", "poof"): loud.append(ev["t"])
 
 # ---------- music bed ----------
 spec = meta.get("music") or {}
