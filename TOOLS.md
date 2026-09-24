@@ -109,7 +109,7 @@ node check-post.mjs <postId…>        # draft · due time · VideoAsset/ImageAs
 node gaps.mjs 14                     # no two posts share a slot
 ```
 
-The scripts refuse more than 5 hashtags and never publish. Captions live next to the source: `captions/<id>.txt`.
+The scripts refuse more than 5 hashtags. They create drafts; the one exception is `SCHEDULE=1` on a reel the owner explicitly asked to have scheduled (`unschedule-post.mjs` undoes a schedule without deleting). Captions live next to the source: `captions/<id>.txt`.
 
 **Clean up the local media once R2 and the draft are verified.** R2 is the durable copy from here on — the mp4/pngs sitting in
 `tools/reel/out/<id>/` or `tools/carousel/out/<id>/` (laptop and spare Mac) have no further reason to exist once `curl` showed 206
