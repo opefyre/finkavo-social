@@ -101,6 +101,15 @@ window.E = (() => {
     E.world = E.el(b, "world");
     E.ui = E.el(b, "abs", "inset:0;pointer-events:none");
     E.assets = assets;
+    E.images = assets.images || {};
+  };
+  // Episode mode (character shorts): any length 10-30 s, one or more scenes, no 5-scene rule. Set with E.episode().
+  E.episode = (sfxLufs = -16) => { E.kind = "episode"; E.sfxLufs = sfxLufs; };
+  // A picture from meta.images (a cutout PNG). Returns the <img>; size it with css (height:820px;width:auto).
+  E.img = (parent, name, css = "") => {
+    const i = document.createElement("img");
+    if (!E.images[name]) throw new Error("unknown image " + name);
+    i.src = E.images[name]; i.style.cssText = "display:block;" + css; parent.appendChild(i); return i;
   };
 
   // ---------- scenes ----------
@@ -321,8 +330,11 @@ window.E = (() => {
   E.check = () => {
     const bad = [];
     const S0 = E.scenes;
-    if (S0.length !== 5) bad.push(`expected 5 scenes, found ${S0.length}`);
-    if (E.dur < 35 || E.dur > 38) bad.push(`duration ${E.dur}s is outside 35–38s`);
+    if (E.kind === "episode") { if (E.dur < 10 || E.dur > 30) bad.push(`duration ${E.dur}s is outside 10–30s`); }
+    else {
+      if (S0.length !== 5) bad.push(`expected 5 scenes, found ${S0.length}`);
+      if (E.dur < 35 || E.dur > 38) bad.push(`duration ${E.dur}s is outside 35–38s`);
+    }
     // 1. reading time: words/3 + 0.8s on screen
     for (const h of E.texts) {
       if (!h.check) continue;
@@ -351,7 +363,7 @@ window.E = (() => {
     E.render(0);
     return bad;
   };
-  E.meta = () => ({ dur: E.dur, sounds: E.sounds.slice().sort((a, b) => a.t - b.t), music: E.musicSpec || null, scenes: E.scenes.map(s => ({ id: s.id, t0: s.t0, t1: s.t1, theme: s.theme })) });
+  E.meta = () => ({ kind: E.kind || "reel", sfxLufs: E.sfxLufs || -20, dur: E.dur, sounds: E.sounds.slice().sort((a, b) => a.t - b.t), music: E.musicSpec || null, scenes: E.scenes.map(s => ({ id: s.id, t0: s.t0, t1: s.t1, theme: s.theme })) });
   E.music = spec => { E.musicSpec = spec; };
 
   E.icons = {};

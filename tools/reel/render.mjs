@@ -32,6 +32,10 @@ const fonts = {
   no: await b64("fonts/noto-sans-normal-latin.woff2", "font/woff2"), nox: await b64("fonts/noto-sans-normal-latin-ext.woff2", "font/woff2"),
 };
 const logo = await b64("finkavo-logo-512.png", "image/png");
+// meta.images = { name: "characters/cutouts/x.png" } (paths under branding/) become data URIs the reel can draw with E.img
+const BRANDING = path.resolve(HERE, "../../branding");
+const images = {};
+for (const [k, f] of Object.entries(meta.images || {})) images[k] = `data:image/${f.endsWith(".webp") ? "webp" : "png"};base64,${(await readFile(path.join(BRANDING, f))).toString("base64")}`;
 const engineSrc = await readFile(path.join(HERE, "engine.js"), "utf8");
 const iconsSrc = (await readFile(path.join(HERE, "icons.js"), "utf8")) + "\n" + (await readFile(path.join(HERE, "std.js"), "utf8"));
 const html = `<!doctype html><html><head><meta charset="utf-8"><style>
@@ -49,7 +53,7 @@ async function open(browser) {
   await page.addScriptTag({ content: engineSrc });
   await page.addScriptTag({ content: iconsSrc });
   await page.evaluate(async () => { await Promise.all([document.fonts.load('900 40px "Noto Sans"'), document.fonts.load('800 40px "Noto Sans"'), document.fonts.load('900 40px "Fraunces"')]); await document.fonts.ready; });
-  await page.evaluate(`(async()=>{ E.init({logo:${JSON.stringify(logo)}}); (${reelSrc})(E); })()`);
+  await page.evaluate(`(async()=>{ E.init({logo:${JSON.stringify(logo)},images:${JSON.stringify(images)}}); (${reelSrc})(E); })()`);
   return page;
 }
 
@@ -114,7 +118,7 @@ const enc = (wav, lufs, file) => run(FFMPEG, ["-y", "-framerate", String(FPS), "
   "-map", "0:v", "-map", "[a]", "-c:v", "libx264", "-profile:v", "high", "-crf", "18", "-pix_fmt", "yuv420p", "-r", String(FPS),
   "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", "-t", D, path.join(out, file)]);
 await enc("mix.wav", -14, "reel.mp4");
-await enc("sfx.wav", -20, "reel-sfx-only.mp4");
+await enc("sfx.wav", m.sfxLufs || -20, "reel-sfx-only.mp4");
 // audio duration must match the video: decode the audio stream and read its length
 for (const f of ["reel.mp4", "reel-sfx-only.mp4"]) {
   const log = await run(FFMPEG, ["-i", path.join(out, f), "-map", "0:a", "-f", "null", "-"]);
