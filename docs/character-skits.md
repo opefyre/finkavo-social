@@ -72,7 +72,8 @@ summer, phone), **Dona Fernanda** (the grandma, ~30 poses), **Buck** (tourist), 
 |---|---|
 | Pale face/beard/plastic flooded away | `TOLHEAD=14 HEADROWS=.55` (or `.8`–`1` for white clothes); `NOCROP=1` |
 | White socks, sneakers, bags, paper cups vanish | strict tolerance `TOLHEAD=7 HEADROWS=1`, then remove the floor shadow only by exact colour and only in the bottom ~8 % |
-| Cream trapped between legs / chair gaps | label connected regions within ~6–8 of the source background colour (from pixel [5,5]) below mid-height, drop regions > ~150 px, grow 2 px |
+| Cream trapped between legs / chair gaps | label connected regions within ~5 of the source background colour (from pixel [5,5]) below mid-height, drop regions > ~300 px; **never grow** into white areas (it ate white shirts, cups and album pages) |
+| White clothes/shoes still merge with the cream background | regenerate the same image (0.5 credits) with "Change ONLY the background: a solid flat pale mint-green background (#bfe8d6), with no floor shadow", then `cutout.py` with tolerance 40 (the American, EP37) |
 | Floor-shadow ellipse under feet/props | low-saturation pale pixels in the bottom 7–10 %; for props, bottom 40 % |
 | Expressions must line up | **joint-crop** every image of one pose set to the union bounding box (same canvas = frame-perfect swaps). Adding to a set later: re-crop with the same box, or keep the set's existing box so older reels don't shift |
 
