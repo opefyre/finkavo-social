@@ -31,7 +31,17 @@ prompt "Keep this exact same character, same pose … Change ONLY his face: …"
 
 **Otto (14):** worried (default) · hopeful · smug · angry · shocked · panic · confused · defeated · sleepy · side-eye · cry-laugh · celebrating · stubble (tired, weeks later) · ancient (long white beard, dusty suitcases)
 **Sr. Carimbo (7):** deadpan (default) · smug · bored-asleep · angry · surprised · evil-grin · laughing
-Leo, Nico, Marta, Buck, Zoe, Sr. Renda, Dona Fernanda: base image only, add expressions when a story needs them.
+**Otto, other outfits** (no coat and suitcases; each set joint-cropped on its own canvas):
+- at the table (sweater, on a chair): `otto-table_happy` (fork and knife) · `otto-table_plead` (cheeks full, hands up) · `otto-table_panic` · `otto-table_stuffed` (round as a ball)
+- coat, no suitcases: `otto-coat_wave` · `otto-coat_tired-cake` (stubble, cake box) · `otto-coat_phone` (stubble, phone to ear)
+- summer: `otto-summer_happy` (towel, thumbs up) · `otto-summer_bundled` (buried in winter clothes, sweating) · `otto-summer_shiver`
+**Sr. Renda (4):** smug · evil-grin · laughing · fake-sad
+**Dona Fernanda (5):** knowing · skeptical · smirk · eye-roll · jacket (holding out a folded jacket, smug)
+**Base cutouts:** `buck_default` · `leo_default` · `nico_default` · `marta_default` · `zoe_default` · `renda_default`
+**Props** (`props/`): `food_bacalhau` · `food_bread` · `food_soup` · `food_chourico` · `food_rice` · `food_cake` · `food_natas` · `food_tupperware`
+
+Cutout notes: chair gaps, bags and plates are near the background colour; after `cutout.py`, clear enclosed gaps and floor
+shadows explicitly (a strict tolerance keeps plates and bags) and always check on magenta.
 
 ## Rules
 
