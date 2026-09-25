@@ -111,7 +111,33 @@ def s_buzz():
     ph = 2 * np.pi * 150 * t; y = np.sign(np.sin(ph)) * .6 + np.sin(3 * ph) * .3
     gate = ((t % .31) < .22).astype(float) * (1 - np.exp(-t / .005))
     return peak(lowpass(y, 6) * gate) * .6
-SFX = dict(smack=s_smack, buzz=s_buzz, splat=s_splat, crack=s_crack, scratch=s_scratch, poof=s_poof, whoosh=s_whoosh, swish=s_swish, pop=s_pop, thud=s_thud, slam=s_slam, ding=s_ding, tick=s_tick, sparkle=s_sparkle, nope=s_nope, riser=s_riser)
+def s_cluck():
+    # a hen: two short clucks and a long "ba-GAWK" that glides down, with a rough, nasal edge
+    def note(dur, f0, f1, rough=.35):
+        n = int(dur * SR); t = T(n); f = np.linspace(f0, f1, n) * (1 + .04 * np.sin(2 * np.pi * 38 * t))
+        ph = 2 * np.pi * np.cumsum(f) / SR
+        y = sum(np.sin(h * ph) / h ** .8 for h in (1, 2, 3, 4, 5)) + rough * rng.standard_normal(n)
+        return lowpass(y, 3) * np.sin(np.pi * np.linspace(0, 1, n)) ** .6
+    y = np.zeros(int(.95 * SR))
+    for i, (dt, d, a, b) in enumerate([(0, .07, 700, 640), (.13, .07, 720, 650), (.3, .12, 760, 980), (.42, .38, 980, 560)]):
+        k = int(dt * SR); z = note(d, a, b); y[k:k + len(z)] += z
+    return peak(y) * .55
+def s_creak():
+    # old springs / a door hinge: a slow, jittery, rough low tone
+    n = int(.8 * SR); t = T(n); f = 170 + 60 * np.sin(2 * np.pi * 1.3 * t) + 25 * rng.standard_normal(n).cumsum() / np.sqrt(np.arange(1, n + 1))
+    ph = 2 * np.pi * np.cumsum(f) / SR
+    y = np.sign(np.sin(ph)) * (0.5 + 0.5 * np.sin(2 * np.pi * 23 * t) ** 2)
+    return peak(lowpass(y, 8) * np.sin(np.pi * np.linspace(0, 1, n)) ** .5) * .5
+def s_blare():
+    # a TV at full volume: a dense, clipped band of crowd noise plus a brassy chord (1 s, meant to be chained)
+    n = int(1.02 * SR); t = T(n)
+    crowd = band_noise(1.02, 500, 1400, 1.2, .2)[:n]
+    chord = sum(np.sign(np.sin(2 * np.pi * f * t)) * .3 for f in (220, 277, 330, 440))
+    wob = 1 + .3 * np.sin(2 * np.pi * 5 * t)
+    y = np.tanh((peak(crowd) * 1.2 + chord * .6) * wob * 2.5)
+    e = np.minimum(1, np.minimum(t / .02, (1.02 - t) / .02))
+    return peak(lowpass(y, 2) * e) * .75
+SFX = dict(blare=s_blare, cluck=s_cluck, creak=s_creak, smack=s_smack, buzz=s_buzz, splat=s_splat, crack=s_crack, scratch=s_scratch, poof=s_poof, whoosh=s_whoosh, swish=s_swish, pop=s_pop, thud=s_thud, slam=s_slam, ding=s_ding, tick=s_tick, sparkle=s_sparkle, nope=s_nope, riser=s_riser)
 cache = {}
 sfx = np.zeros((N, 2)); loud = []
 for k, ev in enumerate(sorted(meta["sounds"], key=lambda e: e["t"])):
