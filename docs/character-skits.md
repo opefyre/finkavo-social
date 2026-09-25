@@ -108,6 +108,7 @@ ice, café crowd, stadium goal, tier drop, … Check the folder before generatin
 
 In the reel: `E.clip(t, "voices/<id>/x.wav" | "sfx/x.wav", { vol, from, to, gain: [[t, g], …], duck })` — mixed into both mp4s;
 `gain` is a volume curve in reel time (the TV that follows its volume bar), `duck: false` for ambience and deliberately buried lines.
+`E.music({ off: true })` drops the synthetic music bed when a recorded clip is the music (the fado reel).
 
 ## 5. Building the reel
 

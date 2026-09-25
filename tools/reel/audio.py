@@ -201,7 +201,7 @@ for b in range(nb):
         add(pl, t0 + k * beat / 2, .16 * (.7 + .3 * r2.random()))
     for k in (0, 2):  # soft pulse on 1 and 3
         n3 = int(.3 * SR); add(sweep(.3, 100, 48, 22) * env(n3, .002, .09), t0 + k * beat, .25)
-music = peak(music) * .34
+music = peak(music) * (0 if spec.get("off") else .34)          # E.music({ off: true }): a recorded clip is the music (the fado reel)
 
 # duck the music under loud effects: quick dip, short hold, gentle return
 duck = np.ones(N)
