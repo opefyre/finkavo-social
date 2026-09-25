@@ -250,6 +250,8 @@ Only touch R2 to add the object. Full details for the Buffer scripts: `tools/buf
 
 ## Recorded voices and clips (`E.clip`)
 
+The full skit workflow (voices, real effects, when to use them) is in `docs/character-skits.md`; helpers in `tools/reel/voice/`.
+
 `E.clip(t, "voices/<reel>/<file>.wav", { vol, from, to, gain: [[t, g], …], duck })` mixes a WAV from `branding/` into the effects
 track (so it is in both `reel.mp4` and `reel-sfx-only.mp4`). WAVs must be 44.1 kHz; mono is fine. `gain` is a volume curve in reel
 time (the TV in `ep18-tv` follows its on-screen volume bar); `duck` (default true) dips the music bed under the clip.

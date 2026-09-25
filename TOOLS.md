@@ -6,6 +6,7 @@ Where the owner gives no detail, use the **defaults** shown and say which you us
 | Say | It does | Output |
 |---|---|---|
 | **`reel`** (`reel 5`, `reel 28 Sep–2 Oct`) | Topic → code-drawn reel → checked, rendered, verified → Buffer drafts | mp4 files, drafts at 09:00 |
+| **`skit`** (`skit`, `skit 3`) | Funny character reel for reach: pitch → images → sound/voices → code → checked → owner → Buffer at 19:00 | mp4 files, posts at 19:00 |
 | **`carousel`** (`carousel 5`) | Topic → spec (v2 design) → checked slides → Buffer drafts | PNG slides, drafts at 18:00 |
 | **`topics`** (`topics 5`) | Picks and fact-checks topics that were never posted | topic briefs with sources |
 | **`queue`** | What is scheduled, drafted, sent and empty | table of slots |
@@ -71,6 +72,24 @@ first empty reel slots from `queue`, **09:00 Lisbon**.
 8. Report (short): table of date · topic · draft status, the caveats you hedged, what the owner must do (schedule the drafts).
 
 Done when: checks pass, mp4 frames looked at, loudness ≈ −14, drafts verified with `check-post`, sources pushed.
+
+## `skit` — a funny character reel (≈ 12–16 s), for growth
+
+Full guide: **`docs/character-skits.md`** (what makes a skit, pace, cast library, image generation, cutouts, sound and voices,
+templates, caption, cost). Default: **3 skits**, pitched first, one per day at **19:00 Lisbon** on the next free evenings.
+
+1. Review the last ~10 skits (`ls tools/reel/reels/ep*`) and **pitch 3 varied ideas** — different topic *and* format, each with the
+   twist and the production call (voiced or effects only, ~N new images). Wait for "go".
+2. Images: reuse `branding/characters/` first; generate the rest with Higgsfield `gpt_image_2_5` medium (0.5 credits; ≤ 10 credits
+   a batch without asking); look at every image; cutouts with `tools/reel/cutout.py`, checked on magenta, joint-cropped; add to
+   `branding/characters/README.md`.
+3. Sound: synthetic effects in `audio.py`; real effects in `branding/sfx/` (`tools/reel/voice/sfx.py`); voices only when the joke
+   needs them (`tools/reel/voice/tts.py` + `cut.py` → `branding/voices/<id>/`), used with `E.clip`. Verify cuts on the waveform.
+4. Write `tools/reel/reels/<id>.reel.mjs` (`ep<NN>-<slug>`, start from a similar skit) and `captions/<id>.txt`.
+5. On the spare Mac: `--check`, stills, **look**, fix (2–3 rounds is normal); then `render-all.sh`; frames from the mp4; loudness ≈ −14.
+6. Send the mp4s to the owner (short table incl. credits spent and "sound not checked by ear").
+7. When the owner says to schedule them: `tools/reel/publish-skit.sh <id> <YYYY-MM-DD> "<title>"` (R2 → scheduled, or a dated draft when Buffer's
+   10-post limit is full → check → local and spare-Mac media deleted). Commit and push sources, captions, images, sfx, voices.
 
 ## `carousel` — a carousel (1080 × 1350, 6–8 slides)
 
