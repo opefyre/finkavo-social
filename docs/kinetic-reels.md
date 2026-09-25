@@ -247,3 +247,18 @@ Only touch R2 to add the object. Full details for the Buffer scripts: `tools/buf
 - Fraunces cannot render numerals (3 reads as 5). The engine uses Noto Sans throughout; `--check` fails if Fraunces ever holds a digit.
 - A re-render of the same file gives bit-identical audio and visually identical video (measured PSNR 74 dB against the published reel), though not a byte-identical mp4. Re-rendering after a small edit is safe.
 - `--force` renders despite failed checks. Use it only to look at a problem, never to publish.
+
+## Recorded voices and clips (`E.clip`)
+
+`E.clip(t, "voices/<reel>/<file>.wav", { vol, from, to, gain: [[t, g], …], duck })` mixes a WAV from `branding/` into the effects
+track (so it is in both `reel.mp4` and `reel-sfx-only.mp4`). WAVs must be 44.1 kHz; mono is fine. `gain` is a volume curve in reel
+time (the TV in `ep18-tv` follows its on-screen volume bar); `duck` (default true) dips the music bed under the clip.
+
+Voices come from ElevenLabs (key: `finance/secrets/elevenlabs-api.txt`, never printed or committed). What works with this key:
+`POST /v1/text-to-speech/{voice}/with-timestamps` (model `eleven_v3`, `output_format=mp3_44100_128`; 192 kbps needs a higher tier)
+returns character timings, which is how lines are found and cut, since the key has no speech-to-text; `POST /v1/text-to-dialogue`
+(v3, several voices, up to 2,000 characters) for scenes; `GET /v1/shared-voices` to search the library. v3 is unstable on very short
+text, so each character is generated as one longer take (a warm-up line plus the real lines, separated by "... ...") and cut with ffmpeg
+at the aligned times, checked against the waveform. Tags such as `[strong Portuguese accent]`, `[shouting]`, `[whispers]` work.
+Voices used: grandma `xIzR6egd3S3LJZbVW0c1` (Nana Margaret), Otto `vBKc2FfBKJfcZNyEt1n6` (Finn), TV soap in European Portuguese
+`iLelOQ6m5mpSeNH8fRob` (Maria) and `aLFUti4k8YKvtQGXv0UO` (Paulo). Keep the raw takes next to the cut WAVs (`raw_*.mp3`).

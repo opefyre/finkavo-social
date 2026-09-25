@@ -14,10 +14,10 @@ export default function (E) {
   const { C } = E;
   E.episode(-16);
   E.music({ bpm: 104, root: 55, seed: 181, prog: [[0, 4, 7], [5, 9, 12], [7, 11, 14], [5, 9, 12]] });
-  const DUR = 14.2;
+  const DUR = 15.0;
   const S = E.scene("room", 0, DUR, "light"); E.cur = S;
   const at = (list, t) => { let v = list[0][1]; for (const [k, x] of list) if (t >= k) v = x; return v; };
-  const FLOOR = 1760, DOWN = 3.3, WHAT = 4.6, UP = 6.6, WHISPER = 8.6, HUH = 10.6;
+  const FLOOR = 1760, DOWN = 3.3, WHAT = 4.6, UP = 7.5, WHISPER = 9.4, HUH = 11.3;
   const loud = t => t < DOWN || t >= UP + .4;
 
   // ---------------- the living room (it shakes when the TV is loud) ----------------
@@ -36,7 +36,7 @@ export default function (E) {
   const paint = E.el(room, "abs", "left:385px;top:580px;width:214px;height:175px;transform-origin:50% 0");
   E.img(paint, "p_paint", "width:214px;height:175px");
   E.el(room, "abs", "left:486px;top:560px;width:12px;height:12px;border-radius:50%;background:#6b5a48");
-  const FALL = 7.5;
+  const FALL = 8.4;
   E.F(t => {
     let r = 0, y = 0;
     if (t < DOWN) r = Math.sin(t * 9) * 5 + t * 3;
@@ -73,9 +73,15 @@ export default function (E) {
       ringEl.style.transform = `scale(${1 + ph * 3.2})`;
     });
   }
-  // the TV noise itself, chained 1-second blasts while loud
-  for (let t = 0; t < DOWN; t += 1) E.S(t, "blare", t === 0 ? .8 : .9);
-  for (let t = UP + .4; t < DUR - .5; t += 1) E.S(t, "blare", .9);
+  // the TV plays a Portuguese telenovela the whole time (ElevenLabs, European Portuguese voices), its level follows the volume bar;
+  // the voices: grandma (English with a Portuguese accent) and Otto. Recorded with Eleven v3; see branding/voices/ep18.
+  const tvGain = []; for (let t = 0; t <= DUR; t += .1) tvGain.push([t, Math.pow(vol(t) / 100, 1.6) * (t >= HUH - .05 && t < HUH + .9 ? .45 : 1)]);
+  E.clip(0, "voices/ep18/tv_soap.wav", { vol: 1.0, gain: tvGain });
+  for (let t = 0; t < DUR - .5; t += 1) E.S(t, "blare", .22 * Math.pow(vol(t) / 100, 1.6));    // the TV's own music under the actors
+  E.clip(.45, "voices/ep18/otto_hi.wav", { vol: .55, duck: false });                 // drowned out by the TV, on purpose
+  E.clip(WHAT + .2, "voices/ep18/grandma_what.wav", { vol: 1.0 });
+  E.clip(WHISPER + .35, "voices/ep18/grandma_whisper.wav", { vol: .6, duck: false }); // a whisper under the TV: barely there
+  E.clip(HUH + .02, "voices/ep18/otto_what.wav", { vol: 1.15 });
   E.S(DOWN, "tick", 1); E.S(UP, "tick", 1);
 
   // ---------------- Otto ----------------
@@ -111,9 +117,9 @@ export default function (E) {
     return b;
   };
   bubble("hi grandma", 60, 760, 280, "l", .4, 1.9, 28);                         // drowned out: tiny
-  bubble("WHAT?! I can't hear ANYTHING!", 300, 370, 700, "r", WHAT + .2, UP, 66);
+  bubble("WHAT?! I can't hear ANYTHING!", 300, 370, 700, "r", WHAT + .2, WHAT + 3.0, 66);
   bubble("can you hear me?", 330, 900, 320, "r", WHISPER + .3, HUH - .1, 28);    // her whisper: tiny
-  bubble("WHAT?!", 40, 400, 420, "l", HUH, 12.9, 96);
+  bubble("WHAT?!", 40, 400, 420, "l", HUH, 13.7, 96);
   E.S(HUH, "nope", .8);
 
   // ---------------- title (frame 0) ----------------
@@ -121,5 +127,5 @@ export default function (E) {
   E.text(titleBox, "Grandma's *TV volume*", { size: 66, lh: 1.04, instant: true, id: "hook", nowrap: true });
 
   E.finish(DUR);
-  E.K(E.logo, "s", [[13.3, 1], [13.55, 1.18, "out"], [13.9, 1, "io"]]);
+  E.K(E.logo, "s", [[14.1, 1], [14.35, 1.18, "out"], [14.7, 1, "io"]]);
 }

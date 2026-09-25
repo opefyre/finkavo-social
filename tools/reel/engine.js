@@ -53,6 +53,10 @@ window.E = (() => {
   };
   E.F = fn => { E.fns.push(fn); };
   E.S = (t, name, vol = 1) => { E.sounds.push({ t, name, vol }); };
+  // A recorded clip (a voice line, a TV soundtrack): a WAV under branding/, placed at t. o.vol, o.from/o.to (seconds into the file),
+  // o.gain = [[t, g], ...] a volume curve in reel time (for a TV that is turned down), o.duck = true to dip the music under it.
+  E.clips = [];
+  E.clip = (t, file, o = {}) => { E.clips.push({ t, file, vol: o.vol ?? 1, from: o.from ?? 0, to: o.to ?? null, gain: o.gain || null, duck: o.duck ?? true }); };
 
   // ---------- DOM ----------
   E.el = (parent, cls = "", css = "", html = "") => {
@@ -364,7 +368,7 @@ window.E = (() => {
     E.render(0);
     return bad;
   };
-  E.meta = () => ({ kind: E.kind || "reel", sfxLufs: E.sfxLufs || -20, dur: E.dur, sounds: E.sounds.slice().sort((a, b) => a.t - b.t), music: E.musicSpec || null, scenes: E.scenes.map(s => ({ id: s.id, t0: s.t0, t1: s.t1, theme: s.theme })) });
+  E.meta = () => ({ kind: E.kind || "reel", sfxLufs: E.sfxLufs || -20, dur: E.dur, sounds: E.sounds.slice().sort((a, b) => a.t - b.t), clips: E.clips || [], music: E.musicSpec || null, scenes: E.scenes.map(s => ({ id: s.id, t0: s.t0, t1: s.t1, theme: s.theme })) });
   E.music = spec => { E.musicSpec = spec; };
 
   E.icons = {};

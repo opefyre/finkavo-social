@@ -149,6 +149,26 @@ for k, ev in enumerate(sorted(meta["sounds"], key=lambda e: e["t"])):
     sfx[i:j, 0] += y[:j - i] * np.cos(pan * np.pi / 2); sfx[i:j, 1] += y[:j - i] * np.sin(pan * np.pi / 2)
     if name in ("crack", "whoosh", "thud", "slam", "ding", "sparkle", "nope", "riser", "scratch", "poof"): loud.append(ev["t"])
 
+# ---------- recorded clips (voices, a TV soundtrack): WAV files under the repo's branding/ folder ----------
+import os
+ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../branding"))
+def load_wav(path):
+    w = wave.open(path); ch = w.getnchannels(); sr = w.getframerate(); sw = w.getsampwidth()
+    x = np.frombuffer(w.readframes(w.getnframes()), {2: np.int16, 4: np.int32}[sw]).astype(float) / (32768 if sw == 2 else 2 ** 31)
+    if ch > 1: x = x.reshape(-1, ch).mean(axis=1)
+    if sr != SR: raise SystemExit(f"{path}: resample to {SR} Hz first")
+    return x
+for c in meta.get("clips", []):
+    y = load_wav(os.path.join(ROOT, c["file"]))
+    a = int(c.get("from", 0) * SR); b = int(c["to"] * SR) if c.get("to") else len(y); y = y[a:b] * c.get("vol", 1.0)
+    i = int(round(c["t"] * SR))
+    if c.get("gain"):
+        g = c["gain"]; tt = c["t"] + np.arange(len(y)) / SR
+        y = y * np.interp(tt, [p[0] for p in g], [p[1] for p in g])
+    j = min(N, i + len(y)); y = y[:j - i]
+    sfx[i:j, 0] += y; sfx[i:j, 1] += y
+    if c.get("duck", True): loud.extend(np.arange(c["t"], c["t"] + len(y) / SR, .5).tolist())
+
 # ---------- music bed ----------
 spec = meta.get("music") or {}
 bpm = spec.get("bpm", 84); root = spec.get("root", 57)
