@@ -99,7 +99,19 @@ def s_crack():
         y[i:i + m] += (rng.standard_normal(m) - lowpass(rng.standard_normal(m), 6)) * np.exp(-tt / .006) * (1 - k * .12)
     th = s_thud(); y = y[:len(th)]
     return peak(peak(y) * .9 + th[:len(y)] * .7) * 1.0
-SFX = dict(splat=s_splat, crack=s_crack, scratch=s_scratch, poof=s_poof, whoosh=s_whoosh, swish=s_swish, pop=s_pop, thud=s_thud, slam=s_slam, ding=s_ding, tick=s_tick, sparkle=s_sparkle, nope=s_nope, riser=s_riser)
+def s_smack():
+    # a cartoon kiss: a tiny lip-pop click plus a bright squeak
+    n = int(.12 * SR); t = T(n)
+    click = (rng.standard_normal(n) - lowpass(rng.standard_normal(n), 4)) * np.exp(-t / .004)
+    squeak = sweep(.12, 1400, 2300, 30) * env(n, .002, .03)
+    return peak(click * .7 + squeak * .8) * .7
+def s_buzz():
+    # a phone vibrating: two short bursts of a rough 150 Hz buzz
+    n = int(.62 * SR); t = T(n)
+    ph = 2 * np.pi * 150 * t; y = np.sign(np.sin(ph)) * .6 + np.sin(3 * ph) * .3
+    gate = ((t % .31) < .22).astype(float) * (1 - np.exp(-t / .005))
+    return peak(lowpass(y, 6) * gate) * .6
+SFX = dict(smack=s_smack, buzz=s_buzz, splat=s_splat, crack=s_crack, scratch=s_scratch, poof=s_poof, whoosh=s_whoosh, swish=s_swish, pop=s_pop, thud=s_thud, slam=s_slam, ding=s_ding, tick=s_tick, sparkle=s_sparkle, nope=s_nope, riser=s_riser)
 cache = {}
 sfx = np.zeros((N, 2)); loud = []
 for k, ev in enumerate(sorted(meta["sounds"], key=lambda e: e["t"])):

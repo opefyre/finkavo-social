@@ -33,12 +33,14 @@ prompt "Keep this exact same character, same pose … Change ONLY his face: …"
 **Sr. Carimbo (7):** deadpan (default) · smug · bored-asleep · angry · surprised · evil-grin · laughing
 **Otto, other outfits** (no coat and suitcases; each set joint-cropped on its own canvas):
 - at the table (sweater, on a chair): `otto-table_happy` (fork and knife) · `otto-table_plead` (cheeks full, hands up) · `otto-table_panic` · `otto-table_stuffed` (round as a ball)
-- coat, no suitcases: `otto-coat_wave` · `otto-coat_tired-cake` (stubble, cake box) · `otto-coat_phone` (stubble, phone to ear)
-- summer: `otto-summer_happy` (towel, thumbs up) · `otto-summer_bundled` (buried in winter clothes, sweating) · `otto-summer_shiver`
+- coat, no suitcases: `otto-coat_wave` · `otto-coat_cake` (fresh, holding a cake box) · `otto-coat_tired-cake` (stubble, cake box) · `otto-coat_phone` (stubble, phone to ear)
+- summer: `otto-summer_happy` (towel, thumbs up) · `otto-summer_jacket` · `otto-summer_layers` (jacket, scarf, hat) · `otto-summer_bundled` (buried in winter clothes, sweating) · `otto-summer_shiver`
+- casual standing (sweater, cupped hands): `otto-casual_excited` · `otto-casual_betrayed` · `otto-casual_grab` (heart eyes, reaching right)
 **Sr. Renda (4):** smug · evil-grin · laughing · fake-sad
-**Dona Fernanda (5):** knowing · skeptical · smirk · eye-roll · jacket (holding out a folded jacket, smug)
+**Dona Fernanda (6):** knowing · skeptical · smirk · eye-roll · jacket (holding out a folded jacket, smug) · box (open box of cookies)
+**Marta:** `marta_phone` (showing her phone, excited)
 **Base cutouts:** `buck_default` · `leo_default` · `nico_default` · `marta_default` · `zoe_default` · `renda_default`
-**Props** (`props/`): `food_bacalhau` · `food_bread` · `food_soup` · `food_chourico` · `food_rice` · `food_cake` · `food_natas` · `food_tupperware`
+**Props** (`props/`): `food_bacalhau` · `food_bread` · `food_soup` · `food_chourico` · `food_rice` · `food_cake` · `food_natas` · `food_tupperware` · `tin` · `tin-sewing` · `tub` · `tub-soup` (frozen soup) · `bags` (a bag of bags) · `cookiebox`
 
 Cutout notes: chair gaps, bags and plates are near the background colour; after `cutout.py`, clear enclosed gaps and floor
 shadows explicitly (a strict tolerance keeps plates and bags) and always check on magenta.
