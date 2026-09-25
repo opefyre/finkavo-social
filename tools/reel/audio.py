@@ -85,7 +85,21 @@ def s_poof():
     puff = band_noise(.7, 3000, 260, 1.1, 1.0)[:n] * np.exp(-t / .22)
     low = sweep(.7, 90, 40, 9) * env(n, .004, .12)
     return peak(puff * .8 + low * .5) * .8
-SFX = dict(scratch=s_scratch, poof=s_poof, whoosh=s_whoosh, swish=s_swish, pop=s_pop, thud=s_thud, slam=s_slam, ding=s_ding, tick=s_tick, sparkle=s_sparkle, nope=s_nope, riser=s_riser)
+def s_splat():
+    # wet food landing: a soft low thump plus a short, dull, lowpassed noise burst
+    n = int(.32 * SR); t = T(n)
+    thump = sweep(.32, 170, 60, 22) * env(n, .002, .07)
+    wet = lowpass(rng.standard_normal(n), 14) * np.exp(-t / .045) * (1 - np.exp(-t / .004))
+    return peak(thump * .8 + peak(wet) * .9) * .85
+def s_crack():
+    # wood snapping: a burst of sharp splinter clicks over a heavy thud
+    n = int(.7 * SR); t = T(n); y = np.zeros(n)
+    for k, dt in enumerate([0, .018, .03, .052, .07, .11]):
+        i = int(dt * SR); m = int(.03 * SR); tt = T(m)
+        y[i:i + m] += (rng.standard_normal(m) - lowpass(rng.standard_normal(m), 6)) * np.exp(-tt / .006) * (1 - k * .12)
+    th = s_thud(); y = y[:len(th)]
+    return peak(peak(y) * .9 + th[:len(y)] * .7) * 1.0
+SFX = dict(splat=s_splat, crack=s_crack, scratch=s_scratch, poof=s_poof, whoosh=s_whoosh, swish=s_swish, pop=s_pop, thud=s_thud, slam=s_slam, ding=s_ding, tick=s_tick, sparkle=s_sparkle, nope=s_nope, riser=s_riser)
 cache = {}
 sfx = np.zeros((N, 2)); loud = []
 for k, ev in enumerate(sorted(meta["sounds"], key=lambda e: e["t"])):
@@ -95,7 +109,7 @@ for k, ev in enumerate(sorted(meta["sounds"], key=lambda e: e["t"])):
     i = int(round(ev["t"] * SR)); j = min(N, i + len(y))
     pan = 0.5 + (0.12 if k % 2 else -0.12)                       # a touch of alternating width
     sfx[i:j, 0] += y[:j - i] * np.cos(pan * np.pi / 2); sfx[i:j, 1] += y[:j - i] * np.sin(pan * np.pi / 2)
-    if name in ("whoosh", "thud", "slam", "ding", "sparkle", "nope", "riser", "scratch", "poof"): loud.append(ev["t"])
+    if name in ("crack", "whoosh", "thud", "slam", "ding", "sparkle", "nope", "riser", "scratch", "poof"): loud.append(ev["t"])
 
 # ---------- music bed ----------
 spec = meta.get("music") or {}
