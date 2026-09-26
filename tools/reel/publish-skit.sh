@@ -12,7 +12,7 @@ K=social/reels/${day//-//}/$(uuidgen | tr A-Z a-z)/reel.mp4
 got=$(curl -sI -H "Range: bytes=0-1" "https://social-media.finkavo.com/$K" | grep -i content-range | tr -d '\r' | sed 's#.*/##')
 [ "$got" = "$(stat -f %z "$F")" ] || { echo "R2 size mismatch: $got"; exit 1; }
 scp -q "$CAP" finkavo-spare:/tmp/$id.txt
-ssh finkavo-spare "export PATH=\$HOME/.local/finkavo-node/bin:\$PATH; set -a; . ~/.config/finkavo-social/services.env; set +a; cd ~/social-posts-workflow/tools/buffer
+ssh -n finkavo-spare "export PATH=\$HOME/.local/finkavo-node/bin:\$PATH; set -a; . ~/.config/finkavo-social/services.env; set +a; cd ~/social-posts-workflow/tools/buffer
 r=\$(SCHEDULE=1 node create-reel-draft.mjs https://social-media.finkavo.com/$K /tmp/$id.txt ${day}@$hm $qt | tail -1)
 case \"\$r\" in *LimitReached*) r=\$(node create-reel-draft.mjs https://social-media.finkavo.com/$K /tmp/$id.txt ${day}@$hm $qt | tail -1);; esac
 echo \"\$r\"; case \"\$r\" in draft*|scheduled*) ;; *) echo 'Buffer refused: local media kept'; exit 3;; esac
