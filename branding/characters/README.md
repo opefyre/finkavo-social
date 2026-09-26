@@ -4,13 +4,11 @@ Flat vector cartoon style. **Reuse these images, do not regenerate them.** Every
 stays the same across episodes (the image tools cannot reproduce a character from a text prompt, only from a source image).
 
 - `01-…09-*` — the nine base characters (Higgsfield `z_image`, ~0.15 credits each; 01-05 from the free Hugging Face Z-Image space).
-- `expressions/<character>_<expression>.webp` — the expression library: same character, same pose, same canvas (880×1168), only the
-  face changes. Made by editing the base image with `gpt_image_2_5` (medium, 0.5 credits each, from reference media).
-- `cutouts/` — the same files with the background removed (`tools/reel/cutout.py`, joint-cropped so any two expressions of one
+- `cutouts/` — the character images with the background removed (the uncut originals are not kept: they are in the git history up to Sep 2026, and on Higgsfield) (`tools/reel/cutout.py`, joint-cropped so any two expressions of one
   character line up pixel for pixel). This is what reels load (`meta.images`).
 
 Naming: `<character>_<expression>` in lower case, expression words joined with `-`. To add one: edit the character's base image with the
-prompt "Keep this exact same character, same pose … Change ONLY his face: …", save it in `expressions/`, run
+prompt "Keep this exact same character, same pose … Change ONLY his face: …", download it to a temp folder (not the repo), run
 `NOCROP=1 python3 tools/reel/cutout.py in.webp out.webp`, then joint-crop with the other cutouts of that character.
 
 ## The cast
