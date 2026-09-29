@@ -166,12 +166,17 @@ Voice files go in `branding/voices/<epNN>/`, named `<speaker letter>_<word>.wav`
   (#bfe8d6), with no floor shadow". Cream-background versions of these always get damaged by the cutout.
 - **Look at every result**, zooming in on hands and props. Redo anything off-model; 0.5 credits is cheaper than a weak reel.
 - Download originals to the scratchpad. **Only cutouts and props go in the repo**; `branding/characters/expressions/` is git-ignored.
+- **Use Higgsfield for richness, not just characters**: full illustrated backgrounds (`branding/characters/scenes/bg_*`, generated
+  with "an empty background scene … no characters, no text"), vehicles with see-through windows (cut with `cutout_mint.py`, then
+  place people behind them), and a second stage of edits from a first job id for extra poses of a new character. A shirtless or
+  swimwear reference can trip the content filter ("nsfw"): retry with a clothed character as the style reference.
 
 **Cutouts:**
 - Cream background:
   - `NOCROP=1 TOLHEAD=8 HEADROWS=1 python3 tools/reel/cutout.py src.png cut.png 20-30`
   - then `python3 tools/reel/cutout_clean.py src.png cut.png out.webp [shadow_tol] [gap_min_height]`.
-- Mint background: `cutout.py … 40`.
+- Mint background: `python3 tools/reel/cutout_mint.py src.png out.webp` (flood fill plus mint-hue gap removal: clears the mint between legs and
+  chair slats without eating white shirts, jackets or newspapers).
 - Floor shadows: remove them by colour in the bottom few percent only.
 - Sticker sheets: split per grid cell, or by **connected component** when an item crosses the cell edge (the parasol). Split two
   touching items at the column where the transparency is lowest (the pigeons).
@@ -191,6 +196,9 @@ Voice files go in `branding/voices/<epNN>/`, named `<speaker letter>_<word>.wav`
 | `ep69-voicenote` | screen-as-stage (a phone voice note with a timer), a split panel of what's really happening, time passing on Otto |
 | `ep70-remotejob` | a rumour chain across several characters, an escalating card, a location change |
 | `ep71-beachfamily` | items piling up around a character with an ITEMS counter, a crowd arriving |
+| `ep76-enhance` | screen-as-stage with zooms (translate + scale to a target, reticle, ENHANCE flash), a public comment typed live |
+| `ep77-taxi` | split screen: the action outside (scrolling street, vehicles) on top, faces inside below |
+| `ep78-diy` | a cross-section of two flats, a time-skip montage (SUNDAY → YEAR 2), a callback loop ending |
 | `ep72-edp` | an "OFFENCE #n" pill counter, room lighting and a thermometer reacting, text drawn onto a prop (the framed bill) |
 
 **The shape of the file:**
