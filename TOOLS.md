@@ -73,9 +73,9 @@ first empty reel slots from `queue`, **09:00 Lisbon**.
 
 Done when: checks pass, mp4 frames looked at, loudness ≈ −14, drafts verified with `check-post`, sources pushed.
 
-## `skit` — a funny character reel (≈ 12–16 s), for growth
+## `skit` — a funny character reel (≈ 19–21 s), for growth
 
-Full guide: **`docs/character-skits.md`** (what makes a skit, pace, cast library, image generation, cutouts, sound and voices,
+Full guide: **`docs/character-skits.md`** (current format from EP67: the 10/10 bar, English first, pace, voices by role, images, cutouts,
 templates, caption, cost). Default: **3 skits**, pitched first, one per day at **19:00 Lisbon** on the next free evenings.
 
 1. Review the last ~10 skits (`ls tools/reel/reels/ep*`) and **pitch 3 varied ideas** — different topic *and* format, each with the
@@ -84,7 +84,7 @@ templates, caption, cost). Default: **3 skits**, pitched first, one per day at *
    a batch without asking); look at every image; cutouts with `tools/reel/cutout.py`, checked on magenta, joint-cropped; add to
    `branding/characters/README.md`.
 3. Sound: synthetic effects in `audio.py`; real effects in `branding/sfx/` (`tools/reel/voice/sfx.py`); voices only when the joke
-   needs them (`tools/reel/voice/tts.py` + `cut.py` → `branding/voices/<id>/`), used with `E.clip`. Verify cuts on the waveform.
+   needs them (`tools/reel/voice/tts.py` + `autocut.py` → `branding/voices/<id>/`, English with a Portuguese accent), used with `E.clip`. Verify cuts on the waveform.
 4. Write `tools/reel/reels/<id>.reel.mjs` (`ep<NN>-<slug>`, start from a similar skit) and `captions/<id>.txt`.
 5. On the spare Mac: `--check`, stills, **look**, fix (2–3 rounds is normal); then `render-all.sh`; frames from the mp4; loudness ≈ −14.
 6. Send the mp4s to the owner (short table incl. credits spent and "sound not checked by ear").

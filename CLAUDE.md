@@ -14,6 +14,6 @@ Always:
 - **The old n8n pipeline is retired** (removed 21 Sep 2026, still in git at tag `pipeline-final`). Do not rebuild or restart it.
 - **Reports are short and verified.** Say what is done, what is a draft, what you did not check. Look at what you rendered before saying it is fine.
 - **Skits** (`skit`, docs/character-skits.md) are for reach, not tax facts: universal jokes, varied topics and formats, paced so
-  every event can be seen (12–16 s). Higgsfield images up to 10 credits a batch without asking; ElevenLabs voices/effects only when
+  every event can be seen (19–21 s), English first (Portuguese only as a subtitled line from an older character). Higgsfield images up to 10 credits a batch without asking; ElevenLabs voices/effects only when
   the joke needs them. Nobody here can hear audio: say so, and check cuts on the waveform.
 - Commit new reel/carousel/skit sources, captions and assets and push to `main` once they are published.
