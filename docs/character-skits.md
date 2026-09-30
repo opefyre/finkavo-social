@@ -162,6 +162,11 @@ Voice files go in `branding/voices/<epNN>/`, named `<speaker letter>_<word>.wav`
   - "In the exact same flat vector cartoon style as this reference, a DIFFERENT character: …";
   - for props, one **sticker sheet**: "3×2 grid, lots of empty space, nothing touching, no text".
 - Always add: "Exactly two arms and two hands, five fingers each. No text." Draw all text and numbers in code.
+- **Generate characters and props with a transparent background** (`background: "transparent"` on `gpt_image_2_5`): no cutout step,
+  no residue, clean edges. Keep backgrounds and scenes `background: "opaque"`. Save a transparent PNG straight to `.webp` (crop
+  to its content), and keep pose sets that must line up (e.g. `dona-arm_*`) on their shared full canvas. The owner asked for this
+  (30 Sep 2026): background removal left residue.
+- Older images made on cream or mint still need a cutout.
 - **White clothes, white paws or white props**: generate them on mint from the start. "…a solid flat pale mint-green background
   (#bfe8d6), with no floor shadow". Cream-background versions of these always get damaged by the cutout.
 - **Look at every result**, zooming in on hands and props. Redo anything off-model; 0.5 credits is cheaper than a weak reel.
