@@ -73,6 +73,10 @@ English with portuguese accent, or portuguese famous sayings, or even portuguese
   an **older** character: grandma, the old man, the dad, the priest.
 - **Every Portuguese line gets an English subtitle**: in the bubble (the `sub()` helper), and translated in the caption's first line.
 - Small Portuguese words inside English lines are fine and add flavour: *filho*, *beijinhos*, *ai*.
+- **Every skit has at least one Portuguese word** (owner, 30 Sep 2026: "in some videos I see no Portuguese at all… even 1–2 words"). It can be a spoken
+  saying, a word on a sign or card (*FORA DE SERVIÇO*, *REEMBOLSO*), the setting (azulejos, a *Finanças* envelope) or a caption line. Always subtitle it.
+- **Keep a thread of Finkavo's world (about 5%)**: Portugal, residency or tax-and-admin life (letters from *Finanças*, NIF, queues, the *senha*, IRS refunds)
+  shows up somewhere in the batch. Irrelevant, universal jokes are fine; a whole batch of them is not. Never put real figures in it.
 
 ## 3. Pace and length
 
@@ -87,7 +91,12 @@ The owner's words: *"not slow, not too fast… see the events… duration good, 
 | Punchline | the line, then the stamp about 1.5–1.8 s later, then hold until the logo pulse |
 | Frame 0 | the title fully visible and something already moving (`--check` enforces it) |
 
-## 4. Voices (ElevenLabs Eleven v3)
+## 4. Voices (ElevenLabs Eleven v4 from EP112; v3 before)
+
+`tts.py` now defaults to `eleven_v4` (`--model eleven_v3` for the old one). Measured 30 Sep 2026: the same line cost **8 credits on v4 against 29 on v3**
+(v4 Turbo 4); `/v1/history` shows it charged to the normal counter at the discounted rate. The key cannot read the account page (no `user_read`), so the launch-bonus
+balance is not visible from here; check it in the ElevenLabs dashboard. v4 accepts natural-language tags (`[said with a strong Portuguese accent]`) and keeps the
+alignment/timestamps endpoint and `--lang pt`. Its pacing is tighter (a Portuguese line ran 7.6 s against 11.5 s on v3). The voices table below still applies.
 
 Most current skits are voiced, because the delivery is the joke. Use voices when the words carry the joke; use effects only when
 the joke is purely visual. Credits are topped up, but keep it lean: one take per character, short lines.

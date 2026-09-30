@@ -8,11 +8,11 @@ Key: $ELEVENLABS_API_KEY or ~/Desktop/Personal/Projects/finance/secrets/elevenla
 """
 import json, os, sys, base64, subprocess, urllib.request, time, argparse
 ap = argparse.ArgumentParser(); ap.add_argument("voice"); ap.add_argument("lines"); ap.add_argument("out")
-ap.add_argument("--stability", type=float, default=0.5); ap.add_argument("--seed", type=int, default=7); ap.add_argument("--lang")
+ap.add_argument("--stability", type=float, default=0.5); ap.add_argument("--seed", type=int, default=7); ap.add_argument("--lang"); ap.add_argument("--model", default="eleven_v4")
 a = ap.parse_args()
 key = os.environ.get("ELEVENLABS_API_KEY") or open(os.path.expanduser("~/Desktop/Personal/Projects/finance/secrets/elevenlabs-api.txt")).read().strip()
 text = "\n... ...\n".join(l.rstrip("\n") for l in open(a.lines) if l.strip())
-body = {"text": text, "model_id": "eleven_v3", "voice_settings": {"stability": a.stability}, "seed": a.seed}
+body = {"text": text, "model_id": a.model, "voice_settings": {"stability": a.stability}, "seed": a.seed}
 if a.lang: body["language_code"] = a.lang
 for attempt in range(3):
     try:
