@@ -272,8 +272,8 @@ ssh finkavo-spare 'export PATH=$HOME/.local/finkavo-node/bin:$PATH; cd ~/social-
   the same time.
 - For one skit, run `tools/reel/publish-skit.sh <id> <YYYY-MM-DD> "<short title>"`. It:
   - uploads to R2 and verifies the size;
-  - schedules the post, or creates a **draft with the date and time set** when the free plan's 10 scheduled posts are full (the
-    owner bumps those);
+  - always creates a **draft with the date and time set**; the owner moves it to the queue. "Schedule" from the owner means this,
+    never a scheduled post (owner, 4 Oct 2026: "always push to draft and set the dates, not to queue directly");
   - runs `check-post`;
   - deletes `out/<id>` on both Macs.
 - For a batch, use a zsh loop that doesn't feed stdin to ssh: ``for l in "${(@f)$(cat queue.txt)}"; do …; done < /dev/null``.
