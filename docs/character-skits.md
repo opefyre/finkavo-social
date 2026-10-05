@@ -268,7 +268,7 @@ ssh finkavo-spare 'export PATH=$HOME/.local/finkavo-node/bin:$PATH; cd ~/social-
 
 ## 9. Publish (when the owner says "schedule")
 
-- Skits post at **19:00 Lisbon**, one per evening, on the next free days after the last skit already in Buffer. Never two posts at
+- Skits post at **15:00 Lisbon** (was 19:00 until 5 Oct 2026: too late, people were going to bed), one per day, on the next free days after the last skit already in Buffer. Never two posts at
   the same time.
 - For one skit, run `tools/reel/publish-skit.sh <id> <YYYY-MM-DD> "<short title>"`. It:
   - uploads to R2 and verifies the size;

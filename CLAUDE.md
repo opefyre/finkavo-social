@@ -7,7 +7,7 @@ Always:
 
 - **Renders run on the spare Mac** (`ssh finkavo-spare`), never on the laptop. See `spare` in TOOLS.md.
 - **Drafts only.** Create posts in Buffer as drafts; the owner schedules them. Never publish. The exception is a single post the owner explicitly asks you to schedule (`SCHEDULE=1`); never permanently delete posts (use `unschedule-post.mjs` to cancel a schedule and let the owner delete drafts).
-- **Max 5 hashtags** (3 topic + `#viveremportugal` + `#Finkavo`). Reels 09:00 Lisbon, carousels 18:00, skits 19:00. Never two posts at the same time.
+- **Max 5 hashtags** (3 topic + `#viveremportugal` + `#Finkavo`). Reels 09:00 Lisbon, carousels 18:00, skits 15:00 (moved from 19:00 on 5 Oct 2026 so people see them before bed). Never two posts at the same time.
 - **No repeated topics.** Check the full Buffer history first. Tax and admin only, never employment law.
 - **Every number from a primary source you actually opened.** If two official sources disagree, drop the topic. No invented Finkavo features.
 - **Never write to the app's D1 corpus** (read only). Only ever add objects to R2.

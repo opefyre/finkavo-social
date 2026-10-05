@@ -6,7 +6,7 @@ Where the owner gives no detail, use the **defaults** shown and say which you us
 | Say | It does | Output |
 |---|---|---|
 | **`reel`** (`reel 5`, `reel 28 Sep–2 Oct`) | Topic → code-drawn reel → checked, rendered, verified → Buffer drafts | mp4 files, drafts at 09:00 |
-| **`skit`** (`skit`, `skit 3`) | Funny character reel for reach: pitch → images → sound/voices → code → checked → owner → Buffer at 19:00 | mp4 files, posts at 19:00 |
+| **`skit`** (`skit`, `skit 3`) | Funny character reel for reach: pitch → images → sound/voices → code → checked → owner → Buffer at 15:00 | mp4 files, posts at 15:00 |
 | **`carousel`** (`carousel 5`) | Topic → spec (v2 design) → checked slides → Buffer drafts | PNG slides, drafts at 18:00 |
 | **`topics`** (`topics 5`) | Picks and fact-checks topics that were never posted | topic briefs with sources |
 | **`queue`** | What is scheduled, drafted, sent and empty | table of slots |
@@ -76,7 +76,7 @@ Done when: checks pass, mp4 frames looked at, loudness ≈ −14, drafts verifie
 ## `skit` — a funny character reel (≈ 19–21 s), for growth
 
 Full guide: **`docs/character-skits.md`** (current format from EP67: the 10/10 bar, English first, pace, voices by role, images, cutouts,
-templates, caption, cost). Default: **3 skits**, pitched first, one per day at **19:00 Lisbon** on the next free evenings.
+templates, caption, cost). Default: **3 skits**, pitched first, one per day at **15:00 Lisbon** on the next free days.
 
 1. Review the last ~10 skits (`ls tools/reel/reels/ep*`) and **pitch 3 varied ideas** — different topic *and* format, each with the
    twist and the production call (voiced or effects only, ~N new images). Wait for "go".

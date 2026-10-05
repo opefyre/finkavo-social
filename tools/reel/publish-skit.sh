@@ -3,7 +3,7 @@
 # out/<id>/reel.mp4 (with music) → R2 (verified 206 + size) → Buffer: ALWAYS a draft with the date and time set; the owner
 # schedules it (owner, 4 Oct 2026: "always push to draft and set the dates, not to queue directly") → check-post → deletes out/<id>/ here and on the spare Mac.
 set -euo pipefail
-id=$1; day=$2; title=$3; hm=${4:-19:00}; qt=$(printf %q "$title")   # quoted for the remote shell (titles with apostrophes)
+id=$1; day=$2; title=$3; hm=${4:-15:00}; qt=$(printf %q "$title")   # quoted for the remote shell (titles with apostrophes)
 REPO=$(cd "$(dirname "$0")/../.." && pwd); F=$REPO/tools/reel/out/$id/reel.mp4; CAP=$REPO/tools/reel/captions/$id.txt
 [ -f "$F" ] && [ -f "$CAP" ] || { echo "missing $F or $CAP"; exit 1; }
 n=$(grep -oE '(^|[[:space:]])#[[:alnum:]_]+' "$CAP" | wc -l | tr -d ' '); [ "$n" -le 5 ] || { echo "caption has $n hashtags ('#1' counts too)"; exit 1; }
