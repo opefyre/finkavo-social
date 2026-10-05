@@ -15,5 +15,5 @@ scp -q "$CAP" finkavo-spare:/tmp/$id.txt
 ssh -n finkavo-spare "export PATH=\$HOME/.local/finkavo-node/bin:\$PATH; set -a; . ~/.config/finkavo-social/services.env; set +a; cd ~/social-posts-workflow/tools/buffer
 r=\$(node create-reel-draft.mjs https://social-media.finkavo.com/$K /tmp/$id.txt ${day}@$hm $qt | tail -1)
 echo \"\$r\"; case \"\$r\" in draft*) ;; *) echo 'Buffer refused: local media kept'; exit 3;; esac
-node check-post.mjs \$(echo \"\$r\" | awk '{print \$2}'); rm -rf ~/social-posts-workflow/tools/reel/out/$id"
+node check-post.mjs \$(echo \"\$r\" | awk '{print \$2}'); rm -rf ~/social-posts-workflow/tools/reel/out/$id /tmp/$id.txt"
 rm -rf "$REPO/tools/reel/out/$id"          # only reached when the post exists (set -e stops on the ssh exit 3)
