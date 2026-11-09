@@ -6,7 +6,7 @@ follow that tool's procedure. Do not ask for what it already defines; use its de
 Always:
 
 - **Renders run on the spare Mac** (`ssh finkavo-spare`); the laptop too, but only with the owner's approval each time. See `spare` in TOOLS.md.
-- **Drafts only.** New reels are social-publisher drafts (from 9 Nov 2026); posts already in Buffer stay there as drafts. The owner schedules them. Never publish. The exception is a single post the owner explicitly asks you to schedule (`SCHEDULE=1`); never permanently delete posts (use `unschedule-post.mjs` to cancel a schedule and let the owner delete drafts).
+- **Drafts only.** All reels are social-publisher trial drafts (from 9 Nov 2026); Buffer is paused (its old drafts are kept for the owner to delete). The owner schedules them. Never publish. The exception is a single post the owner explicitly asks you to schedule (`SCHEDULE=1`); never permanently delete posts (use `unschedule-post.mjs` to cancel a schedule and let the owner delete drafts).
 - **Max 5 hashtags** (3 topic + `#viveremportugal` + `#Finkavo`). Reels 09:00 Lisbon, carousels 18:00, skits 15:00 (moved from 19:00 on 5 Oct 2026 so people see them before bed). Never two posts at the same time.
 - **No repeated topics.** Check the full Buffer history first. Tax and admin only, never employment law.
 - **Every number from a primary source you actually opened.** If two official sources disagree, drop the topic. No invented Finkavo features.
