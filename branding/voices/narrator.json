@@ -1,0 +1,11 @@
+{
+ "voice_id": "LSKH2rfiMj7AysE7xtJC",
+ "name": "Finkavo Narrator",
+ "design_prompt": "A warm, wry male narrator in his mid-thirties, speaking natural English with a light European Portuguese accent. Conversational and dry, like a friend telling a funny story at a caf\u00e9 table, quick timing, a smile in the voice. Not an advertising or announcer voice. Close, clean studio recording.",
+ "design_model": "eleven_ttv_v3",
+ "preview_text": "How many kisses do you give someone in Portugal? One? Three? Otto went for a handshake. Big mistake. In Portugal it's two, one on each cheek, right side first. And yes, that includes the plumber, your boss, and the lady from the tax office. Otto is still recovering.",
+ "chosen_preview": 2,
+ "tts_model": "eleven_v4",
+ "created": "2026-11-09",
+ "approved_by_owner": "2026-11-09 (chose preview 2)"
+}
