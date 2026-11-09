@@ -15,6 +15,7 @@ Always:
 - **Reports are short and verified.** Say what is done, what is a draft, what you did not check. Look at what you rendered before saying it is fine.
 - **Reels/skits** follow the `finkavo-social` skill (~/.claude/skills/finkavo-social), read before every batch: scored ideas and
   hooks (skip rate decides reach), at least two production methods per reel, no synthesized sound or generic music, gates, the
-  owner's review, then social-publisher drafts at 15:00 Lisbon. English first, Portuguese as subtitled seasoning. Higgsfield used freely but
+  owner's review, then social-publisher drafts at 15:00 Lisbon, every one a Trial Reel with the performance switch on. Music is composed by us from
+  real recorded instruments (Gemini as fallback), never ElevenLabs music or synthesized sound. English first, Portuguese as subtitled seasoning. Higgsfield used freely but
   logged (ask above ~50 credits a batch). Nobody here can hear audio: say so, and check cuts on the waveform.
 - Commit new reel/carousel/skit sources, captions and assets and push to `main` once they are published.
