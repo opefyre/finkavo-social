@@ -1,4 +1,8 @@
-# Skits: how we make them now
+# Skits: the older guide (cast, voices, images)
+
+> **Superseded on 9 Nov 2026 for ideas, hooks, length, sound and publishing** by the `finkavo-social` skill
+> (`~/.claude/skills/finkavo-social/`). Still valid here: the cast and voice IDs (§4), Higgsfield prompts and image practice (§6),
+> voice cutting. Synthesized sound (`E.S`, `E.music`, `audio.py`) is banned.
 
 This guide covers the `skit` tool as it stands from **EP67 on (Sep 2026)**. The reference skits are EP67–72, and this is the only
 current guide for them. Older skits (EP1–66) used an earlier formula; they are in git as history, but don't copy their style.

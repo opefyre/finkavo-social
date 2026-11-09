@@ -7,3 +7,7 @@ out/
 secrets/
 *.log
 branding/characters/expressions/
+tools/reel/eps/*/media/
+tools/reel/eps/*/qa/
+tools/reel/eps/*/delivery/
+tools/reel/eps/*/audio/stems/
