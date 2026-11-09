@@ -148,3 +148,21 @@ https://github.com/sgossner/VSCO-2-CE — downloaded 9 Nov 2026, subset: Woodwin
 | accordion | 560804 | Accordion Keyboard Octave F3.m4a | Miles_Thompson | https://freesound.org/people/Miles_Thompson/sounds/560804/ |
 | misc | 776250 | AMB-Night,People,DistantFadoLive-BairroAlto,Lisbon-02Oct2022,21.53H | soundandmelodies | https://freesound.org/people/soundandmelodies/sounds/776250/ |
 | misc | 394378 | cavaquinho.wav | leinad123 | https://freesound.org/people/leinad123/sounds/394378/ |
+
+## Sound effects from Freesound (CC0 1.0), 9 Nov 2026, in `branding/sfx/fs-*`
+
+| File | Freesound id | Name | Author | URL |
+|---|---|---|---|---|
+| fs-knife-ring.wav | 320521 | Unsheathed blade | deleted_user_2906614 | https://freesound.org/people/deleted_user_2906614/sounds/320521/ |
+| fs-slipper-tiles.wav | 620373 | slippers on kitchen floor.WAV | dly0694 | https://freesound.org/people/dly0694/sounds/620373/ |
+| fs-door-bang.wav | 403898 | uPVC_Door_Opening_And_Closing.wav | watercool | https://freesound.org/people/watercool/sounds/403898/ |
+| fs-fan-hum.wav | 324665 | Electric machine engine large air-conditioner hum noise | kentspublicdomain | https://freesound.org/people/kentspublicdomain/sounds/324665/ |
+| fs-iron-steam.wav | 365071 | Steam.wav | sniperous | https://freesound.org/people/sniperous/sounds/365071/ |
+| fs-suitcase-wheels.wav | 423705 | Rolling suitcase 2 | Aurelon | https://freesound.org/people/Aurelon/sounds/423705/ |
+| fs-clock-tick.wav | 342299 | Clock 128 bpm half speed.wav | kruud | https://freesound.org/people/kruud/sounds/342299/ |
+| fs-pot-lid.wav | 737401 | potlid_clatter | noisymichael | https://freesound.org/people/noisymichael/sounds/737401/ |
+| fs-chair-creak.wav | 590161 | Creaking in Room 11.wav | Greg_Surr | https://freesound.org/people/Greg_Surr/sounds/590161/ |
+| fs-rubber-stamp.wav | 470710 | traditional stamp.wav | I.fekry | https://freesound.org/people/I.fekry/sounds/470710/ |
+| fs-gas-hiss.wav | 513888 | Close Up Turning On Gas Stove Top Then Turning Off.mp3 | shelbyshark | https://freesound.org/people/shelbyshark/sounds/513888/ |
+| fs-window-slam.wav | 234005 | Window Slam Studio 5 | crashoverride6 | https://freesound.org/people/crashoverride6/sounds/234005/ |
+| fs-curtain-flap.wav | 386794 | flag_flap_1.wav | RichieMcMullen | https://freesound.org/people/RichieMcMullen/sounds/386794/ |

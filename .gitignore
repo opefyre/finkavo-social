@@ -11,3 +11,5 @@ tools/reel/eps/*/media/
 tools/reel/eps/*/qa/
 tools/reel/eps/*/delivery/
 tools/reel/eps/*/audio/stems/
+tools/reel/eps/*/audio/
+tools/reel/reels/*p.reel.mjs

@@ -97,3 +97,4 @@ shadows explicitly (a strict tolerance keeps plates and bags) and always check o
 - Never let the AI draw text or numbers on props; draw them in code.
 - Check hands and props on every generated frame (extra limbs and floating objects were the two faults seen so far).
 - Names are working names; change them freely.
+- **EP127–129 (9 Nov 2026, transparent generation):** dona_point, dona_slam, mum_call, mum_shirt, otto-coat_ask, otto_cape, tiago_controller, tiago_shirt.

@@ -84,7 +84,109 @@ def rua(out):
     return s.mix({"accordion": 1.0, "guitar": 0.6, "bass": 0.8, "clarinet": 0.45}, reverb=0.14, out=out)
 
 
+# ---- per-reel scores (9 Nov 2026). Times in seconds come from each reel's storyboard. ----
+
+def _muted(t, windows):
+    return any(a <= t < b for a, b in windows)
+
+
+def ep127(out):
+    """The draught: tasca noir. Guitar arpeggios + bass from 0.0, lead from the wind, dead stop on the slam (19.6 s),
+    one guitar note at 20.0 s that rings to the end."""
+    beat, dur = 60 / 92, 24.8
+    s = Sampler(dur, seed=11)
+    s.ambience(FADO_ROOM, gain=0.12, start=40)
+    prog = [("D3", "m"), ("A2", "7"), ("D3", "m"), ("G2", "m"), ("Bb2", "M"), ("A2", "7"), ("D3", "m"), ("A2", "7"), ("D3", "m"), ("G2", "m")]
+    stop = [(22.8, 24.8)]
+    for bar, (root, kind) in enumerate(prog):
+        t0 = bar * 4 * beat
+        c = chord(root, kind)
+        for off, n in ((0, c[0] - 12), (2, c[0] - 5)):
+            if not _muted(t0 + off * beat, stop):
+                s.note("bass", t0 + off * beat, n, 1.6 * beat, 0.75)
+        arp = [c[0], c[1] + 12, c[2], c[1] + 12, c[2], c[1] + 12, c[0] + 12, c[2]]
+        for i, n in enumerate(arp):
+            t = t0 + i * beat / 2
+            if not _muted(t, stop):
+                s.note("guitar", t, n, beat * 0.9, 0.42 + 0.12 * (i % 4 == 0), pan=-0.35, bus="guitar_low")
+    mel = [(9.4, "A3", 1), (10.4, "D4", 1), (11.4, "F4", 2), (13.4, "E4", 1), (14.4, "C#4", 1), (15.4, "E4", 2),
+           (17.4, "G4", 1), (18.4, "F4", 1), (19.4, "E4", 1), (20.4, "D4", 2), (22.4, "E4", 1), (23.4, "F4", 1),
+           (24.4, "A4", 2), (26.4, "G4", 1), (27.4, "E4", 1), (28.4, "F4", 2), (30.4, "E4", 1), (31.4, "D4", 1), (32.4, "C#4", 2)]
+    for b, n, d in mel:
+        t = b * beat
+        if not _muted(t, stop):
+            s.note("guitar", t, n, d * beat, 0.7, pan=0.3, bus="guitar_lead")
+    s.note("guitar", 23.3, "D3", 1.4, 0.7, pan=0.0, bus="guitar_lead", release=0.5)
+    return s.mix({"guitar_low": 0.7, "guitar_lead": 1.0, "bass": 0.8, "room": 1.0}, reverb=0.16, out=out)
+
+
+def ep128(out):
+    """Leaving home: rua waltz. Light from 0.0, a lift around the 28.8 reveal (11-15 s), resolve at 22.0 s."""
+    beat, dur = 60 / 104, 24.0
+    s = Sampler(dur, seed=13)
+    bars = int(dur / (3 * beat))
+    prog = [("G2", "M"), ("D2", "7"), ("G2", "M"), ("C3", "M"), ("G2", "M"), ("D2", "7"), ("E2", "m"), ("D2", "7"),
+            ("G2", "M"), ("C3", "M"), ("D2", "7"), ("G2", "M")]
+    for bar in range(bars):
+        root, kind = prog[bar % len(prog)]
+        t0 = bar * 3 * beat
+        c = chord(root, kind)
+        lift = 1.15 if 12.4 <= t0 < 16.0 else 1.0
+        s.note("bass", t0, c[0] - 12, beat * 1.2, 0.75 * lift)
+        for off in (1, 2):
+            for n in c[1:3]:
+                s.note("guitar", t0 + off * beat, n + 12, beat * 0.6, 0.4 * lift, pan=-0.3)
+    mel = [(0, "D5", 2), (2, "B4", 1), (3, "C5", 1), (4, "A4", 1), (5, "F#4", 1), (6, "G4", 3), (9, "B4", 2), (11, "D5", 1),
+           (12, "E5", 2), (14, "C5", 1), (15, "B4", 3), (18, "A4", 2), (20, "C5", 1), (21, "E5", 3), (24, "D5", 3),
+           (27, "B4", 2), (29, "A4", 1), (30, "B4", 2), (32, "C5", 1), (33, "A4", 2), (35, "F#4", 1), (36, "G4", 3), (39, "B4", 1), (40, "D5", 2), (42, "G4", 3)]
+    for b, n, d in mel:
+        t = b * beat
+        if t < dur - 0.3:
+            s.note("accordion", t, n, d * beat, 0.7 + (0.15 if 12.4 <= t < 16.0 else 0), pan=0.15)
+    for b, n, d in [(21, "C4", 3), (24, "B3", 3), (33, "F#4", 3)]:
+        s.note("clarinet", b * beat, n, d * beat, 0.4, pan=0.45)
+    s.note("tuba_stac", 14.9, "G1", 0.6, 0.6)  # one low accent under "twenty-eight point eight"
+    return s.mix({"accordion": 1.0, "guitar": 0.6, "bass": 0.8, "clarinet": 0.45, "tuba_stac": 0.5}, reverb=0.14, out=out)
+
+
+def ep129(out):
+    """The haircut: light filarmónica swing. Plays 0.0-2.4, drops out for "Contribuinte?" / "Sorry?" (2.4-5.0),
+    returns with the receipt (5.0), button on the soup at 20.55 s."""
+    beat, dur = 60 / 112, 21.6
+    s = Sampler(dur, seed=17)
+    mute = [(2.4, 4.4)]
+    prog = [("Bb2", "M"), ("F2", "7"), ("Bb2", "M"), ("Eb2", "M"), ("Bb2", "M"), ("G2", "m"), ("C3", "m"), ("F2", "7"),
+            ("Bb2", "M"), ("Eb2", "M"), ("F2", "7"), ("Bb2", "M")]
+    bars = int(dur / (4 * beat)) + 1
+    for bar in range(bars):
+        root, kind = prog[bar % len(prog)]
+        t0 = bar * 4 * beat
+        c = chord(root, kind)
+        for off, n in ((0, c[0] - 12), (2, c[2] - 24)):
+            t = t0 + off * beat
+            if t < dur - 0.2 and not _muted(t, mute):
+                s.note("tuba_stac", t, n, beat * 0.7, 0.75)
+        for off in (1, 3):
+            t = t0 + off * beat
+            if t < dur - 0.2 and not _muted(t, mute):
+                for n in c[1:3]:
+                    s.note("guitar", t, n + 12, beat * 0.4, 0.45, pan=-0.3)
+    mel = [(0, "F4", 1), (1, "Bb4", 1), (2, "D5", 1), (3, "C5", 1), (10, "D5", 1), (11, "F5", 1.5), (12.5, "D5", 0.5),
+           (13, "Eb5", 1), (14, "C5", 2), (16, "D5", 1), (17, "Bb4", 1), (18, "G4", 1), (19, "A4", 1), (20, "Bb4", 2),
+           (22, "C5", 1), (23, "D5", 1), (24, "F5", 2), (26, "Eb5", 1), (27, "C5", 1), (28, "D5", 1), (29, "Bb4", 1),
+           (32, "A4", 1), (33, "C5", 1), (34, "F5", 1), (35, "D5", 1)]
+    for b, n, d in mel:
+        t = b * beat
+        if t < dur - 0.6 and not _muted(t, mute):
+            s.note("clarinet" if d >= 1 else "clarinet_stac", t, n, d * beat, 0.65, pan=0.3)
+    s.note("trumpet_stac", 20.85, "Bb4", 0.4, 0.7, pan=0.1)  # the button on the soup
+    s.note("tuba_stac", 20.85, "Bb1", 0.4, 0.7)
+    return s.mix({"tuba_stac": 0.85, "guitar": 0.55, "clarinet": 0.9, "clarinet_stac": 0.9, "trumpet_stac": 0.7},
+                 reverb=0.18, out=out)
+
+
 if __name__ == "__main__":
     name = sys.argv[1]
     out = sys.argv[2] if len(sys.argv) > 2 else f"{name}.wav"
-    print({"tasca": tasca, "filarmonica": filarmonica, "rua": rua}[name](out))
+    pieces = {"tasca": tasca, "filarmonica": filarmonica, "rua": rua, "ep127": ep127, "ep128": ep128, "ep129": ep129}
+    print(pieces[name](out))
