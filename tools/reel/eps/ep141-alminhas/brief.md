@@ -5,3 +5,6 @@ Say "some families in northern Portugal (Minho, Porto area)"; it's a traditional
 
 ## Build (10 Nov 2026)
 Opening plate gpt_image_2_5 medium + Kling 3.0 pro 5 s silent (8 credits). Voices ElevenLabs eleven_v4 (shared ~1,300 characters for EP139–141). Music own composition (compose.py ep141). Gates pass (picture change, loudness, no silence); English lines and Portuguese takes checked with faster-whisper. Not checked: nobody listened.
+
+## Rework (10 Nov 2026, owner: elements too simplified)
+New Higgsfield cutouts: props/ghost-avo, ghost-avoa, oil-lamp, plate-crumbs (2 credits). Two more Kling clips (15 credits): the two ghosts at the real table (Kling from a composite of the ghost cutouts on the opening plate) and the extra place setting with a candle (new plate, 0.5). media/clip.mp4 joins table 0–3.0, ghosts 6.8–10.8, place 10.8–14.6 (punch-in at 12.6). Map zooms to the north with Guimarães, Porto, Barroso. Gates pass again.
