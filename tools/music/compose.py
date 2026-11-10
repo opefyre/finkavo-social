@@ -412,9 +412,77 @@ def ep138(out):
     return _tasca_score(out, 19.6, [(17.6, 18.4)], 18.45, seed=38, bpm=84, lead=lead)
 
 
+def _waltz(out, dur, mute, key, mel, end_t, seed, bpm=114):
+    """Accordion street waltz (rua style) in a major key: bass on 1, guitar chords on 2-3, accordion melody; button at end_t."""
+    beat = 60 / bpm
+    s = Sampler(dur, seed=seed)
+    I, V, IV = key
+    prog = [I, V, V, I, IV, I, V, I]
+    for bar in range(int(dur / (3 * beat)) + 1):
+        root, kind = prog[bar % len(prog)]
+        t0 = .2 + bar * 3 * beat
+        c = chord(root, kind)
+        if t0 < dur - .3 and not _muted(t0, mute):
+            s.note("bass", t0, c[0] - 12, beat * 1.2, 0.75)
+        for off in (1, 2):
+            t = t0 + off * beat
+            if t < dur - .3 and not _muted(t, mute):
+                for n in c[1:3]:
+                    s.note("guitar", t, n + 12, beat * 0.6, 0.38, pan=-0.3)
+    for b, n, d in mel:
+        t = .2 + b * beat
+        if t < dur - .4 and not _muted(t, mute):
+            s.note("accordion", t, n, d * beat, 0.62, pan=0.15)
+    s.note("accordion", end_t, chord(*I)[1] + 12, 0.8, 0.7, pan=0.1)
+    s.note("bass", end_t, chord(*I)[0] - 12, 0.8, 0.8)
+    return s.mix({"accordion": 1.0, "guitar": 0.6, "bass": 0.8}, reverb=0.14, out=out)
+
+
+def ep139(out):
+    """IRS Jovem: bright waltz in A; drops under grandma's "Devias ter vindo mais cedo." (19.6-21.3)."""
+    mel = [(3, "E5", 1), (4, "C#5", 1), (5, "A4", 1), (6, "B4", 2), (8, "G#4", 1), (9, "A4", 3), (12, "C#5", 1), (13, "D5", 1),
+           (14, "E5", 1), (15, "F#5", 2), (17, "D5", 1), (18, "C#5", 3), (21, "B4", 1), (22, "C#5", 1), (23, "D5", 1), (24, "E5", 2),
+           (26, "D5", 1), (27, "C#5", 2), (29, "B4", 1), (30, "A4", 3), (33, "E5", 2), (35, "C#5", 1), (36, "A4", 3)]
+    return _waltz(out, 22.4, [(19.6, 21.3)], (("A2", "M"), ("E2", "7"), ("D2", "M")), mel, 21.4, seed=39)
+
+
+def ep140(out):
+    """Crypto: quick tasca guitars in E minor feel (A minor score at 104 bpm); ringing note on Buck's "Oh, come ON."."""
+    lead = [(4, "E4", 1), (5, "G4", 1), (6, "A4", 2), (8, "G4", 1), (9, "E4", 1), (10, "D4", 2), (12, "E4", 2), (14, "B3", 2),
+            (16, "C4", 1), (17, "D4", 1), (18, "E4", 2), (20, "G4", 1), (21, "F4", 1), (22, "E4", 2), (24, "D4", 1), (25, "C4", 1),
+            (26, "B3", 2), (28, "E4", 2), (30, "A3", 2)]
+    return _tasca_score(out, 20.2, [(17.0, 17.3)], 19.2, seed=40, bpm=104, lead=lead)
+
+
+def ep141(out):
+    """The souls' table: slow fingerpicked guitar in A minor over the night room; hushed under grandma (16.7-end)."""
+    beat, dur = 60 / 66, 19.0
+    s = Sampler(dur, seed=41)
+    s.ambience(FADO_ROOM, gain=0.06, start=120)
+    mute = [(16.7, dur)]
+    prog = [("A2", "m"), ("F2", "M"), ("C3", "M"), ("E2", "7"), ("A2", "m"), ("D3", "m"), ("E2", "7"), ("A2", "m")]
+    for bar in range(int(dur / (4 * beat)) + 1):
+        root, kind = prog[bar % len(prog)]
+        t0 = bar * 4 * beat
+        c = chord(root, kind)
+        if t0 < dur - .3 and not _muted(t0, mute):
+            s.note("bass", t0, c[0] - 12, 3 * beat, 0.55)
+        for i, n in enumerate([c[0], c[2], c[1] + 12, c[2]] * 2):
+            t = t0 + i * beat / 2
+            if t < dur - .3 and not _muted(t, mute):
+                s.note("guitar", t, n, beat * 1.2, 0.3 + 0.1 * (i % 4 == 0), pan=-0.3, bus="guitar_low")
+    lead = [(4, "E4", 2), (6, "C4", 2), (8, "D4", 3), (11, "B3", 1), (12, "C4", 2), (14, "A3", 2), (16, "E4", 2), (18, "F4", 2)]
+    for b, n, d in lead:
+        t = b * beat
+        if t < dur - .3 and not _muted(t, mute):
+            s.note("guitar", t, n, d * beat, 0.55, pan=0.3, bus="guitar_lead")
+    s.note("guitar", 17.9, "A2", 1.0, 0.4, bus="guitar_lead", release=0.8)
+    return s.mix({"guitar_low": 0.7, "guitar_lead": 1.0, "bass": 0.7, "room": 1.0}, reverb=0.22, out=out)
+
+
 if __name__ == "__main__":
     name = sys.argv[1]
     out = sys.argv[2] if len(sys.argv) > 2 else f"{name}.wav"
     pieces = {"tasca": tasca, "filarmonica": filarmonica, "rua": rua, "ep127": ep127, "ep128": ep128, "ep129": ep129,
-              "ep130": ep130, "ep131": ep131, "ep132": ep132, "ep133": ep133, "ep134": ep134, "ep135": ep135, "ep136": ep136, "ep137": ep137, "ep138": ep138}
+              "ep130": ep130, "ep131": ep131, "ep132": ep132, "ep133": ep133, "ep134": ep134, "ep135": ep135, "ep136": ep136, "ep137": ep137, "ep138": ep138, "ep139": ep139, "ep140": ep140, "ep141": ep141}
     print(pieces[name](out))
