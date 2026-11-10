@@ -98,3 +98,4 @@ shadows explicitly (a strict tolerance keeps plates and bags) and always check o
 - Check hands and props on every generated frame (extra limbs and floating objects were the two faults seen so far).
 - Names are working names; change them freely.
 - **EP127–129 (9 Nov 2026, transparent generation):** dona_point, dona_slam, mum_call, mum_shirt, otto-coat_ask, otto_cape, tiago_controller, tiago_shirt.
+- **EP130–132 (10 Nov 2026, transparent generation):** tiago_plant, dona_folded, otto-coat_baby, clerk_stamp (new: registry clerk), props/cat-crown, scenes/bg_registo.

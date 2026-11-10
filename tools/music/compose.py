@@ -185,8 +185,104 @@ def ep129(out):
                  reverb=0.18, out=out)
 
 
+def _tasca_score(out, dur, mutes, end_note, seed, bpm=88, lead=None):
+    """Minor guitar duo + plucked bass over the fado-night room; silent in `mutes`, one ringing note at `end_note`."""
+    beat = 60 / bpm
+    s = Sampler(dur, seed=seed)
+    s.ambience(FADO_ROOM, gain=0.1, start=60)
+    prog = [("A2", "m"), ("E2", "7"), ("A2", "m"), ("D3", "m"), ("F2", "M"), ("E2", "7"), ("A2", "m"), ("E2", "7")]
+    bars = int(dur / (4 * beat)) + 1
+    for bar in range(bars):
+        root, kind = prog[bar % len(prog)]
+        t0 = bar * 4 * beat
+        c = chord(root, kind)
+        for off, n in ((0, c[0] - 12), (2, c[0] - 5)):
+            t = t0 + off * beat
+            if t < dur - .3 and not _muted(t, mutes):
+                s.note("bass", t, n, 1.6 * beat, 0.75)
+        for i, n in enumerate([c[0], c[1] + 12, c[2], c[1] + 12, c[2], c[1] + 12, c[0] + 12, c[2]]):
+            t = t0 + i * beat / 2
+            if t < dur - .3 and not _muted(t, mutes):
+                s.note("guitar", t, n, beat * 0.9, 0.4 + 0.12 * (i % 4 == 0), pan=-0.35, bus="guitar_low")
+    for b, n, d in (lead or []):
+        t = b * beat
+        if t < dur - .3 and not _muted(t, mutes):
+            s.note("guitar", t, n, d * beat, 0.68, pan=0.3, bus="guitar_lead")
+    s.note("guitar", end_note, "A2", min(1.6, dur - end_note), 0.7, bus="guitar_lead", release=0.5)
+    return s.mix({"guitar_low": 0.7, "guitar_lead": 1.0, "bass": 0.8, "room": 1.0}, reverb=0.16, out=out)
+
+
+def ep130(out):
+    """The will: tasca noir in A minor; silent under "Então fica para o gato" (17.8-20.0), ringing note on the last line."""
+    lead = [(4, "E4", 2), (6, "C4", 1), (7, "D4", 1), (8, "E4", 2), (10, "A3", 2), (12, "C4", 1), (13, "B3", 1), (14, "A3", 2),
+            (16, "E4", 1), (17, "F4", 1), (18, "E4", 2), (20, "D4", 1), (21, "C4", 1), (22, "B3", 2)]
+    return _tasca_score(out, 24.6, [(17.8, 20.2)], 21.2, seed=21, lead=lead)
+
+
+def ep131(out):
+    """The names: mock-ceremonial filarmónica in F; drops for "Seis palavras. Escolha." (19.8-21.7), button on APPROVED (22.5)."""
+    beat, dur = 60 / 108, 24.0
+    s = Sampler(dur, seed=23)
+    mute = [(19.8, 21.5)]
+    prog = [("F2", "M"), ("C2", "7"), ("F2", "M"), ("Bb2", "M"), ("F2", "M"), ("D2", "m"), ("G2", "m"), ("C2", "7")]
+    for bar in range(int(dur / (4 * beat)) + 1):
+        root, kind = prog[bar % len(prog)]
+        t0 = bar * 4 * beat
+        c = chord(root, kind)
+        for off, n in ((0, c[0] - 12), (2, c[2] - 24)):
+            t = t0 + off * beat
+            if t < dur - .3 and not _muted(t, mute):
+                s.note("tuba_stac", t, n, beat * 0.7, 0.75)
+        for off in (1, 3):
+            t = t0 + off * beat
+            if t < dur - .3 and not _muted(t, mute):
+                for n in c[1:3]:
+                    s.note("trombone_stac", t, n + 12, beat * 0.45, 0.5, pan=-0.3)
+    mel = [(0, "C5", 1.5), (1.5, "A4", 0.5), (2, "F4", 1), (3, "A4", 1), (4, "C5", 2), (6, "Bb4", 1), (7, "G4", 1), (8, "A4", 2),
+           (10, "F4", 1), (11, "G4", 1), (12, "A4", 1.5), (13.5, "Bb4", 0.5), (14, "C5", 2), (16, "D5", 1), (17, "C5", 1),
+           (18, "A4", 2), (20, "F4", 1), (21, "A4", 1), (22, "C5", 2), (24, "Bb4", 1), (25, "G4", 1), (26, "A4", 2),
+           (28, "F4", 1), (29, "G4", 1), (30, "A4", 2), (32, "C5", 2), (34, "A4", 2), (36, "F4", 2), (38, "G4", 2)]
+    for b, n, d in mel:
+        t = b * beat
+        if t < dur - .6 and not _muted(t, mute):
+            s.note("trumpet" if d >= 1 else "trumpet_stac", t, n, d * beat, 0.75, pan=0.2)
+            s.note("clarinet" if d >= 1 else "clarinet_stac", t, midi(n) - 12, d * beat, 0.4, pan=0.4)
+    s.note("trumpet_stac", 22.5, "F5", 0.5, 0.8, pan=0.1)
+    s.note("tuba_stac", 22.5, "F1", 0.5, 0.8)
+    return s.mix({"tuba_stac": 0.9, "trombone_stac": 0.55, "trumpet": 1.0, "trumpet_stac": 1.0, "clarinet": 0.5, "clarinet_stac": 0.5},
+                 reverb=0.22, out=out)
+
+
+def ep132(out):
+    """Obrigado: rua waltz in D; starts at 1.0 after Zoe's first "Obrigado!", short stop for the waiter's "Obrigada." (2.4-3.3)."""
+    beat, dur = 60 / 106, 26.4
+    s = Sampler(dur, seed=29)
+    mute = [(0, 1.0), (2.4, 3.3)]
+    prog = [("D2", "M"), ("A2", "7"), ("A2", "7"), ("D2", "M"), ("G2", "M"), ("D2", "M"), ("A2", "7"), ("D2", "M")]
+    for bar in range(int(dur / (3 * beat)) + 1):
+        root, kind = prog[bar % len(prog)]
+        t0 = 1.0 + bar * 3 * beat
+        c = chord(root, kind)
+        if t0 < dur - .3 and not _muted(t0, mute):
+            s.note("bass", t0, c[0] - 12, beat * 1.2, 0.75)
+        for off in (1, 2):
+            t = t0 + off * beat
+            if t < dur - .3 and not _muted(t, mute):
+                for n in c[1:3]:
+                    s.note("guitar", t, n + 12, beat * 0.6, 0.4, pan=-0.3)
+    mel = [(0, "F#5", 2), (2, "E5", 1), (3, "D5", 2), (5, "A4", 1), (6, "B4", 2), (8, "C#5", 1), (9, "D5", 3), (12, "E5", 2),
+           (14, "F#5", 1), (15, "G5", 2), (17, "E5", 1), (18, "D5", 2), (20, "C#5", 1), (21, "D5", 3), (24, "A4", 2), (26, "B4", 1),
+           (27, "C#5", 2), (29, "E5", 1), (30, "D5", 3), (33, "F#5", 2), (35, "E5", 1), (36, "D5", 3), (39, "A4", 3)]
+    for b, n, d in mel:
+        t = 1.0 + b * beat
+        if t < dur - .4 and not _muted(t, mute):
+            s.note("accordion", t, n, d * beat, 0.7, pan=0.15)
+    return s.mix({"accordion": 1.0, "guitar": 0.6, "bass": 0.8}, reverb=0.14, out=out)
+
+
 if __name__ == "__main__":
     name = sys.argv[1]
     out = sys.argv[2] if len(sys.argv) > 2 else f"{name}.wav"
-    pieces = {"tasca": tasca, "filarmonica": filarmonica, "rua": rua, "ep127": ep127, "ep128": ep128, "ep129": ep129}
+    pieces = {"tasca": tasca, "filarmonica": filarmonica, "rua": rua, "ep127": ep127, "ep128": ep128, "ep129": ep129,
+              "ep130": ep130, "ep131": ep131, "ep132": ep132}
     print(pieces[name](out))
