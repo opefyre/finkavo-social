@@ -280,9 +280,73 @@ def ep132(out):
     return s.mix({"accordion": 1.0, "guitar": 0.6, "bass": 0.8}, reverb=0.14, out=out)
 
 
+def ep133(out):
+    """The TV levy: light accordion street waltz in G; drops for grandpa's "Pago a televisão e nem a ligo." (22.0-24.1), button after."""
+    beat, dur = 60 / 112, 25.0
+    s = Sampler(dur, seed=33)
+    mute = [(22.0, 24.1)]
+    prog = [("G2", "M"), ("D2", "7"), ("D2", "7"), ("G2", "M"), ("C3", "M"), ("G2", "M"), ("D2", "7"), ("G2", "M")]
+    for bar in range(int(dur / (3 * beat)) + 1):
+        root, kind = prog[bar % len(prog)]
+        t0 = .2 + bar * 3 * beat
+        c = chord(root, kind)
+        if t0 < dur - .3 and not _muted(t0, mute):
+            s.note("bass", t0, c[0] - 12, beat * 1.2, 0.75)
+        for off in (1, 2):
+            t = t0 + off * beat
+            if t < dur - .3 and not _muted(t, mute):
+                for n in c[1:3]:
+                    s.note("guitar", t, n + 12, beat * 0.6, 0.38, pan=-0.3)
+    mel = [(3, "D5", 1), (4, "B4", 1), (5, "G4", 1), (6, "A4", 2), (8, "F#4", 1), (9, "G4", 3), (12, "B4", 1), (13, "C5", 1),
+           (14, "D5", 1), (15, "E5", 2), (17, "C5", 1), (18, "B4", 3), (21, "A4", 1), (22, "B4", 1), (23, "C5", 1), (24, "D5", 2),
+           (26, "C5", 1), (27, "B4", 2), (29, "A4", 1), (30, "G4", 3)]
+    for b, n, d in mel:
+        t = .2 + b * beat
+        if t < dur - .4 and not _muted(t, mute):
+            s.note("accordion", t, n, d * beat, 0.62, pan=0.15)
+    s.note("accordion", 24.15, "G4", 0.7, 0.7, pan=0.1)
+    s.note("bass", 24.15, "G1", 0.7, 0.8)
+    return s.mix({"accordion": 1.0, "guitar": 0.6, "bass": 0.8}, reverb=0.14, out=out)
+
+
+def ep134(out):
+    """Found money: tasca guitars in A minor; stops for "Volte daqui a um ano." (11.9-13.3), ringing note on Otto's coffee."""
+    lead = [(4, "C4", 1), (5, "E4", 1), (6, "A3", 2), (8, "B3", 1), (9, "C4", 1), (10, "D4", 2), (12, "E4", 2), (14, "C4", 2),
+            (18, "A3", 1), (19, "C4", 1), (20, "E4", 2), (22, "F4", 1), (23, "E4", 1), (24, "D4", 2), (26, "C4", 1), (27, "B3", 1),
+            (28, "A3", 2), (30, "E4", 2)]
+    return _tasca_score(out, 24.0, [(11.9, 13.3)], 20.0, seed=34, bpm=96, lead=lead)
+
+
+def ep135(out):
+    """25 April: slow, hopeful fingerpicked guitar in C over the fado-night room; quiet under grandma's "Eu estava lá." (26.4-end)."""
+    beat, dur = 60 / 72, 28.3
+    s = Sampler(dur, seed=35)
+    s.ambience(FADO_ROOM, gain=0.08, start=90)
+    mute = [(26.4, dur)]
+    prog = [("C3", "M"), ("A2", "m"), ("F2", "M"), ("G2", "M"), ("C3", "M"), ("E2", "m"), ("F2", "M"), ("G2", "7")]
+    for bar in range(int(dur / (4 * beat)) + 1):
+        root, kind = prog[bar % len(prog)]
+        t0 = bar * 4 * beat
+        c = chord(root, kind)
+        if t0 < dur - .3 and not _muted(t0, mute):
+            s.note("bass", t0, c[0] - 12, 3 * beat, 0.6)
+        for i, n in enumerate([c[0], c[2], c[1] + 12, c[2]] * 2):
+            t = t0 + i * beat / 2
+            if t < dur - .3 and not _muted(t, mute):
+                s.note("guitar", t, n, beat * 1.2, 0.34 + 0.1 * (i % 4 == 0), pan=-0.3, bus="guitar_low")
+    lead = [(8, "E4", 2), (10, "G4", 2), (12, "A4", 3), (15, "G4", 1), (16, "E4", 2), (18, "D4", 2), (20, "C4", 4),
+            (24, "E4", 2), (26, "F4", 2), (28, "A4", 3), (31, "G4", 1)]
+    for b, n, d in lead:
+        t = b * beat
+        if t < dur - .3 and not _muted(t, mute):
+            s.note("guitar", t, n, d * beat, 0.6, pan=0.3, bus="guitar_lead")
+    s.note("guitar", 26.4, "C3", 1.8, 0.45, bus="guitar_lead", release=0.8)
+    return s.mix({"guitar_low": 0.7, "guitar_lead": 1.0, "bass": 0.7, "room": 1.0}, reverb=0.2, out=out)
+
+
 if __name__ == "__main__":
     name = sys.argv[1]
     out = sys.argv[2] if len(sys.argv) > 2 else f"{name}.wav"
     pieces = {"tasca": tasca, "filarmonica": filarmonica, "rua": rua, "ep127": ep127, "ep128": ep128, "ep129": ep129,
-              "ep130": ep130, "ep131": ep131, "ep132": ep132}
+              "ep130": ep130, "ep131": ep131, "ep132": ep132, "ep133": ep133, "ep134": ep134, "ep135": ep135}
     print(pieces[name](out))
