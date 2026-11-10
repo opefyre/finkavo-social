@@ -1,0 +1,4 @@
+# EP141 Christmas Eve table for the dead (researched 10 Nov 2026; post in December)
+Hook: "Why do some Portuguese leave dinner out for the dead?" Score 54/70. No Finkavo bridge.
+Verified (Ernesto Veiga de Oliveira, Festividades cíclicas em Portugal, ch. 17 "O culto dos mortos no Natal", books.openedition.org/etnograficapress/5998): the Consoada table is not cleared so the dead / "alminhas" can come and eat the crumbs of the living's supper. Places: Guimarães, Barroso, Rio Tinto, outskirts of Porto. Alto Minho: an extra place set for the most recently dead. Some Porto houses: a second supper in another room. Santa Leocádia (Guimarães): a plate "com pedaços de tudo" outside the door at midnight, carried with a light.
+Say "some families in northern Portugal (Minho, Porto area)"; it's a traditional custom, not universal today. Don't claim tablecloths/chairs/candles on the table or a list of Consoada foods (unverified).
