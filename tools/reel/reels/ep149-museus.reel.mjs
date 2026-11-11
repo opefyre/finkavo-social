@@ -61,13 +61,12 @@ export default function (E) {
   show(stt, [[4.6, SHOW]]); E.K(stt, "s", [[4.6, 2.4], [4.78, 1, "in"]]);
   B.style.transformOrigin = "50% 40%"; E.K(B, "s", [[DAYS, 1.08], [DAYS + .4, 1, "out"], [4.55, 1.0], [4.7, 1.1, "out"], [N37 - .05, 1.1], [N37 + .15, 1.0, "out"], [7.4, 1.0], [7.6, 1.12, "out"], [SHOW, 1.14, "lin"]]);
 
-  // ============ 3. ID + NIF at the desk, "Grátis?" (9.0 – end) ============
+  // ============ 3. ID at the desk, "Grátis?" (9.0 – end) ============
   const C = E.el(S.el, "abs", "inset:0;overflow:hidden"); show(C, [[SHOW - .1, DUR]]); E.img(C, "belem", COVER + ";filter:blur(4px) brightness(.9)");
   const desk = piece(C, "desk", 1024, 688, .9, 640, 1640, 4); E.K(desk, "y", [[SHOW, 800], [SHOW + .3, 0, "out"]]);
   const man = piece(C, "man", 688, 1024, .95, 250, 1900, 6); E.K(man, "x", [[SHOW, -500], [SHOW + .35, 0, "out"]]);
   E.K(man, "y", [[GRATIS, 0], [GRATIS + .15, -60, "out"], [GRATIS + .35, 0, "in"]]);
-  const idc = strip(C, "ID", 520, 90, "#bfe0ff", "#0f2a6b", -6, 8); show(idc, [[9.6, DUR]]); E.pop(idc, 9.6, { from: .3, dur: .2 });
-  const nif = strip(C, "+ NIF", 660, 90, "#ffe08a", "#5a3a00", 5, 8); show(nif, [[10.4, DUR]]); E.pop(nif, 10.4, { from: .3, dur: .2 });
+  const idc = strip(C, "ID", 590, 110, "#bfe0ff", "#0f2a6b", -6, 8); show(idc, [[9.6, DUR]]); E.pop(idc, 9.6, { from: .3, dur: .2 });
   const st2 = piece(C, "stamp", 1024, 1024, .42, 700, 1250, 9); show(st2, [[12.9, DUR]]); E.K(st2, "s", [[12.9, 2.4], [13.08, 1, "in"]]);
   const st2t = E.el(C, "abs", "left:580px;top:915px;width:240px;height:240px;border-radius:50%;background:#f4ecd8;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900;font-size:50px;color:#b3261e;z-index:8;transform:rotate(-10deg)", "GRÁTIS");
   show(st2t, [[12.9, DUR]]); E.K(st2t, "s", [[12.9, 2.4], [13.08, 1, "in"]]);
@@ -75,7 +74,7 @@ export default function (E) {
 
   // ============ captions ============
   const cap = E.el(S.el, "abs", "left:60px;top:1560px;width:960px;text-align:center;z-index:50", "");
-  const CAPS = [[DAYS, "52 free days a year,"], [N37 - .1, "at 37 national museums, monuments and palaces."], [SHOW - .1, ""], [SHOW, "Show your ID and tax number (NIF)."], [GRATIS - .1, ""],
+  const CAPS = [[DAYS, "52 free days a year,"], [N37 - .1, "at 37 national museums, monuments and palaces."], [SHOW - .1, ""], [SHOW, "Just show your ID at the ticket desk."], [GRATIS - .1, ""],
     [GRATIS, `"Grátis?"<br><span style='font-size:40px;color:#7a5a12'>(Free?)</span>`]];
   E.F(t => { let s = ""; for (const [k, x] of CAPS) if (t >= k) s = x; if (cap.dataset.s !== s) { cap.dataset.s = s; cap.innerHTML = s ? `<span style="display:inline-block;background:#f4ecd8;color:#2b1d12;padding:12px 28px;font-weight:800;font-size:50px;transform:rotate(-1.5deg);box-shadow:0 8px 10px rgba(40,20,0,.45)">${s}</span>` : ""; } });
 
