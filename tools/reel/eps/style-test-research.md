@@ -27,3 +27,9 @@ Research done 11 Nov 2026, one agent per topic, primary sources only. "Hedge" = 
 | Free youth pass | up to 23 incl., student or not: regional monthly pass free | Portaria 307-A/2024/1; gov.pt 7 Jul 2026 news | 2026 legal basis; operator documents vary |
 | MB WAY | no fee up to €30 each, €150/month, 25/month (consumers, third-party apps) | DL 3/2010 art. 3.º-A (Lei 53/2020); DL 72/2024 | 0.2%/0.3% caps above; EU instant-payments reg not opened |
 | (dropped) Fatura da Sorte | — | AT draw list shows 0 draws in 2026 | — |
+
+## Rechecks, 11 Nov 2026 (before posting)
+- Lei 88/2019 (EP145): DR shows "Em vigor"; art. 11 n.º 1 €25–€250 (original text, FAOLEX copy); no amendment found. It is a standalone law (not an amendment of DL 152-D/2017).
+- Lisbon Aviso 20811-B/2019 (EP146, EP151): DR text reread: art. 84.º n.º 2 €50–€1,000 individuals; a) food attracting dogs, cats, pigeons; g) rugs etc. from windows/doors onto the street 8:00–23:00; art. 86.º negligence halves. Still the regulation in force; a new one went to public consultation in Sept 2026 (Observador 9–10 Sep 2026), so both captions now say so.
+- Youth pass (EP150): Portaria 307-A/2024/1 (up to 23 incl., student or not, the monthly pass of the AM/CIM where you live, not the green rail pass); IMT page 30 Jun 2025; gov.pt 7 Jul 2026 says it continues. No 2027 end date found; OE2027 not opened. Video wording already matches.
+- Museums (EP149): 52 days and 37 sites still on museusemonumentos.pt/pt/pagina/bilhetes, but that page says "residentes em Portugal" with the Cartão de Cidadão at the desk, while gov.pt (2024) says ID + NIF incl. foreigners. Sources disagree on the desk detail; government committed to the EC to revise the scheme by end of June 2027 (RTP).
