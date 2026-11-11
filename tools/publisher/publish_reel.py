@@ -2,7 +2,7 @@
 
 usage: /usr/bin/python3 tools/publisher/publish_reel.py <id> <YYYY-MM-DDTHH:MM:SSZ> [--account finkavo|sandbox] [--cover-at 1.0]
   <id>: episode folder tools/reel/eps/<id>/ with delivery/reel.mp4; caption from tools/reel/captions/<id>.txt.
-  The cover is a JPEG pulled from the reel at --cover-at seconds (the hook frame). Times are UTC with Z.
+  The cover is a JPEG pulled from the reel at --cover-at seconds (the hook frame), or --cover-file. Check it in the 3:4 grid crop. Times are UTC with Z.
   Queueing is publishing: do it only after the owner's yes for this post, with POST /v1/posts/<post_id>/queue.
 """
 import argparse, json, os, subprocess, sys, tempfile, time, urllib.error, urllib.request
@@ -14,6 +14,7 @@ B = "https://social.opefyre.com"
 ap = argparse.ArgumentParser()
 ap.add_argument("id"); ap.add_argument("at")
 ap.add_argument("--account", default="finkavo"); ap.add_argument("--cover-at", type=float, default=1.0)
+ap.add_argument("--cover-file", help="a ready 1080x1920 JPEG cover (hook inside the centre 3:4 grid crop); overrides --cover-at")
 a = ap.parse_args()
 if not a.at.endswith("Z"):
     sys.exit("time must be UTC with Z, e.g. 2027-01-28T15:00:00Z")
@@ -40,7 +41,10 @@ title = caption.split("\n")[0][:60]
 tmp = tempfile.mkdtemp()
 try:
     cover = os.path.join(tmp, "cover.jpg")
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", str(a.cover_at), "-i", video, "-frames:v", "1", "-q:v", "2", cover], check=True)
+    if a.cover_file:
+        cover = os.path.abspath(a.cover_file)
+    else:
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", str(a.cover_at), "-i", video, "-frames:v", "1", "-q:v", "2", cover], check=True)
     mv = call("POST", "/v1/media?filename=reel.mp4", data=open(video, "rb").read(), ctype="video/mp4")["media"]
     mc = call("POST", "/v1/media?filename=cover.jpg", data=open(cover, "rb").read(), ctype="image/jpeg")["media"]
     for m in (mv, mc):
