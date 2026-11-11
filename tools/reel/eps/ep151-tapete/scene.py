@@ -47,19 +47,22 @@ bpy.ops.mesh.primitive_plane_add(size=1); rug = bpy.context.object; rug.scale = 
 bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.subdivide(number_cuts=24); bpy.ops.object.mode_set(mode="OBJECT")
 rug.data.materials.append(rugm); smooth(rug)
 for v in rug.data.vertices: v.co.y -= .9                       # pivot at the top edge
-rug.rotation_euler = (math.radians(-80), 0, 0); rug.location = (WIN[0], WIN[1] - .1, WIN[2] + .1)
-wave = rug.modifiers.new("wave", "WAVE"); wave.use_normal = True; wave.height = .12; wave.width = .6; wave.speed = .45; wave.use_x = False
+rug.rotation_euler = (math.radians(80), 0, 0); rug.location = (WIN[0], WIN[1] - .1, WIN[2] + .1)
+vg = rug.vertex_groups.new(name="hang")                        # held edge stays still, the wave grows toward the free end
+for v in rug.data.vertices: vg.add([v.index], min(1.0, (-v.co.y / 1.8) ** 1.6), "REPLACE")
+wave = rug.modifiers.new("wave", "WAVE"); wave.vertex_group = "hang"; wave.use_normal = True; wave.height = .22; wave.width = .7; wave.speed = .45; wave.use_x = False
 sol = rug.modifiers.new("sol", "SOLIDIFY"); sol.thickness = .03
 for i in range(int(10.5 / .18)):                               # shaking: flicks out and back
     t = i * .18
-    key(rug, "rotation_euler", [(t, (math.radians(-80 + (25 if i % 2 else -10)), 0, math.radians(4 if i % 3 else -4)))])
-key(rug, "rotation_euler", [(10.6, (math.radians(-85), 0, 0)), (12.6, (math.radians(-85), 0, 0)), (12.9, (math.radians(-5), 0, 0))])
+    key(rug, "rotation_euler", [(t, (math.radians(80 - (25 if i % 2 else -6)), 0, 0))])
+key(rug, "rotation_euler", [(10.6, (math.radians(85), 0, 0)), (12.6, (math.radians(85), 0, 0)), (12.9, (math.radians(170), 0, 0))])
 key(rug, "location", [(12.6, (WIN[0], WIN[1] - .1, WIN[2] + .1)), (12.9, (WIN[0], WIN[1] + .4, WIN[2] + .1))])   # pulled back in
 # a forearm holding it
 skin = mat("skin", hexc("f1c7a0"), .6)
 for ax in (-.45, .45):
-    bpy.ops.mesh.primitive_cylinder_add(radius=.07, depth=.6, location=(WIN[0] + ax, WIN[1] - .05, WIN[2] + .12), rotation=(math.radians(90), 0, 0)); a = bpy.context.object
-    a.data.materials.append(skin); a.parent = rug; a.matrix_parent_inverse = rug.matrix_world.inverted()
+    bpy.ops.mesh.primitive_cylinder_add(radius=.07, depth=.6, location=(WIN[0] + ax, WIN[1] + .18, WIN[2] + .1), rotation=(math.radians(90), 0, 0)); a = bpy.context.object
+    a.data.materials.append(skin)   # the held edge is the pivot, so the forearms stay put while the rug flaps below
+    key(a, "location", [(12.6, (WIN[0] + ax, WIN[1] + .18, WIN[2] + .1)), (12.9, (WIN[0] + ax, WIN[1] + .9, WIN[2] + .1))])
 # green shutter that slams shut at 12.8
 sh = box((WIN[0] - .75, FY - .08, WIN[2] - .1), (.7, .06, 1.25), mat("shutter", hexc("2f6b45"), .6), .02)
 key(sh, "rotation_euler", [(0, (0, 0, math.radians(-95))), (12.75, (0, 0, math.radians(-95))), (12.95, (0, 0, 0))])

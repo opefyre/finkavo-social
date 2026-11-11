@@ -38,8 +38,8 @@ export default function (E) {
   // ============ 1. hook: a paper train runs the Douro (0 – 3.4) ============
   const A = E.el(S.el, "abs", "inset:0;overflow:hidden"); show(A, [[0, PASS - .1]]); E.img(A, "douro", COVER);
   const tr = piece(A, "train", 1024, 688, .62, 540, 1420, 4);
-  tr.style.transformOrigin = "50% 70%"; tr.style.rotate = "19deg";
-  E.K(tr, "x", [[0, -760], [PASS, 380, "lin"]]); E.K(tr, "y", [[0, 161], [PASS, 430, "lin"]]);
+  tr.style.transformOrigin = "50% 70%"; tr.style.rotate = "17deg";
+  E.K(tr, "x", [[0, -760], [PASS, 380, "lin"]]); E.K(tr, "y", [[0, 48], [PASS, 397, "lin"]]);
   const hookWords = [["Trains", .2, 1], ["across", .55], ["Portugal,", .8], ["for", 1.6], ["€20", 1.8, 1], ["a", 2.3], ["month?", 2.45, 1]];
   const H = E.el(S.el, "abs", "left:40px;top:200px;width:1000px;text-align:center;z-index:11;line-height:1.25"); show(H, [[0, PASS - .1]]);
   hookWords.forEach(([w, t, key]) => {
@@ -64,8 +64,8 @@ export default function (E) {
   const C = E.el(S.el, "abs", "inset:0;overflow:hidden"); show(C, [[WHICH - .1, VINTE - .1]]);
   const cbg = E.el(C, "abs", "inset:0;transform:scale(1.07)"); E.img(cbg, "coast", COVER);
   const tr2 = piece(C, "train", 1024, 688, .55, 540, 1330, 4);
-  tr2.style.transformOrigin = "50% 70%"; tr2.style.rotate = "20.5deg";
-  E.K(tr2, "x", [[WHICH, -800], [VINTE, 500, "lin"]]); E.K(tr2, "y", [[WHICH, 190], [VINTE, 600, "lin"]]);
+  tr2.style.transformOrigin = "50% 70%"; tr2.style.rotate = "21.7deg";
+  E.K(tr2, "x", [[WHICH, -800], [VINTE, 500, "lin"]]); E.K(tr2, "y", [[WHICH, 10], [VINTE, 527, "lin"]]);
   const tags = [["Regional ✓", 8.7, "#f4ecd8", "#1d5b3a"], ["Intercidades ✓", 9.6, "#f4ecd8", "#1d5b3a"], ["Lisbon &amp; Porto urban ✓", 10.6, "#f4ecd8", "#1d5b3a"], ["Alfa Pendular ✗", 11.9, "#e8b4ad", "#8f1d16"]];
   tags.forEach(([txt, t, bg, col], i) => { const tg = strip(C, txt, 230 + i * 125, 66, bg, col, i % 2 ? 2 : -2); show(tg, [[t, VINTE - .1]]); E.pop(tg, t, { from: .4, dur: .2 }); });
   E.K(cbg, "s", [[WHICH, 1.12], [WHICH + .3, 1.07, "out"]]);
