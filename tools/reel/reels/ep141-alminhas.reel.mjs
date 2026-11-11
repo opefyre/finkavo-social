@@ -9,7 +9,7 @@ export const meta = {
   id: "ep141-alminhas", date: "2026-12-20",
   images: {
     dining: "characters/scenes/bg_dining.webp", grab: "characters/cutouts/otto-casual_grab.webp", dona: "characters/cutouts/dona_point.webp",
-    lamp: "characters/props/oil-lamp.webp", plate: "characters/props/plate-crumbs.webp", ghost: "characters/props/ghost-avo.webp",
+    lamp: "characters/props/oil-lamp.webp", plate: "characters/props/plate-crumbs.webp", ghost: "characters/props/ghost-avo.webp", map: "characters/scenes/map_norte.webp",
   },
 };
 
@@ -45,15 +45,11 @@ export default function (E) {
   E.K(glow, "s", Array.from({ length: 16 }, (_, k) => [EVE + k * .23, k % 2 ? .9 : 1.08, "io"]));
   const date = E.el(N, "abs", "left:290px;top:250px;width:500px;text-align:center;z-index:4;font-family:Georgia,serif;color:#f4e3c3;font-size:120px;font-weight:700;line-height:1;text-shadow:0 4px 18px #000", "24<br><span style='font-size:46px;letter-spacing:.18em'>DEZEMBRO</span>");
   E.pop(date, EVE + .2, { from: .7, dur: .25 }); show(date, [[EVE, MAP]]); show(lamp, [[EVE, MAP]]); show(glow, [[EVE, MAP]]);
-  const map = E.el(N, "abs", "left:300px;top:300px;width:480px;height:900px;z-index:3;opacity:0");
-  map.innerHTML = '<svg viewBox="0 0 240 450" width="480" height="900"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a4630"/><stop offset="1" stop-color="#2e2416"/></linearGradient><linearGradient id="ng" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffcf6b"/><stop offset="1" stop-color="#e09a2a"/></linearGradient></defs>' +
-    '<path d="M70 10 L190 20 L200 90 L185 170 L200 250 L190 330 L170 400 L120 440 L60 430 L40 360 L30 280 L45 200 L35 120 L50 50 Z" fill="url(#lg)" stroke="#d8c4a0" stroke-width="2.5"/>' +
-    '<path d="M70 10 L190 20 L200 90 L120 106 L42 112 L50 50 Z" fill="url(#ng)" opacity=".95"/>' +
-    '<circle cx="78" cy="78" r="5" fill="#2a1a0a"/><circle cx="62" cy="104" r="5" fill="#2a1a0a"/><circle cx="130" cy="34" r="5" fill="#2a1a0a"/></svg>';
-  show(map, [[MAP, SOULS]]); E.pop(map, MAP, { from: .8, dur: .25 });
-  const towns = [["Guimarães", 472, 436], ["Porto", 300, 492], ["Barroso", 576, 348]];
-  towns.forEach(([n, x, y], i) => { const tl = E.el(N, "abs", `left:${x}px;top:${y}px;font-weight:800;font-size:34px;color:#fff;z-index:5;text-shadow:0 2px 8px #000;opacity:0`, n); show(tl, [[MAP + .3 + i * .2, SOULS]]); });
-  N.style.transformOrigin = "45% 23%"; E.K(N, "s", [[EVE, 1.1], [EVE + .5, 1, "out"], [MAP - .1, 1.04, "lin"], [MAP, 1.0, "out"], [MAP + .5, 1.0], [MAP + .9, 1.9, "out"], [SOULS, 2.0, "lin"]]);
+  // real-data map (Natural Earth borders/rivers + terrarium elevation hillshade; eps/ep141-alminhas/map_norte.py), Norte districts lit
+  const map = E.el(N, "abs", "inset:0;z-index:3;opacity:0"); E.img(map, "map", COVER);
+  show(map, [[MAP, SOULS]]);
+  N.style.transformOrigin = "51.5% 23%"; E.K(N, "s", [[EVE, 1.1], [EVE + .5, 1, "out"], [MAP - .1, 1.04, "lin"], [MAP, 1.0, "out"], [MAP + .5, 1.0], [MAP + 1.0, 1.6, "io"], [SOULS, 1.68, "lin"]]);
+  E.K(N, "y", [[MAP + .5, 0], [MAP + 1.0, 240, "io"], [SOULS, 265, "lin"]]);
   E.F(t => { N.style.background = t < MAP ? "radial-gradient(circle at 50% 38%,#4a2f18 0%,#1d120a 45%,#07040a 80%)" : "radial-gradient(circle at 50% 30%,#1f2a3a,#090d14)"; });
 
   // ============ 3. Otto reaches, grandma stops him (14.6 – end) ============
