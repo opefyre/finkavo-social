@@ -480,9 +480,96 @@ def ep141(out):
     return s.mix({"guitar_low": 0.7, "guitar_lead": 1.0, "bass": 0.7, "room": 1.0}, reverb=0.22, out=out)
 
 
+def ep142(out):
+    """Neighbour noise: late-night tasca guitars at 96 bpm; drop out when the party stops (10.0) and under "Finalmente." (to 12.4)."""
+    lead = [(2, "E4", 1), (3, "G4", 1), (4, "B4", 2), (6, "A4", 1), (7, "G4", 1), (8, "E4", 2), (10, "D4", 1), (11, "E4", 1),
+            (12, "G4", 2), (14, "A4", 2)]
+    return _tasca_score(out, 13.6, [(10.0, 12.4)], 12.5, seed=42, bpm=96, lead=lead)
+
+
+def ep143(out):
+    """Rail pass: bright travelling waltz in D at 126 bpm; drops under "Vinte euros!" (14.1-15.4)."""
+    mel = [(3, "A4", 1), (4, "D5", 1), (5, "F#5", 1), (6, "A5", 2), (8, "G5", 1), (9, "F#5", 3), (12, "E5", 1), (13, "F#5", 1),
+           (14, "G5", 1), (15, "A5", 2), (17, "F#5", 1), (18, "D5", 3), (21, "E5", 1), (22, "F#5", 1), (23, "E5", 1), (24, "C#5", 2),
+           (26, "D5", 1), (27, "E5", 2), (29, "A4", 1), (30, "D5", 3)]
+    return _waltz(out, 16.4, [(14.1, 15.4)], (("D2", "M"), ("A2", "7"), ("G2", "M")), mel, 15.5, seed=43, bpm=126)
+
+
+def ep144(out):
+    """1% to charity: gentle waltz in G at 104 bpm; drops under "Obrigado, Finanças!" (10.4-11.9)."""
+    mel = [(3, "D5", 2), (5, "B4", 1), (6, "G4", 2), (8, "A4", 1), (9, "B4", 3), (12, "C5", 1), (13, "D5", 1), (14, "E5", 2),
+           (16, "D5", 1), (17, "B4", 2), (19, "A4", 1), (20, "G4", 3)]
+    return _waltz(out, 13.0, [(10.4, 11.9)], (("G2", "M"), ("D2", "7"), ("C3", "M")), mel, 12.1, seed=44, bpm=104)
+
+
+def ep145(out):
+    """Cigarette butt: light tasca guitars at 92 bpm; hushed under "Pronto." (12.8-13.4)."""
+    lead = [(2, "A4", 1), (3, "C5", 1), (4, "E5", 2), (6, "D5", 1), (7, "C5", 1), (8, "B4", 2), (10, "A4", 2), (12, "E4", 2),
+            (14, "F4", 1), (15, "G4", 1), (16, "A4", 2), (18, "E4", 2)]
+    return _tasca_score(out, 14.4, [(12.8, 13.4)], 13.6, seed=45, bpm=92, lead=lead)
+
+
+def ep146(out):
+    """Lisbon pigeons: cheeky waltz in F at 120 bpm; drops under "Não fui eu!" (10.4-11.4)."""
+    mel = [(3, "C5", 1), (4, "A4", 1), (5, "F4", 1), (6, "G4", 2), (8, "A4", 1), (9, "C5", 3), (12, "D5", 1), (13, "C5", 1),
+           (14, "A#4", 1), (15, "A4", 2), (17, "G4", 1), (18, "F4", 3), (21, "A4", 1), (22, "C5", 2)]
+    return _waltz(out, 12.6, [(10.4, 11.4)], (("F2", "M"), ("C3", "7"), ("A#2", "M")), mel, 11.6, seed=46, bpm=120)
+
+
+def ep147(out):
+    """Meal allowance: easy lunchtime waltz in C at 112 bpm; drops under "Bom apetite!" (14.8-15.7)."""
+    mel = [(3, "E5", 1), (4, "G5", 1), (5, "E5", 1), (6, "C5", 2), (8, "D5", 1), (9, "E5", 3), (12, "F5", 1), (13, "E5", 1),
+           (14, "D5", 1), (15, "C5", 2), (17, "B4", 1), (18, "C5", 3), (21, "E5", 1), (22, "D5", 1), (23, "C5", 1), (24, "G4", 2),
+           (26, "A4", 1), (27, "B4", 2), (29, "C5", 3)]
+    return _waltz(out, 16.6, [(14.8, 15.7)], (("C3", "M"), ("G2", "7"), ("F2", "M")), mel, 15.8, seed=47, bpm=112)
+
+
+def ep148(out):
+    """Licence renewal: warm tasca guitars at 90 bpm; hushed under grandpa's "Ainda estou ótimo!" (15.1-16.8)."""
+    lead = [(2, "E4", 2), (4, "A4", 1), (5, "B4", 1), (6, "C5", 2), (8, "B4", 1), (9, "A4", 1), (10, "G#4", 2), (12, "A4", 2),
+            (14, "E4", 2), (16, "F4", 1), (17, "E4", 1), (18, "D4", 2), (20, "C4", 1), (21, "B3", 1), (22, "A3", 2)]
+    return _tasca_score(out, 17.8, [(15.1, 16.8)], 17.0, seed=48, bpm=90, lead=lead)
+
+
+def ep149(out):
+    """Free museums: stately waltz in Bb at 118 bpm; drops under "Grátis?" (12.2-13.1)."""
+    mel = [(3, "D5", 1), (4, "F5", 1), (5, "D5", 1), (6, "A#4", 2), (8, "C5", 1), (9, "D5", 3), (12, "D#5", 1), (13, "D5", 1),
+           (14, "C5", 1), (15, "A#4", 2), (17, "A4", 1), (18, "A#4", 3), (21, "D5", 1), (22, "C5", 2)]
+    return _waltz(out, 14.2, [(12.2, 13.1)], (("A#2", "M"), ("F2", "7"), ("D#2", "M")), mel, 13.3, seed=49, bpm=118)
+
+
+def ep150(out):
+    """Free youth pass: quick bright waltz in E at 132 bpm; drops under "Espera!" (13.5-14.1)."""
+    mel = [(3, "B4", 1), (4, "E5", 1), (5, "G#5", 1), (6, "B5", 2), (8, "A5", 1), (9, "G#5", 3), (12, "F#5", 1), (13, "G#5", 1),
+           (14, "A5", 1), (15, "B5", 2), (17, "G#5", 1), (18, "E5", 3), (21, "F#5", 1), (22, "G#5", 1), (23, "F#5", 1), (24, "D#5", 2),
+           (26, "E5", 3)]
+    return _waltz(out, 15.6, [(13.5, 14.1)], (("E2", "M"), ("B2", "7"), ("A2", "M")), mel, 14.9, seed=50, bpm=132)
+
+
+def ep151(out):
+    """Rug shaking: brisk tasca guitars at 94 bpm; hushed under "A sério?!" (11.6-13.2)."""
+    lead = [(2, "C5", 1), (3, "B4", 1), (4, "A4", 2), (6, "E4", 1), (7, "A4", 1), (8, "B4", 2), (10, "C5", 1), (11, "D5", 1),
+            (12, "E5", 2), (14, "D5", 1), (15, "C5", 1), (16, "B4", 2), (18, "A4", 2)]
+    return _tasca_score(out, 14.3, [(11.6, 13.2)], 13.4, seed=51, bpm=94, lead=lead)
+
+
+def ep152(out):
+    """Cheque-dentista: gentle waltz in D at 108 bpm; drops under "Já está?" (14.1-15.6)."""
+    mel = [(3, "F#5", 2), (5, "E5", 1), (6, "D5", 2), (8, "E5", 1), (9, "F#5", 3), (12, "A5", 1), (13, "G5", 1), (14, "F#5", 1),
+           (15, "E5", 2), (17, "C#5", 1), (18, "D5", 3), (21, "F#5", 1), (22, "E5", 1), (23, "D5", 1), (24, "A4", 2), (26, "D5", 3)]
+    return _waltz(out, 16.6, [(14.1, 15.6)], (("D2", "M"), ("A2", "7"), ("G2", "M")), mel, 15.7, seed=52, bpm=108)
+
+
+def ep153(out):
+    """MB WAY: quick tasca guitars at 108 bpm; hushed under "Manda por MB WAY!" (12.0-13.4)."""
+    lead = [(2, "E4", 1), (3, "G4", 1), (4, "B4", 1), (5, "C5", 1), (6, "B4", 2), (8, "A4", 1), (9, "G4", 1), (10, "E4", 2),
+            (12, "A4", 1), (13, "C5", 1), (14, "E5", 2), (16, "D5", 1), (17, "B4", 1), (18, "A4", 2)]
+    return _tasca_score(out, 14.4, [(12.0, 13.4)], 13.6, seed=53, bpm=108, lead=lead)
+
+
 if __name__ == "__main__":
     name = sys.argv[1]
     out = sys.argv[2] if len(sys.argv) > 2 else f"{name}.wav"
     pieces = {"tasca": tasca, "filarmonica": filarmonica, "rua": rua, "ep127": ep127, "ep128": ep128, "ep129": ep129,
-              "ep130": ep130, "ep131": ep131, "ep132": ep132, "ep133": ep133, "ep134": ep134, "ep135": ep135, "ep136": ep136, "ep137": ep137, "ep138": ep138, "ep139": ep139, "ep140": ep140, "ep141": ep141}
+              "ep130": ep130, "ep131": ep131, "ep132": ep132, "ep133": ep133, "ep134": ep134, "ep135": ep135, "ep136": ep136, "ep137": ep137, "ep138": ep138, "ep139": ep139, "ep140": ep140, "ep141": ep141, "ep142": ep142, "ep143": ep143, "ep144": ep144, "ep145": ep145, "ep146": ep146, "ep147": ep147, "ep148": ep148, "ep149": ep149, "ep150": ep150, "ep151": ep151, "ep152": ep152, "ep153": ep153}
     print(pieces[name](out))
