@@ -22,12 +22,16 @@ export default function (E) {
   const M = E.el(S.el, "abs", "inset:0;background:#ff00ff"); show(M, [[0, D365 - .1]]);
   const tick = E.el(M, "abs", "left:0;top:1900px;width:4px;height:4px;background:#fe00ff"); E.K(tick, "x", [[0, 0], [DUR, 20, "lin"]]);
   const hookWords = [["Sell", .2, 1], ["crypto", .4], ["in", .8], ["Portugal", .9], ["after", 1.5], ["a", 1.7], ["year?", 1.8, 1], ["Tax:", 2.5], ["€0", 3.1, 1]];
-  const H = E.el(S.el, "abs", "left:40px;top:220px;width:1000px;text-align:center;z-index:10;line-height:1.08"); show(H, [[0, D365 - .1]]);
+  const H = E.el(S.el, "abs", "left:40px;top:220px;width:1000px;text-align:center;z-index:10;line-height:1.25"); show(H, [[0, D365 - .1]]);
   hookWords.forEach(([w, t, key]) => {
-    const sp = E.el(H, "", `display:inline-block;margin:0 .2em;font-weight:900;font-size:108px;color:${key ? "#7dff8a" : "#fff"};-webkit-text-stroke:4px #141414;text-shadow:0 6px 18px rgba(0,0,0,.55)`, w);
+    const sp = E.el(H, "", `display:inline-block;margin:7px 6px;padding:2px 18px 6px;border-radius:12px;font-weight:900;font-size:94px;color:#141414;background:${key ? "#7dff8a" : "#ffffff"};border:5px solid #141414;box-shadow:0 10px 0 #141414;transform:rotate(${(w.length % 3 - 1) * 1.5}deg)`, w);
     E.K(sp, "s", [[t - .01, 1], [t + .06, 1.07, "out"], [t + .22, 1, "io"]]);
   });
   E.texts.push({ scene: S, tIn: 0, words: hookWords.length });
+  // hook badge: the number, big and red, from frame 0 until the hook ends
+  const BG = E.el(S.el, "abs", "left:30px;top:1110px;width:430px;height:430px;border-radius:50%;background:#d62828;border:12px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:900;z-index:11;line-height:1", "<span style='font-size:90px'>📈</span><span style='font-size:150px;-webkit-text-stroke:4px #141414'>€0</span>");
+  show(BG, [[0, D365 - .1]]); BG.style.rotate = "-8deg";
+  E.K(BG, "s", Array.from({ length: 12 }, (_, k) => [k * .3, k % 2 ? 1.1 : 1, "io"]));
 
   // ============ 2. the 365-day counter (4.2 – 10.7) ============
   const C = E.el(S.el, "abs", "inset:0;background:radial-gradient(circle at 50% 40%,#13261b,#07110b)"); show(C, [[D365 - .1, SWAP]]);

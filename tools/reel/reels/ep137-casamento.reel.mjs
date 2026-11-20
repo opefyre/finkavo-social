@@ -25,12 +25,16 @@ export default function (E) {
   const M = E.el(S.el, "abs", "inset:0;background:#ff00ff"); show(M, [[0, FEE - .1]]);
   const tick = E.el(M, "abs", "left:0;top:1900px;width:4px;height:4px;background:#fe00ff"); E.K(tick, "x", [[0, 0], [DUR, 20, "lin"]]);
   const hookWords = [["Getting", .2], ["married", .4, 1], ["in", .8], ["Portugal", .9], ["costs…", 1.4], ["how", 2.0, 1], ["much?", 2.2, 1]];
-  const H = E.el(S.el, "abs", "left:40px;top:240px;width:1000px;text-align:center;z-index:10;line-height:1.08"); show(H, [[0, FEE - .1]]);
+  const H = E.el(S.el, "abs", "left:40px;top:240px;width:1000px;text-align:center;z-index:10;line-height:1.25"); show(H, [[0, FEE - .1]]);
   hookWords.forEach(([w, t, key]) => {
-    const sp = E.el(H, "", `display:inline-block;margin:0 .2em;font-weight:900;font-size:104px;color:${key ? "#ffd640" : "#fff"};-webkit-text-stroke:4px #141414;text-shadow:0 6px 18px rgba(0,0,0,.55)`, w);
+    const sp = E.el(H, "", `display:inline-block;margin:7px 6px;padding:2px 18px 6px;border-radius:12px;font-weight:900;font-size:90px;color:#141414;background:${key ? "#ffd640" : "#ffffff"};border:5px solid #141414;box-shadow:0 10px 0 #141414;transform:rotate(${(w.length % 3 - 1) * 1.5}deg)`, w);
     E.K(sp, "s", [[t - .01, 1], [t + .06, 1.07, "out"], [t + .22, 1, "io"]]);
   });
   E.texts.push({ scene: S, tIn: 0, words: hookWords.length });
+  // hook badge: the number, big and red, from frame 0 until the hook ends
+  const BG = E.el(S.el, "abs", "left:610px;top:820px;width:430px;height:430px;border-radius:50%;background:#d62828;border:12px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:900;z-index:11;line-height:1", "<span style='font-size:90px'>💍</span><span style='font-size:120px;-webkit-text-stroke:4px #141414'>€???</span>");
+  show(BG, [[0, FEE - .1]]); BG.style.rotate = "-8deg";
+  E.K(BG, "s", Array.from({ length: 12 }, (_, k) => [k * .3, k % 2 ? 1.1 : 1, "io"]));
 
   // ============ 2. at the registry counter (3.1 – 13.2) ============
   const R = E.el(S.el, "abs", "inset:0;overflow:hidden"); show(R, [[FEE - .1, AVO]]); E.img(R, "registo", COVER);
