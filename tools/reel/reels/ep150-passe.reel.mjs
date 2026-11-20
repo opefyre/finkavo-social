@@ -3,7 +3,7 @@
 // 4–18, sub23+TP 18–23, valid until the end of the month you turn 24); the pass is the monthly network pass of the metropolitan
 // area/CIM where you live. gov.pt news 7 Jul 2026: still running (2026 legal act not found). Apply: navegante app (TML), Andante
 // site/store (Porto). Music: compose.py ep150.
-export const meta = { id: "ep150-passe", date: "2026-12-03", images: {} };
+export const meta = { id: "ep150-passe", date: "2026-12-03", images: { flagpt: "characters/props/flag-pt.webp", tp: "characters/props/city-bus.webp" } };
 
 export default function (E) {
   E.episode(-16);
@@ -61,6 +61,20 @@ export default function (E) {
   write(150, 320, "your transport pass", 92, "#1b2a6b", .5, .5);
   write(150, 440, "may be <b style='color:#1e8a3c'>free</b>.", 100, "#1b2a6b", 1.0, .4);
   E.texts.push({ scene: S, tIn: 0, words: 10 });
+  // ===== hook visuals: big number badge + real cut-out symbols (Portugal flag, topic object), popping in on the word =====
+  const HV = (el, a, b) => E.F(t => { el.style.opacity = t >= a && t < b ? 1 : 0; });
+  const HY = { row: 1330, bx: 640, by: 700 };
+  const BG = E.el(S.el, "abs", `left:${HY.bx}px;top:${HY.by}px;width:430px;height:430px;border-radius:50%;background:#d62828;border:12px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;z-index:31;line-height:1`, "<span style='font-size:150px;-webkit-text-stroke:4px #141414'>€0</span>");
+  HV(BG, 0, WHO - .1); BG.style.rotate = "-8deg";
+  E.K(BG, "s", Array.from({ length: 12 }, (_, k) => [k * .3, k % 2 ? 1.1 : 1, "io"]));
+  [[0.3, "flagpt", 360], [0.5, "tp", 300]].forEach(([t, key, w], i, all) => {
+    const x = 540 + (i - (all.length - 1) / 2) * 400 - w / 2;
+    const st = E.el(S.el, "abs", `left:${x}px;top:${HY.row}px;width:${w}px;height:${w}px;z-index:31;filter:drop-shadow(0 12px 14px rgba(0,0,0,.6))`);
+    E.img(st, key, `width:${w}px;height:${w}px;object-fit:contain`);
+    HV(st, t, WHO - .1); E.K(st, "s", [[t, .2], [t + .14, 1.15, "out"], [t + .3, 1, "io"]]);
+    st.style.transformOrigin = key === "flagpt" ? "8% 90%" : "50% 100%";
+    E.K(st, "r", Array.from({ length: 16 }, (_, j) => [t + j * .35, j % 2 ? (key === "flagpt" ? 5 : 3) : (key === "flagpt" ? -4 : -3), "io"]));
+  });
   blob(130, 760, 820, 420, "#ffd23f", .3, 0, 40);                                 // the bus
   rect(130, 760, 820, 420, "#222", 8, .3, .6);
   for (let i = 0; i < 4; i++) rect(170 + i * 190, 810, 150, 140, "#222", 6, .7 + i * .12, .2);

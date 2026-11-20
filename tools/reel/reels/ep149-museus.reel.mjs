@@ -5,7 +5,7 @@
 // report says the minister wants to change it — RECHECK BEFORE POSTING. Music: compose.py ep149.
 export const meta = {
   id: "ep149-museus", date: "2026-12-02",
-  images: { belem: "characters/papercut/bg_belem.webp", torre: "characters/papercut/torre.webp", desk: "characters/papercut/desk.webp",
+  images: { flagpt: "characters/props/flag-pt.webp", tp: "characters/props/museum.webp", belem: "characters/papercut/bg_belem.webp", torre: "characters/papercut/torre.webp", desk: "characters/papercut/desk.webp",
     cal: "characters/papercut/calendar.webp", man: "characters/papercut/man.webp", stamp: "characters/papercut/stamp.webp" },
 };
 
@@ -45,6 +45,20 @@ export default function (E) {
     E.K(sp, "s", [[t - .01, 1], [t + .06, 1.1, "out"], [t + .22, 1, "io"]]);
   });
   E.texts.push({ scene: S, tIn: 0, words: hookWords.length });
+  // ===== hook visuals: big number badge + real cut-out symbols (Portugal flag, topic object), popping in on the word =====
+  const HV = (el, a, b) => E.F(t => { el.style.opacity = t >= a && t < b ? 1 : 0; });
+  const HY = { row: 640, bx: 610, by: 1000 };
+  const BG = E.el(S.el, "abs", `left:${HY.bx}px;top:${HY.by}px;width:430px;height:430px;border-radius:50%;background:#d62828;border:12px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;z-index:31;line-height:1`, "<span style='font-size:150px;-webkit-text-stroke:4px #141414'>52</span>");
+  HV(BG, 0, DAYS - .1); BG.style.rotate = "-8deg";
+  E.K(BG, "s", Array.from({ length: 12 }, (_, k) => [k * .3, k % 2 ? 1.1 : 1, "io"]));
+  [[0.5, "flagpt", 360], [1.3, "tp", 300]].forEach(([t, key, w], i, all) => {
+    const x = 540 + (i - (all.length - 1) / 2) * 400 - w / 2;
+    const st = E.el(S.el, "abs", `left:${x}px;top:${HY.row}px;width:${w}px;height:${w}px;z-index:31;filter:drop-shadow(0 12px 14px rgba(0,0,0,.6))`);
+    E.img(st, key, `width:${w}px;height:${w}px;object-fit:contain`);
+    HV(st, t, DAYS - .1); E.K(st, "s", [[t, .2], [t + .14, 1.15, "out"], [t + .3, 1, "io"]]);
+    st.style.transformOrigin = key === "flagpt" ? "8% 90%" : "50% 100%";
+    E.K(st, "r", Array.from({ length: 16 }, (_, j) => [t + j * .35, j % 2 ? (key === "flagpt" ? 5 : 3) : (key === "flagpt" ? -4 : -3), "io"]));
+  });
   A.style.transformOrigin = "50% 70%"; E.K(A, "s", [[0, 1.08], [1.2, 1.0, "out"], [2.0, 1.0], [2.2, 1.1, "out"], [DAYS, 1.12, "lin"]]);
 
   // ============ 2. 52 free days, 37 sites (3.1 – 8.9) ============

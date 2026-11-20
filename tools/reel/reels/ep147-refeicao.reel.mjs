@@ -3,7 +3,7 @@
 // meal vouchers. 2026 limit: €6.15/day (Portaria n.º 51-B/2026/1, art. 1.º, from 1 Jan 2026); vouchers: 6.15 × 1.7 = €10.455
 // (≈€10.46, our arithmetic). "Vouchers" is the statute's word (cards are the usual form; not stated in the code). Social Security
 // left out. Music: compose.py ep147.
-export const meta = { id: "ep147-refeicao", date: "2026-11-29", images: {} };
+export const meta = { id: "ep147-refeicao", date: "2026-11-29", images: { flagpt: "characters/props/flag-pt.webp", tp: "characters/props/lunch-plate.webp" } };
 
 export default function (E) {
   E.episode(-16);
@@ -61,6 +61,20 @@ export default function (E) {
   write(150, 320, "workers get paid", 96, "#1b2a6b", .4, .45);
   write(150, 440, "in <b style='color:#c0392b'>lunch money</b>.", 100, "#1b2a6b", .85, .5);
   E.texts.push({ scene: S, tIn: 0, words: 8 });
+  // ===== hook visuals: big number badge + real cut-out symbols (Portugal flag, topic object), popping in on the word =====
+  const HV = (el, a, b) => E.F(t => { el.style.opacity = t >= a && t < b ? 1 : 0; });
+  const HY = { row: 1330, bx: 640, by: 700 };
+  const BG = E.el(S.el, "abs", `left:${HY.bx}px;top:${HY.by}px;width:430px;height:430px;border-radius:50%;background:#d62828;border:12px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;z-index:31;line-height:1`, "<span style='font-size:96px;-webkit-text-stroke:4px #141414'>€6.15</span>");
+  HV(BG, 0, CASH - .1); BG.style.rotate = "-8deg";
+  E.K(BG, "s", Array.from({ length: 12 }, (_, k) => [k * .3, k % 2 ? 1.1 : 1, "io"]));
+  [[0, "flagpt", 360], [0.85, "tp", 300]].forEach(([t, key, w], i, all) => {
+    const x = 540 + (i - (all.length - 1) / 2) * 400 - w / 2;
+    const st = E.el(S.el, "abs", `left:${x}px;top:${HY.row}px;width:${w}px;height:${w}px;z-index:31;filter:drop-shadow(0 12px 14px rgba(0,0,0,.6))`);
+    E.img(st, key, `width:${w}px;height:${w}px;object-fit:contain`);
+    HV(st, t, CASH - .1); E.K(st, "s", [[t, .2], [t + .14, 1.15, "out"], [t + .3, 1, "io"]]);
+    st.style.transformOrigin = key === "flagpt" ? "8% 90%" : "50% 100%";
+    E.K(st, "r", Array.from({ length: 16 }, (_, j) => [t + j * .35, j % 2 ? (key === "flagpt" ? 5 : 3) : (key === "flagpt" ? -4 : -3), "io"]));
+  });
   blob(240, 760, 600, 600, "#ffd23f", .3, 0, 300);                               // a big plate
   circ(540, 1060, 300, 300, "#222", 8, .3, .6); circ(540, 1060, 200, 200, "#222", 5, .8, .5);
   line([[170, 820], [170, 1300]], "#222", 9, 1.2, .3); line([[140, 820], [140, 950], [200, 950], [200, 820]], "#222", 6, 1.4, .3);   // fork

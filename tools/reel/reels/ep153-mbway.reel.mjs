@@ -3,7 +3,7 @@
 // that don't exceed €30 per operation, or €150 a month, or 25 transfers a month (n.º 4: consumers, linked account or card).
 // Above the limits, fees are capped (DL 72/2024: 0.2%) — kept off screen. EU instant-payments regulation not opened.
 // Music: compose.py ep153.
-export const meta = { id: "ep153-mbway", date: "2026-12-06", images: {} };
+export const meta = { id: "ep153-mbway", date: "2026-12-06", images: { flagpt: "characters/props/flag-pt.webp", tp: "characters/props/phone-transfer.webp" } };
 
 export default function (E) {
   E.episode(-16);
@@ -61,6 +61,20 @@ export default function (E) {
   write(150, 320, "charge you for", 96, "#1b2a6b", .4, .4);
   write(150, 440, "these transfers.", 96, "#1b2a6b", .8, .45);
   E.texts.push({ scene: S, tIn: 0, words: 8 });
+  // ===== hook visuals: big number badge + real cut-out symbols (Portugal flag, topic object), popping in on the word =====
+  const HV = (el, a, b) => E.F(t => { el.style.opacity = t >= a && t < b ? 1 : 0; });
+  const HY = { row: 1330, bx: 640, by: 700 };
+  const BG = E.el(S.el, "abs", `left:${HY.bx}px;top:${HY.by}px;width:430px;height:430px;border-radius:50%;background:#d62828;border:12px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;z-index:31;line-height:1`, "<span style='font-size:150px;-webkit-text-stroke:4px #141414'>€0</span>");
+  HV(BG, 0, LAW - .1); BG.style.rotate = "-8deg";
+  E.K(BG, "s", Array.from({ length: 12 }, (_, k) => [k * .3, k % 2 ? 1.1 : 1, "io"]));
+  [[0.8, "tp", 300]].forEach(([t, key, w], i, all) => {
+    const x = 540 + (i - (all.length - 1) / 2) * 400 - w / 2;
+    const st = E.el(S.el, "abs", `left:${x}px;top:${HY.row}px;width:${w}px;height:${w}px;z-index:31;filter:drop-shadow(0 12px 14px rgba(0,0,0,.6))`);
+    E.img(st, key, `width:${w}px;height:${w}px;object-fit:contain`);
+    HV(st, t, LAW - .1); E.K(st, "s", [[t, .2], [t + .14, 1.15, "out"], [t + .3, 1, "io"]]);
+    st.style.transformOrigin = key === "flagpt" ? "8% 90%" : "50% 100%";
+    E.K(st, "r", Array.from({ length: 16 }, (_, j) => [t + j * .35, j % 2 ? (key === "flagpt" ? 5 : 3) : (key === "flagpt" ? -4 : -3), "io"]));
+  });
   blob(330, 700, 420, 760, "#2b2f3a", .2, 0, 50);                                  // a phone
   rect(330, 700, 420, 760, "#111", 7, .2, .5); blob(365, 780, 350, 560, "#e9f0ff", .5, 0, 16);
   line([[420, 950], [660, 950], [630, 920], [660, 950], [630, 980]], "#1e8a3c", 9, 1.0, .3);

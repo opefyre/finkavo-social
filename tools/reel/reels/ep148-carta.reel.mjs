@@ -3,7 +3,7 @@
 // RHLC (DL 138/2012, republished by DL 40/2016) art. 16.º n.º 2–3: category B revalidated every 15 years until 60, then at 60, 65,
 // 70 and every 2 years from 70; art. 17.º n.º 3–4: medical certificate from 60; gov.pt (updated 29.10.2026): licences issued up to
 // 1.1.2013 also renew at 50. Fine for an expired licence not confirmed: kept out. Music: compose.py ep148.
-export const meta = { id: "ep148-carta", date: "2026-12-01", images: {} };
+export const meta = { id: "ep148-carta", date: "2026-12-01", images: { flagpt: "characters/props/flag-pt.webp", tp: "characters/props/licence-card.webp" } };
 
 export default function (E) {
   E.episode(-16);
@@ -16,13 +16,27 @@ export default function (E) {
   const tick = E.el(M, "abs", "left:0;top:1900px;width:4px;height:4px;background:#fe00ff"); E.K(tick, "x", [[0, 0], [DUR, 20, "lin"]]);
 
   const hookWords = [["Your", .2], ["Portuguese", .35], ["driving", .95], ["licence", 1.25, 1], ["has", 1.75], ["an", 1.9], ["expiry", 2.0, 1], ["age.", 2.4, 1]];
-  const H = E.el(S.el, "abs", "left:40px;top:230px;width:1000px;text-align:center;z-index:10;line-height:1.08");
+  const H = E.el(S.el, "abs", "left:40px;top:230px;width:1000px;text-align:center;z-index:10;line-height:1.25");
   E.F(t => { H.style.opacity = t < AGES - .1 ? 1 : 0; });
   hookWords.forEach(([w, t, key]) => {
-    const sp = E.el(H, "", `display:inline-block;margin:0 .2em;font-weight:900;font-size:104px;color:${key ? "#ffd640" : "#fff"};-webkit-text-stroke:4px #141414;text-shadow:0 6px 18px rgba(0,0,0,.55)`, w);
+    const sp = E.el(H, "", `display:inline-block;margin:7px 6px;padding:2px 18px 6px;border-radius:12px;font-weight:900;font-size:90px;color:#141414;background:${key ? "#ffd640" : "#ffffff"};border:5px solid #141414;box-shadow:0 10px 0 #141414;transform:rotate(${(w.length % 3 - 1) * 1.5}deg)`, w);
     E.K(sp, "s", [[t - .01, 1], [t + .06, 1.08, "out"], [t + .22, 1, "io"]]);
   });
   E.texts.push({ scene: S, tIn: 0, words: hookWords.length });
+  // ===== hook visuals: big number badge + real cut-out symbols (Portugal flag, topic object), popping in on the word =====
+  const HV = (el, a, b) => E.F(t => { el.style.opacity = t >= a && t < b ? 1 : 0; });
+  const HY = { row: 640, bx: 610, by: 1000 };
+  const BG = E.el(S.el, "abs", `left:${HY.bx}px;top:${HY.by}px;width:430px;height:430px;border-radius:50%;background:#d62828;border:12px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;z-index:31;line-height:1`, "<span style='font-size:150px;-webkit-text-stroke:4px #141414'>60</span>");
+  HV(BG, 0, AGES - .1); BG.style.rotate = "-8deg";
+  E.K(BG, "s", Array.from({ length: 12 }, (_, k) => [k * .3, k % 2 ? 1.1 : 1, "io"]));
+  [[0.35, "flagpt", 360], [1.25, "tp", 300]].forEach(([t, key, w], i, all) => {
+    const x = 540 + (i - (all.length - 1) / 2) * 400 - w / 2;
+    const st = E.el(S.el, "abs", `left:${x}px;top:${HY.row}px;width:${w}px;height:${w}px;z-index:31;filter:drop-shadow(0 12px 14px rgba(0,0,0,.6))`);
+    E.img(st, key, `width:${w}px;height:${w}px;object-fit:contain`);
+    HV(st, t, AGES - .1); E.K(st, "s", [[t, .2], [t + .14, 1.15, "out"], [t + .3, 1, "io"]]);
+    st.style.transformOrigin = key === "flagpt" ? "8% 90%" : "50% 100%";
+    E.K(st, "r", Array.from({ length: 16 }, (_, j) => [t + j * .35, j % 2 ? (key === "flagpt" ? 5 : 3) : (key === "flagpt" ? -4 : -3), "io"]));
+  });
 
   const card = (top, html, t0, t1, bg = "#fbfaf6") => {
     const c = E.el(S.el, "abs", `left:90px;top:${top}px;width:900px;padding:30px 0;border-radius:30px;background:${bg};text-align:center;font-weight:900;color:#1d2b36;z-index:9;opacity:0;line-height:1.12;box-shadow:0 20px 40px rgba(0,0,0,.4)`, html);

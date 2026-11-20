@@ -3,7 +3,7 @@
 // Lisbon Regulamento de Gestão de Resíduos, Limpeza e Higiene Urbana (Aviso n.º 20811-B/2019) art. 84.º n.º 2 g): shaking or beating
 // blankets, doormats, rugs, carpets, clothes… from windows and doors facing the street between 8:00 and 23:00: €50–€1,000 for
 // individuals (negligence halves, art. 86.º). Amendments since 2019 not checked. Music: compose.py ep151.
-export const meta = { id: "ep151-tapete", date: "2026-12-05", images: {} };
+export const meta = { id: "ep151-tapete", date: "2026-12-05", images: { flagpt: "characters/props/flag-pt.webp", tp: "characters/props/rug.webp" } };
 
 export default function (E) {
   E.episode(-16);
@@ -16,13 +16,27 @@ export default function (E) {
   const tick = E.el(M, "abs", "left:0;top:1900px;width:4px;height:4px;background:#fe00ff"); E.K(tick, "x", [[0, 0], [DUR, 20, "lin"]]);
 
   const hookWords = [["Shaking", .2, 1], ["a", .55], ["rug", .65, 1], ["out", .9], ["of", 1.05], ["your", 1.15], ["window", 1.3], ["can", 1.9], ["cost", 2.05], ["€1,000", 2.4, 1], ["in", 3.3], ["Lisbon.", 3.45]];
-  const H = E.el(S.el, "abs", "left:40px;top:1150px;width:1000px;text-align:center;z-index:10;line-height:1.08");
+  const H = E.el(S.el, "abs", "left:40px;top:1150px;width:1000px;text-align:center;z-index:10;line-height:1.25");
   E.F(t => { H.style.opacity = t < FINE - .1 ? 1 : 0; });
   hookWords.forEach(([w, t, key]) => {
-    const sp = E.el(H, "", `display:inline-block;margin:0 .2em;font-weight:900;font-size:96px;color:${key ? "#ffd640" : "#fff"};-webkit-text-stroke:4px #141414;text-shadow:0 6px 18px rgba(0,0,0,.55)`, w);
+    const sp = E.el(H, "", `display:inline-block;margin:7px 6px;padding:2px 18px 6px;border-radius:12px;font-weight:900;font-size:82px;color:#141414;background:${key ? "#ffd640" : "#ffffff"};border:5px solid #141414;box-shadow:0 10px 0 #141414;transform:rotate(${(w.length % 3 - 1) * 1.5}deg)`, w);
     E.K(sp, "s", [[t - .01, 1], [t + .06, 1.08, "out"], [t + .22, 1, "io"]]);
   });
   E.texts.push({ scene: S, tIn: 0, words: hookWords.length });
+  // ===== hook visuals: big number badge + real cut-out symbols (Portugal flag, topic object), popping in on the word =====
+  const HV = (el, a, b) => E.F(t => { el.style.opacity = t >= a && t < b ? 1 : 0; });
+  const HY = { row: 600, bx: 610, by: 140 };
+  const BG = E.el(S.el, "abs", `left:${HY.bx}px;top:${HY.by}px;width:430px;height:430px;border-radius:50%;background:#d62828;border:12px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;z-index:31;line-height:1`, "<span style='font-size:96px;-webkit-text-stroke:4px #141414'>€1,000</span>");
+  HV(BG, 0, FINE - .1); BG.style.rotate = "-8deg";
+  E.K(BG, "s", Array.from({ length: 12 }, (_, k) => [k * .3, k % 2 ? 1.1 : 1, "io"]));
+  [[0.65, "tp", 300], [3.45, "flagpt", 360]].forEach(([t, key, w], i, all) => {
+    const x = 540 + (i - (all.length - 1) / 2) * 400 - w / 2;
+    const st = E.el(S.el, "abs", `left:${x}px;top:${HY.row}px;width:${w}px;height:${w}px;z-index:31;filter:drop-shadow(0 12px 14px rgba(0,0,0,.6))`);
+    E.img(st, key, `width:${w}px;height:${w}px;object-fit:contain`);
+    HV(st, t, FINE - .1); E.K(st, "s", [[t, .2], [t + .14, 1.15, "out"], [t + .3, 1, "io"]]);
+    st.style.transformOrigin = key === "flagpt" ? "8% 90%" : "50% 100%";
+    E.K(st, "r", Array.from({ length: 16 }, (_, j) => [t + j * .35, j % 2 ? (key === "flagpt" ? 5 : 3) : (key === "flagpt" ? -4 : -3), "io"]));
+  });
 
   const card = E.el(S.el, "abs", "left:90px;top:1080px;width:900px;padding:28px 0;border-radius:30px;background:#fbfaf6;text-align:center;font-weight:900;color:#1d2b36;z-index:9;opacity:0;line-height:1.1;box-shadow:0 20px 40px rgba(0,0,0,.4)",
     "<span style='font-size:60px'>8:00 – 23:00, street-facing</span><br><span style='font-size:110px;color:#c62828'>€50–€1,000</span>");

@@ -4,7 +4,7 @@
 // from 2024 on. Chosen in the IRS return or beforehand on the Portal (CIRS art. 153.º). Bill unchanged: the share comes out of tax
 // already assessed (our reading of "imposto liquidado"; no source states it in words). IVA consignation left out (it costs you).
 // Music: compose.py ep144.
-export const meta = { id: "ep144-consignacao", date: "2026-11-27", images: {} };
+export const meta = { id: "ep144-consignacao", date: "2026-11-27", images: { flagpt: "characters/props/flag-pt.webp", tp: "characters/props/charity-heart.webp" } };
 
 export default function (E) {
   E.episode(-16);
@@ -66,6 +66,20 @@ export default function (E) {
   write(150, 350, "<b>give away</b> tax", 104, "#c0392b", .45, .45);
   write(150, 475, "you already <u>paid</u>.", 96, "#1b2a6b", .9, .5);
   E.texts.push({ scene: S, tIn: 0, words: 9 });
+  // ===== hook visuals: big number badge + real cut-out symbols (Portugal flag, topic object), popping in on the word =====
+  const HV = (el, a, b) => E.F(t => { el.style.opacity = t >= a && t < b ? 1 : 0; });
+  const HY = { row: 1330, bx: 640, by: 700 };
+  const BG = E.el(S.el, "abs", `left:${HY.bx}px;top:${HY.by}px;width:430px;height:430px;border-radius:50%;background:#d62828;border:12px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;z-index:31;line-height:1`, "<span style='font-size:150px;-webkit-text-stroke:4px #141414'>1%</span>");
+  HV(BG, 0, HOW - .1); BG.style.rotate = "-8deg";
+  E.K(BG, "s", Array.from({ length: 12 }, (_, k) => [k * .3, k % 2 ? 1.1 : 1, "io"]));
+  [[0, "flagpt", 360], [0.45, "tp", 300]].forEach(([t, key, w], i, all) => {
+    const x = 540 + (i - (all.length - 1) / 2) * 400 - w / 2;
+    const st = E.el(S.el, "abs", `left:${x}px;top:${HY.row}px;width:${w}px;height:${w}px;z-index:31;filter:drop-shadow(0 12px 14px rgba(0,0,0,.6))`);
+    E.img(st, key, `width:${w}px;height:${w}px;object-fit:contain`);
+    HV(st, t, HOW - .1); E.K(st, "s", [[t, .2], [t + .14, 1.15, "out"], [t + .3, 1, "io"]]);
+    st.style.transformOrigin = key === "flagpt" ? "8% 90%" : "50% 100%";
+    E.K(st, "r", Array.from({ length: 16 }, (_, j) => [t + j * .35, j % 2 ? (key === "flagpt" ? 5 : 3) : (key === "flagpt" ? -4 : -3), "io"]));
+  });
   rect(250, 760, 420, 560, "#222", 7, .3, .8); write(290, 790, "IRS", 90, "#222", .9, .3, 340, "center");
   for (let i = 0; i < 4; i++) line([[300, 960 + i * 80], [620, 960 + i * 80]], "#999", 5, 1.1 + i * .12, .15);
   line([[700, 1040], [800, 1040], [775, 1015], [800, 1040], [775, 1065]], "#c0392b", 7, 2.3, .3);

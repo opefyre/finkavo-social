@@ -5,7 +5,7 @@
 // Music: compose.py ep143.
 export const meta = {
   id: "ep143-comboio", date: "2026-11-26",
-  images: { douro: "characters/papercut/bg_douro.webp", coast: "characters/papercut/bg_coast.webp", train: "characters/papercut/train.webp",
+  images: { flagpt: "characters/props/flag-pt.webp", tp: "characters/props/train.webp", douro: "characters/papercut/bg_douro.webp", coast: "characters/papercut/bg_coast.webp", train: "characters/papercut/train.webp",
     pass: "characters/papercut/pass.webp", seat: "characters/papercut/man_seat.webp", stamp: "characters/papercut/stamp.webp" },
 };
 
@@ -47,6 +47,20 @@ export default function (E) {
     E.K(sp, "s", [[t - .01, 1], [t + .06, 1.1, "out"], [t + .22, 1, "io"]]);
   });
   E.texts.push({ scene: S, tIn: 0, words: hookWords.length });
+  // ===== hook visuals: big number badge + real cut-out symbols (Portugal flag, topic object), popping in on the word =====
+  const HV = (el, a, b) => E.F(t => { el.style.opacity = t >= a && t < b ? 1 : 0; });
+  const HY = { row: 640, bx: 610, by: 1000 };
+  const BG = E.el(S.el, "abs", `left:${HY.bx}px;top:${HY.by}px;width:430px;height:430px;border-radius:50%;background:#d62828;border:12px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;z-index:31;line-height:1`, "<span style='font-size:150px;-webkit-text-stroke:4px #141414'>€20</span>");
+  HV(BG, 0, PASS - .1); BG.style.rotate = "-8deg";
+  E.K(BG, "s", Array.from({ length: 12 }, (_, k) => [k * .3, k % 2 ? 1.1 : 1, "io"]));
+  [[0.2, "tp", 300], [0.8, "flagpt", 360]].forEach(([t, key, w], i, all) => {
+    const x = 540 + (i - (all.length - 1) / 2) * 400 - w / 2;
+    const st = E.el(S.el, "abs", `left:${x}px;top:${HY.row}px;width:${w}px;height:${w}px;z-index:31;filter:drop-shadow(0 12px 14px rgba(0,0,0,.6))`);
+    E.img(st, key, `width:${w}px;height:${w}px;object-fit:contain`);
+    HV(st, t, PASS - .1); E.K(st, "s", [[t, .2], [t + .14, 1.15, "out"], [t + .3, 1, "io"]]);
+    st.style.transformOrigin = key === "flagpt" ? "8% 90%" : "50% 100%";
+    E.K(st, "r", Array.from({ length: 16 }, (_, j) => [t + j * .35, j % 2 ? (key === "flagpt" ? 5 : 3) : (key === "flagpt" ? -4 : -3), "io"]));
+  });
 
   // ============ 2. the pass (3.5 – 7.9) ============
   const B = E.el(S.el, "abs", "inset:0;overflow:hidden;background:#cfe3d4"); show(B, [[PASS - .1, WHICH]]);
