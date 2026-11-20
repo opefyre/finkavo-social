@@ -7,7 +7,7 @@ follow that tool's procedure. Do not ask for what it already defines; use its de
 
 - Answer only what was asked. A yes/no question gets "yes" or "no" plus at most one short sentence.
 - Short and plain. No jargon, no lists of caveats, no background they didn't ask for.
-- Never state a guess as a finding. If it's a guess, say "guess" in one word, or leave it out.
+- Only say what solid analysis or evidence supports. No assumptions, guesses or theories unless the owner asks for theories.
 - No unrequested suggestions, recaps or follow-up questions unless something is blocked.
 
 Always:
