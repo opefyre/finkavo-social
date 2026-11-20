@@ -8,6 +8,7 @@
 export const meta = {
   id: "ep141-alminhas", date: "2026-12-20",
   images: {
+    flagpt: "characters/props/flag-pt.webp", ghosty: "characters/props/ghost.webp",
     dining: "characters/scenes/bg_dining.webp", grab: "characters/cutouts/otto-casual_grab.webp", dona: "characters/cutouts/dona_point.webp",
     lamp: "characters/props/oil-lamp.webp", plate: "characters/props/plate-crumbs.webp", ghost: "characters/props/ghost-avo.webp", map: "characters/scenes/map_norte.webp",
   },
@@ -36,9 +37,18 @@ export default function (E) {
   });
   E.texts.push({ scene: S, tIn: 0, words: hookWords.length });
   // hook badge: the number, big and red, from frame 0 until the hook ends
-  const BG = E.el(S.el, "abs", "left:610px;top:720px;width:430px;height:430px;border-radius:50%;background:#d62828;border:12px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:900;z-index:11;line-height:1", "<span style='font-size:90px'>🍽️</span><span style='font-size:150px;-webkit-text-stroke:4px #141414'>+1</span>");
+  const BG = E.el(S.el, "abs", "left:610px;top:1120px;width:430px;height:430px;border-radius:50%;background:#d62828;border:12px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:900;z-index:11;line-height:1", "<span style='font-size:150px;-webkit-text-stroke:4px #141414'>+1</span>");
   show(BG, [[0, EVE - .1]]); BG.style.rotate = "-8deg";
   E.K(BG, "s", Array.from({ length: 12 }, (_, k) => [k * .3, k % 2 ? 1.1 : 1, "io"]));
+  // recognisable symbols (real cut-out images), popping in when the word is said: the Portugal flag waves, the topic object bobs
+  [[0.6, "flagpt", 360], [2.1, "ghosty", 300]].forEach(([t, key, w], i, all) => {
+    const x = 540 + (i - (all.length - 1) / 2) * 400 - w / 2;
+    const st = E.el(S.el, "abs", `left:${x}px;top:810px;width:${w}px;height:${w}px;z-index:11;filter:drop-shadow(0 12px 14px rgba(0,0,0,.6))`);
+    E.img(st, key, `width:${w}px;height:${w}px;object-fit:contain`);
+    show(st, [[t, EVE - .1]]); E.K(st, "s", [[t, .2], [t + .14, 1.15, "out"], [t + .3, 1, "io"]]);
+    st.style.transformOrigin = key === "flagpt" ? "8% 90%" : "50% 100%";
+    E.K(st, "r", Array.from({ length: 16 }, (_, j) => [t + j * .35, j % 2 ? (key === "flagpt" ? 5 : 3) : (key === "flagpt" ? -4 : -3), "io"]));
+  });
   label(S.el, 300, "\"as alminhas\"<br><span style='font-size:38px;color:#c8d6ff'>(the little souls)</span>", SOULS + 1.4, PLACE);
   label(S.el, 300, "one extra place<br><span style='font-size:36px;color:#ffd640'>for the one who left most recently</span>", PLACE + .5, THIS);
 

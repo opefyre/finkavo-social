@@ -6,6 +6,7 @@
 export const meta = {
   id: "ep136-limpeza", date: "2026-11-20",
   images: {
+    flagpt: "characters/props/flag-pt.webp", fire: "characters/props/fire.webp",
     trail: "characters/scenes/bg_trail.webp", relax: "characters/cutouts/otto-beach_sit.webp", shock: "characters/cutouts/otto_shocked.webp",
     dona: "characters/cutouts/dona_knowing.webp", goat: "characters/props/goat.webp",
   },
@@ -33,9 +34,18 @@ export default function (E) {
   });
   E.texts.push({ scene: S, tIn: 0, words: hookWords.length });
   // hook badge: the number, big and red, from frame 0 until the hook ends
-  const BG = E.el(S.el, "abs", "left:610px;top:860px;width:430px;height:430px;border-radius:50%;background:#d62828;border:12px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:900;z-index:11;line-height:1", "<span style='font-size:90px'>🔥</span><span style='font-size:120px;-webkit-text-stroke:4px #141414'>50 m</span>");
+  const BG = E.el(S.el, "abs", "left:610px;top:1000px;width:430px;height:430px;border-radius:50%;background:#d62828;border:12px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:900;z-index:11;line-height:1", "<span style='font-size:120px;-webkit-text-stroke:4px #141414'>50 m</span>");
   show(BG, [[0, LAW - .1]]); BG.style.rotate = "-8deg";
   E.K(BG, "s", Array.from({ length: 12 }, (_, k) => [k * .3, k % 2 ? 1.1 : 1, "io"]));
+  // recognisable symbols (real cut-out images), popping in when the word is said: the Portugal flag waves, the topic object bobs
+  [[0.3, "flagpt", 360], [1.05, "fire", 300]].forEach(([t, key, w], i, all) => {
+    const x = 540 + (i - (all.length - 1) / 2) * 400 - w / 2;
+    const st = E.el(S.el, "abs", `left:${x}px;top:640px;width:${w}px;height:${w}px;z-index:11;filter:drop-shadow(0 12px 14px rgba(0,0,0,.6))`);
+    E.img(st, key, `width:${w}px;height:${w}px;object-fit:contain`);
+    show(st, [[t, LAW - .1]]); E.K(st, "s", [[t, .2], [t + .14, 1.15, "out"], [t + .3, 1, "io"]]);
+    st.style.transformOrigin = key === "flagpt" ? "8% 90%" : "50% 100%";
+    E.K(st, "r", Array.from({ length: 16 }, (_, j) => [t + j * .35, j % 2 ? (key === "flagpt" ? 5 : 3) : (key === "flagpt" ? -4 : -3), "io"]));
+  });
 
   // ============ 2. the 50 m ring, seen from above (3.5 – 7.8) ============
   const D = E.el(S.el, "abs", "inset:0;background:#c9a64a;overflow:hidden"); show(D, [[LAW - .1, FIFTY]]);

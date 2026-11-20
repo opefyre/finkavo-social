@@ -5,6 +5,7 @@
 export const meta = {
   id: "ep137-casamento", date: "2026-11-21",
   images: {
+    flagpt: "characters/props/flag-pt.webp", rings: "characters/props/rings.webp",
     registo: "characters/scenes/bg_registo.webp", otto: "characters/cutouts/otto-coat_ask.webp", zoe: "characters/cutouts/zoe_date.webp",
     party: "characters/scenes/bg_party.webp", dona: "characters/cutouts/dona_point.webp", pig: "characters/props/roast-pig.webp", cake: "characters/props/tier-cake.webp",
   },
@@ -32,9 +33,18 @@ export default function (E) {
   });
   E.texts.push({ scene: S, tIn: 0, words: hookWords.length });
   // hook badge: the number, big and red, from frame 0 until the hook ends
-  const BG = E.el(S.el, "abs", "left:610px;top:820px;width:430px;height:430px;border-radius:50%;background:#d62828;border:12px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:900;z-index:11;line-height:1", "<span style='font-size:90px'>💍</span><span style='font-size:120px;-webkit-text-stroke:4px #141414'>€???</span>");
+  const BG = E.el(S.el, "abs", "left:610px;top:1110px;width:430px;height:430px;border-radius:50%;background:#d62828;border:12px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:900;z-index:11;line-height:1", "<span style='font-size:120px;-webkit-text-stroke:4px #141414'>€???</span>");
   show(BG, [[0, FEE - .1]]); BG.style.rotate = "-8deg";
   E.K(BG, "s", Array.from({ length: 12 }, (_, k) => [k * .3, k % 2 ? 1.1 : 1, "io"]));
+  // recognisable symbols (real cut-out images), popping in when the word is said: the Portugal flag waves, the topic object bobs
+  [[0.4, "rings", 300], [0.9, "flagpt", 360]].forEach(([t, key, w], i, all) => {
+    const x = 540 + (i - (all.length - 1) / 2) * 400 - w / 2;
+    const st = E.el(S.el, "abs", `left:${x}px;top:720px;width:${w}px;height:${w}px;z-index:11;filter:drop-shadow(0 12px 14px rgba(0,0,0,.6))`);
+    E.img(st, key, `width:${w}px;height:${w}px;object-fit:contain`);
+    show(st, [[t, FEE - .1]]); E.K(st, "s", [[t, .2], [t + .14, 1.15, "out"], [t + .3, 1, "io"]]);
+    st.style.transformOrigin = key === "flagpt" ? "8% 90%" : "50% 100%";
+    E.K(st, "r", Array.from({ length: 16 }, (_, j) => [t + j * .35, j % 2 ? (key === "flagpt" ? 5 : 3) : (key === "flagpt" ? -4 : -3), "io"]));
+  });
 
   // ============ 2. at the registry counter (3.1 – 13.2) ============
   const R = E.el(S.el, "abs", "inset:0;overflow:hidden"); show(R, [[FEE - .1, AVO]]); E.img(R, "registo", COVER);

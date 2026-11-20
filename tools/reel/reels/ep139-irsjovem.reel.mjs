@@ -4,7 +4,7 @@
 // Grandma: "Devias ter vindo mais cedo." (You should have come earlier.) Music: compose.py ep139. Opening 0–4.6 is the clip.
 export const meta = {
   id: "ep139-irsjovem", date: "2026-11-23",
-  images: { kitchen: "characters/scenes/bg_kitchen.webp", shock: "characters/cutouts/otto_shocked.webp", dona: "characters/cutouts/dona_smirk.webp" },
+  images: { flagpt: "characters/props/flag-pt.webp", bday: "characters/props/birthday-cake.webp", kitchen: "characters/scenes/bg_kitchen.webp", shock: "characters/cutouts/otto_shocked.webp", dona: "characters/cutouts/dona_smirk.webp" },
 };
 
 export default function (E) {
@@ -29,9 +29,18 @@ export default function (E) {
   });
   E.texts.push({ scene: S, tIn: 0, words: hookWords.length });
   // hook badge: the number, big and red, from frame 0 until the hook ends
-  const BG = E.el(S.el, "abs", "left:610px;top:1190px;width:430px;height:430px;border-radius:50%;background:#d62828;border:12px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:900;z-index:11;line-height:1", "<span style='font-size:90px'>🎂</span><span style='font-size:150px;-webkit-text-stroke:4px #141414'>0%</span>");
+  const BG = E.el(S.el, "abs", "left:610px;top:1190px;width:430px;height:430px;border-radius:50%;background:#d62828;border:12px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:900;z-index:11;line-height:1", "<span style='font-size:150px;-webkit-text-stroke:4px #141414'>0%</span>");
   show(BG, [[0, JOV - .1]]); BG.style.rotate = "-8deg";
   E.K(BG, "s", Array.from({ length: 12 }, (_, k) => [k * .3, k % 2 ? 1.1 : 1, "io"]));
+  // recognisable symbols (real cut-out images), popping in when the word is said: the Portugal flag waves, the topic object bobs
+  [[0.45, "bday", 300], [0.9, "flagpt", 360]].forEach(([t, key, w], i, all) => {
+    const x = 540 + (i - (all.length - 1) / 2) * 400 - w / 2;
+    const st = E.el(S.el, "abs", `left:${x}px;top:800px;width:${w}px;height:${w}px;z-index:11;filter:drop-shadow(0 12px 14px rgba(0,0,0,.6))`);
+    E.img(st, key, `width:${w}px;height:${w}px;object-fit:contain`);
+    show(st, [[t, JOV - .1]]); E.K(st, "s", [[t, .2], [t + .14, 1.15, "out"], [t + .3, 1, "io"]]);
+    st.style.transformOrigin = key === "flagpt" ? "8% 90%" : "50% 100%";
+    E.K(st, "r", Array.from({ length: 16 }, (_, j) => [t + j * .35, j % 2 ? (key === "flagpt" ? 5 : 3) : (key === "flagpt" ? -4 : -3), "io"]));
+  });
 
   // ============ 2. IRS Jovem, year 1: 100% (4.7 – 9.7) ============
   const J = E.el(S.el, "abs", "inset:0;background:radial-gradient(circle at 50% 40%,#1f3d2b,#0d1a12)"); show(J, [[JOV - .1, SCALE]]);

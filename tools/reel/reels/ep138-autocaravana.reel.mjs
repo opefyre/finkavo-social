@@ -6,6 +6,7 @@
 export const meta = {
   id: "ep138-autocaravana", date: "2026-11-22",
   images: {
+    flagpt: "characters/props/flag-pt.webp", campervan: "characters/props/camper-van.webp",
     night: "characters/scenes/bg_night.webp", van: "characters/props/van-loaded.webp", buck: "characters/cutouts/buck_startled.webp",
     officer: "characters/cutouts/officer_arms.webp", beach: "characters/scenes/bg_beach2.webp", hola: "characters/cutouts/buck_hola.webp",
   },
@@ -33,9 +34,18 @@ export default function (E) {
   });
   E.texts.push({ scene: S, tIn: 0, words: hookWords.length });
   // hook badge: the number, big and red, from frame 0 until the hook ends
-  const BG = E.el(S.el, "abs", "left:610px;top:1220px;width:430px;height:430px;border-radius:50%;background:#d62828;border:12px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:900;z-index:11;line-height:1", "<span style='font-size:90px'>🚐</span><span style='font-size:120px;-webkit-text-stroke:4px #141414'>€600</span>");
+  const BG = E.el(S.el, "abs", "left:610px;top:1220px;width:430px;height:430px;border-radius:50%;background:#d62828;border:12px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:900;z-index:11;line-height:1", "<span style='font-size:120px;-webkit-text-stroke:4px #141414'>€600</span>");
   show(BG, [[0, WAKE - .1]]); BG.style.rotate = "-8deg";
   E.K(BG, "s", Array.from({ length: 12 }, (_, k) => [k * .3, k % 2 ? 1.1 : 1, "io"]));
+  // recognisable symbols (real cut-out images), popping in when the word is said: the Portugal flag waves, the topic object bobs
+  [[0.85, "campervan", 300], [1.2, "flagpt", 360]].forEach(([t, key, w], i, all) => {
+    const x = 540 + (i - (all.length - 1) / 2) * 400 - w / 2;
+    const st = E.el(S.el, "abs", `left:${x}px;top:700px;width:${w}px;height:${w}px;z-index:11;filter:drop-shadow(0 12px 14px rgba(0,0,0,.6))`);
+    E.img(st, key, `width:${w}px;height:${w}px;object-fit:contain`);
+    show(st, [[t, WAKE - .1]]); E.K(st, "s", [[t, .2], [t + .14, 1.15, "out"], [t + .3, 1, "io"]]);
+    st.style.transformOrigin = key === "flagpt" ? "8% 90%" : "50% 100%";
+    E.K(st, "r", Array.from({ length: 16 }, (_, j) => [t + j * .35, j % 2 ? (key === "flagpt" ? 5 : 3) : (key === "flagpt" ? -4 : -3), "io"]));
+  });
 
   // ============ 2. the knock (2.9 – 5.5) ============
   const N = E.el(S.el, "abs", "inset:0;overflow:hidden"); show(N, [[WAKE - .1, BAN]]); E.img(N, "night", COVER);
