@@ -3,6 +3,13 @@
 When the owner names a tool (`reel`, `carousel`, `topics`, `queue`, `publish`, `spare`), open **TOOLS.md** and
 follow that tool's procedure. Do not ask for what it already defines; use its defaults and say which you used.
 
+**How to answer the owner (strict):**
+
+- Answer only what was asked. A yes/no question gets "yes" or "no" plus at most one short sentence.
+- Short and plain. No jargon, no lists of caveats, no background they didn't ask for.
+- Never state a guess as a finding. If it's a guess, say "guess" in one word, or leave it out.
+- No unrequested suggestions, recaps or follow-up questions unless something is blocked.
+
 Always:
 
 - **Renders run on the spare Mac** (`ssh finkavo-spare`); the laptop too, but only with the owner's approval each time. See `spare` in TOOLS.md.
