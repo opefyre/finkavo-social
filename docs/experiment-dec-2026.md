@@ -48,3 +48,38 @@ only if its interval excludes zero; otherwise the answer is "no detectable diffe
 ## Timing
 Starts 8 Dec, after the style test's last reel (6 Dec), and runs 24 days in a row (8–31 Dec). The old backlog reels
 on those days, and EP141 (20 Dec), move after 31 Dec. No other posts are interleaved.
+
+## Topics (written 23 Nov 2026, before assignment; facts not yet verified)
+Each is one everyday situation (the comedy) with one money/admin angle (used only in "comedy + fact" runs). Checked
+against past reel captions: none repeats a past reel. Every fact is researched from primary sources before production;
+any that fails is replaced by the reserve list.
+
+| # | Situation (comedy) | Money/admin angle (to verify) |
+|---|---|---|
+| 1 | The Christmas bonus arrives and Otto plans a trip… then sees the payslip | Subsídio de Natal is taxed (IRS withheld) |
+| 2 | Grandma's raspadinha habit: "this one is the winner" | Lottery and raspadinha prizes are taxed above a threshold |
+| 3 | Euromilhões office pool at work: who keeps the ticket? | Tax on the prize, who pays it |
+| 4 | Splitting the tasca bill: 9 people, 1 receipt, 1 NIF | Only the NIF on the receipt gets the IRS deduction |
+| 5 | The pharmacy queue: everyone knows the pharmacist | Pharmacy spending counts as health expense for IRS |
+| 6 | The CTT notice: "we tried to deliver" (nobody rang) | How long the parcel waits, what customs charges cost |
+| 7 | The phone contract with "fidelização": leaving costs more than staying | Rules on early-termination charges |
+| 8 | Condomínio meeting: 3 hours about one light bulb | Who must pay condominium fees, and the reserve fund |
+| 9 | The senhorio who only accepts cash | Landlord must issue electronic rent receipts; renter deduction |
+| 10 | Black Friday: the "–70%" price that was the same last week | Shops must show the previous lowest price |
+| 11 | Returning a Christmas gift: "no refunds, only vale" | When shops must accept returns (and when they don't) |
+| 12 | The gym that can't be cancelled | Cancelling a contract: the notice rules |
+| 13 | Baptism gift envelope: how much is "normal"? | Cash gifts between family and the stamp-duty rule |
+| 14 | The family WhatsApp "who's bringing bacalhau" | Paying the family in MB WAY vs cash (no fee limits) |
+| 15 | Neighbour's dog barks at 3 am | Noise rules and who you call (police vs council) |
+| 16 | Taxi from the airport: the "special price" | Official fares, receipts with NIF for expense claims |
+| 17 | The trotinete parked in front of grandma's door | Where scooters can be parked, the fine |
+| 18 | Selling the old sofa on OLX: 40 messages "is it available?" | When selling second-hand becomes taxable |
+| 19 | The botija de gás delivery guy who knows your whole life | Social energy tariff / gas price support |
+| 20 | Winter in a Portuguese flat: colder inside than outside | Energy efficiency support for homes |
+| 21 | New Year's Eve: 12 raisins, 12 wishes, 0 savings | What changes in taxes on 1 January 2027 |
+| 22 | Kids' school book list in September… paid in December | School expenses deduction (education) |
+| 23 | The vet bill for the cat | Vet bills give an IRS deduction (VAT share) |
+| 24 | Haircut every 3 weeks to "support the local barber" | Hairdresser VAT counts as an IRS deduction |
+
+Reserve (if a fact fails): car inspection (IPO) panic; parking ticket from EMEL; the electricity bill "estimate"; the
+supermarket loyalty card points that expire.
