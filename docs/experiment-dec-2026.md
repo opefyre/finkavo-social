@@ -69,8 +69,8 @@ any that fails is replaced by the reserve list.
 | 11 | Returning a Christmas gift: "no refunds, only vale" | When shops must accept returns (and when they don't) |
 | 12 | The gym that can't be cancelled | Cancelling a contract: the notice rules |
 | 13 | Baptism gift envelope: how much is "normal"? | Cash gifts between family and the stamp-duty rule |
-| 14 | The family WhatsApp "who's bringing bacalhau" | Paying the family in MB WAY vs cash (no fee limits) |
-| 15 | Neighbour's dog barks at 3 am | Noise rules and who you call (police vs council) |
+| 14 | The supermarket loyalty points that expire the day before you use them | Rules on expiry and what shops must tell you |
+| 15 | The car inspection (IPO) panic: the queue, the verdict | When IPO is due and the fine for missing it |
 | 16 | Taxi from the airport: the "special price" | Official fares, receipts with NIF for expense claims |
 | 17 | The trotinete parked in front of grandma's door | Where scooters can be parked, the fine |
 | 18 | Selling the old sofa on OLX: 40 messages "is it available?" | When selling second-hand becomes taxable |
@@ -79,7 +79,7 @@ any that fails is replaced by the reserve list.
 | 21 | New Year's Eve: 12 raisins, 12 wishes, 0 savings | What changes in taxes on 1 January 2027 |
 | 22 | Kids' school book list in September… paid in December | School expenses deduction (education) |
 | 23 | The vet bill for the cat | Vet bills give an IRS deduction (VAT share) |
-| 24 | Haircut every 3 weeks to "support the local barber" | Hairdresser VAT counts as an IRS deduction |
+| 24 | The EMEL parking ticket under the wiper | How long you have to pay, and the discount for paying early |
 
-Reserve (if a fact fails): car inspection (IPO) panic; parking ticket from EMEL; the electricity bill "estimate"; the
-supermarket loyalty card points that expire.
+Reserve (if a fact fails): the electricity bill "estimate"; the water meter reading; the post-Christmas gym rush; the
+bakery that weighs the bread.
