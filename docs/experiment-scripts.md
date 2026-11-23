@@ -226,6 +226,6 @@ N = narrator, O = Otto, A = Avó, D = Dona, B = Buck. [PT] = subtitled Portugues
 ### 31 Dec · Proof of address · comedy / question / 20 s
 - **Hook:** O at a counter holding a tower of papers. N: "How do you prove where you live in Portugal?"
 - **Want:** O needs one document that says where he lives.
-- **Escalation:** his rental contract: "Não chega"; his bills: "Não chega"; a selfie in front of his door: "Não chega".
+- **Escalation:** his rental contract: "Não chega. [PT] (Not enough.)"; his bills: "Não chega."; a selfie in front of his door: "Não chega."
 - **Payoff (answer):** D stamps the whole tower at once, smiling: "Bem-vindo. [PT] (Welcome.)" Midnight fireworks: it took all year.
 - **Button:** O kisses the stamp.
