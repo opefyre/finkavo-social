@@ -52,7 +52,7 @@ window.E = (() => {
     return el;
   };
   E.F = fn => { E.fns.push(fn); };
-  E.S = (t, name, vol = 1) => { E.sounds.push({ t, name, vol }); };
+  E.S = (t, name, vol = 1) => { if (name) E.sounds.push({ t, name, vol }); };
   // A recorded clip (a voice line, a TV soundtrack): a WAV under branding/, placed at t. o.vol, o.from/o.to (seconds into the file),
   // o.gain = [[t, g], ...] a volume curve in reel time (for a TV that is turned down), o.duck = true to dip the music under it.
   E.clips = [];

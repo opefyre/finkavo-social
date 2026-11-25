@@ -1,0 +1,105 @@
+{
+ "voices": {
+  "N": [
+   "kokoro",
+   "am_michael",
+   1.0
+  ]
+ },
+ "la1-morada": [
+  [
+   "N",
+   "l1",
+   "Moved flat in Portugal? Most people update their address four times."
+  ],
+  [
+   "N",
+   "l2",
+   "With a Portuguese citizen card, you only need to do it once."
+  ],
+  [
+   "N",
+   "l3",
+   "Change it on the card itself, online or at a counter."
+  ],
+  [
+   "N",
+   "l4",
+   "That one change goes to the tax office, Social Security and the health service. Automatically."
+  ],
+  [
+   "N",
+   "l5",
+   "You'll get a letter with a code. Until you enter it, the change doesn't count."
+  ],
+  [
+   "N",
+   "l6",
+   "You have sixty days. Still separate: your car registration, and your pet's registry."
+  ],
+  [
+   "N",
+   "l7",
+   "One change. Not four."
+  ]
+ ],
+ "la2-renda": [
+  [
+   "N",
+   "l1",
+   "Paying rent in cash, with no receipt? You could be losing up to nine hundred euros."
+  ],
+  [
+   "N",
+   "l2",
+   "Your landlord has to give you rent receipts. Most must issue them on the tax portal."
+  ],
+  [
+   "N",
+   "l3",
+   "The lease itself must be registered with the tax office, by the end of the month after it starts."
+  ],
+  [
+   "N",
+   "l4",
+   "Tenants get fifteen percent of their rent back on IRS. Up to nine hundred euros for 2026."
+  ],
+  [
+   "N",
+   "l5",
+   "No receipts, no deduction. So ask for them."
+  ]
+ ],
+ "la3-sns": [
+  [
+   "N",
+   "l1",
+   "Got your S N S health number? It might not cover you yet."
+  ],
+  [
+   "N",
+   "l2",
+   "Any foreign resident can get one, at their first visit to a health centre or hospital."
+  ],
+  [
+   "N",
+   "l3",
+   "But the health service only covers your costs when the number is linked to four things."
+  ],
+  [
+   "N",
+   "l4",
+   "Your I D. Your NIF. Your Portuguese address. And your residence permit."
+  ],
+  [
+   "N",
+   "l5",
+   "Missing one? Sort it out before you need a doctor, not after."
+  ],
+  [
+   "N",
+   "l6",
+   "Emergency? Call one one two."
+  ]
+ ]
+}

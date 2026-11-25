@@ -1,0 +1,215 @@
+{
+ "voices": {
+  "N": [
+   "kokoro",
+   "am_michael",
+   1.0
+  ],
+  "O": [
+   "kokoro",
+   "am_puck",
+   1.05
+  ],
+  "B": [
+   "kokoro",
+   "am_eric",
+   1.0
+  ],
+  "AVO": [
+   "eleven",
+   "xIzR6egd3S3LJZbVW0c1",
+   "pt"
+  ],
+  "PM": [
+   "eleven",
+   "aLFUti4k8YKvtQGXv0UO",
+   "pt"
+  ],
+  "PF": [
+   "eleven",
+   "iLelOQ6m5mpSeNH8fRob",
+   "pt"
+  ],
+  "PMEN": [
+   "eleven",
+   "aLFUti4k8YKvtQGXv0UO",
+   "en"
+  ],
+  "PFEN": [
+   "eleven",
+   "iLelOQ6m5mpSeNH8fRob",
+   "en"
+  ]
+ },
+ "x01-renda": [
+  [
+   "N",
+   "hook",
+   "Never pay your rent in an envelope."
+  ],
+  [
+   "O",
+   "recibo",
+   "Receipt?"
+  ],
+  [
+   "PM",
+   "laugh",
+   "Recibo? [laughs]"
+  ],
+  [
+   "N",
+   "fact",
+   "Renters get fifteen percent of their rent back on IRS. Up to nine hundred euros."
+  ],
+  [
+   "O",
+   "shout",
+   "Recibo!"
+  ]
+ ],
+ "x02-farmacia": [
+  [
+   "N",
+   "hook",
+   "Never go to a Portuguese pharmacy in a hurry."
+  ],
+  [
+   "PFEN",
+   "lady",
+   "[strong Portuguese accent] And my knee, and my son, and the neighbour's cat..."
+  ],
+  [
+   "O",
+   "sigh",
+   "Here we go."
+  ],
+  [
+   "PMEN",
+   "pharm",
+   "[strong Portuguese accent, warmly] So... and how is YOUR family?"
+  ]
+ ],
+ "x03-vale": [
+  [
+   "N",
+   "hook",
+   "Don't accept only a voucher for something broken."
+  ],
+  [
+   "PM",
+   "vale",
+   "Só vale."
+  ],
+  [
+   "O",
+   "broken",
+   "But it's broken!"
+  ],
+  [
+   "N",
+   "fact",
+   "Broken goods have a three-year guarantee. And bought online? Fourteen days to change your mind."
+  ]
+ ],
+ "x04-livros": [
+  [
+   "N",
+   "hook",
+   "Why do Portuguese parents keep every school receipt?"
+  ],
+  [
+   "O",
+   "just",
+   "It's just a receipt."
+  ],
+  [
+   "B",
+   "what",
+   "Just a receipt? Are you crazy?"
+  ],
+  [
+   "N",
+   "fact",
+   "School costs give you thirty percent back on your IRS. Up to eight hundred euros a household."
+  ],
+  [
+   "O",
+   "dive",
+   "Receipt! With my NIF!"
+  ]
+ ],
+ "x05-blackfriday": [
+  [
+   "N",
+   "hook",
+   "Don't fall for the Friday sticker."
+  ],
+  [
+   "O",
+   "mine",
+   "Mine!"
+  ],
+  [
+   "O",
+   "deal",
+   "Best deal of the year!"
+  ],
+  [
+   "AVO",
+   "ai",
+   "[strong Portuguese accent, tender] Ai, filho..."
+  ]
+ ],
+ "x06-padaria": [
+  [
+   "N",
+   "hook",
+   "How much is one bread roll in Portugal?"
+  ],
+  [
+   "O",
+   "pao",
+   "One bread roll, please."
+  ],
+  [
+   "PM",
+   "troco",
+   "Não tem troco?"
+  ]
+ ],
+ "x07-luz": [
+  [
+   "N",
+   "hook",
+   "Why did his bill triple while he was away?"
+  ],
+  [
+   "O",
+   "away",
+   "I wasn't even home!"
+  ],
+  [
+   "N",
+   "fact",
+   "It was an estimate. Send your own meter reading. Corrections can't go back more than six months."
+  ]
+ ],
+ "x08-ctt": [
+  [
+   "N",
+   "hook",
+   "How does a parcel get delivered without anyone knocking?"
+  ],
+  [
+   "O",
+   "win",
+   "Not today. Today, I win."
+  ],
+  [
+   "N",
+   "answer",
+   "It never knocked."
+  ]
+ ]
+}

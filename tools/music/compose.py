@@ -567,9 +567,18 @@ def ep153(out):
     return _tasca_score(out, 14.4, [(12.0, 13.4)], 13.6, seed=53, bpm=108, lead=lead)
 
 
+def exp(out):
+    """Dec 2026 experiment series theme (held constant across all 24 runs): bright accordion waltz in G, length from $EXP_DUR."""
+    dur = float(os.environ.get("EXP_DUR", "15"))
+    mel = [(3, "D5", 1), (4, "B4", 1), (5, "G4", 1), (6, "A4", 2), (8, "F#4", 1), (9, "G4", 3), (12, "B4", 1), (13, "C5", 1),
+           (14, "D5", 1), (15, "E5", 2), (17, "C5", 1), (18, "B4", 3), (21, "A4", 1), (22, "B4", 1), (23, "C5", 1), (24, "D5", 2),
+           (26, "C5", 1), (27, "B4", 2), (29, "A4", 1), (30, "G4", 3), (33, "D5", 2), (35, "B4", 1), (36, "G4", 3), (39, "A4", 3)]
+    return _waltz(out, dur, [], (("G2", "M"), ("D2", "7"), ("C2", "M")), mel, dur - .9, seed=2612)
+
+
 if __name__ == "__main__":
     name = sys.argv[1]
     out = sys.argv[2] if len(sys.argv) > 2 else f"{name}.wav"
     pieces = {"tasca": tasca, "filarmonica": filarmonica, "rua": rua, "ep127": ep127, "ep128": ep128, "ep129": ep129,
-              "ep130": ep130, "ep131": ep131, "ep132": ep132, "ep133": ep133, "ep134": ep134, "ep135": ep135, "ep136": ep136, "ep137": ep137, "ep138": ep138, "ep139": ep139, "ep140": ep140, "ep141": ep141, "ep142": ep142, "ep143": ep143, "ep144": ep144, "ep145": ep145, "ep146": ep146, "ep147": ep147, "ep148": ep148, "ep149": ep149, "ep150": ep150, "ep151": ep151, "ep152": ep152, "ep153": ep153}
+              "ep130": ep130, "ep131": ep131, "ep132": ep132, "ep133": ep133, "ep134": ep134, "ep135": ep135, "ep136": ep136, "ep137": ep137, "ep138": ep138, "ep139": ep139, "ep140": ep140, "ep141": ep141, "ep142": ep142, "ep143": ep143, "ep144": ep144, "ep145": ep145, "ep146": ep146, "ep147": ep147, "ep148": ep148, "ep149": ep149, "ep150": ep150, "ep151": ep151, "ep152": ep152, "ep153": ep153, "exp": exp}
     print(pieces[name](out))
